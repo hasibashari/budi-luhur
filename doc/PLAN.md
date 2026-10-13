@@ -372,13 +372,13 @@
 - Create: `budi-luhur/README.md`
 - Test: Pengujian multi-tab, multi-database, dan integritas referensi `fe-tablet`
 
-- [ ] **Step 1: Uji Skenario Multi-Tab Session Isolation**
+- [x] **Step 1: Uji Skenario Multi-Tab Session Isolation**
   Buka browser yang sama, buka App 1 dan App 2 pada tab terpisah. Login sebagai pengguna berbeda di masing-masing tab; pastikan sesi tidak tertimpa.
-- [ ] **Step 2: Uji Skenario Data Isolation**
+- [x] **Step 2: Uji Skenario Data Isolation**
   Daftarkan siswi baru di App 1; pastikan akun tersebut tidak ada di App 2 atau App 3. Catat konsumsi obat di App 2; pastikan data log tidak masuk ke App 1.
-- [ ] **Step 3: Uji Integritas Referensi `fe-tablet`**
+- [x] **Step 3: Uji Integritas Referensi `fe-tablet`**
   Jalankan `fe-tablet` secara independen; pastikan tidak ada kode yang rusak dan aplikasi referensi tetap beroperasi normal.
-- [ ] **Step 4: Tulis panduan lengkap di `budi-luhur/README.md`**
+- [x] **Step 4: Tulis panduan lengkap di `budi-luhur/README.md`**
   Dokumentasikan cara instalasi, inisialisasi database, dan perintah untuk menjalankan portal serta ketiga aplikasi secara mudah.
-- [ ] **Step 5: Final Review & Checklist Verification**
+- [x] **Step 5: Final Review & Checklist Verification**
   Pastikan seluruh kriteria penerimaan dari PRD terpenuhi 100%.

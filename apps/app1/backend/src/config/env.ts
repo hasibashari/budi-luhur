@@ -5,9 +5,9 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Load .env from backend root folder
-dotenv.config({ path: path.resolve(__dirname, '../../.env') });
-dotenv.config();
+// Load .env from backend root folder with override
+dotenv.config({ path: path.resolve(__dirname, '../../.env'), override: true });
+dotenv.config({ override: true });
 
 export const config = {
   port: parseInt(process.env.PORT || '4001', 10),
