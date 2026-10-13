@@ -289,15 +289,15 @@
 - Consumes: Modul backend admin (`/api/v1/admin/*`).
 - Produces: Portal fasilitator medis / UKS lengkap.
 
-- [ ] **Step 1: Migrasi Layout Admin & Sidebar**
+- [x] **Step 1: Migrasi Layout Admin & Sidebar**
   Setup tata letak desktop dan mobile nav khusus admin.
-- [ ] **Step 2: Migrasi Admin Dashboard & Kartu Statistik**
+- [x] **Step 2: Migrasi Admin Dashboard & Kartu Statistik**
   Tampilkan metrik total siswi, tingkat kepatuhan global, dan alert siswi berisiko.
-- [ ] **Step 3: Migrasi Manajemen Siswi & Modal Nudge**
+- [x] **Step 3: Migrasi Manajemen Siswi & Modal Nudge**
   Porting tabel pengguna dan modal pengiriman pesan pengingat langsung via App/WhatsApp.
-- [ ] **Step 4: Migrasi CMS Artikel & Laporan Kepatuhan**
+- [x] **Step 4: Migrasi CMS Artikel & Laporan Kepatuhan**
   Porting editor materi edukasi dan grafik analitik kepatuhan sekolah.
-- [ ] **Step 5: Verifikasi fitur admin portal**
+- [x] **Step 5: Verifikasi fitur admin portal**
   Pastikan role `admin` dapat mengoperasikan seluruh kapabilitas manajemen data.
 
 ---

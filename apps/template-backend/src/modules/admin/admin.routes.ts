@@ -22,4 +22,13 @@ adminRoutes.post('/articles', AdminController.createArticle as any);
 adminRoutes.put('/articles/:id', AdminController.updateArticle as any);
 adminRoutes.delete('/articles/:id', AdminController.deleteArticle as any);
 
+adminRoutes.get('/schedules', AdminController.getSchedules as any);
+adminRoutes.get('/schedules/:id', AdminController.getScheduleById as any);
+adminRoutes.post('/schedules', AdminController.createSchedule as any);
+adminRoutes.put('/schedules/:id', AdminController.updateSchedule as any);
+adminRoutes.delete('/schedules/:id', AdminController.deleteSchedule as any);
+
+adminRoutes.get('/compliance', AdminController.getComplianceReports as any);
+adminRoutes.put('/profile', AdminController.updateProfile as any);
+
 export default adminRoutes;

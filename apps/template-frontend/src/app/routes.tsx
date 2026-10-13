@@ -20,15 +20,16 @@ import { BuddyView } from '@/src/features/buddy';
 import { EducationView, ArticleDetailView } from '@/src/features/education';
 import { ConsultationView } from '@/src/features/consultation';
 
-// Lazy or placeholder modules for Task 8 (Admin Portal)
-const AdminDashboardPlaceholder = () => (
-  <div className='min-h-screen flex items-center justify-center p-4 bg-[#fff5f7]'>
-    <div className='bg-white p-6 rounded-2xl shadow-md border border-rose-100 text-center max-w-md'>
-      <h2 className='text-lg font-bold text-slate-800 mb-2'>Portal Admin UKS</h2>
-      <p className='text-sm text-slate-600 mb-4'>Halaman sedang disiapkan di Task 8.</p>
-    </div>
-  </div>
-);
+// Admin Portal Views
+import {
+  AdminLayout,
+  AdminDashboardView,
+  UserManagementView,
+  ScheduleManagementView,
+  ArticleManagementView,
+  ReportAnalyticsView,
+  AdminProfileView,
+} from '@/src/features/admin';
 
 export function AppRoutes() {
   return (
@@ -86,15 +87,24 @@ export function AppRoutes() {
         <Route path='profile' element={<ProfileView />} />
       </Route>
 
-      {/* Protected Admin Routes */}
+      {/* Protected Admin Portal Routes */}
       <Route
-        path='/admin/*'
+        path='/admin'
         element={
           <AuthGuard allowedRoles={['admin']}>
-            <AdminDashboardPlaceholder />
+            <AdminLayout />
           </AuthGuard>
         }
-      />
+      >
+        <Route index element={<Navigate to='/admin/dashboard' replace />} />
+        <Route path='dashboard' element={<AdminDashboardView />} />
+        <Route path='users' element={<UserManagementView />} />
+        <Route path='schedules' element={<ScheduleManagementView />} />
+        <Route path='articles' element={<ArticleManagementView />} />
+        <Route path='articles/:id' element={<ArticleDetailView backHref='/admin/articles' />} />
+        <Route path='reports' element={<ReportAnalyticsView />} />
+        <Route path='profile' element={<AdminProfileView />} />
+      </Route>
 
       {/* Fallback */}
       <Route path='*' element={<Navigate to='/' replace />} />

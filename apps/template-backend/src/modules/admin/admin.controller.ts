@@ -126,4 +126,86 @@ export class AdminController {
       res.status(500).json({ success: false, error: 'Gagal menghapus artikel.' });
     }
   }
+
+  static async getSchedules(_req: AuthRequest, res: Response) {
+    try {
+      const schedules = await AdminService.getSchedules();
+      res.json(schedules);
+    } catch (error: any) {
+      console.error('AdminController.getSchedules error:', error);
+      res.status(500).json({ success: false, error: 'Gagal memuat jadwal.' });
+    }
+  }
+
+  static async getScheduleById(req: AuthRequest, res: Response) {
+    try {
+      const id = String(req.params.id);
+      const schedule = await AdminService.getScheduleById(id);
+      if (!schedule) {
+        res.status(404).json({ success: false, error: 'Jadwal tidak ditemukan.' });
+        return;
+      }
+      res.json(schedule);
+    } catch (error: any) {
+      console.error('AdminController.getScheduleById error:', error);
+      res.status(500).json({ success: false, error: 'Gagal memuat detail jadwal.' });
+    }
+  }
+
+  static async createSchedule(req: AuthRequest, res: Response) {
+    try {
+      const schedule = await AdminService.createSchedule(req.body);
+      res.status(201).json({ success: true, schedule });
+    } catch (error: any) {
+      console.error('AdminController.createSchedule error:', error);
+      res.status(500).json({ success: false, error: 'Gagal membuat jadwal.' });
+    }
+  }
+
+  static async updateSchedule(req: AuthRequest, res: Response) {
+    try {
+      const id = String(req.params.id);
+      const result = await AdminService.updateSchedule(id, req.body);
+      res.json(result);
+    } catch (error: any) {
+      console.error('AdminController.updateSchedule error:', error);
+      res.status(500).json({ success: false, error: 'Gagal memperbarui jadwal.' });
+    }
+  }
+
+  static async deleteSchedule(req: AuthRequest, res: Response) {
+    try {
+      const id = String(req.params.id);
+      const result = await AdminService.deleteSchedule(id);
+      res.json(result);
+    } catch (error: any) {
+      console.error('AdminController.deleteSchedule error:', error);
+      res.status(500).json({ success: false, error: 'Gagal menghapus jadwal.' });
+    }
+  }
+
+  static async getComplianceReports(_req: AuthRequest, res: Response) {
+    try {
+      const reports = await AdminService.getComplianceReports();
+      res.json(reports);
+    } catch (error: any) {
+      console.error('AdminController.getComplianceReports error:', error);
+      res.status(500).json({ success: false, error: 'Gagal memuat laporan kepatuhan.' });
+    }
+  }
+
+  static async updateProfile(req: AuthRequest, res: Response) {
+    try {
+      const adminId = req.user?.id;
+      if (!adminId) {
+        res.status(401).json({ success: false, error: 'Tidak terotentikasi.' });
+        return;
+      }
+      const result = await AdminService.updateUser(adminId, req.body);
+      res.json(result);
+    } catch (error: any) {
+      console.error('AdminController.updateProfile error:', error);
+      res.status(500).json({ success: false, error: 'Gagal memperbarui profil admin.' });
+    }
+  }
 }
