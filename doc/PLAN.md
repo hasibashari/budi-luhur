@@ -49,13 +49,13 @@
 **Interfaces:**
 - Produces: Root scripts `npm run dev:portal`, `npm run dev:app1`, `npm run dev:app2`, `npm run dev:app3`, `npm run dev:all`.
 
-- [ ] **Step 1: Buat konfigurasi root `budi-luhur/package.json`**
+- [x] **Step 1: Buat konfigurasi root `budi-luhur/package.json`**
   Definisikan nama project `"budi-luhur-ecosystem"`, private: true, dan npm scripts untuk orkestrasi landing page serta ketiga apps.
-- [ ] **Step 2: Buat berkas `budi-luhur/.gitignore`**
+- [x] **Step 2: Buat berkas `budi-luhur/.gitignore`**
   Abaikan `node_modules`, `.env`, `dist`, `.DS_Store`, dan berkas log.
-- [ ] **Step 3: Setup direktori dasar di `budi-luhur/`**
+- [x] **Step 3: Setup direktori dasar di `budi-luhur/`**
   Pastikan folder `budi-luhur/apps/` dan `budi-luhur/frontend/` siap untuk scaffolding.
-- [ ] **Step 4: Commit konfigurasi awal**
+- [x] **Step 4: Commit konfigurasi awal**
   Commit git untuk fondasi main project `budi-luhur`.
 
 ---
@@ -79,15 +79,15 @@
 - Produces: Singleton database client `db.query(text, params)` dan `db.transaction(callback)` di Express.
 - Produces: Endpoint health check `GET /api/v1/health` -> `{ status: "ok", timestamp: ... }`.
 
-- [ ] **Step 1: Setup dependencies backend template**
+- [x] **Step 1: Setup dependencies backend template**
   Pasang `express`, `pg`, `dotenv`, `cors`, `jsonwebtoken`, `bcryptjs`, `@types/express`, `@types/pg`, `@types/node`, `tsx`, `typescript`.
-- [ ] **Step 2: Salin & sesuaikan skema PostgreSQL dari `fe-tablet`**
+- [x] **Step 2: Salin & sesuaikan skema PostgreSQL dari `fe-tablet`**
   Salin DDL 8 modul tabel dari `fe-tablet/src/db/schema.sql`, `seed.ts`, dan `seedData.json` ke `budi-luhur/apps/template-backend/src/db/`.
-- [ ] **Step 3: Buat `src/config/database.ts`**
+- [x] **Step 3: Buat `src/config/database.ts`**
   Implementasikan PostgreSQL connection pool singleton dengan dukungan transaksi ACID yang persis dengan `fe-tablet/src/db/client.ts`.
-- [ ] **Step 4: Buat `src/app.ts` & `src/server.ts`**
+- [x] **Step 4: Buat `src/app.ts` & `src/server.ts`**
   Setup Express application dengan middleware `cors`, `express.json()`, global error handler, dan route `/api/v1/health`.
-- [ ] **Step 5: Verifikasi server & koneksi database**
+- [x] **Step 5: Verifikasi server & koneksi database**
   Jalankan server dan uji endpoint `GET /api/v1/health`.
 
 ---
@@ -117,15 +117,15 @@
   - `PUT /api/v1/users/profile` (Protected) -> updated profile
   - `POST /api/v1/users/setup` (Protected) -> complete profile & schedule
 
-- [ ] **Step 1: Implementasikan `auth.middleware.ts` & `role.middleware.ts`**
+- [x] **Step 1: Implementasikan `auth.middleware.ts` & `role.middleware.ts`**
   Ekstrak token Bearer JWT dari header `Authorization`, verifikasi payload, dan sematkan `req.user`.
-- [ ] **Step 2: Migrasi logika `authRepository.ts` ke `auth.service.ts` & controller**
+- [x] **Step 2: Migrasi logika `authRepository.ts` ke `auth.service.ts` & controller**
   Porting logika pencarian user, keyword fallback (`admin`, `sarah`), registrasi auto-generate `friend_code`, dan delete account kaskade. Tambahkan pembuatan token JWT saat login berhasil.
-- [ ] **Step 3: Migrasi logika `userRepository.ts` ke `user.service.ts` & controller**
+- [x] **Step 3: Migrasi logika `userRepository.ts` ke `user.service.ts` & controller**
   Porting agregasi data dashboard (streak, reminder hero, active today), edit profil, dan simpan initial setup profil/jadwal.
-- [ ] **Step 4: Mount rute di `src/app.ts`**
+- [x] **Step 4: Mount rute di `src/app.ts`**
   Pasang `/api/v1/auth` dan `/api/v1/users`.
-- [ ] **Step 5: Verifikasi endpoint Auth & User**
+- [x] **Step 5: Verifikasi endpoint Auth & User**
   Uji registrasi, login, quick-login, dan akses dashboard dengan token JWT.
 
 ---
@@ -154,15 +154,15 @@
   - `GET /api/v1/buddy/groups` & `POST /api/v1/buddy/groups` & `POST /api/v1/buddy/groups/join`
   - `GET /api/v1/buddy/groups/:id` & `POST /api/v1/buddy/groups/:id/messages`
 
-- [ ] **Step 1: Implementasikan modul `schedules`**
+- [x] **Step 1: Implementasikan modul `schedules`**
   Migrasi logika dari `scheduleRepository.ts` & `user/api/scheduleRepository.ts`.
-- [ ] **Step 2: Implementasikan modul `consumption`**
+- [x] **Step 2: Implementasikan modul `consumption`**
   Migrasi logika pencatatan status harian, kalkulasi streak otomatis, dan evaluasi bulanan dari `consumptionRepository.ts`.
-- [ ] **Step 3: Implementasikan modul `buddy`**
+- [x] **Step 3: Implementasikan modul `buddy`**
   Migrasi logika manajemen grup sahabat, validasi kode unik grup, pengiriman chat, dan stiker apresiasi (*cheers*) dari `buddyRepository.ts`.
-- [ ] **Step 4: Mount rute di `src/app.ts`**
+- [x] **Step 4: Mount rute di `src/app.ts`**
   Pasang `/api/v1/schedules`, `/api/v1/consumption`, dan `/api/v1/buddy`.
-- [ ] **Step 5: Verifikasi transaksi pencatatan obat dan obrolan grup**
+- [x] **Step 5: Verifikasi transaksi pencatatan obat dan obrolan grup**
   Pastikan mutasi data tercermin dengan benar di database PostgreSQL.
 
 ---

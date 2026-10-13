@@ -2,6 +2,7 @@
   "name": "femory-backend-template",
   "version": "1.0.0",
   "description": "Modular Express.js Backend for FEMORY Ecosystem",
+  "type": "module",
   "main": "src/server.ts",
   "scripts": {
     "dev": "tsx watch src/server.ts",

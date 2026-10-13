@@ -26,9 +26,15 @@ app.get('/api/v1/health', (_req: Request, res: Response) => {
 // Domain Routes
 import { authRoutes } from './modules/auth/auth.routes.js';
 import { userRoutes } from './modules/users/user.routes.js';
+import { scheduleRoutes } from './modules/schedules/schedule.routes.js';
+import { consumptionRoutes } from './modules/consumption/consumption.routes.js';
+import { buddyRoutes } from './modules/buddy/buddy.routes.js';
 
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/users', userRoutes);
+app.use('/api/v1/schedules', scheduleRoutes);
+app.use('/api/v1/consumption', consumptionRoutes);
+app.use('/api/v1/buddy', buddyRoutes);
 
 // Global Error Handler
 app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
