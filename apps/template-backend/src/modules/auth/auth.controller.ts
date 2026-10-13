@@ -19,7 +19,11 @@ export class AuthController {
 
   static async quickLogin(req: Request, res: Response) {
     try {
-      const role = req.body.role || 'user';
+      const role =
+        req.body.role ||
+        (typeof req.body.keyword === 'string' && req.body.keyword.toLowerCase().includes('admin')
+          ? 'admin'
+          : 'user');
       const result = await AuthService.quickLogin(role);
       res.json(result);
     } catch (error: any) {

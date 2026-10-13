@@ -4,6 +4,7 @@ export interface UserProfile {
   email: string;
   phone: string;
   avatarUrl: string;
+  gender?: string;
   dateOfBirth?: string;
   bloodType?: string;
   height?: number;

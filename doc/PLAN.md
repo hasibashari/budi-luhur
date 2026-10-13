@@ -190,15 +190,15 @@
   - `POST /api/v1/admin/reminders/send` -> kirim pengingat nudge (App / WhatsApp)
   - `POST /api/v1/admin/articles` & `PUT /api/v1/admin/articles/:id`
 
-- [ ] **Step 1: Implementasikan modul `articles`**
+- [x] **Step 1: Implementasikan modul `articles`**
   Migrasi pencarian artikel, filter kategori, detail seksi, dan toggle bookmark dari `educationRepository.ts`.
-- [ ] **Step 2: Implementasikan modul `consultation` (Gemini AI)**
+- [x] **Step 2: Implementasikan modul `consultation` (Gemini AI)**
   Migrasi logika integrasi Google Gemini API dari `fe-tablet/src/lib/gemini.ts` dengan penanganan prompt kesehatan dan fallback respon teruji.
-- [ ] **Step 3: Implementasikan modul `admin`**
+- [x] **Step 3: Implementasikan modul `admin`**
   Migrasi fungsi agregasi statistik kepatuhan, daftar pengguna berisiko, pengiriman nudge, dan CMS artikel dari `features/admin/api/*`.
-- [ ] **Step 4: Mount seluruh rute tersisa di `src/app.ts`**
+- [x] **Step 4: Mount seluruh rute tersisa di `src/app.ts`**
   Pasang `/api/v1/articles`, `/api/v1/consultation`, dan `/api/v1/admin` (dilindungi `roleMiddleware(['admin'])`).
-- [ ] **Step 5: Verifikasi menyeluruh backend template**
+- [x] **Step 5: Verifikasi menyeluruh backend template**
   Pastikan 100% endpoint backend bekerja secara RESTful.
 
 ---
