@@ -224,15 +224,15 @@
 - Consumes: REST API backend di `VITE_API_BASE_URL`.
 - Produces: Client SPA React + Vite dengan sistem routing dan sesi terisolasi.
 
-- [ ] **Step 1: Setup project Vite + React + TypeScript + Tailwind CSS**
+- [x] **Step 1: Setup project Vite + React + TypeScript + Tailwind CSS**
   Konfigurasi `vite.config.ts` dengan path alias `@/` dan Tailwind CSS styling yang konsisten dengan tema Rose (`#e11d48`) dan canvas blush (`#fff5f7`).
-- [ ] **Step 2: Setup Axios Client dengan JWT Interceptor**
+- [x] **Step 2: Setup Axios Client dengan JWT Interceptor**
   Konfigurasi client HTTP di `src/shared/api/client.ts` yang otomatis menyematkan header `Authorization: Bearer <token>` dari local storage.
-- [ ] **Step 3: Migrasi `AuthContext` & `AuthGuard`**
+- [x] **Step 3: Migrasi `AuthContext` & `AuthGuard`**
   Sesuaikan `AuthContext` agar memanggil endpoint REST Express dan menyimpan token dengan konfigurasi kunci dinamis (`VITE_AUTH_STORAGE_KEY`).
-- [ ] **Step 4: Migrasi `Splash`, `Onboarding`, `LoginView`, dan `RegisterView`**
+- [x] **Step 4: Migrasi `Splash`, `Onboarding`, `LoginView`, dan `RegisterView`**
   Porting komponen antarmuka dari `fe-tablet/src/features/auth` dan `onboarding`, menggantikan dependensi `next/navigation` dengan `useNavigate()` dari `react-router-dom`.
-- [ ] **Step 5: Verifikasi alur Auth & Onboarding pada browser**
+- [x] **Step 5: Verifikasi alur Auth & Onboarding pada browser**
   Pastikan pengguna dapat masuk dan diarahkan sesuai peran (`admin` / `user`).
 
 ---
