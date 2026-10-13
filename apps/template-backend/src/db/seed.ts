@@ -461,7 +461,7 @@ export async function seedDatabase() {
 }
 
 // Auto execute if run directly via CLI (npx tsx src/db/seed.ts)
-if (require.main === module || process.argv[1]?.includes('seed.ts')) {
+if (process.argv[1]?.includes('seed.ts') || process.argv[1]?.includes('seed.js')) {
   seedDatabase()
     .then(async () => {
       await pool.end();

@@ -317,17 +317,17 @@
   - App 2: Frontend `http://localhost:5174` | Backend `http://localhost:4002` | DB: `fe_tablet_app2`
   - App 3: Frontend `http://localhost:5175` | Backend `http://localhost:4003` | DB: `fe_tablet_app3`
 
-- [ ] **Step 1: Duplikasi paket template ke `apps/app1`, `apps/app2`, dan `apps/app3`**
+- [x] **Step 1: Duplikasi paket template ke `apps/app1`, `apps/app2`, dan `apps/app3`**
   Salin kode frontend dan backend template yang telah 100% tervalidasi ke ketiga folder aplikasi.
-- [ ] **Step 2: Konfigurasi berkas `.env` App 1**
+- [x] **Step 2: Konfigurasi berkas `.env` App 1**
   Set `PORT=4001`, `CORS_ORIGIN=http://localhost:5173`, `DATABASE_URL=.../fe_tablet_app1`, `VITE_AUTH_STORAGE_KEY=app1_auth_token`.
-- [ ] **Step 3: Konfigurasi berkas `.env` App 2**
+- [x] **Step 3: Konfigurasi berkas `.env` App 2**
   Set `PORT=4002`, `CORS_ORIGIN=http://localhost:5174`, `DATABASE_URL=.../fe_tablet_app2`, `VITE_AUTH_STORAGE_KEY=app2_auth_token`.
-- [ ] **Step 4: Konfigurasi berkas `.env` App 3**
+- [x] **Step 4: Konfigurasi berkas `.env` App 3**
   Set `PORT=4003`, `CORS_ORIGIN=http://localhost:5175`, `DATABASE_URL=.../fe_tablet_app3`, `VITE_AUTH_STORAGE_KEY=app3_auth_token`.
-- [ ] **Step 5: Inisialisasi dan seed database untuk masing-masing aplikasi**
+- [x] **Step 5: Inisialisasi dan seed database untuk masing-masing aplikasi**
   Jalankan `npm run db:init` dan `npm run db:seed` di `apps/app1/backend`, `apps/app2/backend`, dan `apps/app3/backend`.
-- [ ] **Step 6: Verifikasi isolasi operasional**
+- [x] **Step 6: Verifikasi isolasi operasional**
   Pastikan ketiga backend dan frontend dapat berjalan serentak tanpa bentrokan port.
 
 ---
