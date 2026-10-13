@@ -7,16 +7,20 @@ import { SplashScreenView } from '@/src/features/splash';
 import { OnboardingView } from '@/src/features/onboarding';
 import { HomeView } from '@/src/features/home';
 
-// Lazy or placeholder modules for Task 7 (User Portal) & Task 8 (Admin Portal)
-const UserDashboardPlaceholder = () => (
-  <div className='min-h-screen flex items-center justify-center p-4 bg-[#fff5f7]'>
-    <div className='bg-white p-6 rounded-2xl shadow-md border border-rose-100 text-center max-w-md'>
-      <h2 className='text-lg font-bold text-slate-800 mb-2'>Portal Siswi</h2>
-      <p className='text-sm text-slate-600 mb-4'>Halaman sedang disiapkan di Task 7.</p>
-    </div>
-  </div>
-);
+// User Portal Views
+import {
+  UserLayout,
+  DashboardView,
+  SetupProfileView,
+  ProfileView,
+} from '@/src/features/user';
+import { ScheduleView } from '@/src/features/schedule';
+import { HistoryView } from '@/src/features/consumption';
+import { BuddyView } from '@/src/features/buddy';
+import { EducationView, ArticleDetailView } from '@/src/features/education';
+import { ConsultationView } from '@/src/features/consultation';
 
+// Lazy or placeholder modules for Task 8 (Admin Portal)
 const AdminDashboardPlaceholder = () => (
   <div className='min-h-screen flex items-center justify-center p-4 bg-[#fff5f7]'>
     <div className='bg-white p-6 rounded-2xl shadow-md border border-rose-100 text-center max-w-md'>
@@ -52,15 +56,35 @@ export function AppRoutes() {
         }
       />
 
-      {/* Protected User Routes */}
+      {/* Dedicated Setup Profile Route */}
       <Route
-        path='/user/*'
+        path='/user/setup'
         element={
           <AuthGuard allowedRoles={['user', 'admin']}>
-            <UserDashboardPlaceholder />
+            <SetupProfileView />
           </AuthGuard>
         }
       />
+
+      {/* Protected User Portal Routes */}
+      <Route
+        path='/user'
+        element={
+          <AuthGuard allowedRoles={['user', 'admin']}>
+            <UserLayout />
+          </AuthGuard>
+        }
+      >
+        <Route index element={<Navigate to='/user/dashboard' replace />} />
+        <Route path='dashboard' element={<DashboardView />} />
+        <Route path='schedule' element={<ScheduleView />} />
+        <Route path='history' element={<HistoryView />} />
+        <Route path='buddy' element={<BuddyView />} />
+        <Route path='education' element={<EducationView />} />
+        <Route path='education/:id' element={<ArticleDetailView />} />
+        <Route path='consultation' element={<ConsultationView />} />
+        <Route path='profile' element={<ProfileView />} />
+      </Route>
 
       {/* Protected Admin Routes */}
       <Route
@@ -77,3 +101,5 @@ export function AppRoutes() {
     </Routes>
   );
 }
+
+export default AppRoutes;

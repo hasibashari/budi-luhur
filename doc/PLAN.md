@@ -257,17 +257,17 @@
 - Consumes: Modul backend schedules, consumption, buddy, articles, consultation.
 - Produces: Pengalaman pengguna portal siswi berorientasi mobile-first dan thumb-friendly.
 
-- [ ] **Step 1: Migrasi BottomNavigationBar & Layout Siswi**
+- [x] **Step 1: Migrasi BottomNavigationBar & Layout Siswi**
   Pasang bottom navigation 5-tab tetap (Beranda, Pantau, Edukasi, Sahabat, Konsultasi).
-- [ ] **Step 2: Migrasi Dashboard, Hero Reminder, & Setup Profile**
+- [x] **Step 2: Migrasi Dashboard, Hero Reminder, & Setup Profile**
   Porting `DashboardView` dan `SetupProfileView` dengan integrasi ke backend Express.
-- [ ] **Step 3: Migrasi Jadwal & Kalender Monitoring 3-Tab**
+- [x] **Step 3: Migrasi Jadwal & Kalender Monitoring 3-Tab**
   Porting `ScheduleView` (modal ubah jadwal) dan `HistoryView` (hari ini, mingguan, bulanan dengan grafik).
-- [ ] **Step 4: Migrasi Sahabat Sehat (Buddy Group Chat & Cheers)**
+- [x] **Step 4: Migrasi Sahabat Sehat (Buddy Group Chat & Cheers)**
   Porting `BuddyView` dengan komponen obrolan grup dan modal gabung grup.
-- [ ] **Step 5: Migrasi Edukasi & AI Consultation Chat**
+- [x] **Step 5: Migrasi Edukasi & AI Consultation Chat**
   Porting `EducationView`, `ArticleDetailView`, dan `ConsultationView` (Gemini chat interface).
-- [ ] **Step 6: Verifikasi seluruh fitur portal siswi**
+- [x] **Step 6: Verifikasi seluruh fitur portal siswi**
   Lakukan pencatatan obat, ubah jadwal, tes AI chat, dan cek pembaruan streak.
 
 ---
