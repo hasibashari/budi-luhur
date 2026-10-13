@@ -353,15 +353,15 @@
 - Consumes: Konfigurasi URL `VITE_APP_1_URL`, `VITE_APP_2_URL`, `VITE_APP_3_URL`.
 - Produces: Portal landing page estetis yang memandu pengguna memilih aplikasi.
 
-- [ ] **Step 1: Setup project Vite + React + Tailwind di `budi-luhur/frontend/`**
+- [x] **Step 1: Setup project Vite + React + Tailwind di `budi-luhur/frontend/`**
   Konfigurasi port 5170 pada `vite.config.ts`.
-- [ ] **Step 2: Porting komponen presentasional dari `fe-tablet/src/features/home/`**
+- [x] **Step 2: Porting komponen presentasional dari `fe-tablet/src/features/home/`**
   Salin komponen `Benefits`, `Features`, `FAQ`, dan `Footer` dengan penyesuaian styling Tailwind yang bersih.
-- [ ] **Step 3: Bangun `AppSelectorSection.tsx` dengan 3 kartu aplikasi interaktif**
+- [x] **Step 3: Bangun `AppSelectorSection.tsx` dengan 3 kartu aplikasi interaktif**
   Tampilkan 3 kartu: Aplikasi 1 (`http://localhost:5173`), Aplikasi 2 (`http://localhost:5174`), dan Aplikasi 3 (`http://localhost:5175`) lengkap dengan status aktif, deskripsi, dan tombol navigasi langsung.
-- [ ] **Step 4: Integrasikan ke dalam `App.tsx` & `Hero.tsx`**
+- [x] **Step 4: Integrasikan ke dalam `App.tsx` & `Hero.tsx`**
   Sematkan tombol navigasi halus (*smooth scroll*) dari hero banner langsung menuju section kartu aplikasi.
-- [ ] **Step 5: Verifikasi di peramban**
+- [x] **Step 5: Verifikasi di peramban**
   Buka `http://localhost:5170`, klik masing-masing dari 3 kartu, dan pastikan aplikasi tujuan terbuka dengan tepat.
 
 ---
