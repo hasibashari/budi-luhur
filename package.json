@@ -1,0 +1,23 @@
+{
+  "name": "budi-luhur-ecosystem",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Ekosistem Tiga Aplikasi Mandiri Berbasis Fe-Tablet dengan Landing Page Portal Budi-Luhur",
+  "scripts": {
+    "dev:portal": "npm --prefix frontend run dev",
+    "dev:app1:backend": "npm --prefix apps/app1/backend run dev",
+    "dev:app1:frontend": "npm --prefix apps/app1/frontend run dev",
+    "dev:app2:backend": "npm --prefix apps/app2/backend run dev",
+    "dev:app2:frontend": "npm --prefix apps/app2/frontend run dev",
+    "dev:app3:backend": "npm --prefix apps/app3/backend run dev",
+    "dev:app3:frontend": "npm --prefix apps/app3/frontend run dev",
+    "dev:app1": "concurrently -n \"app1-be,app1-fe\" -c \"blue,cyan\" \"npm run dev:app1:backend\" \"npm run dev:app1:frontend\"",
+    "dev:app2": "concurrently -n \"app2-be,app2-fe\" -c \"green,emerald\" \"npm run dev:app2:backend\" \"npm run dev:app2:frontend\"",
+    "dev:app3": "concurrently -n \"app3-be,app3-fe\" -c \"magenta,pink\" \"npm run dev:app3:backend\" \"npm run dev:app3:frontend\"",
+    "db:init:all": "npm --prefix apps/app1/backend run db:init && npm --prefix apps/app2/backend run db:init && npm --prefix apps/app3/backend run db:init",
+    "db:seed:all": "npm --prefix apps/app1/backend run db:seed && npm --prefix apps/app2/backend run db:seed && npm --prefix apps/app3/backend run db:seed"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.5"
+  }
+}
