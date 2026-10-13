@@ -5,10 +5,12 @@ import { config } from './config/env.js';
 export const app = express();
 
 // Middlewares
-app.use(cors({
-  origin: config.corsOrigin === '*' ? '*' : config.corsOrigin.split(','),
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin: config.corsOrigin === '*' ? '*' : config.corsOrigin.split(','),
+    credentials: true,
+  }),
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -20,6 +22,13 @@ app.get('/api/v1/health', (_req: Request, res: Response) => {
     service: 'FEMORY Backend Template',
   });
 });
+
+// Domain Routes
+import { authRoutes } from './modules/auth/auth.routes.js';
+import { userRoutes } from './modules/users/user.routes.js';
+
+app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/users', userRoutes);
 
 // Global Error Handler
 app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
