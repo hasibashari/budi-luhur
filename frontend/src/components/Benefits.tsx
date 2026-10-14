@@ -1,67 +1,70 @@
 import React from 'react';
-import { Zap, Brain, Shield, HeartPulse, Sparkles } from 'lucide-react';
+import { Users, Building2, Globe, HeartHandshake, Award } from 'lucide-react';
 
 export const Benefits: React.FC = () => {
   const benefits = [
     {
-      icon: Zap,
-      title: 'Bebas Gejala 5L',
-      desc: 'Mencegah Lesu, Lelah, Letih, Lemah, dan Lalai sehingga tubuh selalu berenergi sepanjang hari di sekolah.',
-      color: 'from-amber-500 to-orange-500',
-      bgColor: 'bg-amber-50 text-amber-600',
+      icon: Users,
+      title: 'Dosen Pakar & Praktisi',
+      desc: 'Dosen berkualifikasi S2/S3 spesialis dengan pengalaman klinis aktif di RS rujukan nasional.',
+      badgeColor: 'bg-blue-50 text-[#005EB8] border-blue-200',
+      iconColor: 'text-[#005EB8]',
     },
     {
-      icon: Brain,
-      title: 'Meningkatkan Konsentrasi',
-      desc: 'Oksigenasi optimal ke otak membuat daya ingat, fokus belajar, dan prestasi akademik meningkat tajam.',
-      color: 'from-blue-500 to-indigo-500',
-      bgColor: 'bg-blue-50 text-blue-600',
+      icon: Building2,
+      title: 'Laboratorium Mini Hospital',
+      desc: 'Simulasi rumah sakit terpadu, lab keperawatan gerontik, dan lab kebidanan berteknologi modern.',
+      badgeColor: 'bg-sky-50 text-[#00A3E0] border-sky-200',
+      iconColor: 'text-[#00A3E0]',
     },
     {
-      icon: Shield,
-      title: 'Daya Tahan Tubuh Kuat',
-      desc: 'Zat besi esensial mendukung pembentukan sel darah merah yang memperkuat sistem imun tubuh dari penyakit.',
-      color: 'from-emerald-500 to-teal-500',
-      bgColor: 'bg-emerald-50 text-emerald-600',
+      icon: Globe,
+      title: 'Kemitraan Karir Global',
+      desc: 'Penempatan kerja dan magang ke Jepang (program EPA) dan Jerman dengan kursus bahasa terarah.',
+      badgeColor: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+      iconColor: 'text-emerald-500',
     },
     {
-      icon: HeartPulse,
-      title: 'Investasi Masa Depan',
-      desc: 'Mencegah anemia jangka panjang dan mempersiapkan generasi masa depan yang bebas risiko stunting.',
-      color: 'from-rose-500 to-pink-500',
-      bgColor: 'bg-rose-50 text-rose-600',
+      icon: HeartHandshake,
+      title: 'Karakter Budi Luhur',
+      desc: 'Pembinaan etika medis dan nilai religius untuk melahirkan nakes berintegritas dan berempati tinggi.',
+      badgeColor: 'bg-amber-50 text-amber-700 border-amber-200',
+      iconColor: 'text-amber-500',
     },
   ];
 
   return (
-    <section id="benefits" className="py-20 lg:py-28 bg-slate-50/70 border-y border-rose-100/60">
+    <section id="keunggulan" className="py-12 sm:py-16 lg:py-24 bg-white border-b border-slate-200 scroll-mt-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-rose-100 text-rose-700 text-xs font-bold uppercase tracking-wider mb-4">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>Manfaat Penting</span>
+        <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12">
+          <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-[#005EB8] text-xs font-bold uppercase tracking-wider mb-3 sm:mb-4">
+            <Award className="w-3.5 h-3.5 text-[#fdc800]" />
+            <span>Keunggulan Institusi</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-            Kenapa Tablet Tambah Darah Begitu Penting?
+          <h2 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold text-[#202020] tracking-tight">
+            Mengapa Memilih STIKes Budi Luhur?
           </h2>
-          <p className="mt-4 text-base sm:text-lg text-slate-600">
-            Remaja putri kehilangan zat besi setiap siklus menstruasi. Konsumsi rutin 1 tablet setiap minggu sangat penting untuk menjaga kebugaran tubuh.
+          <div className="title-accent-blue" />
+          <p className="mt-3 sm:mt-4 text-sm sm:text-base lg:text-lg text-[#444444] leading-relaxed">
+            Kurikulum mutakhir, praktik rumah sakit komprehensif, dan jejaring karir internasional bagi lulusan siap kerja.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
           {benefits.map((item, index) => {
             const Icon = item.icon;
             return (
               <div
                 key={index}
-                className="bg-white rounded-3xl p-8 border border-slate-200/80 shadow-xs hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+                className="card-academic p-4 sm:p-6 lg:p-7 flex flex-col justify-between"
               >
-                <div className={`w-14 h-14 rounded-2xl ${item.bgColor} flex items-center justify-center mb-6`}>
-                  <Icon className="w-7 h-7" />
+                <div>
+                  <div className={`w-11 h-11 sm:w-13 sm:h-13 rounded-xl sm:rounded-2xl ${item.badgeColor} border flex items-center justify-center mb-4 sm:mb-5`}>
+                    <Icon className={`w-5 h-5 sm:w-6 sm:h-6 ${item.iconColor}`} />
+                  </div>
+                  <h3 className="text-base sm:text-lg font-bold text-[#202020] mb-1.5 sm:mb-2">{item.title}</h3>
+                  <p className="text-xs sm:text-sm text-[#444444] leading-relaxed">{item.desc}</p>
                 </div>
-                <h3 className="text-xl font-bold text-slate-900 mb-3">{item.title}</h3>
-                <p className="text-sm text-slate-600 leading-relaxed">{item.desc}</p>
               </div>
             );
           })}

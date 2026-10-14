@@ -33,15 +33,15 @@ const app3BaseUrl = import.meta.env.VITE_APP_3_URL || 'http://localhost:5175';
 export const APPS: AppInfo[] = [
   {
     id: 'app1',
-    name: 'FEMORY - Aplikasi 1',
+    name: 'Aplikasi Mandiri 1',
     tagline: 'Instansi & Kelompok Studi 1',
-    description: 'Aplikasi PWA mandiri dengan database independen fe_tablet_app1. Dirancang untuk pemantauan siswi kelas VII & VIII secara real-time.',
+    description: 'Aplikasi PWA mandiri dengan database independen fe_tablet_app1. Dirancang untuk pemantauan kesehatan siswi kelas VII & VIII.',
     url: app1BaseUrl,
     loginUrl: `${app1BaseUrl}/auth/login`,
     registerUrl: `${app1BaseUrl}/auth/register`,
     port: 5173,
     backendPort: 4001,
-    badge: 'Port 5173 • DB App 1',
+    badge: 'DB: fe_tablet_app1',
     colorScheme: {
       bgLight: 'from-rose-50 to-pink-50/40',
       badgeBg: 'bg-rose-100',
@@ -60,21 +60,21 @@ export const APPS: AppInfo[] = [
     ],
     stats: [
       { label: 'Role Akses', value: 'Siswi & Admin' },
-      { label: 'Port App', value: ':5173' },
+      { label: 'Sesi Browser', value: 'Terisolasi' },
       { label: 'PWA Ready', value: 'Yes' },
     ],
   },
   {
     id: 'app2',
-    name: 'FEMORY - Aplikasi 2',
+    name: 'Aplikasi Mandiri 2',
     tagline: 'Instansi & Kelompok Studi 2',
-    description: 'Aplikasi PWA mandiri dengan database independen fe_tablet_app2. Dikhususkan untuk monitoring kepatuhan siswi kelas IX.',
+    description: 'Aplikasi PWA mandiri dengan database independen fe_tablet_app2. Dikhususkan untuk monitoring kesehatan siswi kelas IX.',
     url: app2BaseUrl,
     loginUrl: `${app2BaseUrl}/auth/login`,
     registerUrl: `${app2BaseUrl}/auth/register`,
     port: 5174,
     backendPort: 4002,
-    badge: 'Port 5174 • DB App 2',
+    badge: 'DB: fe_tablet_app2',
     colorScheme: {
       bgLight: 'from-fuchsia-50 to-rose-50/40',
       badgeBg: 'bg-fuchsia-100',
@@ -93,13 +93,13 @@ export const APPS: AppInfo[] = [
     ],
     stats: [
       { label: 'Role Akses', value: 'Siswi & Admin' },
-      { label: 'Port App', value: ':5174' },
+      { label: 'Sesi Browser', value: 'Terisolasi' },
       { label: 'PWA Ready', value: 'Yes' },
     ],
   },
   {
     id: 'app3',
-    name: 'FEMORY - Aplikasi 3',
+    name: 'Aplikasi Mandiri 3',
     tagline: 'Instansi & Kelompok Studi 3',
     description: 'Aplikasi PWA mandiri dengan database independen fe_tablet_app3. Digunakan untuk evaluasi berkala dan fasilitas UKS Sekolah Budi Luhur.',
     url: app3BaseUrl,
@@ -107,7 +107,7 @@ export const APPS: AppInfo[] = [
     registerUrl: `${app3BaseUrl}/auth/register`,
     port: 5175,
     backendPort: 4003,
-    badge: 'Port 5175 • DB App 3',
+    badge: 'DB: fe_tablet_app3',
     colorScheme: {
       bgLight: 'from-pink-50 to-amber-50/40',
       badgeBg: 'bg-pink-100',
@@ -126,7 +126,7 @@ export const APPS: AppInfo[] = [
     ],
     stats: [
       { label: 'Role Akses', value: 'Siswi & Admin' },
-      { label: 'Port App', value: ':5175' },
+      { label: 'Sesi Browser', value: 'Terisolasi' },
       { label: 'PWA Ready', value: 'Yes' },
     ],
   },

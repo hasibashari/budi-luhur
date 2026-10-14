@@ -1,19 +1,219 @@
 @import "tailwindcss";
 
 @layer base {
+  :root {
+    --budi-primary-deep: #004B87;
+    --budi-primary: #005EB8;
+    --budi-accent-sky: #00A3E0;
+    --budi-accent-sky-light: #71C5E8;
+    --budi-accent-gold: #fdc800;
+    --budi-accent-gold-light: #FDE900;
+    --budi-ink-heading: #005EB8;
+    --budi-ink-body: #444444;
+    --budi-border-rule: #bdbdbd;
+    --budi-border-subtle: #e3e3e3;
+  }
+
   body {
+    margin: 0;
+    padding: 0;
     font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    color: var(--budi-ink-body);
+    background-color: #ffffff;
+    line-height: 1.5;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: 'Montserrat', 'Plus Jakarta Sans', sans-serif;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
   }
 }
 
-.glass-card {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(244, 63, 94, 0.12);
+/* ─── STIKes Budi Luhur Custom Component Utilities ─── */
+
+/* Tombol Aksi Utama (Pill 20px / 9999px, uppercase, gold hover) */
+.btn-budi-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #00A3E0;
+  color: #ffffff;
+  border-radius: 9999px;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 10px 20px;
+  min-height: 44px;
+  box-shadow: 0 4px 12px rgba(0, 163, 224, 0.25);
+  transition: all 0.3s ease-out;
+  user-select: none;
 }
 
-.hero-gradient {
-  background: radial-gradient(circle at 15% 20%, rgba(254, 205, 211, 0.45) 0%, transparent 45%),
-              radial-gradient(circle at 85% 75%, rgba(251, 207, 232, 0.35) 0%, transparent 50%),
-              linear-gradient(135deg, #ffffff 0%, #fff1f2 100%);
+@media (min-width: 640px) {
+  .btn-budi-primary {
+    font-size: 14px;
+    padding: 12px 28px;
+    min-height: 48px;
+  }
+}
+
+.btn-budi-primary:hover {
+  background-color: #fdc800;
+  color: #212121;
+  box-shadow: 0 6px 16px rgba(253, 200, 0, 0.35);
+  transform: translateY(-1px);
+}
+
+.btn-budi-primary:active {
+  transform: translateY(0);
+}
+
+/* Tombol Sekunder Royal Blue */
+.btn-budi-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #005EB8;
+  color: #ffffff;
+  border-radius: 9999px;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 10px 20px;
+  min-height: 44px;
+  box-shadow: 0 4px 12px rgba(0, 94, 184, 0.25);
+  transition: all 0.3s ease-out;
+  user-select: none;
+}
+
+@media (min-width: 640px) {
+  .btn-budi-secondary {
+    font-size: 14px;
+    padding: 12px 24px;
+    min-height: 48px;
+  }
+}
+
+.btn-budi-secondary:hover {
+  background-color: #004B87;
+  transform: translateY(-1px);
+}
+
+.btn-budi-secondary:active {
+  transform: translateY(0);
+}
+
+/* Tombol Outline Rounded */
+.btn-budi-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  color: #005EB8;
+  border: 1.5px solid #005EB8;
+  border-radius: 9999px;
+  font-weight: 600;
+  font-size: 12px;
+  padding: 8px 16px;
+  min-height: 44px;
+  transition: all 0.25s ease-out;
+  user-select: none;
+}
+
+@media (min-width: 640px) {
+  .btn-budi-outline {
+    font-size: 13px;
+    padding: 8px 20px;
+  }
+}
+
+.btn-budi-outline:hover {
+  background-color: #005EB8;
+  color: #ffffff;
+  box-shadow: 0 4px 10px rgba(0, 94, 184, 0.2);
+}
+
+/* Safe area insets helper for mobile devices */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 1rem);
+}
+
+/* Dekorasi Garis Aksen Judul Budi Luhur */
+.title-accent-gold {
+  position: relative;
+  display: inline-block;
+}
+
+.title-accent-gold::after {
+  content: "";
+  display: block;
+  height: 3px;
+  width: 50px;
+  background-color: #fdc800;
+  margin: 8px auto 0 auto;
+  border-radius: 6px;
+}
+
+.title-accent-gold-left {
+  position: relative;
+}
+
+.title-accent-gold-left::after {
+  content: "";
+  display: block;
+  height: 3px;
+  width: 45px;
+  background-color: #fdc800;
+  margin-top: 8px;
+  border-radius: 6px;
+}
+
+.title-accent-blue {
+  position: relative;
+  display: inline-block;
+}
+
+.title-accent-blue::after {
+  content: "";
+  display: block;
+  height: 3px;
+  width: 50px;
+  background-color: #005EB8;
+  margin: 8px auto 0 auto;
+  border-radius: 6px;
+}
+
+/* Hero Academic Gradient */
+.hero-academic-bg {
+  background: radial-gradient(circle at 10% 15%, rgba(0, 163, 224, 0.12) 0%, transparent 45%),
+    radial-gradient(circle at 90% 85%, rgba(0, 94, 184, 0.08) 0%, transparent 50%),
+    linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+}
+
+/* Glass & Academic Cards */
+.card-academic {
+  background: #ffffff;
+  border: 1px solid rgba(0, 75, 135, 0.12);
+  border-radius: 20px;
+  box-shadow: 0 2px 8px rgba(0, 40, 80, 0.04);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card-academic:hover {
+  border-color: rgba(0, 94, 184, 0.4);
+  box-shadow: 0 12px 28px -4px rgba(0, 75, 135, 0.12);
+  transform: translateY(-2px);
 }
