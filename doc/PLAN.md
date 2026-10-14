@@ -4,7 +4,7 @@
 
 **Goal:** Membangun ekosistem tiga aplikasi mandiri berbasis implementasi `fe-tablet` (Frontend React+Vite Feature-Based & Backend Express.js Modular) yang diwadahi di dalam main project `budi-luhur`, lengkap dengan portal landing page utama di `budi-luhur/frontend/` yang menghubungkan ke ketiga aplikasi.
 
-**Architecture:** Mengadopsi pola *Template-First Migration*: mengekstrak satu set template teruji (Frontend React+Vite dan Backend Express.js) dengan paritas fungsional 100% terhadap `fe-tablet`, lalu menduplikasi template tersebut menjadi tiga instans otonom di `budi-luhur/apps/app1`, `app2`, dan `app3` dengan isolasi database PostgreSQL dan *namespaced browser storage*. Portal landing page dibangun di `budi-luhur/frontend` mengadaptasi desain presentasional yang sudah ada dengan 3 tautan aplikasi aktif.
+**Architecture:** Mengadopsi pola *Template-First Migration*: mengekstrak satu set template teruji (Frontend React+Vite dan Backend Express.js) dengan paritas fungsional 100% terhadap `fe-tablet`, lalu menduplikasi template tersebut menjadi tiga instans otonom di `budi-luhur/apps/app1`, `app2`, dan `app3` dengan isolasi database PostgreSQL dan *namespaced browser storage*. Portal landing page dibangun di `budi-luhur/frontend` mengadaptasi desain presentasional yang sudah ada sebagai satu-satunya etalase/gerbang informasi publik. **PWA-First Architecture**: Ketiga aplikasi beroperasi sebagai aplikasi web progresif (PWA) mandiri tanpa halaman home/marketing internal; rute root (`/`) pada masing-masing aplikasi mengarahkan pengguna langsung ke alur autentikasi (`/auth/login`), dan kartu aplikasi pada portal utama menghubungkan pengguna langsung ke halaman login dan registrasi.
 
 **Tech Stack:**
 - Frontend Portal & Apps: React 19/18, Vite, TypeScript, Tailwind CSS, React Router DOM, Axios, Lucide React, Motion.
@@ -31,7 +31,7 @@
 1. **Bentrokan Sesi Browser (Cross-App Storage Collision):** Pengguna login di App 1 dan App 2 pada peramban yang sama; sesi tidak boleh saling menimpa karena kunci penyimpanan lokal menggunakan *namespace* berbeda (`app1_auth_token`, `app2_auth_token`, `app3_auth_token`).
 2. **Isolasi Database Antar-Aplikasi:** Pendaftaran akun atau pencatatan konsumsi obat di App 1 tidak boleh mengubah atau menambahkan baris pada database App 2 maupun App 3.
 3. **Paritas Logika Server Actions ke Express REST:** Seluruh parameter query SQL, penanganan transaksi ACID, dan respons error dari `fe-tablet/*Repository.ts` harus berperilaku identik pada endpoint Express.
-4. **Navigasi Landing Page Portal Budi-Luhur:** Klik pada masing-masing dari 3 kartu aplikasi di `http://localhost:5170` harus mengarahkan ke port/URL frontend aplikasi terkait secara akurat.
+4. **Navigasi PWA-First & Eliminasi Home App:** Klik pada masing-masing kartu aplikasi di portal `http://localhost:5170` mengarahkan langsung ke halaman autentikasi (`/auth/login` dan `/auth/register`). Mengakses rute root (`/`) pada App 1, 2, atau 3 (serta via jendela PWA standalone) tidak menampilkan landing page duplikat, melainkan langsung menuju alur login atau dashboard aktif pengguna.
 5. **Penanganan Onboarding & Penguncian Setup:** Pengguna baru yang belum melengkapi data sekolah/jadwal wajib tetap dikunci pada rute `/user/setup` hingga profil dilengkapi, sesuai aturan asli di `fe-tablet`.
 
 ---
@@ -382,3 +382,53 @@
   Dokumentasikan cara instalasi, inisialisasi database, dan perintah untuk menjalankan portal serta ketiga aplikasi secara mudah.
 - [x] **Step 5: Final Review & Checklist Verification**
   Pastikan seluruh kriteria penerimaan dari PRD terpenuhi 100%.
+
+---
+
+### Task 12: Eliminasi Halaman Home di Setiap Aplikasi, Pengalihan Root Langsung ke Auth (PWA-First), & Pembaruan Tautan Portal Root
+
+**Goal:** Menghapus halaman home/landing page redundan di setiap aplikasi (`template-frontend`, `app1`, `app2`, `app3`) dan mengalihkan rute root (`/`) langsung ke alur autentikasi (`/auth/login` & `/auth/register`) untuk mendukung pengalaman PWA murni (*standalone app shell*), serta memperbarui kartu navigasi pada portal root (`frontend/`) agar menyediakan tautan langsung ke halaman login dan registrasi.
+
+**Files:**
+- Delete: `budi-luhur/apps/template-frontend/src/features/home/`
+- Delete: `budi-luhur/apps/app1/frontend/src/features/home/`
+- Delete: `budi-luhur/apps/app2/frontend/src/features/home/`
+- Delete: `budi-luhur/apps/app3/frontend/src/features/home/`
+- Modify: `budi-luhur/apps/template-frontend/src/app/routes.tsx`
+- Modify: `budi-luhur/apps/app1/frontend/src/app/routes.tsx`
+- Modify: `budi-luhur/apps/app2/frontend/src/app/routes.tsx`
+- Modify: `budi-luhur/apps/app3/frontend/src/app/routes.tsx`
+- Modify: `budi-luhur/frontend/src/config/apps.ts`
+- Modify: `budi-luhur/frontend/src/components/AppSelectorSection.tsx`
+- Test: Verifikasi akses root `http://localhost:5173/`, `5174/`, `5175/` langsung mengarah ke `/auth/login`, dan tombol pada `http://localhost:5170` mengarah tepat ke `/auth/login` dan `/auth/register`.
+
+**Interfaces & Behavior:**
+- App Frontend Routing (`routes.tsx`):
+  - Rute `/` -> `<Route path="/" element={<Navigate to="/auth/login" replace />} />`
+  - Rute wildcard fallback `*` -> `<Route path="*" element={<Navigate to="/auth/login" replace />} />`
+  - Rute `/auth/login` dan `/auth/register` dilindungi `GuestGuard`: pengguna yang sudah terautentikasi otomatis dialihkan ke `/user/dashboard` (atau `/admin/dashboard` jika admin, atau `/user/setup` jika profil belum lengkap).
+- Portal Root (`frontend/`):
+  - `AppInfo` di `src/config/apps.ts` mengekspos `loginUrl` (`${app.url}/auth/login`) dan `registerUrl` (`${app.url}/auth/register`).
+  - `AppSelectorSection.tsx` menyediakan dua tombol aksi:
+    - Tombol Utama: "Masuk / Login" -> membuka `${app.url}/auth/login`
+    - Tombol Sekunder: "Daftar Akun Baru" -> membuka `${app.url}/auth/register`
+- PWA Configuration:
+  - Web App Manifest di setiap aplikasi (`public/manifest.json` atau `vite.config.ts`) mengarahkan `start_url` ke `/` atau `/auth/login` dengan `display: "standalone"`, memastikan aplikasi terpasang di perangkat langsung membuka antarmuka kerja aplikasi.
+
+- [ ] **Step 1: Hapus `features/home` dan perbarui `routes.tsx` di `template-frontend`**
+  Hapus folder `budi-luhur/apps/template-frontend/src/features/home/`. Pada `budi-luhur/apps/template-frontend/src/app/routes.tsx`, hapus import `HomeView`, alihkan rute `/` dan wildcard `*` ke `/auth/login`.
+- [ ] **Step 2: Sinkronisasi pembaruan routing & eliminasi `features/home` ke `app1`, `app2`, dan `app3`**
+  Hapus direktori `features/home/` di `apps/app1/frontend/src/features/home/`, `apps/app2/frontend/src/features/home/`, dan `apps/app3/frontend/src/features/home/`. Terapkan pembaruan routing yang identik di `routes.tsx` masing-masing aplikasi.
+- [ ] **Step 3: Perbarui konfigurasi aplikasi di portal landing page (`budi-luhur/frontend/src/config/apps.ts`)**
+  Tambahkan field `loginUrl` dan `registerUrl` pada masing-masing item dalam array `APPS` yang mengarah langsung ke `/auth/login` dan `/auth/register`.
+- [ ] **Step 4: Perbarui antarmuka kartu aplikasi di `budi-luhur/frontend/src/components/AppSelectorSection.tsx`**
+  Sematkan tombol navigasi langsung untuk "Masuk / Login" dan link/tombol sekunder untuk "Daftar Akun", serta perbarui label panduan pengguna.
+- [ ] **Step 5: Verifikasi manifest PWA pada masing-masing aplikasi**
+  Pastikan konfigurasi PWA (`start_url`, `display: standalone`) pada ketiga frontend aplikasi siap digunakan sebagai aplikasi mandiri yang langsung menuju login/dashboard saat dibuka dari homescreen.
+- [ ] **Step 6: Verifikasi end-to-end pada peramban**
+  Uji skenario:
+  1. Akses langsung `http://localhost:5173/` di browser -> verifikasi URL seketika berubah ke `http://localhost:5173/auth/login`.
+  2. Akses portal landing page `http://localhost:5170`, klik "Masuk / Login" pada kartu App 1 -> verifikasi membuka tab baru ke `http://localhost:5173/auth/login`.
+  3. Klik "Daftar Akun" pada kartu App 1 -> verifikasi membuka tab baru ke `http://localhost:5173/auth/register`.
+  4. Lakukan login akun -> verifikasi pengguna langsung masuk ke dashboard, dan saat refresh rute root tetap berada di dashboard tanpa pernah melihat halaman home duplikat.
+

@@ -197,14 +197,14 @@ budi-luhur/
 ```
 
 ### 5.2 Landing Page Portal `budi-luhur/frontend`
-1. **Fungsi Utama**: Pintu gerbang utama yang menyajikan landing page program kesehatan berbasis desain heroik `fe-tablet/src/features/home`.
+1. **Fungsi Utama**: Pintu gerbang utama yang menyajikan landing page program kesehatan berbasis desain heroik `fe-tablet/src/features/home`. Portal ini merupakan satu-satunya landing page promosi/marketing publik; ketiga aplikasi mandiri (`app1`, `app2`, `app3`) beroperasi sebagai PWA (*standalone app shell*) tanpa halaman home internal, di mana rute root (`/`) langsung mengalihkan pengguna ke alur autentikasi.
 2. **Penyesuaian Minimum yang Diperlukan**:
    - Mempertahankan komponen desain bernilai tinggi: `Hero`, `Benefits`, `ProductInfo`, `Ingredients`, `Features`, `Testimonials`, `FAQ`, dan `Footer`.
    - Mengubah CTA utama (`Buka Aplikasi`) dan bilah navigasi (`Navbar`) menjadi **Portal Akses 3 Aplikasi**:
-     - Menampilkan section kartu interaktif:
-       - **Kartu Aplikasi 1**: Judul, deskripsi singkat sasaran, status operasional (🟢 Aktif), dan tombol navigasi langsung `Masuk ke Aplikasi 1` (`http://localhost:5173`).
-       - **Kartu Aplikasi 2**: Judul, deskripsi singkat sasaran, status operasional (🟢 Aktif), dan tombol navigasi langsung `Masuk ke Aplikasi 2` (`http://localhost:5174`).
-       - **Kartu Aplikasi 3**: Judul, deskripsi singkat sasaran, status operasional (🟢 Aktif), dan tombol navigasi langsung `Masuk ke Aplikasi 3` (`http://localhost:5175`).
+     - Menampilkan section kartu interaktif yang menyediakan tautan langsung ke halaman autentikasi (Login & Registrasi):
+       - **Kartu Aplikasi 1**: Judul, deskripsi sasaran, status operasional (🟢 Aktif), tombol `Masuk / Login` (`http://localhost:5173/auth/login`) dan tautan `Daftar Akun` (`http://localhost:5173/auth/register`).
+       - **Kartu Aplikasi 2**: Judul, deskripsi sasaran, status operasional (🟢 Aktif), tombol `Masuk / Login` (`http://localhost:5174/auth/login`) dan tautan `Daftar Akun` (`http://localhost:5174/auth/register`).
+       - **Kartu Aplikasi 3**: Judul, deskripsi sasaran, status operasional (🟢 Aktif), tombol `Masuk / Login` (`http://localhost:5175/auth/login`) dan tautan `Daftar Akun` (`http://localhost:5175/auth/register`).
    - URL target tautan dikonfigurasi melalui berkas `.env` portal `budi-luhur/frontend`:
      ```env
      VITE_PORTAL_TITLE="Budi Luhur Health Portal"
