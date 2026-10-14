@@ -32,7 +32,7 @@ export const Footer: React.FC = () => {
               {APPS.map((app) => (
                 <li key={app.id}>
                   <a
-                    href={app.url}
+                    href={app.loginUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center space-x-1.5 text-slate-400 hover:text-rose-400 transition-colors"

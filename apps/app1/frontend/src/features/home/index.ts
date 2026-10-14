@@ -1,9 +1,0 @@
-export { default as Hero } from './components/Hero';
-export { default as Benefits } from './components/Benefits';
-export { default as ProductInfo } from './components/ProductInfo';
-export { default as Ingredients } from './components/Ingredients';
-export { default as Features } from './components/Features';
-export { default as Testimonials } from './components/Testimonials';
-export { default as FAQ } from './components/FAQ';
-export { default as CTA } from './components/CTA';
-export { default as HomeView } from './views/HomeView';

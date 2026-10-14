@@ -1,5 +1,5 @@
 import React from 'react';
-import { ExternalLink, CheckCircle2, Server, Globe, ArrowUpRight, Activity } from 'lucide-react';
+import { CheckCircle2, Globe, ArrowUpRight, Activity, LogIn, UserPlus, Smartphone } from 'lucide-react';
 import { APPS } from '../config/apps';
 
 export const AppSelectorSection: React.FC = () => {
@@ -9,20 +9,20 @@ export const AppSelectorSection: React.FC = () => {
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
           <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-rose-50 border border-rose-200 text-rose-700 text-xs font-bold uppercase tracking-wider mb-4">
-            <Globe className="w-3.5 h-3.5" />
-            <span>Gerbang Aplikasi FEMORY</span>
+            <Smartphone className="w-3.5 h-3.5" />
+            <span>Gerbang PWA Aplikasi FEMORY</span>
           </div>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight">
             Pilih Portal Aplikasi Tujuan Anda
           </h2>
           <p className="mt-4 text-base sm:text-lg text-slate-600">
-            Setiap aplikasi berjalan secara mandiri dengan database, sesi, dan backend terisolasi. Pilih salah satu untuk langsung diarahkan.
+            Setiap aplikasi beroperasi sebagai Progressive Web App (PWA) mandiri dengan isolasi penuh. Pilih Masuk atau Daftar untuk langsung diarahkan ke autentikasi aplikasi.
           </p>
         </div>
 
         {/* 3 App Cards Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
-          {APPS.map((app, index) => {
+          {APPS.map((app) => {
             return (
               <div
                 key={app.id}
@@ -78,19 +78,31 @@ export const AppSelectorSection: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Card Action Button */}
-                <div className="pt-4 border-t border-slate-200/60">
+                {/* Card Action Buttons (Direct Auth Flow) */}
+                <div className="pt-5 border-t border-slate-200/60 space-y-2.5">
                   <a
-                    href={app.url}
+                    href={app.loginUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className={`w-full inline-flex items-center justify-center space-x-2.5 px-6 py-3.5 rounded-2xl ${app.colorScheme.btnBg} ${app.colorScheme.btnHover} text-white font-bold text-sm shadow-md transition-all group-hover:shadow-lg active:scale-[0.98]`}
                   >
-                    <span>Buka {app.name}</span>
+                    <LogIn className="w-4 h-4" />
+                    <span>Masuk ke {app.name}</span>
                     <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                   </a>
-                  <p className="text-[11px] text-center text-slate-400 mt-2">
-                    Membuka aplikasi di tab baru ({app.url})
+
+                  <a
+                    href={app.registerUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full inline-flex items-center justify-center space-x-2 px-5 py-2.5 rounded-xl bg-white/90 hover:bg-white border border-slate-300/80 text-slate-700 hover:text-slate-900 font-semibold text-xs shadow-2xs transition-all active:scale-[0.98]"
+                  >
+                    <UserPlus className="w-3.5 h-3.5 text-slate-500" />
+                    <span>Daftar Akun Baru</span>
+                  </a>
+
+                  <p className="text-[11px] text-center text-slate-400 pt-1">
+                    PWA Standalone • Langsung ke login ({app.url})
                   </p>
                 </div>
               </div>

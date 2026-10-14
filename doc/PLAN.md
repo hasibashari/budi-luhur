@@ -415,17 +415,17 @@
 - PWA Configuration:
   - Web App Manifest di setiap aplikasi (`public/manifest.json` atau `vite.config.ts`) mengarahkan `start_url` ke `/` atau `/auth/login` dengan `display: "standalone"`, memastikan aplikasi terpasang di perangkat langsung membuka antarmuka kerja aplikasi.
 
-- [ ] **Step 1: Hapus `features/home` dan perbarui `routes.tsx` di `template-frontend`**
+- [x] **Step 1: Hapus `features/home` dan perbarui `routes.tsx` di `template-frontend`**
   Hapus folder `budi-luhur/apps/template-frontend/src/features/home/`. Pada `budi-luhur/apps/template-frontend/src/app/routes.tsx`, hapus import `HomeView`, alihkan rute `/` dan wildcard `*` ke `/auth/login`.
-- [ ] **Step 2: Sinkronisasi pembaruan routing & eliminasi `features/home` ke `app1`, `app2`, dan `app3`**
+- [x] **Step 2: Sinkronisasi pembaruan routing & eliminasi `features/home` ke `app1`, `app2`, dan `app3`**
   Hapus direktori `features/home/` di `apps/app1/frontend/src/features/home/`, `apps/app2/frontend/src/features/home/`, dan `apps/app3/frontend/src/features/home/`. Terapkan pembaruan routing yang identik di `routes.tsx` masing-masing aplikasi.
-- [ ] **Step 3: Perbarui konfigurasi aplikasi di portal landing page (`budi-luhur/frontend/src/config/apps.ts`)**
+- [x] **Step 3: Perbarui konfigurasi aplikasi di portal landing page (`budi-luhur/frontend/src/config/apps.ts`)**
   Tambahkan field `loginUrl` dan `registerUrl` pada masing-masing item dalam array `APPS` yang mengarah langsung ke `/auth/login` dan `/auth/register`.
-- [ ] **Step 4: Perbarui antarmuka kartu aplikasi di `budi-luhur/frontend/src/components/AppSelectorSection.tsx`**
+- [x] **Step 4: Perbarui antarmuka kartu aplikasi di `budi-luhur/frontend/src/components/AppSelectorSection.tsx`**
   Sematkan tombol navigasi langsung untuk "Masuk / Login" dan link/tombol sekunder untuk "Daftar Akun", serta perbarui label panduan pengguna.
-- [ ] **Step 5: Verifikasi manifest PWA pada masing-masing aplikasi**
+- [x] **Step 5: Verifikasi manifest PWA pada masing-masing aplikasi**
   Pastikan konfigurasi PWA (`start_url`, `display: standalone`) pada ketiga frontend aplikasi siap digunakan sebagai aplikasi mandiri yang langsung menuju login/dashboard saat dibuka dari homescreen.
-- [ ] **Step 6: Verifikasi end-to-end pada peramban**
+- [x] **Step 6: Verifikasi end-to-end pada peramban**
   Uji skenario:
   1. Akses langsung `http://localhost:5173/` di browser -> verifikasi URL seketika berubah ke `http://localhost:5173/auth/login`.
   2. Akses portal landing page `http://localhost:5170`, klik "Masuk / Login" pada kartu App 1 -> verifikasi membuka tab baru ke `http://localhost:5173/auth/login`.

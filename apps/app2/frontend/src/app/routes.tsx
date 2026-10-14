@@ -5,7 +5,6 @@ import { GuestGuard } from '@/src/features/auth/components/GuestGuard';
 import { LoginView, RegisterView } from '@/src/features/auth';
 import { SplashScreenView } from '@/src/features/splash';
 import { OnboardingView } from '@/src/features/onboarding';
-import { HomeView } from '@/src/features/home';
 
 // User Portal Views
 import {
@@ -34,8 +33,8 @@ import {
 export function AppRoutes() {
   return (
     <Routes>
-      {/* Public Pages */}
-      <Route path='/' element={<HomeView />} />
+      {/* Public / Entry Routes */}
+      <Route path='/' element={<Navigate to='/auth/login' replace />} />
       <Route path='/splash' element={<SplashScreenView />} />
       <Route path='/onboarding' element={<OnboardingView />} />
 
@@ -107,7 +106,7 @@ export function AppRoutes() {
       </Route>
 
       {/* Fallback */}
-      <Route path='*' element={<Navigate to='/' replace />} />
+      <Route path='*' element={<Navigate to='/auth/login' replace />} />
     </Routes>
   );
 }
