@@ -6,7 +6,9 @@ import path from 'path';
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  cacheDir: path.resolve(__dirname, '.vite'),
   resolve: {
+    dedupe: ['react', 'react-dom'],
     alias: [
       { find: '@/src', replacement: path.resolve(__dirname, './src') },
       { find: '@', replacement: path.resolve(__dirname, './src') },
