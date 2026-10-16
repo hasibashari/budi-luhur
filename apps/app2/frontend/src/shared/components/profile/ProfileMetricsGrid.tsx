@@ -23,7 +23,7 @@ export interface ProfileMetricsGridProps {
 }
 
 export function ProfileMetricsGrid({
-  title = 'Ringkasan & Status',
+  title = 'Ringkasan & Status Kepatuhan',
   subtitle,
   metrics,
   columns = 3,
@@ -36,7 +36,7 @@ export function ProfileMetricsGrid({
         : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3';
 
   return (
-    <div className='rounded-3xl bg-white border border-rose-100/80 shadow-sm p-5 sm:p-6'>
+    <div className='rounded-3xl bg-white border border-slate-200/90 shadow-xs p-5 sm:p-6'>
       <div className='mb-4 pb-3 border-b border-slate-100 flex items-center justify-between'>
         <div>
           <h2 className='text-sm sm:text-base font-bold text-slate-800'>{title}</h2>
@@ -50,14 +50,14 @@ export function ProfileMetricsGrid({
           return (
             <div
               key={metric.id}
-              className='p-4 rounded-2xl bg-gradient-to-br from-rose-50/40 via-white to-pink-50/20 border border-rose-100/60 hover:shadow-xs transition-all flex flex-col justify-between'
+              className='p-4 rounded-2xl bg-gradient-to-br from-slate-50/70 via-white to-teal-50/30 border border-slate-200/80 hover:shadow-xs transition-all flex flex-col justify-between'
             >
               <div className='flex items-start justify-between gap-2 mb-2'>
                 <span className='text-xs font-bold text-slate-500'>{metric.label}</span>
                 <div
                   className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
-                    metric.iconBgColor || 'bg-rose-100'
-                  } ${metric.iconColor || 'text-rose-600'}`}
+                    metric.iconBgColor || 'bg-teal-50 border border-teal-100'
+                  } ${metric.iconColor || 'text-teal-700'}`}
                 >
                   <Icon size={16} />
                 </div>
@@ -71,7 +71,7 @@ export function ProfileMetricsGrid({
                   {metric.badgeText && (
                     <span
                       className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full ${
-                        metric.badgeColor || 'bg-emerald-100 text-emerald-700'
+                        metric.badgeColor || 'bg-teal-50 text-teal-700 border border-teal-200'
                       }`}
                     >
                       {metric.badgeText}

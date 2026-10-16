@@ -44,7 +44,14 @@ export async function recordUserConsumptionAction(
   date?: string,
 ): Promise<{ success: boolean; streakCount: number; error?: string }> {
   try {
-    const response = await apiClient.post('/consumption/record', { status, notes, date });
+    const targetDate = date || new Date().toISOString().split('T')[0];
+    const response = await apiClient.post('/consumption/record', {
+      status,
+      notes,
+      date: targetDate,
+      targetDate,
+      scheduledDate: targetDate,
+    });
     return {
       success: true,
       streakCount: response.data?.streakCount || 0,

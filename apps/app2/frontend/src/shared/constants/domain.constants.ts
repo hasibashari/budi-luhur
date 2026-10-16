@@ -1,6 +1,6 @@
 /**
  * Domain Constants
- * Centralized static domain rules, enumerations, and metadata for FEMORY.
+ * Centralized static domain rules, enumerations, and metadata for Pilluna.
  */
 
 export const DAYS_OF_WEEK = [

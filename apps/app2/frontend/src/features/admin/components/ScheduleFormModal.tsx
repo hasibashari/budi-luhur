@@ -33,7 +33,7 @@ export default function ScheduleFormModal({
   onUpdateFormData,
 }: ScheduleFormModalProps) {
   const handleCategoryChange = (cat: ScheduleCategory) => {
-    const preset = CATEGORY_PRESETS[cat] || CATEGORY_PRESETS['TTD Rutin'];
+    const preset = CATEGORY_PRESETS[cat] || CATEGORY_PRESETS['Pil KB Kombinasi'];
     onUpdateFormData({
       category: cat,
       frequency: preset.frequency,
@@ -46,14 +46,14 @@ export default function ScheduleFormModal({
     <CrudModalDialog
       open={open}
       onClose={onClose}
-      title={editingId ? 'Edit Jadwal Obat & Terapi' : 'Buat Jadwal TTD Baru'}
+      title={editingId ? 'Edit Jadwal Pil KB' : 'Buat Jadwal Pil KB Baru'}
       onSubmit={onSave}
       submitText={editingId ? 'Update' : 'Simpan Jadwal'}
       submitting={submitting}
     >
       <div>
         <label className='block text-xs font-bold text-slate-700 mb-1'>
-          Siswi (Pengguna) <span className='text-rose-500'>*</span>
+          Akseptor (Pengguna) <span className='text-rose-500'>*</span>
         </label>
         <select
           value={formData.userId || formData.patientId || ''}
@@ -63,7 +63,7 @@ export default function ScheduleFormModal({
               patientId: e.target.value,
             })
           }
-          className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-400 focus:border-transparent transition-all'
+          className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:border-transparent transition-all'
         >
           {users.map(u => (
             <option key={u.id} value={u.id}>
@@ -80,7 +80,7 @@ export default function ScheduleFormModal({
         <select
           value={formData.category}
           onChange={e => handleCategoryChange(e.target.value as ScheduleCategory)}
-          className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-400 focus:border-transparent transition-all'
+          className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:border-transparent transition-all'
         >
           {SCHEDULE_CATEGORIES.map(cat => (
             <option key={cat.value} value={cat.value}>
@@ -92,13 +92,13 @@ export default function ScheduleFormModal({
 
       <div>
         <label className='block text-xs font-bold text-slate-700 mb-1'>
-          Nama Obat / Suplemen <span className='text-rose-500'>*</span>
+          Nama Pil KB / Suplemen <span className='text-rose-500'>*</span>
         </label>
         <input
           type='text'
           value={formData.medicationName}
           onChange={e => onUpdateFormData({ medicationName: e.target.value })}
-          className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-400 focus:border-transparent transition-all'
+          className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:border-transparent transition-all'
         />
       </div>
 
@@ -109,7 +109,7 @@ export default function ScheduleFormModal({
             type='text'
             value={formData.dosage}
             onChange={e => onUpdateFormData({ dosage: e.target.value })}
-            className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-400 focus:border-transparent transition-all'
+            className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:border-transparent transition-all'
           />
         </div>
         <div>
@@ -121,7 +121,7 @@ export default function ScheduleFormModal({
                 frequency: e.target.value as ScheduleFrequency,
               })
             }
-            className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-400 focus:border-transparent transition-all'
+            className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:border-transparent transition-all'
           >
             {FREQUENCY_OPTIONS.map(opt => (
               <option key={opt.value} value={opt.value}>
@@ -141,7 +141,7 @@ export default function ScheduleFormModal({
             <select
               value={formData.dayOfWeek || 'Sabtu'}
               onChange={e => onUpdateFormData({ dayOfWeek: e.target.value })}
-              className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-400 focus:border-transparent transition-all'
+              className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:border-transparent transition-all'
             >
               {DAYS_OF_WEEK.map(day => (
                 <option key={day} value={day}>
@@ -159,7 +159,7 @@ export default function ScheduleFormModal({
               placeholder='20:00'
               value={formData.timeSlot}
               onChange={e => onUpdateFormData({ timeSlot: e.target.value })}
-              className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-400 focus:border-transparent transition-all'
+              className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:border-transparent transition-all'
             />
           </div>
         </div>
@@ -173,7 +173,7 @@ export default function ScheduleFormModal({
             placeholder='20:00'
             value={formData.timeSlot}
             onChange={e => onUpdateFormData({ timeSlot: e.target.value })}
-            className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-400 focus:border-transparent transition-all'
+            className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:border-transparent transition-all'
           />
           <p className='text-[11px] text-slate-400 mt-1'>
             * Jadwal harian berlaku setiap hari (Senin – Minggu) pada jam pengingat di atas.
@@ -189,7 +189,7 @@ export default function ScheduleFormModal({
           rows={2}
           value={formData.instructions}
           onChange={e => onUpdateFormData({ instructions: e.target.value })}
-          className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-400 focus:border-transparent transition-all resize-none'
+          className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:border-transparent transition-all resize-none'
         />
       </div>
     </CrudModalDialog>

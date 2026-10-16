@@ -84,29 +84,29 @@ export function RegisterForm({ onSwitchTab, hideHeader = false }: RegisterFormPr
     <div className='w-full'>
       {!hideHeader && (
         <div className='mb-6 text-left'>
-          <h2 className='text-2xl font-extrabold text-[#1e293b] tracking-tight mb-1'>
-            Daftar Akun FEMORY
+          <h2 className='text-2xl font-extrabold text-[#0F172A] tracking-tight mb-1'>
+            Daftar Akun Pilluna
           </h2>
-          <p className='text-xs sm:text-sm text-[#64748b]'>
-            Daftarkan akun untuk mulai memantau jadwal suplemen & kesehatanmu.
+          <p className='text-xs sm:text-sm text-[#334155]'>
+            Daftarkan akun untuk mulai memantau jadwal minum pil KB & kesehatan reproduksi.
           </p>
         </div>
       )}
 
       {errorMessage && (
-        <div className='mb-4 p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs sm:text-sm font-semibold flex items-center gap-2 animate-fade-in'>
-          <AlertCircle size={16} className='text-rose-600 shrink-0' />
+        <div className='mb-4 p-3.5 rounded-2xl bg-[#FEF2F2] border border-[#FECACA] text-[#DC2626] text-xs sm:text-sm font-semibold flex items-center gap-2 animate-fade-in'>
+          <AlertCircle size={16} className='text-[#DC2626] shrink-0' />
           <span>{errorMessage}</span>
         </div>
       )}
 
       {successMessage && (
-        <div className='mb-4 p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs sm:text-sm font-medium flex flex-col gap-2 animate-scale-up'>
-          <div className='flex items-center gap-2 font-bold text-emerald-800 text-sm'>
-            <CheckCircle2 size={18} className='text-emerald-600 shrink-0' />
-            <span>Pendaftaran Berhasil! 🌸</span>
+        <div className='mb-4 p-4 rounded-2xl bg-[#F0FDFA] border border-[#CCFBF1] text-[#0D9488] text-xs sm:text-sm font-medium flex flex-col gap-2 animate-scale-up'>
+          <div className='flex items-center gap-2 font-bold text-[#0D9488] text-sm'>
+            <CheckCircle2 size={18} className='text-[#0D9488] shrink-0' />
+            <span>Pendaftaran Berhasil!</span>
           </div>
-          <p className='text-emerald-700 leading-relaxed'>{successMessage}</p>
+          <p className='text-[#0F172A] leading-relaxed'>{successMessage}</p>
           <div className='pt-1 flex items-center justify-end'>
             <button
               type='button'
@@ -114,7 +114,7 @@ export function RegisterForm({ onSwitchTab, hideHeader = false }: RegisterFormPr
                 if (onSwitchTab) onSwitchTab();
                 else navigate('/auth/login?registered=true');
               }}
-              className='text-xs font-bold text-emerald-800 hover:text-emerald-900 underline cursor-pointer inline-flex items-center gap-1'
+              className='text-xs font-bold text-[#0D9488] hover:underline cursor-pointer inline-flex items-center gap-1'
             >
               Masuk Sekarang <ArrowRight size={13} />
             </button>
@@ -125,49 +125,49 @@ export function RegisterForm({ onSwitchTab, hideHeader = false }: RegisterFormPr
       {!successMessage && (
         <form onSubmit={handleSubmit} className='flex flex-col gap-3.5'>
           <div>
-            <label className='text-xs font-bold text-[#1e293b] mb-1.5 block'>Nama Lengkap</label>
+            <label className='text-xs font-bold text-[#0F172A] mb-1.5 block'>Nama Lengkap</label>
             <div className='relative flex items-center'>
-              <div className='absolute left-3.5 w-8 h-8 rounded-full bg-rose-50 flex items-center justify-center text-[#e11d48]'>
+              <div className='absolute left-3.5 w-8 h-8 rounded-full bg-[#F0FDFA] flex items-center justify-center text-[#0D9488]'>
                 <User size={15} />
               </div>
               <input
                 type='text'
-                placeholder='Contoh: Anisa Putri Ramadhani'
+                placeholder='Contoh: Ny. Anisa Rahmawati'
                 value={name}
                 onChange={e => setName(e.target.value)}
                 required
                 autoComplete='name'
-                className='w-full bg-white text-sm text-[#1e293b] rounded-full border border-slate-200 pl-13 pr-4 py-2.5 outline-none focus:border-[#e11d48] transition-colors shadow-2xs'
+                className='w-full bg-white text-sm text-[#0F172A] rounded-full border border-slate-200 pl-13 pr-4 py-2.5 outline-none focus:border-[#0D9488] focus:ring-2 focus:ring-[#0D9488]/15 transition-all shadow-2xs'
               />
             </div>
           </div>
 
           <div>
-            <label className='text-xs font-bold text-[#1e293b] mb-1.5 block'>
+            <label className='text-xs font-bold text-[#0F172A] mb-1.5 block'>
               Alamat Email Aktif
             </label>
             <div className='relative flex items-center'>
-              <div className='absolute left-3.5 w-8 h-8 rounded-full bg-rose-50 flex items-center justify-center text-[#e11d48]'>
+              <div className='absolute left-3.5 w-8 h-8 rounded-full bg-[#F0FDFA] flex items-center justify-center text-[#0D9488]'>
                 <Mail size={15} />
               </div>
               <input
                 type='email'
-                placeholder='nama@sekolah.sch.id atau email@gmail.com'
+                placeholder='nama@email.com'
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 required
                 autoComplete='email'
-                className='w-full bg-white text-sm text-[#1e293b] rounded-full border border-slate-200 pl-13 pr-4 py-2.5 outline-none focus:border-[#e11d48] transition-colors shadow-2xs'
+                className='w-full bg-white text-sm text-[#0F172A] rounded-full border border-slate-200 pl-13 pr-4 py-2.5 outline-none focus:border-[#0D9488] focus:ring-2 focus:ring-[#0D9488]/15 transition-all shadow-2xs'
               />
             </div>
           </div>
 
           <div>
-            <label className='text-xs font-bold text-[#1e293b] mb-1.5 block'>
+            <label className='text-xs font-bold text-[#0F172A] mb-1.5 block'>
               Kata Sandi (Minimal 6 karakter)
             </label>
             <div className='relative flex items-center'>
-              <div className='absolute left-3.5 w-8 h-8 rounded-full bg-rose-50 flex items-center justify-center text-[#e11d48]'>
+              <div className='absolute left-3.5 w-8 h-8 rounded-full bg-[#F0FDFA] flex items-center justify-center text-[#0D9488]'>
                 <Lock size={15} />
               </div>
               <input
@@ -177,7 +177,7 @@ export function RegisterForm({ onSwitchTab, hideHeader = false }: RegisterFormPr
                 onChange={e => setPassword(e.target.value)}
                 required
                 autoComplete='new-password'
-                className='w-full bg-white text-sm text-[#1e293b] rounded-full border border-slate-200 pl-13 pr-11 py-2.5 outline-none focus:border-[#e11d48] transition-colors shadow-2xs'
+                className='w-full bg-white text-sm text-[#0F172A] rounded-full border border-slate-200 pl-13 pr-11 py-2.5 outline-none focus:border-[#0D9488] focus:ring-2 focus:ring-[#0D9488]/15 transition-all shadow-2xs'
               />
               <button
                 type='button'
@@ -194,23 +194,23 @@ export function RegisterForm({ onSwitchTab, hideHeader = false }: RegisterFormPr
               <button
                 type='button'
                 onClick={onSwitchTab}
-                className='text-xs text-[#64748b] hover:text-[#e11d48] font-medium transition-colors cursor-pointer bg-transparent border-none p-0 inline-flex items-center gap-1'
+                className='text-xs text-[#64748B] hover:text-[#0D9488] font-medium transition-colors cursor-pointer bg-transparent border-none p-0 inline-flex items-center gap-1'
               >
-                Sudah punya akun? <span className='font-bold text-[#e11d48]'>Masuk</span>
+                Sudah punya akun? <span className='font-bold text-[#0D9488]'>Masuk</span>
               </button>
             ) : (
               <Link
                 to='/auth?tab=login'
-                className='text-xs text-[#64748b] hover:text-[#e11d48] font-medium transition-colors inline-flex items-center gap-1'
+                className='text-xs text-[#64748B] hover:text-[#0D9488] font-medium transition-colors inline-flex items-center gap-1'
               >
-                Sudah punya akun? <span className='font-bold text-[#e11d48]'>Masuk</span>
+                Sudah punya akun? <span className='font-bold text-[#0D9488]'>Masuk</span>
               </Link>
             )}
 
             <button
               type='submit'
               disabled={loading}
-              className='px-6 py-2.5 bg-[#e11d48] hover:bg-[#be123c] text-white rounded-full text-sm font-bold shadow-md shadow-rose-500/20 transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50'
+              className='px-6 py-2.5 bg-[#0D9488] hover:bg-[#0F766E] text-white rounded-full text-sm font-bold shadow-xs shadow-[#0D9488]/20 transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50'
             >
               {loading ? (
                 <span>Mendaftarkan...</span>

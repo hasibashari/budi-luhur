@@ -1,1 +1,1 @@
-export { default as DashboardView } from './views/DashboardView';
+export { DashboardView as default } from '@/src/features/user';

@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Flame, CalendarCheck, Activity, Sparkles } from 'lucide-react';
+import { Flame, CalendarCheck, ShieldCheck, Sparkles } from 'lucide-react';
 import { Card } from '@/src/shared/components/ui/Card';
 import { ConsumptionChart } from '@/src/shared/components/domain/ConsumptionChart';
 import { ConsumptionStats } from '../types';
@@ -18,7 +18,6 @@ export function MonthlyEvaluationView({
   stats,
   streakCount,
   streakUnit,
-  hbLevel,
   riskLevel = 'Rendah',
 }: MonthlyEvaluationViewProps) {
   return (
@@ -26,58 +25,58 @@ export function MonthlyEvaluationView({
       {/* Monthly Bar Chart Component */}
       <ConsumptionChart
         data={[
-          { month: 'Mei', count: 4, target: 4 },
-          { month: 'Jun', count: 4, target: 4 },
-          { month: 'Jul', count: 3, target: 4 },
-          { month: 'Agt', count: 4, target: 4 },
-          { month: 'Sep', count: 4, target: 4 },
-          { month: 'Okt', count: Math.min(4, stats?.totalCompleted || 4), target: 4 },
+          { month: 'Mei', count: 28, target: 28 },
+          { month: 'Jun', count: 28, target: 28 },
+          { month: 'Jul', count: 26, target: 28 },
+          { month: 'Agt', count: 28, target: 28 },
+          { month: 'Sep', count: 28, target: 28 },
+          { month: 'Okt', count: Math.min(28, stats?.totalCompleted || 28), target: 28 },
         ]}
-        totalCount={stats?.totalCompleted || 4}
-        compliancePercent={stats?.adherenceRate || 95}
+        totalCount={stats?.totalCompleted || 28}
+        compliancePercent={stats?.adherenceRate || 98}
       />
 
       {/* 4-Grid Responsive Milestone Metrics */}
       <div className='grid grid-cols-2 md:grid-cols-4 gap-3.5'>
-        <Card padding='md' className='text-center'>
-          <div className='w-9 h-9 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center mx-auto mb-2 shadow-xs'>
+        <Card padding='md' className='text-center border-slate-200/80 shadow-xs bg-white'>
+          <div className='w-9 h-9 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center mx-auto mb-2 border border-orange-100'>
             <Flame size={18} />
           </div>
-          <span className='text-[11px] text-[#64748b] block font-medium'>Streak Kepatuhan</span>
-          <span className='text-sm sm:text-base font-extrabold text-[#e11d48]'>
+          <span className='text-[11px] text-slate-500 block font-medium'>Streak Kepatuhan</span>
+          <span className='text-sm sm:text-base font-extrabold text-orange-600'>
             {streakCount} {streakUnit}
           </span>
         </Card>
 
-        <Card padding='md' className='text-center'>
-          <div className='w-9 h-9 rounded-full bg-rose-100 text-[#e11d48] flex items-center justify-center mx-auto mb-2 shadow-xs'>
+        <Card padding='md' className='text-center border-slate-200/80 shadow-xs bg-white'>
+          <div className='w-9 h-9 rounded-xl bg-teal-50 text-teal-700 flex items-center justify-center mx-auto mb-2 border border-teal-100'>
             <CalendarCheck size={18} />
           </div>
-          <span className='text-[11px] text-[#64748b] block font-medium'>
-            Total Tablet Diminum
+          <span className='text-[11px] text-slate-500 block font-medium'>
+            Total Pil Diminum
           </span>
-          <span className='text-sm sm:text-base font-extrabold text-[#1e293b]'>
-            {stats?.totalCompleted || 0} Tablet
+          <span className='text-sm sm:text-base font-extrabold text-slate-800'>
+            {stats?.totalCompleted || 0} Butir
           </span>
         </Card>
 
-        <Card padding='md' className='text-center'>
-          <div className='w-9 h-9 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto mb-2 shadow-xs'>
-            <Activity size={18} />
+        <Card padding='md' className='text-center border-slate-200/80 shadow-xs bg-white'>
+          <div className='w-9 h-9 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center mx-auto mb-2 border border-teal-100'>
+            <ShieldCheck size={18} />
           </div>
-          <span className='text-[11px] text-[#64748b] block font-medium'>Kadar Hb</span>
-          <span className={`text-sm sm:text-base font-extrabold ${hbLevel ? 'text-[#10b981]' : 'text-slate-500'}`}>
-            {hbLevel ? `${hbLevel} g/dL` : 'Belum Tes'}
+          <span className='text-[11px] text-slate-500 block font-medium'>Tingkat Proteksi</span>
+          <span className='text-sm sm:text-base font-extrabold text-teal-700'>
+            {(stats?.adherenceRate || 95) >= 80 ? 'Optimal (99%)' : 'Perlu Konsistensi'}
           </span>
         </Card>
 
-        <Card padding='md' className='text-center'>
-          <div className='w-9 h-9 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center mx-auto mb-2 shadow-xs'>
+        <Card padding='md' className='text-center border-slate-200/80 shadow-xs bg-white'>
+          <div className='w-9 h-9 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center mx-auto mb-2 border border-slate-200'>
             <Sparkles size={18} />
           </div>
-          <span className='text-[11px] text-[#64748b] block font-medium'>Status Kebugaran</span>
-          <span className='text-sm sm:text-base font-extrabold text-[#9333ea]'>
-            {riskLevel === 'Rendah' ? 'Bebas Anemia' : 'Perlu Pendampingan'}
+          <span className='text-[11px] text-slate-500 block font-medium'>Status Risiko Hamil</span>
+          <span className='text-sm sm:text-base font-extrabold text-slate-800'>
+            {riskLevel === 'Rendah' ? 'Sangat Rendah (<1%)' : 'Perlu Konsultasi Bidan'}
           </span>
         </Card>
       </div>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, CalendarCheck, BookOpen, Flame, Bot } from 'lucide-react';
+import { Home, CalendarDays, BookOpen, Ribbon, User } from 'lucide-react';
 
 export interface BottomNavItem {
   name: string;
@@ -10,10 +10,10 @@ export interface BottomNavItem {
 
 export const USER_BOTTOM_NAV_ITEMS: BottomNavItem[] = [
   { name: 'Beranda', href: '/user/dashboard', icon: Home },
-  { name: 'Monitoring', href: '/user/history', icon: CalendarCheck },
+  { name: 'Monitoring', href: '/user/history', icon: CalendarDays },
   { name: 'Edukasi', href: '/user/education', icon: BookOpen },
-  { name: 'Buddy', href: '/user/buddy', icon: Flame },
-  { name: 'Konsultasi', href: '/user/consultation', icon: Bot },
+  { name: 'SADARI', href: '/user/sadari', icon: Ribbon },
+  { name: 'Profil', href: '/user/profile', icon: User },
 ];
 
 export interface MobileBottomBarProps {
@@ -27,14 +27,22 @@ export default function MobileBottomBar({ items = USER_BOTTOM_NAV_ITEMS }: Mobil
   return (
     <nav
       aria-label='Navigasi Bawah Mobile'
-      className='fixed bottom-0 left-0 right-0 z-50 md:hidden bg-white/95 backdrop-blur-md border-t border-[#fce7f3] shadow-[0_-4px_16px_rgba(225,29,72,0.06)]'
+      className='fixed bottom-0 left-0 right-0 z-50 md:hidden bg-white/95 backdrop-blur-md border-t border-[#E2E8F0] shadow-[0_-4px_16px_rgba(15,23,42,0.05)]'
       style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
     >
       <div className='max-w-md mx-auto h-16 px-2 flex items-center justify-around'>
         {items.map(item => {
-          const isActive =
-            pathname === item.href ||
-            (item.href !== '/user/dashboard' && pathname?.startsWith(item.href));
+          let isActive = false;
+          if (item.name === 'SADARI' || item.href === '/user/sadari') {
+            isActive = pathname === '/user/sadari';
+          } else if (item.name === 'Edukasi' || item.href === '/user/education') {
+            isActive = pathname.startsWith('/user/education');
+          } else if (item.href === '/user/dashboard') {
+            isActive = pathname === '/user/dashboard' || pathname === '/user';
+          } else {
+            isActive = pathname === item.href || pathname.startsWith(item.href);
+          }
+
           const Icon = item.icon;
 
           return (
@@ -42,24 +50,24 @@ export default function MobileBottomBar({ items = USER_BOTTOM_NAV_ITEMS }: Mobil
               key={item.name}
               to={item.href}
               className={`flex flex-col items-center justify-center min-w-[56px] h-full py-1 px-1.5 rounded-xl transition-all duration-150 relative select-none ${
-                isActive ? 'text-[#e11d48]' : 'text-[#64748b] hover:text-[#e11d48]'
+                isActive ? 'text-[#0D9488]' : 'text-[#64748B] hover:text-[#0D9488]'
               }`}
             >
               <div
                 className={`flex items-center justify-center w-10 h-7 rounded-xl transition-all duration-200 ${
-                  isActive ? 'bg-[#ffe4e6] scale-105' : 'bg-transparent'
+                  isActive ? 'bg-[#F0FDFA] scale-105' : 'bg-transparent'
                 }`}
               >
                 <Icon
                   size={20}
-                  strokeWidth={isActive ? 2.5 : 1.8}
-                  className={isActive ? 'text-[#e11d48]' : 'text-[#64748b]'}
+                  strokeWidth={isActive ? 2.2 : 1.75}
+                  className={isActive ? 'text-[#0D9488]' : 'text-[#64748B]'}
                 />
               </div>
 
               <span
                 className={`text-[10px] mt-0.5 tracking-tight font-medium ${
-                  isActive ? 'text-[#e11d48] font-bold' : 'text-[#64748b]'
+                  isActive ? 'text-[#0D9488] font-bold' : 'text-[#64748B]'
                 }`}
               >
                 {item.name}

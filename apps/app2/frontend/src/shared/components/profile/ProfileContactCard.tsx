@@ -20,14 +20,14 @@ export interface ProfileContactCardProps {
 }
 
 export function ProfileContactCard({
-  title = 'Informasi Kontak & Unit',
-  subtitle = 'Data resmi yang terhubung dengan akun Anda',
+  title = 'Informasi Akseptor & Faskes',
+  subtitle = 'Data resmi yang terhubung dengan layanan kontrasepsi Anda',
   items,
   className = '',
 }: ProfileContactCardProps) {
   return (
     <div
-      className={`rounded-3xl bg-white border border-rose-100/80 shadow-sm p-5 sm:p-6 ${className}`}
+      className={`rounded-3xl bg-white border border-slate-200/90 shadow-xs p-5 sm:p-6 ${className}`}
     >
       <div className='mb-4 pb-3 border-b border-slate-100'>
         <h2 className='text-sm sm:text-base font-bold text-slate-800'>{title}</h2>
@@ -40,12 +40,12 @@ export function ProfileContactCard({
           return (
             <div
               key={idx}
-              className='flex items-center gap-3.5 p-3.5 rounded-2xl bg-slate-50/70 border border-slate-100 hover:border-rose-200 transition-all'
+              className='flex items-center gap-3.5 p-3.5 rounded-2xl bg-slate-50/70 border border-slate-200/80 hover:border-teal-300 hover:bg-teal-50/20 transition-all'
             >
               <div
                 className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
-                  item.iconBgColor || 'bg-rose-100/70'
-                } ${item.iconColor || 'text-rose-600'}`}
+                  item.iconBgColor || 'bg-teal-50 border border-teal-100'
+                } ${item.iconColor || 'text-teal-700'}`}
               >
                 <Icon size={18} />
               </div>
@@ -53,7 +53,7 @@ export function ProfileContactCard({
                 <p className='text-[11px] font-bold text-slate-400 uppercase tracking-wider'>
                   {item.label}
                 </p>
-                <p className='text-xs sm:text-sm font-bold text-slate-700 truncate mt-0.5'>
+                <p className='text-xs sm:text-sm font-bold text-slate-800 truncate mt-0.5'>
                   {item.value || item.fallbackValue || 'Belum diisi'}
                 </p>
               </div>

@@ -104,7 +104,7 @@ export function DateFilterBar({
   };
 
   return (
-    <Card padding='md' className='relative z-30 overflow-visible'>
+    <Card padding='md' className='relative z-30 overflow-visible border border-slate-200/80 shadow-xs'>
       <div className='flex flex-col lg:flex-row lg:items-center justify-between gap-3'>
         {/* Left Side: Calendar Dropdown Button & Preset Chips */}
         <div className='flex items-center gap-2 flex-wrap'>
@@ -115,13 +115,13 @@ export function DateFilterBar({
               onClick={() => setIsCalendarOpen(prev => !prev)}
               className={`inline-flex items-center justify-center gap-1.5 sm:gap-2 w-8 h-8 sm:w-auto sm:h-auto sm:px-3 sm:py-2 rounded-xl text-xs font-bold border transition-all cursor-pointer shadow-2xs ${
                 isCalendarOpen || dateFilterPreset === 'CUSTOM'
-                  ? 'bg-[#fff1f2] border-[#e11d48] text-[#e11d48] ring-2 ring-rose-200'
-                  : 'bg-white border-slate-200 text-slate-700 hover:border-rose-300'
+                  ? 'bg-teal-50 border-teal-600 text-teal-700 ring-2 ring-teal-100'
+                  : 'bg-white border-slate-200 text-slate-700 hover:border-teal-200'
               }`}
               title='Pilih Tanggal dari Kalender'
               aria-label='Pilih Tanggal dari Kalender'
             >
-              <CalendarIcon size={15} className='text-[#e11d48] shrink-0' />
+              <CalendarIcon size={15} className='text-teal-600 shrink-0' />
               <span className='hidden sm:inline'>
                 {dateFilterPreset === 'CUSTOM'
                   ? formatShortDate(selectedDate)
@@ -137,51 +137,53 @@ export function DateFilterBar({
 
             {/* 🗓️ MINI CALENDAR POPOVER DROPDOWN WITH ACTIVITY DOTS */}
             {isCalendarOpen && (
-              <div className='absolute left-0 top-full mt-2 w-72 sm:w-80 bg-white rounded-2xl shadow-2xl border border-rose-100 p-3.5 z-50 animate-fade-in'>
-                {/* Popover Header: Month & Year Navigator */}
-                <div className='flex items-center justify-between mb-2.5 pb-2 border-b border-slate-100'>
-                  <button
-                    type='button'
-                    onClick={() => {
-                      setCalendarViewDate(
-                        new Date(
-                          calendarViewDate.getFullYear(),
-                          calendarViewDate.getMonth() - 1,
-                          1,
-                        ),
-                      );
-                    }}
-                    className='p-1 rounded-lg hover:bg-slate-100 text-slate-600 cursor-pointer'
-                  >
-                    <ChevronLeft size={16} />
-                  </button>
-
-                  <span className='text-xs font-bold text-[#1e293b]'>
-                    {calendarViewDate.toLocaleDateString('id-ID', {
+              <div className='absolute left-0 top-full mt-2 w-72 sm:w-80 bg-white rounded-2xl shadow-2xl border border-slate-200 p-3.5 z-50 animate-fade-in'>
+                {/* Month Navigator Header */}
+                <div className='flex items-center justify-between mb-3 pb-2 border-b border-slate-100'>
+                  <span className='text-xs sm:text-sm font-extrabold text-slate-800'>
+                    {calendarViewDate.toLocaleString('id-ID', {
                       month: 'long',
                       year: 'numeric',
                     })}
                   </span>
-
-                  <button
-                    type='button'
-                    onClick={() => {
-                      setCalendarViewDate(
-                        new Date(
-                          calendarViewDate.getFullYear(),
-                          calendarViewDate.getMonth() + 1,
-                          1,
-                        ),
-                      );
-                    }}
-                    className='p-1 rounded-lg hover:bg-slate-100 text-slate-600 cursor-pointer'
-                  >
-                    <ChevronRight size={16} />
-                  </button>
+                  <div className='flex items-center gap-1'>
+                    <button
+                      type='button'
+                      onClick={() =>
+                        setCalendarViewDate(
+                          new Date(
+                            calendarViewDate.getFullYear(),
+                            calendarViewDate.getMonth() - 1,
+                            1
+                          )
+                        )
+                      }
+                      className='p-1 rounded-lg text-slate-500 hover:bg-slate-100 cursor-pointer'
+                      title='Bulan Lalu'
+                    >
+                      <ChevronLeft size={16} />
+                    </button>
+                    <button
+                      type='button'
+                      onClick={() =>
+                        setCalendarViewDate(
+                          new Date(
+                            calendarViewDate.getFullYear(),
+                            calendarViewDate.getMonth() + 1,
+                            1
+                          )
+                        )
+                      }
+                      className='p-1 rounded-lg text-slate-500 hover:bg-slate-100 cursor-pointer'
+                      title='Bulan Depan'
+                    >
+                      <ChevronRight size={16} />
+                    </button>
+                  </div>
                 </div>
 
-                {/* Day Names Header */}
-                <div className='grid grid-cols-7 gap-1 text-center mb-1'>
+                {/* Day of Week Header */}
+                <div className='grid grid-cols-7 gap-1 mb-1.5 text-center'>
                   {['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'].map(d => (
                     <span key={d} className='text-[10px] font-bold text-slate-400'>
                       {d}
@@ -189,7 +191,7 @@ export function DateFilterBar({
                   ))}
                 </div>
 
-                {/* Calendar Month Grid (1-31) with Status Dots */}
+                {/* Day Matrix Cells */}
                 <div className='grid grid-cols-7 gap-1'>
                   {calendarGrid.map((day, idx) => {
                     if (!day) {
@@ -209,9 +211,9 @@ export function DateFilterBar({
                         onClick={() => handleSelectDay(day.dateKey)}
                         className={`relative h-8 rounded-xl flex flex-col items-center justify-center text-[11px] font-bold transition-all cursor-pointer ${
                           isSelected
-                            ? 'bg-[#e11d48] text-white shadow-xs font-black'
+                            ? 'bg-teal-600 text-white shadow-xs font-black'
                             : day.isToday
-                              ? 'bg-rose-50 text-[#e11d48] border border-rose-300'
+                              ? 'bg-orange-50 text-orange-600 border border-orange-200'
                               : 'text-slate-700 hover:bg-slate-100'
                         }`}
                       >
@@ -222,14 +224,14 @@ export function DateFilterBar({
                           {isRecorded && (
                             <span
                               className={`w-1.5 h-1.5 rounded-full ${
-                                isSelected ? 'bg-white' : 'bg-emerald-500 ring-1 ring-white'
+                                isSelected ? 'bg-white' : 'bg-teal-600 ring-1 ring-white'
                               }`}
                             />
                           )}
                           {isMissed && (
                             <span
                               className={`w-1.5 h-1.5 rounded-full ${
-                                isSelected ? 'bg-white' : 'bg-rose-500 ring-1 ring-white'
+                                isSelected ? 'bg-white' : 'bg-red-500 ring-1 ring-white'
                               }`}
                             />
                           )}
@@ -238,7 +240,7 @@ export function DateFilterBar({
                               className={`w-1.5 h-1.5 rounded-full ${
                                 isSelected
                                   ? 'bg-white'
-                                  : 'bg-amber-400 animate-pulse ring-1 ring-white'
+                                  : 'bg-orange-500 animate-pulse ring-1 ring-white'
                               }`}
                             />
                           )}
@@ -251,15 +253,15 @@ export function DateFilterBar({
                 {/* Calendar Dot Legend Footer */}
                 <div className='flex items-center justify-between pt-2.5 mt-2 border-t border-slate-100 text-[10px] text-slate-500'>
                   <div className='flex items-center gap-1'>
-                    <span className='w-2 h-2 rounded-full bg-emerald-500' />
-                    <span>Selesai</span>
+                    <span className='w-2 h-2 rounded-full bg-teal-600' />
+                    <span>Diminum</span>
                   </div>
                   <div className='flex items-center gap-1'>
-                    <span className='w-2 h-2 rounded-full bg-rose-500' />
+                    <span className='w-2 h-2 rounded-full bg-red-500' />
                     <span>Terlewat</span>
                   </div>
                   <div className='flex items-center gap-1'>
-                    <span className='w-2 h-2 rounded-full bg-amber-400' />
+                    <span className='w-2 h-2 rounded-full bg-orange-500' />
                     <span>Hari Ini</span>
                   </div>
                 </div>
@@ -274,7 +276,7 @@ export function DateFilterBar({
               onClick={() => onDateFilterPresetChange('ALL')}
               className={`text-xs font-bold px-3 py-1.5 rounded-xl transition-all cursor-pointer shrink-0 ${
                 dateFilterPreset === 'ALL'
-                  ? 'bg-[#e11d48] text-white shadow-2xs'
+                  ? 'bg-teal-600 text-white shadow-2xs'
                   : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
               }`}
             >
@@ -288,7 +290,7 @@ export function DateFilterBar({
               }}
               className={`text-xs font-bold px-3 py-1.5 rounded-xl transition-all cursor-pointer shrink-0 ${
                 dateFilterPreset === 'TODAY'
-                  ? 'bg-[#e11d48] text-white shadow-2xs'
+                  ? 'bg-teal-600 text-white shadow-2xs'
                   : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
               }`}
             >
@@ -299,7 +301,7 @@ export function DateFilterBar({
               onClick={() => onDateFilterPresetChange('7_DAYS')}
               className={`text-xs font-bold px-3 py-1.5 rounded-xl transition-all cursor-pointer shrink-0 ${
                 dateFilterPreset === '7_DAYS'
-                  ? 'bg-[#e11d48] text-white shadow-2xs'
+                  ? 'bg-teal-600 text-white shadow-2xs'
                   : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
               }`}
             >
@@ -310,7 +312,7 @@ export function DateFilterBar({
               onClick={() => onDateFilterPresetChange('30_DAYS')}
               className={`text-xs font-bold px-3 py-1.5 rounded-xl transition-all cursor-pointer shrink-0 ${
                 dateFilterPreset === '30_DAYS'
-                  ? 'bg-[#e11d48] text-white shadow-2xs'
+                  ? 'bg-teal-600 text-white shadow-2xs'
                   : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
               }`}
             >
@@ -325,7 +327,7 @@ export function DateFilterBar({
             <button
               type='button'
               onClick={() => onDateFilterPresetChange('ALL')}
-              className='inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold text-slate-500 hover:text-[#e11d48] hover:bg-rose-50 rounded-xl transition-colors cursor-pointer border border-slate-200 hover:border-[#fce7f3]'
+              className='inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold text-slate-500 hover:text-teal-700 hover:bg-teal-50 rounded-xl transition-colors cursor-pointer border border-slate-200 hover:border-teal-200'
               title='Reset Filter Tanggal'
             >
               <X size={14} />

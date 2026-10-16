@@ -17,29 +17,31 @@ export class ConsumptionService {
       hour12: false,
     });
     const nowTimeStr = timeFormatter.format(new Date()) + ' WIB';
+    const finalTargetDate = targetDate || new Date().toLocaleDateString('en-CA');
 
     // Get active schedule
-    const schedRes = await db.query<{ id: string; tablet_name: string; dosage: string; frequency: string }>(
+    const schedRes = await db.query<{ id: string; tablet_name: string; dosage: string; frequency: string; category?: string }>(
       `SELECT id, tablet_name, dosage, frequency FROM reminder_schedules WHERE user_id = $1 AND status = 'Aktif' LIMIT 1`,
       [userId],
     );
     const activeSched = schedRes.rows[0];
     const schedId = activeSched?.id || null;
-    const title = activeSched?.tablet_name || 'Tablet Tambah Darah (TTD)';
+    const title = activeSched?.tablet_name || 'Pil KB Kombinasi (28 Tablet)';
     const dosage = activeSched?.dosage || '1 Tablet';
-    const schedFreq = (activeSched?.frequency as 'daily' | 'weekly') || 'weekly';
+    const schedFreq = (activeSched?.frequency as 'daily' | 'weekly') || 'daily';
+    const category = activeSched?.category || 'Pil KB';
 
     if (status === 'pending') {
       await db.query(
         `DELETE FROM consumption_logs WHERE user_id = $1 AND scheduled_date = $2`,
-        [userId, targetDate],
+        [userId, finalTargetDate],
       );
     } else {
       const dbStatus = status === 'recorded' ? 'ON_TIME' : 'MISSED';
 
       const existingLogRes = await db.query<{ id: string }>(
         `SELECT id FROM consumption_logs WHERE user_id = $1 AND scheduled_date = $2 ORDER BY created_at DESC LIMIT 1`,
-        [userId, targetDate],
+        [userId, finalTargetDate],
       );
 
       if (existingLogRes.rows.length > 0) {
@@ -54,14 +56,15 @@ export class ConsumptionService {
         await db.query(
           `INSERT INTO consumption_logs (
             id, user_id, schedule_id, title, category, dosage, scheduled_date, scheduled_time, taken_at, status, notes, taken_by
-          ) VALUES ($1, $2, $3, $4, 'TTD', $5, $6, '20:00', $7, $8, $9, 'Self')`,
+          ) VALUES ($1, $2, $3, $4, $5, $6, $7, '20:00', $8, $9, $10, 'Self')`,
           [
             newLogId,
             userId,
             schedId,
             title,
+            category,
             dosage,
-            targetDate,
+            finalTargetDate,
             dbStatus === 'ON_TIME' ? nowTimeStr : null,
             dbStatus,
             notes || null,

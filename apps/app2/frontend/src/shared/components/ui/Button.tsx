@@ -5,7 +5,7 @@ import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'outline' | 'soft' | 'ghost' | 'success' | 'danger';
+  variant?: 'primary' | 'secondary' | 'outline' | 'soft' | 'ghost' | 'success' | 'danger';
   size?: 'sm' | 'md' | 'lg';
   shape?: 'pill' | 'rounded';
   fullWidth?: boolean;
@@ -41,13 +41,15 @@ export function Button({
 
   const variantStyles = {
     primary:
-      'bg-[#e11d48] text-white hover:bg-[#be123c] shadow-md shadow-rose-500/20 hover:shadow-lg hover:shadow-rose-500/25',
+      'bg-[#0D9488] text-white hover:bg-[#0F766E] shadow-xs shadow-teal-700/20 hover:shadow-sm hover:shadow-teal-700/25',
+    secondary:
+      'bg-[#F97316] text-white hover:bg-[#EA580C] shadow-xs shadow-orange-500/20',
     outline:
-      'bg-transparent border-1.5 border-[#fce7f3] text-[#e11d48] hover:bg-[#fff1f2] hover:border-[#e11d48]',
-    soft: 'bg-[#ffe4e6] text-[#be123c] hover:bg-[#fecdd3]',
-    ghost: 'bg-transparent text-[#64748b] hover:bg-[#fff1f2] hover:text-[#e11d48]',
-    success: 'bg-[#10b981] text-white hover:bg-[#059669] shadow-md shadow-emerald-500/20',
-    danger: 'bg-[#f43f5e] text-white hover:bg-[#e11d48] shadow-md shadow-rose-500/20',
+      'bg-transparent border border-[#E2E8F0] text-[#0D9488] hover:bg-[#F0FDFA] hover:border-[#0D9488]',
+    soft: 'bg-[#F0FDFA] text-[#0D9488] border border-[#CCFBF1] hover:bg-[#CCFBF1]',
+    ghost: 'bg-transparent text-[#334155] hover:bg-[#F1F5F9] hover:text-[#0D9488]',
+    success: 'bg-[#0D9488] text-white hover:bg-[#0F766E] shadow-xs shadow-teal-500/20',
+    danger: 'bg-[#DC2626] text-white hover:bg-[#B91C1C] shadow-xs shadow-red-500/20',
   };
 
   return (

@@ -14,7 +14,8 @@ export const OnboardingIllustration: React.FC<OnboardingIllustrationProps> = ({
       className={`relative flex items-center justify-center select-none ${className}`}
       style={{ width: size, height: size }}
     >
-      <div className='absolute inset-0 rounded-full bg-rose-400/25 blur-2xl animate-pulse pointer-events-none' />
+      {/* Soft Ambient Glow */}
+      <div className='absolute inset-0 rounded-full bg-[#0D9488]/20 blur-2xl animate-pulse pointer-events-none' />
 
       <svg
         viewBox='0 0 160 160'
@@ -23,77 +24,89 @@ export const OnboardingIllustration: React.FC<OnboardingIllustrationProps> = ({
         className='w-full h-full drop-shadow-xl overflow-visible'
       >
         <defs>
-          <linearGradient id='feDropGrad' x1='40' y1='20' x2='120' y2='150' gradientUnits='userSpaceOnUse'>
-            <stop offset='0%' stopColor='#fb7185' />
-            <stop offset='50%' stopColor='#e11d48' />
-            <stop offset='100%' stopColor='#be123c' />
+          <linearGradient id='onboardingPillTeal' x1='20' y1='20' x2='90' y2='90' gradientUnits='userSpaceOnUse'>
+            <stop offset='0%' stopColor='#2DD4BF' />
+            <stop offset='60%' stopColor='#0D9488' />
+            <stop offset='100%' stopColor='#0F766E' />
           </linearGradient>
 
-          <linearGradient id='feDropGloss' x1='60' y1='30' x2='80' y2='80' gradientUnits='userSpaceOnUse'>
-            <stop offset='0%' stopColor='#ffffff' stopOpacity='0.7' />
-            <stop offset='100%' stopColor='#ffffff' stopOpacity='0' />
+          <linearGradient id='onboardingPillWhite' x1='70' y1='70' x2='140' y2='140' gradientUnits='userSpaceOnUse'>
+            <stop offset='0%' stopColor='#FFFFFF' />
+            <stop offset='100%' stopColor='#F0FDFA' />
           </linearGradient>
 
-          <linearGradient id='pillPink' x1='0' y1='0' x2='1' y2='1'>
-            <stop offset='0%' stopColor='#fda4af' />
-            <stop offset='100%' stopColor='#f43f5e' />
+          <linearGradient id='onboardingPillGloss' x1='40' y1='30' x2='60' y2='70' gradientUnits='userSpaceOnUse'>
+            <stop offset='0%' stopColor='#FFFFFF' stopOpacity='0.8' />
+            <stop offset='100%' stopColor='#FFFFFF' stopOpacity='0' />
           </linearGradient>
-          <linearGradient id='pillWhite' x1='0' y1='0' x2='1' y2='1'>
-            <stop offset='0%' stopColor='#ffffff' />
-            <stop offset='100%' stopColor='#f1f5f9' />
+
+          <linearGradient id='onboardingCoralSparkle' x1='0' y1='0' x2='1' y2='1'>
+            <stop offset='0%' stopColor='#FB923C' />
+            <stop offset='100%' stopColor='#EA580C' />
           </linearGradient>
         </defs>
 
-        <ellipse cx='80' cy='148' rx='42' ry='8' fill='#e11d48' fillOpacity='0.15' />
+        <ellipse cx='80' cy='146' rx='44' ry='10' fill='#0D9488' fillOpacity='0.12' />
 
-        <path
-          d='M80 18 C80 18 130 75 130 108 C130 135.6 107.6 148 80 148 C52.4 148 30 135.6 30 108 C30 75 80 18 80 18 Z'
-          fill='url(#feDropGrad)'
-        />
+        <g transform='translate(80, 78) rotate(-28) translate(-80, -78)'>
+          <path
+            d='M44 80 C44 54 60 38 80 38 L80 118 C60 118 44 102 44 80 Z'
+            fill='url(#onboardingPillTeal)'
+          />
 
-        <path
-          d='M80 26 C80 26 50 68 45 98 C42 118 52 136 68 142 C54 136 44 122 46 102 C49 78 80 26 80 26 Z'
-          fill='url(#feDropGloss)'
-        />
+          <path
+            d='M80 38 C100 38 116 54 116 80 C116 102 100 118 80 118 Z'
+            fill='url(#onboardingPillWhite)'
+            stroke='#FCE7F3'
+            strokeWidth='1'
+          />
 
-        <ellipse cx='65' cy='96' rx='5.5' ry='7.5' fill='#1e293b' />
-        <circle cx='63.5' cy='93.5' r='2.5' fill='#ffffff' />
-        <circle cx='67' cy='99' r='1.2' fill='#ffffff' />
+          <line x1='80' y1='38' x2='80' y2='118' stroke='#F58CB4' strokeWidth='2' strokeOpacity='0.6' />
 
-        <ellipse cx='95' cy='96' rx='5.5' ry='7.5' fill='#1e293b' />
-        <circle cx='93.5' cy='93.5' r='2.5' fill='#ffffff' />
-        <circle cx='97' cy='99' r='1.2' fill='#ffffff' />
+          <path
+            d='M52 64 C56 50 68 44 80 44 C84 44 88 45 92 46 C80 48 64 54 58 66 Z'
+            fill='url(#onboardingPillGloss)'
+          />
 
-        <ellipse cx='53' cy='105' rx='6' ry='3.5' fill='#ff8da1' fillOpacity='0.8' />
-        <ellipse cx='107' cy='105' rx='6' ry='3.5' fill='#ff8da1' fillOpacity='0.8' />
+          <ellipse cx='70' cy='72' rx='3.5' ry='5' fill='#24354D' />
+          <circle cx='69' cy='70' r='1.5' fill='#FFFFFF' />
 
-        <path
-          d='M72 106 Q80 115 88 106'
-          stroke='#1e293b'
-          strokeWidth='3'
-          strokeLinecap='round'
-          fill='none'
-        />
+          <ellipse cx='90' cy='72' rx='3.5' ry='5' fill='#24354D' />
+          <circle cx='89' cy='70' r='1.5' fill='#FFFFFF' />
 
-        <g transform='translate(100, 110) rotate(-25) scale(0.9)'>
-          <rect x='0' y='0' width='16' height='14' rx='7' fill='url(#pillPink)' />
-          <rect x='14' y='0' width='16' height='14' rx='7' fill='url(#pillWhite)' stroke='#fecdd3' strokeWidth='0.5' />
-          <line x1='15' y1='0' x2='15' y2='14' stroke='#e2e8f0' strokeWidth='1' />
-          <text x='7' y='10' fill='#ffffff' fontSize='7' fontWeight='bold' fontFamily='sans-serif'>Fe</text>
+          <ellipse cx='62' cy='78' rx='4.5' ry='2.5' fill='#F58CB4' fillOpacity='0.9' />
+          <ellipse cx='98' cy='78' rx='4.5' ry='2.5' fill='#F58CB4' fillOpacity='0.9' />
+
+          <path
+            d='M75 78 Q80 84 85 78'
+            stroke='#24354D'
+            strokeWidth='2.2'
+            strokeLinecap='round'
+            fill='none'
+          />
+
+          <path
+            d='M96 92 C96 90 98 88.5 100 88.5 C101.5 88.5 102.5 89.5 103 90.5 C103.5 89.5 104.5 88.5 106 88.5 C108 88.5 110 90 110 92 C110 95 106 98 103 100 C100 98 96 95 96 92 Z'
+            fill='#E94383'
+            fillOpacity='0.85'
+          />
         </g>
 
         <path
-          d='M125 45 L127 52 L134 54 L127 56 L125 63 L123 56 L116 54 L123 52 Z'
-          fill='#fbbf24'
+          d='M132 40 L134 46 L140 48 L134 50 L132 56 L130 50 L124 48 L130 46 Z'
+          fill='url(#onboardingTealSparkle)'
           className='animate-pulse'
         />
+
         <path
-          d='M32 60 L33.5 65 L38 66 L33.5 67 L32 72 L30.5 67 L26 66 L30.5 65 Z'
-          fill='#f472b6'
+          d='M26 68 L27.5 72 L32 73.5 L27.5 75 L26 79 L24.5 75 L20 73.5 L24.5 72 Z'
+          fill='#F58CB4'
           className='animate-pulse'
         />
-        <circle cx='135' cy='85' r='2' fill='#fbcfe8' />
-        <circle cx='28' cy='40' r='2.5' fill='#fef08a' />
+
+        <circle cx='138' cy='74' r='2' fill='#F58CB4' />
+        <circle cx='34' cy='46' r='2.5' fill='#58AA96' />
+        <circle cx='122' cy='112' r='2' fill='#E94383' fillOpacity='0.5' />
       </svg>
     </div>
   );

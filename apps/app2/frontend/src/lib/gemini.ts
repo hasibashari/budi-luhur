@@ -44,11 +44,11 @@ export async function generateAiArticleDraftAction(
   error?: string;
 }> {
   try {
-    const prompt = `Buatkan artikel edukasi kesehatan tentang ${topic} (Kategori: ${category}) untuk aplikasi edukasi gizi dan anemia remaja FEMORY. Berikan format JSON dengan properti title, summary, content (format Markdown), dan readTime.`;
+    const prompt = `Buatkan artikel edukasi kesehatan tentang ${topic} (Kategori: ${category}) untuk aplikasi kepatuhan kontrasepsi dan kesehatan reproduksi Pilluna. Berikan format JSON dengan properti title, summary, content (format Markdown), dan readTime.`;
     const res = await apiClient.post<{ answer: string }>('/consultation/ask', { prompt });
     let title = topic;
-    let summary = `Materi edukasi mengenai ${topic} untuk pencegahan anemia remaja putri.`;
-    let content = res.data?.answer || `## ${topic}\n\nEdukasi penting mengenai ${topic} bagi siswi dan remaja putri.`;
+    let summary = `Materi edukasi mengenai ${topic} untuk akseptor KB dan wanita usia subur.`;
+    let content = res.data?.answer || `## ${topic}\n\nEdukasi penting mengenai ${topic} bagi akseptor KB dan kesehatan wanita.`;
     let readTime = '3 min read';
 
     try {
@@ -71,8 +71,8 @@ export async function generateAiArticleDraftAction(
       success: true,
       data: {
         title: topic,
-        summary: `Materi penting mengenai ${topic} bagi pencegahan anemia remaja.`,
-        content: `## Pentingnya ${topic}\n\nTablet Tambah Darah (TTD) sangat esensial bagi remaja putri untuk menjaga konsentrasi belajar dan mencegah anemia defisiensi besi.\n\n> Tips UKS: Konsumsi TTD 1 tablet seminggu sekali secara teratur setelah makan.`,
+        summary: `Materi penting mengenai ${topic} bagi akseptor KB dan kesehatan reproduksi.`,
+        content: `## Pentingnya ${topic}\n\nPil KB dan pemeriksaan SADARI sangat esensial bagi wanita usia subur untuk perencanaan keluarga yang sehat dan deteksi dini kesehatan payudara.\n\n> Tips Bidan: Konsumsi Pil KB setiap hari di jam yang sama untuk efektivitas perlindungan optimal hingga 99%.`,
         readTime: '3 min read',
       },
     };
@@ -88,25 +88,25 @@ export async function generateAiUserNudgeAction(params: {
   adherenceRate?: number;
   tone?: 'friendly' | 'urgent' | 'motivational';
 }): Promise<{ success: boolean; message: string; error?: string }> {
-  const name = params.userName || params.patientName || 'Siswi';
-  const med = params.medicationName || 'Tablet Tambah Darah (TTD)';
+  const name = params.userName || params.patientName || 'Akseptor';
+  const med = params.medicationName || 'Pil KB Kombinasi';
   const tone = params.tone || 'friendly';
 
   if (tone === 'urgent') {
     return {
       success: true,
-      message: `PENGINGAT PENTING: Halo ${name}, catatan minum ${med} kamu belum terisi minggu ini. Yuk segera minum suplemen TTD kamu dan catat di aplikasi FEMORY ya! Semangat selalu! 🌸`,
+      message: `PENGINGAT PENTING: Halo ${name}, catatan minum ${med} kamu belum terisi. Yuk segera minum pil harianmu dan catat di aplikasi Pilluna ya! Semangat selalu! 🌸`,
     };
   }
   if (tone === 'friendly') {
     return {
       success: true,
-      message: `Halo ${name}! Cegah anemia biar tetap fit dan semangat belajar yuk! Jangan lupa minum ${med} hari ini ya! Tetap ceria selalu 🌸✨`,
+      message: `Halo ${name}! Jaga perlindungan kontrasepsi optimal yuk! Jangan lupa minum ${med} hari ini pada jam yang sama ya! Tetap sehat dan semangat 🌸✨`,
     };
   }
   return {
     success: true,
-    message: `Halo ${name}, ini pengingat dari UKS untuk minum ${med} sesuai jadwal kamu. Jangan lupa diminum setelah makan dengan air putih ya! 🌸`,
+    message: `Halo ${name}, ini pengingat dari Bidan Faskes untuk minum ${med} sesuai jadwal kamu. Jangan lupa diminum tepat waktu ya! 🌸`,
   };
 }
 

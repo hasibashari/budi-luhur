@@ -126,7 +126,7 @@ export function PWAInstallBanner({
         visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'
       }`}
     >
-      <div className='relative overflow-hidden p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-rose-500 via-rose-600 to-rose-700 text-white shadow-2xl border border-white/20 backdrop-blur-lg'>
+      <div className='relative overflow-hidden p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-[#E94383] via-[#e23b7c] to-[#c72d68] text-white shadow-2xl border border-white/20 backdrop-blur-lg'>
         {/* Subtle background ambient shine */}
         <div className='absolute -top-8 -right-8 w-28 h-28 rounded-full bg-white/10 pointer-events-none blur-xl' />
 
@@ -140,15 +140,15 @@ export function PWAInstallBanner({
             <div className='flex-1 min-w-0'>
               <div className='flex items-center gap-2 mb-0.5'>
                 <h4 className='font-extrabold text-sm sm:text-base text-white leading-tight'>
-                  Pasang FEMORY
+                  Pasang Pilluna
                 </h4>
                 <span className='inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-white/20 text-[10px] font-bold uppercase tracking-wider'>
                   <Sparkles size={10} /> App
                 </span>
               </div>
 
-              <p className='text-xs text-rose-100 line-clamp-2 leading-relaxed'>
-                Akses cepat jadwal minum TTD & pengingat langsung dari layar utama.
+              <p className='text-xs text-pink-100 line-clamp-2 leading-relaxed'>
+                Akses cepat jadwal minum Pil KB & panduan SADARI langsung dari layar utama.
               </p>
             </div>
           </div>
@@ -176,7 +176,7 @@ export function PWAInstallBanner({
             <button
               disabled={installing}
               onClick={handleInstallClick}
-              className='inline-flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-xs font-bold bg-white text-rose-600 hover:bg-rose-50 shadow-md transition-all cursor-pointer disabled:opacity-50'
+              className='inline-flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-xs font-bold bg-white text-[#E94383] hover:bg-pink-50 shadow-md transition-all cursor-pointer disabled:opacity-50'
             >
               <Download size={13} />
               <span>{installing ? 'Memasang...' : 'Pasang Sekarang'}</span>

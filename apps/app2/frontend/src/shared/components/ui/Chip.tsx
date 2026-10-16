@@ -26,8 +26,8 @@ export function Chip({
   }
 
   const stateStyles = active
-    ? 'bg-[#e11d48] text-white font-semibold shadow-sm shadow-rose-500/20 border border-[#e11d48]'
-    : 'bg-white text-[#475569] border border-[#fce7f3] hover:bg-[#fff1f2] hover:text-[#e11d48] hover:border-[#fbcfe8]'
+    ? 'bg-[#0D9488] text-white font-semibold shadow-xs shadow-teal-700/20 border border-[#0D9488]'
+    : 'bg-white text-[#334155] border border-[#E2E8F0] hover:bg-[#F0FDFA] hover:text-[#0D9488] hover:border-[#CCFBF1]'
 
   return (
     <button

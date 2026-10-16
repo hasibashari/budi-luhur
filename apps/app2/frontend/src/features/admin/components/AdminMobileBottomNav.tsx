@@ -4,7 +4,7 @@ import { LayoutDashboard, Users, CalendarCheck, BarChart3, FileText } from 'luci
 
 const ADMIN_BOTTOM_ITEMS = [
   { name: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
-  { name: 'Siswi', href: '/admin/users', icon: Users },
+  { name: 'Akseptor', href: '/admin/users', icon: Users },
   { name: 'Jadwal', href: '/admin/schedules', icon: CalendarCheck },
   { name: 'Artikel', href: '/admin/articles', icon: FileText },
   { name: 'Laporan', href: '/admin/reports', icon: BarChart3 },
@@ -16,7 +16,7 @@ export default function AdminMobileBottomNav() {
 
   return (
     <nav
-      className='fixed bottom-0 left-0 right-0 z-50 md:hidden bg-white/95 backdrop-blur-lg border-t border-[#fce7f3] shadow-[0_-4px_20px_rgba(225,29,72,0.06)]'
+      className='fixed bottom-0 left-0 right-0 z-50 md:hidden bg-white/95 backdrop-blur-lg border-t border-slate-200 shadow-[0_-4px_20px_rgba(15,23,42,0.06)]'
       style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
       aria-label='Navigasi Bawah Admin'
     >
@@ -33,20 +33,20 @@ export default function AdminMobileBottomNav() {
               to={item.href}
               className={`flex flex-col items-center justify-center flex-1 py-1.5 px-1 rounded-2xl transition-all duration-200 select-none ${
                 isActive
-                  ? 'text-[#e11d48] font-bold'
-                  : 'text-[#64748b] hover:text-[#e11d48] font-medium'
+                  ? 'text-teal-700 font-bold'
+                  : 'text-slate-600 hover:text-teal-700 font-medium'
               }`}
             >
               <div
                 className={`relative flex items-center justify-center w-10 h-7 rounded-full transition-all duration-200 ${
-                  isActive ? 'bg-[#ffe4e6] text-[#e11d48] scale-105 shadow-2xs' : 'text-[#64748b]'
+                  isActive ? 'bg-teal-50 text-teal-700 scale-105 shadow-2xs' : 'text-slate-500'
                 }`}
               >
-                <Icon size={19} className={isActive ? 'stroke-[2.5]' : 'stroke-[1.8]'} />
+                <Icon size={19} className={isActive ? 'stroke-[2.2]' : 'stroke-[1.75]'} />
               </div>
               <span
                 className={`text-[10px] mt-0.5 tracking-tight transition-all duration-200 ${
-                  isActive ? 'font-bold text-[#e11d48]' : 'font-medium text-[#64748b]'
+                  isActive ? 'font-bold text-teal-800' : 'font-medium text-slate-500'
                 }`}
               >
                 {item.name}

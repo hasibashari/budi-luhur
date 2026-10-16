@@ -1,7 +1,7 @@
 export const SCHEDULE_CATEGORIES = [
-  { value: 'TTD Rutin', label: 'TTD Rutin (Pencegahan - 1x Seminggu)' },
-  { value: 'Terapi Anemia', label: 'Terapi Anemia (Intensif - Harian)' },
-  { value: 'Suplemen Tambahan', label: 'Suplemen Tambahan (Vitamin / Pendukung)' },
+  { value: 'Pil KB Kombinasi', label: 'Pil KB Kombinasi (Estrogen + Progestin - Harian)' },
+  { value: 'Pil KB Progestin', label: 'Pil KB Progestin / Mini Pil (Ibu Menyusui - Harian)' },
+  { value: 'Suplemen Tambahan', label: 'Suplemen Tambahan (Asam Folat / Vitamin)' },
 ] as const;
 
 export type ScheduleCategory = (typeof SCHEDULE_CATEGORIES)[number]['value'];
@@ -10,15 +10,15 @@ export const SCHEDULE_CATEGORY_COLORS: Record<
   string,
   { bg: string; text: string; border?: string }
 > = {
-  'Terapi Anemia': { bg: '#fee2e2', text: '#dc2626' },
-  'Suplemen Tambahan': { bg: '#e0f2fe', text: '#0284c7' },
-  'TTD Rutin': { bg: '#ffe4e6', text: '#e11d48' },
-  default: { bg: '#f1f5f9', text: '#475569' },
+  'Pil KB Kombinasi': { bg: '#f0fdfa', text: '#0d9488', border: '#ccfbf1' },
+  'Pil KB Progestin': { bg: '#fff7ed', text: '#ea580c', border: '#ffedd5' },
+  'Suplemen Tambahan': { bg: '#e0f2fe', text: '#0284c7', border: '#bae6fd' },
+  default: { bg: '#f1f5f9', text: '#475569', border: '#e2e8f0' },
 };
 
 export const FREQUENCY_OPTIONS = [
-  { value: '1x Seminggu', label: '1x Seminggu (Mingguan)' },
   { value: 'Harian', label: 'Harian (Setiap Hari)' },
+  { value: '1x Seminggu', label: '1x Seminggu (Jadwal Khusus)' },
 ] as const;
 
 export type ScheduleFrequency = (typeof FREQUENCY_OPTIONS)[number]['value'];
@@ -38,32 +38,34 @@ export interface ScheduleFormData {
 export const INITIAL_SCHEDULE_FORM_DATA: ScheduleFormData = {
   userId: '',
   patientId: '',
-  medicationName: 'Tablet Tambah Darah (TTD)',
+  medicationName: 'Pil KB Kombinasi (28 Tablet)',
   dosage: '1 Tablet',
-  frequency: '1x Seminggu',
-  dayOfWeek: 'Sabtu',
+  frequency: 'Harian',
+  dayOfWeek: 'Setiap Hari',
   timeSlot: '20:00',
-  category: 'TTD Rutin',
-  instructions: 'Minum 1 tablet setelah makan malam atau sebelum tidur dengan air putih.',
+  category: 'Pil KB Kombinasi',
+  instructions:
+    'Minum 1 tablet setiap hari pada jam yang sama setelah makan malam atau sebelum tidur.',
 };
 
 export const CATEGORY_PRESETS: Record<
   ScheduleCategory,
   { medicationName: string; frequency: ScheduleFrequency; instructions: string }
 > = {
-  'TTD Rutin': {
-    medicationName: 'Tablet Tambah Darah (TTD)',
-    frequency: '1x Seminggu',
-    instructions: 'Minum 1 tablet setelah makan malam atau sebelum tidur dengan air putih.',
-  },
-  'Terapi Anemia': {
-    medicationName: 'Tablet Tambah Darah (Terapi Intensif)',
+  'Pil KB Kombinasi': {
+    medicationName: 'Pil KB Kombinasi (28 Tablet)',
     frequency: 'Harian',
-    instructions: 'Minum 1 tablet setiap hari secara teratur setelah makan.',
+    instructions:
+      'Minum 1 tablet setiap hari pada jam yang sama setelah makan malam atau sebelum tidur.',
+  },
+  'Pil KB Progestin': {
+    medicationName: 'Pil KB Progestin / Mini Pil',
+    frequency: 'Harian',
+    instructions: 'Minum 1 tablet setiap hari tanpa jeda, aman untuk ibu menyusui.',
   },
   'Suplemen Tambahan': {
-    medicationName: 'Vitamin C / Asam Folat',
-    frequency: '1x Seminggu',
-    instructions: 'Minum 1 tablet bersamaan dengan TTD untuk meningkatkan penyerapan zat besi.',
+    medicationName: 'Asam Folat / Vitamin Penunjang',
+    frequency: 'Harian',
+    instructions: 'Minum 1 tablet bersamaan dengan pil KB sebagai nutrisi reproduksi.',
   },
 };

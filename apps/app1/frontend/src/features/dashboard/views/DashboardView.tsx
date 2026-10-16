@@ -245,7 +245,8 @@ export default function DashboardView() {
             Dashboard Siswi FEMORY 🌸
           </h1>
           <p className='text-sm text-[#64748b] mt-0.5'>
-            Selamat datang kembali, <strong>{currentUser.name}</strong>! Pertahankan konsistensi minum TTD pekan ini.
+            Selamat datang kembali, <strong>{currentUser.name}</strong>! Pertahankan konsistensi
+            minum TTD pekan ini.
           </p>
         </div>
 

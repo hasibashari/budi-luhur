@@ -45,7 +45,7 @@ export function LoginForm({ hideHeader = false }: LoginFormProps) {
       if (res.success && res.redirectTo) {
         const isUserIncomplete = res.user?.role === 'user' && !res.isProfileComplete;
         const target = isUserIncomplete ? '/user/setup' : redirectParam || res.redirectTo;
-        const roleLabel = res.user?.role === 'admin' ? 'Administrator' : 'Siswi / Pengguna';
+        const roleLabel = res.user?.role === 'admin' ? 'Administrator' : 'Akseptor / Pengguna';
         setSuccessRole(roleLabel);
         setTimeout(() => {
           navigate(target);
@@ -64,18 +64,18 @@ export function LoginForm({ hideHeader = false }: LoginFormProps) {
     <div className='w-full'>
       {!hideHeader && (
         <div className='mb-6 text-left'>
-          <h2 className='text-2xl font-extrabold text-[#1e293b] tracking-tight mb-1'>
-            Masuk ke FEMORY
+          <h2 className='text-2xl font-extrabold text-[#0F172A] tracking-tight mb-1'>
+            Masuk ke Pilluna
           </h2>
-          <p className='text-xs sm:text-sm text-[#64748b]'>
-            Masukkan kredensial akun Siswi atau Administrator Anda.
+          <p className='text-xs sm:text-sm text-[#334155]'>
+            Masukkan kredensial akun Akseptor atau Administrator Anda.
           </p>
         </div>
       )}
 
       {isJustRegistered && !errorMessage && !successRole && (
-        <div className='mb-4 p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs sm:text-sm font-semibold flex items-center gap-2 animate-fade-in'>
-          <CheckCircle2 size={16} className='text-emerald-600 shrink-0' />
+        <div className='mb-4 p-3.5 rounded-2xl bg-[#F0FDFA] border border-[#CCFBF1] text-[#0D9488] text-xs sm:text-sm font-semibold flex items-center gap-2 animate-fade-in'>
+          <CheckCircle2 size={16} className='text-[#0D9488] shrink-0' />
           <span>
             Akun Anda telah berhasil dibuat! Silakan masuk menggunakan email dan kata sandi Anda.
           </span>
@@ -83,15 +83,15 @@ export function LoginForm({ hideHeader = false }: LoginFormProps) {
       )}
 
       {errorMessage && (
-        <div className='mb-4 p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs sm:text-sm font-semibold flex items-center gap-2 animate-fade-in'>
-          <AlertCircle size={16} className='text-rose-600 shrink-0' />
+        <div className='mb-4 p-3.5 rounded-2xl bg-[#FEF2F2] border border-[#FECACA] text-[#DC2626] text-xs sm:text-sm font-semibold flex items-center gap-2 animate-fade-in'>
+          <AlertCircle size={16} className='text-[#DC2626] shrink-0' />
           <span>{errorMessage}</span>
         </div>
       )}
 
       {successRole && (
-        <div className='mb-4 p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs sm:text-sm font-semibold flex items-center gap-2 animate-fade-in'>
-          <CheckCircle2 size={16} className='text-emerald-600 shrink-0' />
+        <div className='mb-4 p-3.5 rounded-2xl bg-[#F0FDFA] border border-[#CCFBF1] text-[#0D9488] text-xs sm:text-sm font-semibold flex items-center gap-2 animate-fade-in'>
+          <CheckCircle2 size={16} className='text-[#0D9488] shrink-0' />
           <span>
             Berhasil masuk sebagai <strong>{successRole}</strong>. Mengalihkan...
           </span>
@@ -100,29 +100,29 @@ export function LoginForm({ hideHeader = false }: LoginFormProps) {
 
       <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
         <div>
-          <label className='text-xs font-bold text-[#1e293b] mb-1.5 block'>
+          <label className='text-xs font-bold text-[#0F172A] mb-1.5 block'>
             Email atau Nomor Telepon
           </label>
           <div className='relative flex items-center'>
-            <div className='absolute left-3.5 w-8 h-8 rounded-full bg-rose-50 flex items-center justify-center text-[#e11d48]'>
+            <div className='absolute left-3.5 w-8 h-8 rounded-full bg-[#F0FDFA] flex items-center justify-center text-[#0D9488]'>
               <Mail size={15} />
             </div>
             <input
               type='email'
-              placeholder='nama@sekolah.sch.id'
+              placeholder='nama@email.com'
               value={email}
               onChange={e => setEmail(e.target.value)}
               required
               autoComplete='email'
-              className='w-full bg-white text-sm text-[#1e293b] rounded-full border border-slate-200 pl-13 pr-4 py-3 outline-none focus:border-[#e11d48] transition-colors shadow-2xs'
+              className='w-full bg-white text-sm text-[#0F172A] rounded-full border border-slate-200 pl-13 pr-4 py-3 outline-none focus:border-[#0D9488] focus:ring-2 focus:ring-[#0D9488]/15 transition-all shadow-2xs'
             />
           </div>
         </div>
 
         <div>
-          <label className='text-xs font-bold text-[#1e293b] mb-1.5 block'>Kata Sandi</label>
+          <label className='text-xs font-bold text-[#0F172A] mb-1.5 block'>Kata Sandi</label>
           <div className='relative flex items-center'>
-            <div className='absolute left-3.5 w-8 h-8 rounded-full bg-rose-50 flex items-center justify-center text-[#e11d48]'>
+            <div className='absolute left-3.5 w-8 h-8 rounded-full bg-[#F0FDFA] flex items-center justify-center text-[#0D9488]'>
               <Lock size={15} />
             </div>
             <input
@@ -132,7 +132,7 @@ export function LoginForm({ hideHeader = false }: LoginFormProps) {
               onChange={e => setPassword(e.target.value)}
               required
               autoComplete='current-password'
-              className='w-full bg-white text-sm text-[#1e293b] rounded-full border border-slate-200 pl-13 pr-11 py-3 outline-none focus:border-[#e11d48] transition-colors shadow-2xs'
+              className='w-full bg-white text-sm text-[#0F172A] rounded-full border border-slate-200 pl-13 pr-11 py-3 outline-none focus:border-[#0D9488] focus:ring-2 focus:ring-[#0D9488]/15 transition-all shadow-2xs'
             />
             <button
               type='button'
@@ -150,10 +150,10 @@ export function LoginForm({ hideHeader = false }: LoginFormProps) {
             onClick={e => {
               e.preventDefault();
               alert(
-                'Silakan hubungi pembina UKS atau administrator untuk mereset kata sandi Anda.',
+                'Silakan hubungi administrator atau tenaga kesehatan untuk mereset kata sandi Anda.',
               );
             }}
-            className='text-xs text-[#64748b] hover:text-[#e11d48] font-medium transition-colors'
+            className='text-xs text-[#64748B] hover:text-[#0D9488] font-medium transition-colors'
           >
             Lupa kata sandi?
           </Link>
@@ -161,7 +161,7 @@ export function LoginForm({ hideHeader = false }: LoginFormProps) {
           <button
             type='submit'
             disabled={loading}
-            className='px-6 py-2.5 bg-[#e11d48] hover:bg-[#be123c] text-white rounded-full text-sm font-bold shadow-md shadow-rose-500/20 transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50'
+            className='px-6 py-2.5 bg-[#0D9488] hover:bg-[#0F766E] text-white rounded-full text-sm font-bold shadow-xs shadow-[#0D9488]/20 transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50'
           >
             {loading ? (
               <span>Masuk...</span>

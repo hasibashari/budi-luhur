@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Users,
   CalendarCheck,
   TrendingUp,
+  FileText,
   AlertTriangle,
-  ArrowUpRight,
   ChevronRight,
+  ArrowUpRight,
   BellRing,
 } from 'lucide-react';
 import AdminHeader from '../components/AdminHeader';
@@ -14,11 +15,17 @@ import StatCard from '@/src/shared/components/StatCard';
 import SendReminderModal from '../components/SendReminderModal';
 import { ToastFeedback } from '@/src/shared/components/ToastFeedback';
 import { Avatar } from '@/src/shared/components/ui/Avatar';
-import { getAdminStatsAction } from '../api/adminStatsRepository';
-import { getUsersAction, sendUserReminderAction } from '../api/userManagementRepository';
-import { getComplianceReportsAction } from '../api/complianceRepository';
+import {
+  getAdminStatsAction,
+  getComplianceReportsAction,
+  getUsersAction,
+} from '../api/adminRepository';
+import {
+  AdminStats,
+  ManagedUser,
+  ComplianceReport,
+} from '../types/admin.types';
 import { publishRealtimeEvent } from '@/src/shared/utils/realtimeSync';
-import { AdminStats, ManagedUser, ComplianceReport } from '../types/admin.types';
 
 export default function AdminDashboardView() {
   const [stats, setStats] = useState<AdminStats>({
@@ -28,105 +35,107 @@ export default function AdminDashboardView() {
     publishedArticles: 0,
     activePrograms: 0,
   });
-  const [users, setUsers] = useState<ManagedUser[]>([]);
-  const [reports, setReports] = useState<ComplianceReport[]>([]);
 
-  React.useEffect(() => {
+  const [reports, setReports] = useState<ComplianceReport[]>([]);
+  const [highRiskUsers, setHighRiskUsers] = useState<ManagedUser[]>([]);
+
+  // State for Send Reminder Modal
+  const [reminderModalOpen, setReminderModalOpen] = useState(false);
+  const [reminderData, setReminderData] = useState({
+    userName: '',
+    userPhone: '',
+    userId: '',
+    medicationName: 'Pil KB Kombinasi (28 Tablet)',
+    dosage: '1 Tablet',
+    timeSlot: '20:00',
+  });
+
+  // State for Toast
+  const [toastOpen, setToastOpen] = useState(false);
+  const [toastMsg, setToastMsg] = useState('');
+
+  useEffect(() => {
     let isMounted = true;
-    const fetchData = async () => {
-      const [s, u, r] = await Promise.all([
-        getAdminStatsAction(),
-        getUsersAction(),
-        getComplianceReportsAction(),
-      ]);
-      if (isMounted) {
-        setStats(s);
-        setUsers(u);
-        setReports(r);
+    async function fetchDashboard() {
+      try {
+        const [statsData, reportsData, allUsers] = await Promise.all([
+          getAdminStatsAction(),
+          getComplianceReportsAction(),
+          getUsersAction(),
+        ]);
+
+        if (isMounted) {
+          setStats(statsData);
+          setReports(reportsData);
+          const highRisk = allUsers.filter(
+            u => u.riskLevel === 'Tinggi' || u.adherenceRate < 85,
+          );
+          setHighRiskUsers(highRisk.length > 0 ? highRisk : allUsers.slice(0, 4));
+        }
+      } catch (err) {
+        console.error('Failed to load admin dashboard data:', err);
       }
-    };
-    fetchData();
+    }
+
+    fetchDashboard();
     return () => {
       isMounted = false;
     };
   }, []);
 
-  const highRiskUsers = users.filter(u => u.riskLevel === 'Tinggi');
-
-  // Reminder Modal State
-  const [reminderModalOpen, setReminderModalOpen] = useState(false);
-  const [reminderData, setReminderData] = useState<{
-    userId?: string;
-    userName: string;
-    userPhone?: string;
-    medicationName?: string;
-    dosage?: string;
-    timeSlot?: string;
-  }>({
-    userName: '',
-  });
-
-  // Toast Notification State
-  const [toastOpen, setToastOpen] = useState(false);
-  const [toastMsg, setToastMsg] = useState('');
-
-  const handleOpenReminder = (
-    name: string,
-    phone?: string,
-    userId?: string,
-    medicationName?: string,
-    dosage?: string,
-    timeSlot?: string,
-  ) => {
+  const handleOpenReminder = (name: string, phone: string, userId?: string) => {
     setReminderData({
-      userId: userId || 'usr_1',
       userName: name,
-      userPhone: phone || '0812-3456-7890',
-      medicationName: medicationName || 'Tablet Tambah Darah (TTD)',
-      dosage: dosage || '1 Tablet (Setelah makan)',
-      timeSlot: timeSlot || '20:00 WIB',
+      userPhone: phone,
+      userId: userId || '',
+      medicationName: 'Pil KB Kombinasi (28 Tablet)',
+      dosage: '1 Tablet',
+      timeSlot: '20:00',
     });
     setReminderModalOpen(true);
   };
 
-  const handleSendSuccess = async (channel: 'app' | 'whatsapp', messageSent: string) => {
-    if (reminderData.userId) {
-      await sendUserReminderAction(reminderData.userId, messageSent);
-      publishRealtimeEvent('NUDGE_SENT', { userId: reminderData.userId, patientId: reminderData.userId });
+  const handleSendSuccess = (channel: 'whatsapp' | 'app', _messageText?: string) => {
+    if (channel === 'app' && reminderData.userId) {
+      publishRealtimeEvent('NUDGE_SENT', {
+        patientId: reminderData.userId,
+        senderName: 'Bidan / Tim Faskes',
+      });
     }
-    const channelName = channel === 'whatsapp' ? 'WhatsApp' : 'Notifikasi App';
     setToastMsg(
-      `Pengingat tablet Fe berhasil dikirimkan ke ${reminderData.userName} via ${channelName}!`,
+      channel === 'whatsapp'
+        ? `Pengingat WhatsApp berhasil disiapkan untuk ${reminderData.userName}!`
+        : `Pengingat realtime berhasil dikirimkan ke aplikasi ${reminderData.userName}!`,
     );
     setToastOpen(true);
   };
 
   return (
-    <div>
+    <div className='animate-fade-in'>
       <AdminHeader
-        title='Dashboard Utama Admin'
-        subtitle='Pantau capaian kepatuhan tablet Fe, aktivitas harian siswi, dan edukasi kesehatan secara real-time.'
+        title='Dashboard Utama Bidan & Faskes'
+        subtitle='Pantau capaian kepatuhan minum Pil KB, aktivitas harian akseptor, dan edukasi kesehatan secara real-time.'
       />
 
       {/* Entry Portal Banner */}
-      <div className='mb-6 p-4 sm:p-6 rounded-3xl border border-rose-200 bg-white shadow-sm flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4'>
+      <div className='mb-6 p-4 sm:p-6 rounded-3xl border border-slate-200 bg-white shadow-xs flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4'>
         <div className='flex items-center gap-4'>
-          <div className='w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center shrink-0 border border-rose-100'>
+          <div className='w-12 h-12 rounded-2xl bg-teal-50 text-teal-700 flex items-center justify-center shrink-0 border border-teal-100'>
             <CalendarCheck size={26} />
           </div>
           <div>
             <h3 className='font-bold text-slate-800 text-sm sm:text-base leading-tight'>
-              Pengelolaan Jadwal & Pengingat Tablet Fe
+              Pengelolaan Jadwal & Pengingat Pil KB
             </h3>
             <p className='text-xs sm:text-sm text-slate-500 mt-1 leading-relaxed'>
-              Akses konfigurasi dosis, jam minum obat, dan pemantauan kepatuhan harian siswi/pengguna.
+              Akses konfigurasi dosis, jam minum pil, dan pemantauan kepatuhan harian akseptor KB.
             </p>
           </div>
         </div>
 
         <Link
           to='/admin/schedules'
-          className='inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-xl bg-rose-600 text-white font-bold text-sm hover:bg-rose-700 shadow-md shadow-rose-200 transition-all cursor-pointer whitespace-nowrap'
+          className='inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-xl bg-teal-600 text-white font-bold text-sm hover:bg-teal-700 shadow-xs transition-all cursor-pointer whitespace-nowrap'
         >
           <span>Buka Jadwal</span>
           <ChevronRight size={16} />
@@ -136,14 +145,14 @@ export default function AdminDashboardView() {
       {/* KPI Cards Grid */}
       <div className='grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5 mb-6'>
         <StatCard
-          title='Total Siswi (Pengguna)'
+          title='Total Akseptor Terdaftar'
           value={stats.totalUsers}
           icon={Users}
-          iconBgColor='#ffe4e6'
-          iconColor='#e11d48'
+          iconBgColor='#f0fdfa'
+          iconColor='#0d9488'
           subtitle={
             <div className='flex items-center gap-1 mt-1'>
-              <span className='px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 text-[10px] font-extrabold'>
+              <span className='px-2 py-0.5 rounded-full bg-teal-50 text-teal-800 text-[10px] font-extrabold border border-teal-100'>
                 +12 bln ini
               </span>
             </div>
@@ -151,55 +160,51 @@ export default function AdminDashboardView() {
         />
 
         <StatCard
-          title='Jadwal Aktif'
+          title='Jadwal Pengingat Aktif'
           value={stats.activeSchedules}
           icon={CalendarCheck}
-          iconBgColor='#ffe4e6'
-          iconColor='#e11d48'
-          subtitle={`${stats.totalUsers} pengguna aktif`}
+          iconBgColor='#f0fdfa'
+          iconColor='#0d9488'
+          subtitle={`${stats.totalUsers} akseptor aktif`}
         />
 
         <StatCard
           title='Kepatuhan Rata-rata'
           value={`${stats.adherenceRate}%`}
           icon={TrendingUp}
-          iconBgColor='#dcfce7'
-          iconColor='#16a34a'
+          iconBgColor='#ecfdf5'
+          iconColor='#10b981'
           subtitle={
-            <div className='w-full bg-slate-100 h-1.5 rounded-full overflow-hidden mt-1.5'>
-              <div
-                className='bg-emerald-500 h-full rounded-full transition-all duration-500'
-                style={{ width: `${stats.adherenceRate}%` }}
-              />
-            </div>
+            <span className='text-[#10b981] font-bold text-xs'>
+              {stats.adherenceRate >= 90 ? 'Proteksi 99% Optimal' : 'Cukup Baik'}
+            </span>
           }
         />
 
         <StatCard
-          title='Risiko Tinggi'
-          value={highRiskUsers.length.toString()}
-          icon={AlertTriangle}
-          iconBgColor='#fef3c7'
-          iconColor='#d97706'
-          valueColor='#d97706'
-          subtitle='Butuh pantauan'
+          title='Artikel Edukasi Aktif'
+          value={stats.publishedArticles}
+          icon={FileText}
+          iconBgColor='#f8fafc'
+          iconColor='#475569'
+          subtitle='Materi Pil KB & SADARI'
         />
       </div>
 
-      {/* Main Content Grid: Compliance Chart & High Risk Users */}
+      {/* Analytics & Compliance Trends */}
       <div className='grid grid-cols-1 lg:grid-cols-12 gap-6'>
         {/* Compliance Trend Visualizer */}
-        <div className='lg:col-span-7 xl:col-span-8 p-5 sm:p-6 rounded-3xl border border-slate-200 bg-white shadow-sm flex flex-col justify-between'>
+        <div className='lg:col-span-7 xl:col-span-8 p-5 sm:p-6 rounded-3xl border border-slate-200 bg-white shadow-xs flex flex-col justify-between'>
           <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4'>
             <div>
-              <h3 className='font-bold text-slate-800 text-base'>Tren Kepatuhan Tablet Fe (Mingguan)</h3>
+              <h3 className='font-bold text-slate-800 text-base'>Tren Kepatuhan Minum Pil KB</h3>
               <p className='text-xs text-slate-500 mt-0.5'>
-                Persentase jadwal TTD yang diminum tepat waktu oleh pengguna
+                Persentase jadwal pil KB yang diminum tepat waktu oleh akseptor
               </p>
             </div>
             <Link
               to='/admin/reports'
-              className='inline-flex items-center gap-1 text-xs font-bold text-rose-600 hover:text-rose-700 transition-colors'
+              className='inline-flex items-center gap-1 text-xs font-bold text-teal-700 hover:text-teal-800 transition-colors'
             >
               <span>Lihat Detail</span>
               <ArrowUpRight size={14} />
@@ -222,16 +227,16 @@ export default function AdminDashboardView() {
 
                 return (
                   <div key={`${dateLabel}-${idx}`} className='flex flex-col items-center flex-1'>
-                    <span className='font-bold text-[11px] text-slate-700 mb-1.5'>
+                    <span className='font-bold text-[11px] text-slate-800 mb-1.5'>
                       {report.adherencePercentage.toFixed(0)}%
                     </span>
                     <div
                       className={`w-1/2 max-w-[28px] rounded-t-md transition-all duration-300 hover:opacity-85 ${
-                        report.adherencePercentage >= 90 ? 'bg-rose-500' : 'bg-amber-500'
+                        report.adherencePercentage >= 90 ? 'bg-teal-600' : 'bg-orange-400'
                       }`}
                       style={{ height: `${report.adherencePercentage * 1.3}px` }}
                     />
-                    <span className='text-[11px] text-slate-400 font-medium mt-2 whitespace-nowrap'>
+                    <span className='text-[11px] text-slate-500 font-medium mt-2 whitespace-nowrap'>
                       {dateLabel}
                     </span>
                   </div>
@@ -242,29 +247,29 @@ export default function AdminDashboardView() {
 
           <div className='flex items-center justify-center gap-6 pt-4 mt-2 border-t border-slate-100 flex-wrap'>
             <div className='flex items-center gap-2'>
-              <span className='w-2.5 h-2.5 rounded-full bg-rose-500' />
-              <span className='text-xs font-semibold text-slate-600'>Kepatuhan Tinggi (≥90%)</span>
+              <span className='w-2.5 h-2.5 rounded-full bg-teal-600' />
+              <span className='text-xs font-semibold text-slate-600'>Proteksi Optimal (≥90%)</span>
             </div>
             <div className='flex items-center gap-2'>
-              <span className='w-2.5 h-2.5 rounded-full bg-amber-500' />
+              <span className='w-2.5 h-2.5 rounded-full bg-orange-400' />
               <span className='text-xs font-semibold text-slate-600'>
-                Perlu Perhatian (&lt;90%)
+                Perlu Pendampingan (&lt;90%)
               </span>
             </div>
           </div>
         </div>
 
         {/* High Risk Users Alert Box */}
-        <div className='lg:col-span-5 xl:col-span-4 p-5 sm:p-6 rounded-3xl border border-slate-200 bg-white shadow-sm flex flex-col justify-between'>
+        <div className='lg:col-span-5 xl:col-span-4 p-5 sm:p-6 rounded-3xl border border-slate-200 bg-white shadow-xs flex flex-col justify-between'>
           <div>
             <div className='flex items-center justify-between mb-2'>
               <div className='flex items-center gap-2'>
-                <AlertTriangle size={18} className='text-amber-500' />
-                <h3 className='font-bold text-slate-800 text-base'>Siswi Perlu Perhatian</h3>
+                <AlertTriangle size={18} className='text-orange-500' />
+                <h3 className='font-bold text-slate-800 text-base'>Akseptor Perlu Perhatian</h3>
               </div>
               <Link
                 to='/admin/users'
-                className='inline-flex items-center gap-1 text-xs font-bold text-rose-600 hover:text-rose-700 transition-colors'
+                className='inline-flex items-center gap-1 text-xs font-bold text-teal-700 hover:text-teal-800 transition-colors'
               >
                 <span>Semua</span>
                 <ChevronRight size={14} />
@@ -272,21 +277,21 @@ export default function AdminDashboardView() {
             </div>
 
             <p className='text-xs text-slate-500 mb-4'>
-              Siswi dengan kepatuhan rendah atau membutuhkan dorongan pengingat:
+              Akseptor dengan kepatuhan rendah atau membutuhkan dorongan pengingat minum pil:
             </p>
 
             <div className='space-y-3'>
               {highRiskUsers.slice(0, 4).map(user => (
                 <div
                   key={user.id}
-                  className='p-3.5 rounded-2xl border border-amber-200 bg-amber-50/60 flex items-center justify-between gap-3'
+                  className='p-3.5 rounded-2xl border border-orange-200 bg-orange-50/60 flex items-center justify-between gap-3'
                 >
                   <div className='flex items-center gap-3 min-w-0 flex-1'>
                     <Avatar
                       src={user.avatarUrl}
                       name={user.name}
                       size='md'
-                      ringClassName='ring-1 ring-amber-200 shadow-2xs'
+                      ringClassName='ring-1 ring-orange-200 shadow-2xs'
                     />
                     <div className='min-w-0 flex-1'>
                       <div className='font-bold text-xs sm:text-sm text-slate-900 truncate'>
@@ -299,14 +304,14 @@ export default function AdminDashboardView() {
                   </div>
 
                   <div className='flex items-center gap-2 shrink-0'>
-                    <span className='px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 font-extrabold text-[11px]'>
+                    <span className='px-2.5 py-1 rounded-full bg-orange-100 text-orange-800 font-extrabold text-[11px]'>
                       {user.adherenceRate}%
                     </span>
                     <button
                       type='button'
                       title='Kirim Pengingat'
                       onClick={() => handleOpenReminder(user.name, user.phone, user.id)}
-                      className='w-11 h-11 rounded-xl bg-amber-200/80 text-amber-800 hover:bg-amber-300 flex items-center justify-center transition-colors cursor-pointer'
+                      className='w-10 h-10 rounded-xl bg-orange-200/80 text-orange-900 hover:bg-orange-300 flex items-center justify-center transition-colors cursor-pointer'
                     >
                       <BellRing size={16} />
                     </button>

@@ -1,12 +1,12 @@
 {
-  "name": "FEMORY - Sahabat Sehat Cegah Anemia",
-  "short_name": "FEMORY",
-  "description": "Aplikasi Pemantauan Tablet Tambah Darah (TTD) Remaja Putri",
+  "name": "Pilluna — Sahabat Setia Minum Pil KB",
+  "short_name": "Pilluna",
+  "description": "Aplikasi Kesehatan Digital Pengingat Jadwal dan Pemantau Konsistensi Minum Pil KB",
   "start_url": "/splash",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#fff5f7",
-  "theme_color": "#e11d48",
+  "background_color": "#F8FAFC",
+  "theme_color": "#0D9488",
   "icons": [
     {
       "src": "/icons/icon-192x192.png",

@@ -22,7 +22,7 @@ export function ProfileEditModal({
   onSave,
   title = 'Edit Informasi Profil',
   subtitle = 'Perbarui data identitas dan informasi akun Anda',
-  submitText = 'Update',
+  submitText = 'Simpan Perubahan',
   isSaving = false,
   errorMessage,
   children,
@@ -54,7 +54,7 @@ export function ProfileEditModal({
 
       {/* Modal Dialog Content (Centered) */}
       <div
-        className='relative z-10 bg-white rounded-3xl shadow-2xl border border-rose-100/80 max-w-lg w-full max-h-[88dvh] sm:max-h-[88vh] flex flex-col overflow-hidden animate-scale-up'
+        className='relative z-10 bg-white rounded-3xl shadow-2xl border border-slate-200 max-w-lg w-full max-h-[88dvh] sm:max-h-[88vh] flex flex-col overflow-hidden animate-scale-up'
         onClick={e => e.stopPropagation()}
         role='dialog'
         aria-modal='true'
@@ -84,8 +84,8 @@ export function ProfileEditModal({
         <form onSubmit={onSave} className='flex flex-col flex-1 min-h-0 overflow-hidden'>
           <div className='p-4 sm:p-6 space-y-3.5 sm:space-y-4 overflow-y-auto flex-1 overscroll-contain'>
             {errorMessage && (
-              <div className='p-3 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-semibold flex items-center gap-2'>
-                <AlertCircle size={15} className='text-rose-600 shrink-0' />
+              <div className='p-3 rounded-2xl bg-red-50 border border-red-200 text-red-800 text-xs font-semibold flex items-center gap-2'>
+                <AlertCircle size={15} className='text-red-600 shrink-0' />
                 <span>{errorMessage}</span>
               </div>
             )}
@@ -114,9 +114,9 @@ export function ProfileEditModal({
               shape='rounded'
               disabled={isSaving}
               icon={isSaving ? <Loader2 size={14} className='animate-spin' /> : <Check size={14} />}
-              className='flex-1 sm:flex-initial text-xs py-2.5 px-5 font-bold shadow-md shadow-rose-200 cursor-pointer min-h-[42px]'
+              className='flex-1 sm:flex-initial text-xs py-2.5 px-5 font-bold cursor-pointer min-h-[42px]'
             >
-              {isSaving ? 'Mengupdate...' : submitText}
+              {isSaving ? 'Menyimpan...' : submitText}
             </Button>
           </div>
         </form>

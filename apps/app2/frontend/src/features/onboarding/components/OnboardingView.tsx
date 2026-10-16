@@ -131,7 +131,7 @@ export function OnboardingView() {
           {/* App Name at top center */}
           <div className='flex items-center gap-1.5'>
             <span className='font-black text-lg sm:text-xl tracking-tight text-slate-800'>
-              FEMORY
+              Pilluna
             </span>
             <span className='text-base sm:text-lg'>🌸</span>
           </div>

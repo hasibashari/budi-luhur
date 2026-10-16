@@ -28,10 +28,11 @@ export function Card({
   }
 
   const variantStyles = {
-    default: 'bg-white border border-[#fce7f3] shadow-sm shadow-rose-500/5',
-    hero: 'bg-gradient-to-br from-[#fff1f2] via-[#ffe4e6] to-[#fecdd3]/40 border-1.5 border-[#fecdd3] shadow-md shadow-rose-500/10',
-    blush: 'bg-[#fdf2f4] border border-[#fce7f3]',
-    flat: 'bg-white border border-[#f1f5f9]',
+    default: 'bg-white border border-[#E2E8F0] shadow-xs shadow-slate-900/5',
+    hero: 'bg-gradient-to-br from-[#F0FDFA] via-[#FFFFFF] to-[#CCFBF1]/30 border border-[#CCFBF1] shadow-xs shadow-teal-900/5',
+    blush: 'bg-[#F8FAFC] border border-[#E2E8F0]',
+    soft: 'bg-[#F8FAFC] border border-[#E2E8F0]',
+    flat: 'bg-white border border-[#F1F5F9]',
   }
 
   return (
@@ -40,8 +41,8 @@ export function Card({
         clsx(
           baseStyles,
           paddingStyles[padding],
-          variantStyles[variant],
-          hoverable && 'hover:shadow-md hover:border-[#fbcfe8] hover:-translate-y-0.5',
+          variantStyles[variant as keyof typeof variantStyles] || variantStyles.default,
+          hoverable && 'hover:shadow-sm hover:border-[#0D9488]/40 hover:-translate-y-0.5',
           className
         )
       )}

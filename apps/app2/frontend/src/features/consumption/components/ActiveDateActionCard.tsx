@@ -24,7 +24,7 @@ export function ActiveDateActionCard({
   isToday,
   activity,
   effectiveStatus,
-  fallbackTabletName = 'Tablet Tambah Darah (TTD)',
+  fallbackTabletName = 'Pil KB Harian',
   fallbackTime = '20:00',
   isUpdating,
   onUpdateStatus,
@@ -32,22 +32,22 @@ export function ActiveDateActionCard({
   return (
     <Card
       padding='md'
-      className='border border-rose-200 bg-gradient-to-br from-[#fff5f7] to-white'
+      className='border border-teal-200/80 bg-gradient-to-br from-teal-50/50 via-slate-50/30 to-white shadow-xs'
     >
       <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-3'>
         {/* Left side: Date & Status Details */}
         <div>
           <div className='flex items-center gap-2'>
-            <span className='text-xs font-extrabold text-[#1e293b]'>
+            <span className='text-xs font-extrabold text-slate-800'>
               {formatFullDateText(selectedDate)}
             </span>
             {isToday && (
-              <span className='text-[10px] font-bold text-rose-600 bg-rose-100 px-2 py-0.5 rounded-full'>
+              <span className='text-[10px] font-bold text-orange-700 bg-orange-50 border border-orange-200 px-2 py-0.5 rounded-full'>
                 Hari Ini
               </span>
             )}
           </div>
-          <p className='text-xs text-[#64748b] mt-0.5'>
+          <p className='text-xs text-slate-500 mt-0.5'>
             {activity?.title || fallbackTabletName}
             {' • '}
             Jadwal {activity?.scheduledTime || fallbackTime} WIB
@@ -66,7 +66,7 @@ export function ActiveDateActionCard({
                 type='button'
                 disabled={isUpdating}
                 onClick={() => onUpdateStatus(selectedDate, 'pending')}
-                className='text-[11px] font-semibold text-slate-500 hover:text-rose-600 hover:underline cursor-pointer'
+                className='text-[11px] font-semibold text-slate-500 hover:text-teal-700 hover:underline cursor-pointer'
               >
                 Ubah
               </button>
@@ -82,7 +82,7 @@ export function ActiveDateActionCard({
                 type='button'
                 disabled={isUpdating}
                 onClick={() => onUpdateStatus(selectedDate, 'pending')}
-                className='text-[11px] font-semibold text-slate-500 hover:text-rose-600 hover:underline cursor-pointer'
+                className='text-[11px] font-semibold text-slate-500 hover:text-teal-700 hover:underline cursor-pointer'
               >
                 Ubah
               </button>
@@ -92,7 +92,7 @@ export function ActiveDateActionCard({
           {effectiveStatus === 'pending' && (
             <div className='flex items-center gap-2'>
               <Button
-                variant='success'
+                variant='primary'
                 size='sm'
                 shape='pill'
                 disabled={isUpdating}
@@ -107,7 +107,7 @@ export function ActiveDateActionCard({
                 size='sm'
                 shape='pill'
                 disabled={isUpdating}
-                className='text-xs py-1.5 px-3 text-[#f43f5e] border-[#fecdd3] hover:bg-rose-50'
+                className='text-xs py-1.5 px-3 text-slate-600 border-slate-300 hover:bg-slate-50'
                 icon={<XCircle size={14} />}
                 onClick={() => onUpdateStatus(selectedDate, 'missed')}
               >

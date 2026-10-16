@@ -25,13 +25,13 @@ export default function AdminProfileView() {
 
   // Profile State
   const [profileData, setProfileData] = useState({
-    name: user?.name || 'dr. Sarah Jenkins, Sp.GK',
-    email: user?.email || 'admin@medicore.com',
+    name: user?.name || 'Bdn. Sarah Jenkins, S.Tr.Keb',
+    email: user?.email || 'bidan@pilluna.com',
     phone: user?.phone || '+62 811-2233-4455',
-    title: user?.schoolOrOrg || 'Fasilitator Kesehatan UKS',
-    department: 'Manajemen Program TTD & Anemia Remaja',
-    clinicName: 'FEMORY Puskesmas / UKS Sekolah',
-    roleLabel: 'Administrator',
+    title: user?.schoolOrOrg || 'Bidan Koordinator KB & Kespro',
+    department: 'Layanan Kontrasepsi & Kesehatan Reproduksi',
+    clinicName: 'Puskesmas / Klinik Pratama Pilluna',
+    roleLabel: 'Bidan / Administrator',
     avatarUrl: user?.avatarUrl || '',
   });
 
@@ -210,7 +210,7 @@ export default function AdminProfileView() {
       {/* 3. Contact Card */}
       <ProfileContactCard
         title='Informasi Kontak Dinas'
-        subtitle='Saluran komunikasi resmi koordinator program FEMORY'
+        subtitle='Saluran komunikasi resmi koordinator program Pilluna'
         items={contactItems}
       />
 

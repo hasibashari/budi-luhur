@@ -195,7 +195,7 @@ export default function ArticleManagementView() {
       label: 'Kategori',
       width: '18%',
       renderCell: article => (
-        <span className='inline-flex items-center px-2.5 py-1 rounded-full bg-rose-50 text-rose-700 border border-pink-200 text-xs font-bold'>
+        <span className='inline-flex items-center px-2.5 py-1 rounded-full bg-teal-50 text-teal-700 border border-teal-200 text-xs font-bold'>
           {article.category}
         </span>
       ),
@@ -261,7 +261,7 @@ export default function ArticleManagementView() {
   const renderMobileCard = (article: HealthArticle) => (
     <div
       key={article.id}
-      className='p-4 rounded-2xl border border-pink-100 bg-white shadow-xs flex flex-col gap-3.5'
+      className='p-4 rounded-2xl border border-slate-200 bg-white shadow-xs flex flex-col gap-3.5'
     >
       <div className='flex gap-3'>
         {article.imageUrl ? (
@@ -271,14 +271,14 @@ export default function ArticleManagementView() {
             className='w-16 h-16 rounded-xl object-cover shrink-0'
           />
         ) : (
-          <div className='w-16 h-16 rounded-xl bg-rose-50 text-rose-500 flex items-center justify-center shrink-0'>
+          <div className='w-16 h-16 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center shrink-0'>
             <ImageIcon size={28} />
           </div>
         )}
 
         <div className='flex-1 min-w-0'>
           <div className='flex items-center gap-1.5 mb-1 flex-wrap'>
-            <span className='px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-pink-100 font-extrabold text-[10px] uppercase tracking-wider'>
+            <span className='px-2.5 py-0.5 rounded-full bg-teal-50 text-teal-700 border border-teal-200 font-extrabold text-[10px] uppercase tracking-wider'>
               {article.category}
             </span>
           </div>
@@ -299,7 +299,7 @@ export default function ArticleManagementView() {
         <button
           type='button'
           onClick={() => handlePreviewArticle(article.id)}
-          className='flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl border border-rose-200 text-rose-600 text-xs font-bold hover:bg-rose-50 transition-colors cursor-pointer min-h-[44px]'
+          className='flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl border border-teal-200 text-teal-700 text-xs font-bold hover:bg-teal-50 transition-colors cursor-pointer min-h-[44px]'
         >
           <Eye size={16} />
           <span>Lihat Artikel</span>
@@ -331,7 +331,7 @@ export default function ArticleManagementView() {
     <div>
       <AdminHeader
         title='Manajemen Artikel Edukasi'
-        subtitle='Publikasikan konten medis interaktif untuk meningkatkan kepatuhan dan pemahaman siswi.'
+        subtitle='Publikasikan konten medis interaktif untuk meningkatkan kepatuhan dan pemahaman akseptor.'
       />
 
       {/* Filter Bar with MobileFilterChips */}
@@ -347,7 +347,7 @@ export default function ArticleManagementView() {
                 placeholder='Cari judul artikel atau nama penulis...'
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                className='w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-xs sm:text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-400 focus:border-transparent transition-all min-h-[44px]'
+                className='w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-xs sm:text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:border-transparent transition-all min-h-[44px]'
               />
             </div>
 
@@ -355,7 +355,7 @@ export default function ArticleManagementView() {
               <select
                 value={categoryFilter}
                 onChange={e => setCategoryFilter(e.target.value)}
-                className='w-full px-3.5 py-2.5 rounded-xl border border-pink-100 bg-slate-50 text-xs sm:text-sm font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:bg-white transition-all cursor-pointer min-h-[44px]'
+                className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs sm:text-sm font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:bg-white transition-all cursor-pointer min-h-[44px]'
               >
                 {ARTICLE_CATEGORIES.map(cat => (
                   <option key={cat} value={cat}>
@@ -369,7 +369,7 @@ export default function ArticleManagementView() {
           <button
             type='button'
             onClick={() => handleOpenAdd()}
-            className='inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-rose-600 text-white font-bold text-xs sm:text-sm hover:bg-rose-700 shadow-md shadow-rose-200 transition-all cursor-pointer whitespace-nowrap min-h-[44px]'
+            className='inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-teal-600 text-white font-bold text-xs sm:text-sm hover:bg-teal-700 shadow-xs transition-all cursor-pointer whitespace-nowrap min-h-[44px]'
           >
             <Plus size={18} />
             <span>Tulis Artikel Baru</span>

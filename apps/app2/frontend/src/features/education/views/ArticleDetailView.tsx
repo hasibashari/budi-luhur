@@ -98,232 +98,217 @@ export default function ArticleDetailView({
 
   const handleBookmarkToggle = async () => {
     if (!article) return;
-    const res = await toggleArticleBookmarkAction(userId, article.id);
-    if (res.success) {
-      setBookmarked(res.isBookmarked);
-      showToast(
-        res.isBookmarked ? 'Artikel disimpan ke bookmark kamu' : 'Artikel dihapus dari bookmark',
-      );
-    }
+    const nextState = !bookmarked;
+    setBookmarked(nextState);
+    await toggleArticleBookmarkAction(userId, article.id);
+    showToast(nextState ? 'Artikel disimpan ke bookmark' : 'Bookmark dihapus');
   };
 
   const handleLikeToggle = () => {
-    setLiked(prev => {
-      const next = !prev;
-      setLikeCount(c => (next ? c + 1 : c - 1));
-      return next;
-    });
+    if (liked) {
+      setLiked(false);
+      setLikeCount(prev => prev - 1);
+    } else {
+      setLiked(true);
+      setLikeCount(prev => prev + 1);
+      showToast('Terima kasih atas apresiasimu!');
+    }
   };
 
   if (loading) {
     return (
-      <div className='pb-12 max-w-[840px] mx-auto px-4 sm:px-6 animate-pulse'>
-        <div className='py-4 flex justify-between items-center'>
-          <div className='h-9 w-40 bg-slate-200 rounded-full' />
-          <div className='h-9 w-20 bg-slate-200 rounded-full' />
-        </div>
-        <div className='my-6 space-y-3'>
-          <div className='h-7 w-28 bg-slate-200 rounded-full' />
-          <div className='h-10 w-4/5 bg-slate-200 rounded-xl' />
-          <div className='h-6 w-3/5 bg-slate-200 rounded-lg' />
-        </div>
-        <div className='h-[360px] w-full bg-slate-200 rounded-2xl mb-8' />
-        <div className='space-y-3'>
-          <div className='h-4 w-full bg-slate-200 rounded' />
-          <div className='h-4 w-11/12 bg-slate-200 rounded' />
-          <div className='h-4 w-4/5 bg-slate-200 rounded' />
-        </div>
+      <div className='flex flex-col items-center justify-center min-h-[50vh] gap-3'>
+        <div className='animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-teal-600' />
+        <span className='text-xs font-semibold text-slate-500'>Memuat materi edukasi...</span>
       </div>
     );
   }
 
   if (!article) {
     return (
-      <div className='py-20 text-center max-w-[540px] mx-auto px-4'>
-        <div className='p-8 rounded-3xl border border-pink-100 bg-white shadow-xl'>
-          <div className='w-16 h-16 rounded-full bg-rose-50 flex items-center justify-center mx-auto mb-4 text-rose-500'>
-            <BookOpen size={32} />
-          </div>
-          <h2 className='text-xl font-bold text-slate-800 mb-2'>Artikel Tidak Ditemukan</h2>
-          <p className='text-sm text-slate-500 mb-6'>
-            Artikel edukasi yang kamu cari mungkin telah dipindahkan atau belum tersedia.
-          </p>
-          <button
-            onClick={() => navigate(backHref)}
-            className='inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full bg-rose-600 text-white font-semibold hover:bg-rose-700 shadow-md shadow-rose-200 transition-all cursor-pointer'
-          >
-            <ArrowLeft size={18} />
-            <span>Kembali ke Edukasi</span>
-          </button>
+      <div className='max-w-2xl mx-auto py-12 px-4 text-center'>
+        <div className='w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-4 text-slate-500'>
+          <BookOpen size={28} />
         </div>
+        <h2 className='text-xl font-bold text-slate-800 mb-2'>Artikel Tidak Ditemukan</h2>
+        <p className='text-slate-500 text-sm mb-6'>
+          Materi edukasi yang Anda cari mungkin telah diperbarui atau dipindahkan.
+        </p>
+        <Link
+          to={backHref}
+          className='inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full bg-teal-600 text-white font-semibold hover:bg-teal-700 shadow-sm transition-all cursor-pointer'
+        >
+          <ArrowLeft size={16} />
+          <span>Kembali ke Daftar Edukasi</span>
+        </Link>
       </div>
     );
   }
 
   return (
-    <div className='pb-16 max-w-[840px] mx-auto px-4 sm:px-6'>
-      {/* Top Bar Navigation & Actions */}
-      <div className='py-3 mb-6 flex items-center justify-between border-b border-pink-100'>
-        <Link
-          to={backHref}
-          className='inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-slate-600 font-semibold hover:bg-rose-50 hover:text-rose-600 transition-colors text-sm'
+    <article className='max-w-3xl mx-auto pb-16 animate-fade-in'>
+      {/* Toast Feedback */}
+      {toastMessage && (
+        <div className='fixed top-16 left-1/2 -translate-x-1/2 z-50 bg-slate-900 text-white text-xs font-semibold px-4 py-2.5 rounded-full shadow-lg flex items-center gap-2 animate-fade-in'>
+          <CheckCircle2 size={14} className='text-teal-400' />
+          <span>{toastMessage}</span>
+        </div>
+      )}
+
+      {/* Top Navigation Bar */}
+      <div className='flex items-center justify-between gap-4 mb-6'>
+        <button
+          type='button'
+          onClick={() => navigate(backHref)}
+          className='inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-slate-600 font-semibold hover:bg-teal-50 hover:text-teal-700 transition-colors text-sm cursor-pointer'
         >
-          <ArrowLeft size={18} />
-          <span>Kembali ke Edukasi</span>
-        </Link>
+          <ArrowLeft size={16} />
+          <span>Kembali</span>
+        </button>
 
         <div className='flex items-center gap-2'>
           <button
+            type='button'
             onClick={handleShare}
+            className='p-2 rounded-full border border-slate-200 bg-white text-slate-600 hover:bg-teal-50 hover:text-teal-700 hover:border-teal-200 transition-colors cursor-pointer shadow-2xs'
             title='Bagikan Artikel'
-            className='p-2 rounded-full border border-slate-200 bg-white text-slate-600 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 transition-colors cursor-pointer shadow-sm'
           >
-            <Share2 size={18} />
+            <Share2 size={16} />
           </button>
-
           <button
+            type='button'
             onClick={handleBookmarkToggle}
-            title={bookmarked ? 'Hapus Bookmark' : 'Simpan Artikel'}
-            className={`p-2 rounded-full border transition-colors cursor-pointer shadow-sm ${
+            className={`p-2 rounded-full border transition-colors cursor-pointer shadow-2xs ${
               bookmarked
-                ? 'border-rose-200 bg-rose-50 text-rose-600'
-                : 'border-slate-200 bg-white text-slate-600 hover:bg-rose-50 hover:text-rose-600'
+                ? 'border-teal-200 bg-teal-50 text-teal-700'
+                : 'border-slate-200 bg-white text-slate-600 hover:bg-teal-50 hover:text-teal-700'
             }`}
+            title={bookmarked ? 'Hapus Bookmark' : 'Simpan Bookmark'}
           >
-            <Bookmark size={18} fill={bookmarked ? 'currentColor' : 'none'} />
+            <Bookmark size={16} className={bookmarked ? 'fill-teal-600' : ''} />
           </button>
         </div>
       </div>
 
-      {/* Article Header */}
-      <div className='mb-6'>
-        <span className='inline-block px-3 py-1 rounded-lg bg-rose-50 text-rose-600 font-bold text-xs mb-3'>
+      {/* Category Badge & Title */}
+      <div className='mb-4'>
+        <span className='inline-block px-3 py-1 rounded-lg bg-teal-50 text-teal-800 font-bold text-xs mb-3 border border-teal-100'>
           {article.category}
         </span>
-
-        <h1 className='text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 leading-tight mb-3'>
+        <h1 className='text-2xl sm:text-3xl font-extrabold text-slate-900 leading-tight tracking-tight mb-4'>
           {article.title}
         </h1>
 
-        <p className='text-base text-slate-600 leading-relaxed mb-6'>{article.summary}</p>
-
-        {/* Metadata Bar */}
-        <div className='flex flex-wrap items-center justify-between gap-3 p-4 bg-[#fff5f7] rounded-2xl border border-pink-100'>
+        {/* Author & Meta Data */}
+        <div className='flex flex-wrap items-center justify-between gap-4 py-3 border-y border-slate-200 text-xs text-slate-500'>
           <div className='flex items-center gap-3'>
-            <div className='w-10 h-10 rounded-full bg-rose-200 flex items-center justify-center font-bold text-rose-700 text-sm overflow-hidden border border-pink-200'>
-              {article.author?.avatarUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={article.author.avatarUrl}
-                  alt={article.author.name}
-                  className='w-full h-full object-cover'
-                />
-              ) : (
-                <span>{article.author?.name?.charAt(0) || 'M'}</span>
-              )}
-            </div>
+            {article.author?.avatarUrl ? (
+              <img
+                src={article.author.avatarUrl}
+                alt={article.author.name}
+                className='w-10 h-10 rounded-full object-cover border border-slate-200'
+              />
+            ) : (
+              <div className='w-10 h-10 rounded-full bg-teal-100 flex items-center justify-center font-bold text-teal-800 text-sm overflow-hidden border border-teal-200'>
+                {article.author?.name ? article.author.name.charAt(0) : 'P'}
+              </div>
+            )}
             <div>
-              <div className='text-sm font-bold text-slate-900'>
-                {article.author?.name || 'Tim Medis FEMORY'}
-              </div>
-              <div className='text-xs text-slate-500'>
-                {article.author?.role || 'UKS & Fasilitator Kesehatan Remaja'}
-              </div>
+              <p className='font-bold text-slate-800 text-sm'>
+                {article.author?.name || 'Bidan Konselor Pilluna'}
+              </p>
+              <p className='text-slate-400 text-xs'>
+                {article.author?.role || 'Fasilitator Kontrasepsi Medis'}
+              </p>
             </div>
           </div>
 
-          <div className='flex items-center gap-4 text-xs font-semibold text-slate-500'>
-            <div className='flex items-center gap-1.5'>
-              <Calendar size={15} className='text-rose-500' />
-              <span>{article.publishedAt}</span>
-            </div>
-            <div className='flex items-center gap-1.5'>
-              <Clock size={15} className='text-rose-500' />
-              <span>{article.readTime}</span>
-            </div>
+          <div className='flex items-center gap-4 text-xs font-medium'>
+            <span className='flex items-center gap-1.5'>
+              <Calendar size={14} className='text-teal-600' />
+              {article.publishedAt}
+            </span>
+            <span className='flex items-center gap-1.5'>
+              <Clock size={14} className='text-teal-600' />
+              {article.readTime}
+            </span>
           </div>
         </div>
       </div>
 
-      {/* Featured Cover Image */}
+      {/* Main Feature Image */}
       {article.imageUrl && (
-        <div className='relative w-full h-[240px] sm:h-[400px] rounded-3xl overflow-hidden mb-8 shadow-md'>
+        <div className='w-full rounded-2xl overflow-hidden mb-8 shadow-xs border border-slate-200 max-h-[380px]'>
           <img
             src={article.imageUrl}
             alt={article.title}
-            className='w-full h-full object-cover'
+            className='w-full h-full object-cover max-h-[380px]'
           />
         </div>
       )}
 
-      {/* Key Takeaways Box if available */}
+      {/* Key Takeaways Box (If any) */}
       {article.keyTakeaways && article.keyTakeaways.length > 0 && (
-        <div className='p-5 mb-8 bg-rose-50/70 rounded-2xl border border-rose-200/80'>
-          <div className='text-xs font-extrabold uppercase tracking-wider text-rose-700 mb-3 flex items-center gap-1.5'>
-            <span>Poin Penting (Key Takeaways)</span>
-            <span>💡</span>
+        <div className='p-5 mb-8 bg-teal-50/70 rounded-2xl border border-teal-200/80 shadow-2xs'>
+          <div className='text-xs font-extrabold uppercase tracking-wider text-teal-800 mb-3 flex items-center gap-1.5'>
+            <span>Poin Kunci & Ringkasan Klinis:</span>
           </div>
-          <div className='space-y-2'>
-            {article.keyTakeaways.map((point, idx) => (
-              <div key={idx} className='flex items-start gap-2.5'>
-                <CheckCircle2 size={16} className='text-rose-600 shrink-0 mt-0.5' />
-                <span className='text-sm font-medium text-slate-700 leading-snug'>{point}</span>
-              </div>
+          <ul className='space-y-2 text-xs sm:text-sm text-slate-700 leading-relaxed'>
+            {article.keyTakeaways.map((point, i) => (
+              <li key={i} className='flex items-start gap-2.5'>
+                <CheckCircle2 size={16} className='text-teal-600 shrink-0 mt-0.5' />
+                <span>{point}</span>
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
       )}
 
-      {/* Main Markdown Content Body */}
-      <div className='mb-10'>
-        <MarkdownRenderer
-          content={
-            article.content ||
-            article.leadParagraph ||
-            article.summary ||
-            'Konten artikel belum tersedia.'
-          }
-        />
+      {/* Markdown Formatted Article Content */}
+      <div className='prose prose-slate max-w-none text-slate-700 leading-relaxed text-sm sm:text-base'>
+        <MarkdownRenderer content={article.content || ''} />
       </div>
 
-      {/* Like / Feedback Bar */}
-      <div className='h-px bg-slate-100 my-8 w-full' />
-      <div className='flex items-center justify-between flex-wrap gap-4 p-5 bg-slate-50 rounded-2xl border border-slate-200/70'>
-        <div className='text-sm font-semibold text-slate-700'>
-          Apakah artikel ini bermanfaat untukmu?
+      {/* Bottom Appreciation / Like Box */}
+      <div className='mt-10 pt-6 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-50 p-6 rounded-2xl border border-slate-200/80'>
+        <div>
+          <h4 className='text-sm sm:text-base font-bold text-slate-800'>
+            Apakah materi ini bermanfaat bagi Anda?
+          </h4>
+          <p className='text-xs text-slate-500 mt-0.5'>
+            Dukungan Anda membantu tim klinis kami menyusun edukasi kontrasepsi berkualitas.
+          </p>
         </div>
+
         <button
+          type='button'
           onClick={handleLikeToggle}
-          className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-bold transition-all cursor-pointer shadow-sm ${
+          className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-xs sm:text-sm transition-all cursor-pointer shadow-xs ${
             liked
-              ? 'bg-rose-600 text-white shadow-rose-200 hover:bg-rose-700'
-              : 'border border-slate-300 bg-white text-slate-700 hover:bg-slate-100'
+              ? 'bg-teal-600 text-white shadow-teal-600/20 hover:bg-teal-700'
+              : 'bg-white text-slate-700 border border-slate-200 hover:bg-teal-50 hover:text-teal-700 hover:border-teal-200'
           }`}
         >
-          <ThumbsUp size={16} fill={liked ? 'currentColor' : 'none'} />
-          <span>Bermanfaat ({likeCount})</span>
+          <ThumbsUp size={16} className={liked ? 'fill-white' : ''} />
+          <span>
+            {liked ? 'Bermanfaat' : 'Bermanfaat'} ({likeCount})
+          </span>
         </button>
       </div>
 
       {/* Related Articles Section */}
       {relatedArticles.length > 0 && (
         <div className='mt-12'>
-          <h2 className='text-xl font-extrabold text-slate-900 mb-6'>Artikel Terkait Lainnya</h2>
-          <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6'>
+          <h3 className='text-lg sm:text-xl font-bold text-slate-900 mb-4'>
+            Materi Edukasi Terkait
+          </h3>
+          <div className='grid grid-cols-1 sm:grid-cols-3 gap-4'>
             {relatedArticles.map(rel => (
               <ArticleCard key={rel.id} article={rel} />
             ))}
           </div>
         </div>
       )}
-
-      {/* Toast Notification */}
-      {toastMessage && (
-        <div className='fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-slate-900 text-white px-5 py-2.5 rounded-full text-sm font-medium shadow-2xl flex items-center gap-2 animate-bounce'>
-          <CheckCircle2 size={16} className='text-emerald-400' />
-          <span>{toastMessage}</span>
-        </div>
-      )}
-    </div>
+    </article>
   );
 }

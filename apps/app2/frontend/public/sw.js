@@ -1,5 +1,5 @@
-// FEMORY PWA Service Worker v3
-const CACHE_NAME = 'femory-pwa-v3';
+// Pilluna PWA Service Worker v3
+const CACHE_NAME = 'pilluna-pwa-v3';
 const OFFLINE_URL = '/offline.html';
 
 const STATIC_ASSETS = [
@@ -80,7 +80,7 @@ self.addEventListener('fetch', (event) => {
             return offlineFallback;
           }
           return new Response(
-            '<!DOCTYPE html><html><head><meta charset="utf-8"><title>FEMORY Offline</title></head><body style="font-family:sans-serif;padding:2rem;text-align:center;"><h2>Anda sedang offline</h2><p>Silakan periksa koneksi internet Anda.</p></body></html>',
+            '<!DOCTYPE html><html><head><meta charset="utf-8"><title>Pilluna Offline</title></head><body style="font-family:sans-serif;padding:2rem;text-align:center;"><h2>Anda sedang offline</h2><p>Silakan periksa koneksi internet Anda.</p></body></html>',
             {
               status: 200,
               headers: { 'Content-Type': 'text/html; charset=utf-8' },
@@ -140,7 +140,7 @@ self.addEventListener('fetch', (event) => {
 // ============================================================
 
 self.addEventListener('sync', (event) => {
-  if (event.tag === 'sync-femory-ttd' || event.tag === 'sync-consumption') {
+  if (event.tag === 'sync-pilluna-consumption' || event.tag === 'sync-femory-ttd' || event.tag === 'sync-consumption') {
     event.waitUntil(
       // Trigger background sync task when back online
       Promise.resolve()
@@ -190,8 +190,8 @@ self.addEventListener('push', (event) => {
   if (!event.data) return;
 
   let data = {
-    title: 'Pengingat Minum TTD FEMORY',
-    body: 'Waktunya meminum Tablet Tambah Darah Anda sesuai jadwal.',
+    title: 'Pengingat Minum Pil KB Pilluna',
+    body: 'Waktunya meminum Pil KB harian Anda agar efektivitas perlindungan tetap terjaga.',
     icon: '/icons/icon-192x192.png',
     badge: '/icons/icon-192x192.png',
     url: '/user/dashboard',
@@ -209,7 +209,7 @@ self.addEventListener('push', (event) => {
     icon: data.icon || '/icons/icon-192x192.png',
     badge: data.badge || '/icons/icon-192x192.png',
     vibrate: [200, 100, 200, 100, 200],
-    tag: data.tag || 'femory-reminder',
+    tag: data.tag || 'pilluna-reminder',
     renotify: true,
     data: {
       url: data.url || '/user/dashboard',

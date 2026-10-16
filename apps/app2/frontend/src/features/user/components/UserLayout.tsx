@@ -13,8 +13,8 @@ export default function UserLayout({ children }: UserLayoutProps) {
   const location = useLocation();
   const pathname = location.pathname;
   const { user } = useAuth();
-  const displayName = user?.name ? user.name.split(' ')[0] : 'Siswi';
-  const avatarUrl = user?.avatarUrl || 'https://api.dicebear.com/7.x/avataaars/svg?seed=FEMORY';
+  const displayName = user?.name ? user.name.split(' ')[0] : 'Akseptor';
+  const avatarUrl = user?.avatarUrl || 'https://api.dicebear.com/7.x/avataaars/svg?seed=Pilluna';
 
   if (pathname === '/user/setup') {
     return (
@@ -26,7 +26,7 @@ export default function UserLayout({ children }: UserLayoutProps) {
 
   return (
     <AuthGuard requiredRole='user'>
-      <div className='min-h-screen bg-[#fff5f7] flex flex-col md:flex-row selection:bg-rose-200 selection:text-rose-900'>
+      <div className='min-h-screen bg-[#F8FAFC] flex flex-col md:flex-row selection:bg-teal-100 selection:text-[#0D9488]'>
         {/* Mobile Top Header (< md) */}
         <div className='block md:hidden'>
           <MobileTopBar userName={displayName} avatarUrl={avatarUrl} />
@@ -38,7 +38,7 @@ export default function UserLayout({ children }: UserLayoutProps) {
         </div>
 
         {/* Main Content Area */}
-        <main className='flex-1 min-w-0 w-full max-w-full md:max-w-7xl mx-auto px-4 py-4 pb-28 md:p-8 md:pb-12 min-h-screen box-border'>
+        <main className='flex-1 min-w-0 w-full max-w-full md:max-w-7xl mx-auto px-4 py-4 pb-24 md:p-8 md:pb-12 min-h-screen box-border'>
           {children || <Outlet />}
         </main>
 

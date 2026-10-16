@@ -32,8 +32,8 @@ export function MobileFilterChips<T extends string = string>({
             onClick={() => onSelect(option.value)}
             className={`shrink-0 flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer min-h-[40px] select-none ${
               isSelected
-                ? 'bg-rose-600 text-white shadow-sm shadow-rose-200 scale-102'
-                : 'bg-slate-50 hover:bg-slate-100 text-slate-600 border border-slate-200/80'
+                ? 'bg-[#E94383] text-white shadow-xs shadow-pink-500/20 scale-102'
+                : 'bg-white hover:bg-[#FFF1F5] text-[#4A5E78] border border-[#FCE7F3]'
             }`}
           >
             <span>{option.label}</span>

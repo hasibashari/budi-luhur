@@ -6,9 +6,9 @@ export const GENDER_OPTIONS = [
 export type UserGender = (typeof GENDER_OPTIONS)[number]['value'];
 
 export const RISK_LEVEL_OPTIONS = [
-  { value: 'Rendah', label: 'Rendah (Hb Normal ≥ 12.0 g/dL)' },
-  { value: 'Sedang', label: 'Sedang (Hb 10.0 - 11.9 g/dL)' },
-  { value: 'Tinggi', label: 'Tinggi (Hb < 10.0 g/dL)' },
+  { value: 'Rendah', label: 'Rendah (Kepatuhan Optimal ≥90%)' },
+  { value: 'Sedang', label: 'Sedang (Kepatuhan 80-89%)' },
+  { value: 'Tinggi', label: 'Tinggi (Kepatuhan <80% / Butuh Pantauan)' },
 ] as const;
 
 export type RiskLevel = (typeof RISK_LEVEL_OPTIONS)[number]['value'];
@@ -20,7 +20,7 @@ export const RISK_LEVEL_COLORS: Record<string, { bg: string; text: string }> = {
   default: { bg: '#f1f5f9', text: '#475569' },
 };
 
-export const DEFAULT_SCHOOL_ORG = 'SMA Negeri 1 Sehat';
+export const DEFAULT_SCHOOL_ORG = 'Puskesmas Melati / Wilayah Bidan';
 
 export interface UserFormData {
   name: string;

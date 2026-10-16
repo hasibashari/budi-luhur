@@ -1,41 +1,50 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-primary: #e11d48;
-  --color-primary-hover: #be123c;
-  --color-primary-light: #ffe4e6;
-  --color-primary-subtle: #fff1f2;
+  --color-primary: #0D9488;
+  --color-primary-hover: #0F766E;
+  --color-primary-focus: #14B8A6;
+  --color-primary-soft: #CCFBF1;
+  --color-primary-light: #E6FFFA;
+  --color-primary-subtle: #F0FDFA;
 
-  --color-canvas: #fff5f7;
-  --color-surface: #ffffff;
-  --color-surface-soft: #fff5f7;
-  --color-surface-card: #ffffff;
-  --color-surface-alt: #fdf2f4;
-  --color-surface-dark: #1e293b;
+  --color-secondary: #F97316;
+  --color-secondary-hover: #EA580C;
+  --color-secondary-subtle: #FFF7ED;
+  --color-secondary-soft: #FFEDD5;
 
-  --color-border: #fce7f3;
-  --color-border-subtle: #f1f5f9;
-  --color-hairline: #fce7f3;
+  --color-canvas: #F8FAFC;
+  --color-surface: #FFFFFF;
+  --color-surface-soft: #F1F5F9;
+  --color-surface-card: #FFFFFF;
+  --color-surface-alt: #F8FAFC;
+  --color-surface-dark: #0F172A;
 
-  --color-ink: #1e293b;
-  --color-body: #475569;
-  --color-muted: #94a3b8;
-  --color-muted-soft: #cbd5e1;
+  --color-border: #E2E8F0;
+  --color-border-subtle: #F1F5F9;
+  --color-hairline: #E2E8F0;
 
-  --color-status-recorded: #10b981;
-  --color-status-missed: #f43f5e;
-  --color-status-pending: #f59e0b;
+  --color-ink: #0F172A;
+  --color-body: #334155;
+  --color-muted: #64748B;
+  --color-muted-soft: #CBD5E1;
 
-  --color-accent-teal: #10b981;
-  --color-accent-amber: #f59e0b;
-  --color-accent-rose: #e11d48;
+  --color-status-recorded: #0D9488;
+  --color-status-missed: #DC2626;
+  --color-status-pending: #F97316;
+  --color-status-placebo: #94A3B8;
+
+  --color-accent-teal: #0D9488;
+  --color-accent-coral: #F97316;
+  --color-accent-amber: #F59E0B;
+  --color-accent-soft: #CCFBF1;
 
   --font-sans: 'Plus Jakarta Sans', Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 :root {
-  --background: #fff5f7;
-  --foreground: #1e293b;
+  --background: #F8FAFC;
+  --foreground: #0F172A;
 }
 
 body {
@@ -56,10 +65,10 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #fce7f3;
+  background: #cbd5e1;
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #fbcfe8;
+  background: #94a3b8;
 }

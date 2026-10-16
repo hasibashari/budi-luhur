@@ -31,20 +31,20 @@ export default function UserFormModal({
     <CrudModalDialog
       open={open}
       onClose={onClose}
-      title={editingId ? 'Edit Data Siswi / Pengguna' : 'Tambah Siswi Baru'}
+      title={editingId ? 'Edit Data Akseptor' : 'Tambah Akseptor Baru'}
       onSubmit={onSave}
-      submitText={editingId ? 'Update' : 'Tambah Siswi'}
+      submitText={editingId ? 'Update Data' : 'Tambah Akseptor'}
       submitting={submitting}
     >
       <div>
         <label className='block text-xs font-bold text-slate-700 mb-1'>
-          Nama Lengkap Siswi <span className='text-rose-500'>*</span>
+          Nama Lengkap Akseptor <span className='text-rose-500'>*</span>
         </label>
         <input
           type='text'
           value={formData.name}
           onChange={e => onUpdateFormData({ name: e.target.value })}
-          className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-400 focus:border-transparent transition-all'
+          className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:border-transparent transition-all'
         />
       </div>
 
@@ -55,7 +55,7 @@ export default function UserFormModal({
             type='number'
             value={formData.age}
             onChange={e => onUpdateFormData({ age: e.target.value })}
-            className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-400 focus:border-transparent transition-all'
+            className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:border-transparent transition-all'
           />
         </div>
         <div>
@@ -63,7 +63,7 @@ export default function UserFormModal({
           <select
             value={formData.gender}
             onChange={e => onUpdateFormData({ gender: e.target.value as UserGender })}
-            className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-400 focus:border-transparent transition-all'
+            className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:border-transparent transition-all'
           >
             {GENDER_OPTIONS.map(opt => (
               <option key={opt.value} value={opt.value}>
@@ -81,7 +81,7 @@ export default function UserFormModal({
             type='text'
             value={formData.phone}
             onChange={e => onUpdateFormData({ phone: e.target.value })}
-            className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-400 focus:border-transparent transition-all'
+            className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:border-transparent transition-all'
           />
         </div>
         <div>
@@ -90,18 +90,18 @@ export default function UserFormModal({
             type='email'
             value={formData.email}
             onChange={e => onUpdateFormData({ email: e.target.value })}
-            className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-400 focus:border-transparent transition-all'
+            className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:border-transparent transition-all'
           />
         </div>
       </div>
 
       <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
         <div>
-          <label className='block text-xs font-bold text-slate-700 mb-1'>Tingkat Risiko</label>
+          <label className='block text-xs font-bold text-slate-700 mb-1'>Tingkat Kepatuhan</label>
           <select
             value={formData.riskLevel}
             onChange={e => onUpdateFormData({ riskLevel: e.target.value as RiskLevel })}
-            className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-400 focus:border-transparent transition-all'
+            className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:border-transparent transition-all'
           >
             {RISK_LEVEL_OPTIONS.map(opt => (
               <option key={opt.value} value={opt.value}>
@@ -112,26 +112,26 @@ export default function UserFormModal({
         </div>
         <div>
           <label className='block text-xs font-bold text-slate-700 mb-1'>
-            Sekolah / Kelas / Instansi
+            Domisili / Faskes Terdaftar
           </label>
           <input
             type='text'
             value={formData.assignedDoctor}
             onChange={e => onUpdateFormData({ assignedDoctor: e.target.value })}
-            className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-400 focus:border-transparent transition-all'
+            className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:border-transparent transition-all'
           />
         </div>
       </div>
 
       <div>
         <label className='block text-xs font-bold text-slate-700 mb-1'>
-          Catatan Kesehatan (Kadar Hb / Riwayat)
+          Catatan Kesehatan & KB (Jenis Pil / Siklus / Riwayat)
         </label>
         <textarea
           rows={3}
           value={formData.medicalNotes}
           onChange={e => onUpdateFormData({ medicalNotes: e.target.value })}
-          className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-400 focus:border-transparent transition-all resize-none'
+          className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:border-transparent transition-all resize-none'
         />
       </div>
     </CrudModalDialog>

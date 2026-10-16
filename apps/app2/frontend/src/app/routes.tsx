@@ -15,8 +15,7 @@ import {
 } from '@/src/features/user';
 import { ScheduleView } from '@/src/features/schedule';
 import { HistoryView } from '@/src/features/consumption';
-import { BuddyView } from '@/src/features/buddy';
-import { EducationView, ArticleDetailView } from '@/src/features/education';
+import { EducationView, ArticleDetailView, SadariView } from '@/src/features/education';
 import { ConsultationView } from '@/src/features/consultation';
 
 // Admin Portal Views
@@ -93,8 +92,9 @@ export function AppRoutes() {
         <Route path='dashboard' element={<DashboardView />} />
         <Route path='schedule' element={<ScheduleView />} />
         <Route path='history' element={<HistoryView />} />
-        <Route path='buddy' element={<BuddyView />} />
+        <Route path='buddy' element={<Navigate to='/user/dashboard' replace />} />
         <Route path='education' element={<EducationView />} />
+        <Route path='sadari' element={<SadariView />} />
         <Route path='education/:id' element={<ArticleDetailView />} />
         <Route path='consultation' element={<ConsultationView />} />
         <Route path='profile' element={<ProfileView />} />

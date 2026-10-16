@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Flame,
-  Activity,
-  HeartPulse,
+  ShieldCheck,
+  Ribbon,
   Mail,
   Phone,
-  School,
+  Building2,
   Check,
   Trash2,
   AlertTriangle,
@@ -30,7 +30,6 @@ interface UserProfileState {
   phone: string;
   avatarUrl: string;
   streakCount: number;
-  hbLevel?: number | null;
   schoolOrOrg?: string | null;
   riskLevel?: string | null;
 }
@@ -40,12 +39,11 @@ export default function ProfileView() {
   const { user: authUser, logout, updateUser, deleteAccount } = useAuth();
   const [userProfile, setUserProfile] = useState<UserProfileState>({
     id: authUser?.id || '',
-    name: authUser?.name || 'Siswi FEMORY',
+    name: authUser?.name || 'Akseptor Pilluna',
     email: authUser?.email || '',
     phone: authUser?.phone || '',
     avatarUrl: authUser?.avatarUrl || '',
     streakCount: authUser?.streakCount || 0,
-    hbLevel: authUser?.hbLevel || null,
     schoolOrOrg: authUser?.schoolOrOrg || null,
     riskLevel: null,
   });
@@ -55,9 +53,8 @@ export default function ProfileView() {
 
   // Edit Profile Form State
   const [editName, setEditName] = useState(userProfile.name);
-  const [editSchool, setEditSchool] = useState(userProfile.schoolOrOrg || '');
+  const [editFaskes, setEditFaskes] = useState(userProfile.schoolOrOrg || '');
   const [editPhone, setEditPhone] = useState(userProfile.phone);
-  const [editHb, setEditHb] = useState(userProfile.hbLevel ? String(userProfile.hbLevel) : '');
 
   // Delete Account State
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -104,14 +101,12 @@ export default function ProfileView() {
             phone: dashboard.user.phone || '',
             avatarUrl: dashboard.user.avatarUrl || '',
             streakCount: dashboard.user.streakCount || 0,
-            hbLevel: dashboard.user.hbLevel,
             schoolOrOrg: dashboard.user.schoolOrOrg,
             riskLevel: dashboard.user.riskLevel,
           });
           setEditName(dashboard.user.name);
-          setEditSchool(dashboard.user.schoolOrOrg || '');
+          setEditFaskes(dashboard.user.schoolOrOrg || '');
           setEditPhone(dashboard.user.phone || '');
-          setEditHb(dashboard.user.hbLevel ? String(dashboard.user.hbLevel) : '');
         }
       } catch (err) {
         console.error('Failed to load user profile:', err);
@@ -141,7 +136,7 @@ export default function ProfileView() {
         updateUser({ avatarUrl: newAvatarUrl || '' });
         showToast(
           newAvatarUrl
-            ? 'Foto profil berhasil diperbarui! ✨'
+            ? 'Foto profil berhasil diperbarui!'
             : 'Foto profil dihapus, menggunakan inisial nama.',
         );
       } else {
@@ -155,9 +150,8 @@ export default function ProfileView() {
 
   const handleOpenEdit = () => {
     setEditName(userProfile.name);
-    setEditSchool(userProfile.schoolOrOrg || '');
+    setEditFaskes(userProfile.schoolOrOrg || '');
     setEditPhone(userProfile.phone);
-    setEditHb(userProfile.hbLevel ? String(userProfile.hbLevel) : '');
     setIsEditProfileModalOpen(true);
   };
 
@@ -165,25 +159,22 @@ export default function ProfileView() {
     e.preventDefault();
     setIsSaving(true);
     try {
-      const parsedHb = editHb.trim() ? Number(editHb) : undefined;
       const res = await updateUserProfileAction(userProfile.id, {
         name: editName,
         phone: editPhone,
-        schoolOrOrg: editSchool,
-        hbLevel: parsedHb,
+        schoolOrOrg: editFaskes,
       });
 
       if (res.success) {
         setUserProfile(prev => ({
           ...prev,
           name: editName,
-          schoolOrOrg: editSchool || null,
+          schoolOrOrg: editFaskes || null,
           phone: editPhone,
-          hbLevel: parsedHb || null,
         }));
-        updateUser({ name: editName, phone: editPhone, schoolOrOrg: editSchool });
+        updateUser({ name: editName, phone: editPhone, schoolOrOrg: editFaskes });
         setIsEditProfileModalOpen(false);
-        showToast('Profil berhasil diperbarui! ✨');
+        showToast('Profil berhasil diperbarui!');
       } else {
         showToast(res.error || 'Gagal memperbarui profil.');
       }
@@ -203,285 +194,190 @@ export default function ProfileView() {
   const userMetrics = [
     {
       id: 'streak',
-      label: 'Streak Konsumsi TTD',
-      value: `${userProfile.streakCount} Pekan`,
-      subtitle: 'Konsumsi rutin mingguan',
+      label: 'Streak Rutin Pil KB',
+      value: `${userProfile.streakCount} Hari`,
+      subtitle: 'Konsumsi rutin jam yang sama',
       icon: Flame,
-      iconBgColor: 'bg-orange-100',
+      iconBgColor: 'bg-orange-50 border border-orange-100',
       iconColor: 'text-orange-600',
-      badgeText: userProfile.streakCount > 0 ? 'Konsisten' : 'Mulai Sekarang',
-      badgeColor:
-        userProfile.streakCount > 0
-          ? 'bg-orange-100 text-orange-700'
-          : 'bg-slate-100 text-slate-600',
+      badgeText: userProfile.streakCount >= 7 ? 'Optimal' : 'Tahap Adaptasi',
+      badgeColor: 'bg-teal-50 text-teal-800 border border-teal-200',
     },
     {
-      id: 'hb',
-      label: 'Kadar Hemoglobin (Hb)',
-      value: userProfile.hbLevel ? `${userProfile.hbLevel} g/dL` : 'Belum Diisi',
-      subtitle: userProfile.hbLevel ? 'Standar normal ≥ 12.0 g/dL' : 'Isi hasil tes lab di profil',
-      icon: Activity,
-      iconBgColor: 'bg-emerald-100',
-      iconColor: 'text-emerald-600',
-      badgeText: userProfile.hbLevel
-        ? userProfile.hbLevel >= 12
-          ? 'Normal'
-          : 'Anemia'
-        : 'Belum Tes',
-      badgeColor: userProfile.hbLevel
-        ? userProfile.hbLevel >= 12
-          ? 'bg-emerald-100 text-emerald-700'
-          : 'bg-rose-100 text-rose-700'
-        : 'bg-slate-100 text-slate-600',
+      id: 'protection',
+      label: 'Efektivitas Kontrasepsi',
+      value: userProfile.streakCount >= 7 ? '99% Optimal' : 'Membangun Proteksi',
+      subtitle: 'Kadar hormon stabil dalam darah',
+      icon: ShieldCheck,
+      iconBgColor: 'bg-teal-50 border border-teal-100',
+      iconColor: 'text-teal-700',
+      badgeText: 'Terlindungi',
+      badgeColor: 'bg-teal-50 text-teal-800 border border-teal-200',
     },
     {
-      id: 'risk',
-      label: 'Status Risiko Anemia',
-      value: userProfile.riskLevel || 'Rendah',
-      subtitle: 'Berdasarkan evaluasi UKS',
-      icon: HeartPulse,
-      iconBgColor: 'bg-rose-100',
-      iconColor: 'text-rose-600',
-      badgeText: userProfile.riskLevel === 'Tinggi' ? 'Perhatian' : 'Aman',
-      badgeColor:
-        userProfile.riskLevel === 'Tinggi'
-          ? 'bg-rose-100 text-rose-700'
-          : 'bg-emerald-100 text-emerald-700',
+      id: 'sadari',
+      label: 'Pemeriksaan SADARI',
+      value: 'Rutin Bulanan',
+      subtitle: 'Skrining payudara mandiri hari 7-10',
+      icon: Ribbon,
+      iconBgColor: 'bg-slate-100 border border-slate-200',
+      iconColor: 'text-slate-700',
+      badgeText: 'Disiplin',
+      badgeColor: 'bg-slate-100 text-slate-800 border border-slate-200',
     },
   ];
 
   const contactItems = [
     {
       icon: Mail,
-      label: 'Email Akun',
-      value: userProfile.email || '-',
+      label: 'Alamat Email',
+      value: userProfile.email,
     },
     {
       icon: Phone,
-      label: 'Nomor Telepon',
-      value: userProfile.phone || 'Belum diisi',
+      label: 'Nomor WhatsApp / HP',
+      value: userProfile.phone || 'Belum ditambahkan',
     },
     {
-      icon: School,
-      label: 'Sekolah / Instansi',
-      value: userProfile.schoolOrOrg || 'Belum diatur',
-      fallbackValue: 'Belum diatur',
+      icon: Building2,
+      label: 'Faskes / Bidan Pendamping',
+      value: userProfile.schoolOrOrg || 'Puskesmas / Praktik Mandiri Bidan',
     },
   ];
 
   return (
-    <div className='flex flex-col gap-6 w-full max-w-5xl mx-auto'>
-      {/* Toast Notification */}
+    <div className='flex flex-col gap-6 w-full animate-fade-in pb-10'>
+      {/* Toast Feedback */}
       {toastMessage && (
-        <div className='fixed top-16 left-1/2 -translate-x-1/2 z-50 bg-slate-900 text-white text-xs font-bold px-4 py-2.5 rounded-full shadow-xl flex items-center gap-2 animate-fade-in'>
-          <Check size={14} className='text-emerald-400' />
+        <div className='fixed top-16 left-1/2 -translate-x-1/2 z-50 bg-slate-900 text-white text-xs font-semibold px-4 py-2.5 rounded-full shadow-lg flex items-center gap-2 animate-fade-in'>
+          <Check size={14} className='text-teal-400' />
           <span>{toastMessage}</span>
         </div>
       )}
 
       {/* Screen Title */}
       <div>
-        <h1 className='text-xl sm:text-2xl font-black text-slate-800 tracking-tight'>
-          Profil Siswi & Pengaturan
-        </h1>
+        <h2 className='text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight'>
+          Profil Akseptor
+        </h2>
         <p className='text-xs sm:text-sm text-slate-500 mt-0.5'>
-          Kelola identitas diri, pantau metrik kesehatan TTD, dan preferensi akun.
+          Informasi akun pengguna, kepatuhan kontrasepsi, dan preferensi layanan Pilluna
         </p>
       </div>
 
-      {/* 1. Profile Header Card */}
+      {/* Header Profile Card */}
       <ProfileHeaderCard
         name={userProfile.name}
         avatarUrl={userProfile.avatarUrl}
-        roleBadgeText='SISWI TERDAFTAR'
+        roleBadgeText='Akseptor Pil KB'
         roleBadgeColor='user'
-        subtitle={`${userProfile.schoolOrOrg || 'Program Pencegahan Anemia'} • FEMORY 🌸`}
-        verified={true}
+        subtitle='Akseptor Program Kontrasepsi Mandiri & Deteksi Dini SADARI'
         onEditClick={handleOpenEdit}
         onSaveAvatar={handleSaveAvatar}
       />
 
-      {/* 2. Health & Habit Metrics Grid */}
+      {/* 3-Column Metrics Grid */}
       <ProfileMetricsGrid
-        title='Metrik Kesehatan & Rutinitas TTD'
-        subtitle='Catatan kepatuhan dan kondisi hemoglobin terkini'
+        title='Status Kepatuhan Kontrasepsi'
+        subtitle='Berdasarkan konsumsi teratur dan pemeriksaan berkala'
         metrics={userMetrics}
         columns={3}
       />
 
-      {/* 3. Contact & Institution Card */}
+      {/* Contact & Affiliation Card */}
       <ProfileContactCard
-        title='Informasi Kontak & Pendidikan'
-        subtitle='Data akun yang tercatat pada sistem pembinaan UKS/Puskesmas'
+        title='Data Kontak & Fasilitas Kesehatan'
+        subtitle='Informasi akun dan klinik pendamping yang terdaftar'
         items={contactItems}
       />
 
-      {/* 4. Security & Session Section */}
+      {/* Security & Account Management */}
       <ProfileSecuritySection
         onLogoutClick={handleConfirmLogout}
-        onChangePasswordClick={() =>
-          showToast('Fitur ubah kata sandi dapat dilakukan melalui admin UKS.')
-        }
         onDeleteAccountClick={handleOpenDeleteModal}
+        lastLoginText='Hari ini via Web App Pilluna'
       />
 
-      {/* 5. Edit Profile Dynamic Modal */}
+      {/* Edit Profile Modal */}
       <ProfileEditModal
         isOpen={isEditProfileModalOpen}
         onClose={() => setIsEditProfileModalOpen(false)}
         onSave={handleSaveProfile}
-        title='Ubah Data Siswi'
-        subtitle='Perbarui data profil dan catatan kesehatan Anda'
+        title='Ubah Informasi Profil'
+        subtitle='Perbarui data identitas akseptor dan fasilitas kesehatan'
         isSaving={isSaving}
       >
         <div>
-          <label className='block text-xs font-bold text-slate-700 mb-1.5'>Nama Lengkap</label>
+          <label className='text-xs font-bold text-slate-700 block mb-1'>Nama Lengkap</label>
           <input
             type='text'
             value={editName}
             onChange={e => setEditName(e.target.value)}
+            className='w-full bg-slate-50 border border-slate-200 focus:border-teal-600 focus:ring-1 focus:ring-teal-600 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-slate-800 outline-none'
             required
-            className='w-full px-3.5 py-2.5 rounded-xl border border-rose-200 bg-slate-50 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:bg-white'
           />
         </div>
 
         <div>
-          <label className='block text-xs font-bold text-slate-700 mb-1.5'>
-            Sekolah / Instansi
+          <label className='text-xs font-bold text-slate-700 block mb-1'>Nomor WhatsApp / HP</label>
+          <input
+            type='tel'
+            value={editPhone}
+            onChange={e => setEditPhone(e.target.value)}
+            placeholder='Contoh: 08123456789'
+            className='w-full bg-slate-50 border border-slate-200 focus:border-teal-600 focus:ring-1 focus:ring-teal-600 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-slate-800 outline-none'
+          />
+        </div>
+
+        <div>
+          <label className='text-xs font-bold text-slate-700 block mb-1'>
+            Fasilitas Kesehatan / Bidan Pendamping
           </label>
           <input
             type='text'
-            value={editSchool}
-            onChange={e => setEditSchool(e.target.value)}
-            required
-            className='w-full px-3.5 py-2.5 rounded-xl border border-rose-200 bg-slate-50 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:bg-white'
+            value={editFaskes}
+            onChange={e => setEditFaskes(e.target.value)}
+            placeholder='Contoh: Puskesmas Budi Luhur / PMB Bidan Siti'
+            className='w-full bg-slate-50 border border-slate-200 focus:border-teal-600 focus:ring-1 focus:ring-teal-600 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-slate-800 outline-none'
           />
-        </div>
-
-        <div className='grid grid-cols-1 sm:grid-cols-2 gap-3'>
-          <div>
-            <label className='block text-xs font-bold text-slate-700 mb-1.5'>Nomor Telepon</label>
-            <input
-              type='tel'
-              value={editPhone}
-              onChange={e => setEditPhone(e.target.value)}
-              className='w-full px-3.5 py-2.5 rounded-xl border border-rose-200 bg-slate-50 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:bg-white'
-            />
-          </div>
-
-          <div>
-            <label className='block text-xs font-bold text-slate-700 mb-1.5'>
-              Kadar Hb Terakhir (g/dL)
-            </label>
-            <input
-              type='number'
-              step='0.1'
-              value={editHb}
-              onChange={e => setEditHb(e.target.value)}
-              placeholder='Contoh: 12.4'
-              className='w-full px-3.5 py-2.5 rounded-xl border border-rose-200 bg-slate-50 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:bg-white'
-            />
-          </div>
         </div>
       </ProfileEditModal>
 
-      {/* 6. Delete Account Confirmation Modal */}
+      {/* Delete Account Confirmation Modal */}
       {isDeleteModalOpen && (
-        <div className='fixed inset-0 z-[70] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fade-in'>
-          <div
-            className='fixed inset-0 bg-transparent'
-            onClick={() => {
-              if (!isDeleting) setIsDeleteModalOpen(false);
-            }}
-            aria-hidden='true'
-          />
-
-          <div
-            className='relative z-10 bg-white rounded-3xl shadow-2xl border border-rose-200 max-w-md w-full max-h-[90dvh] flex flex-col overflow-hidden animate-scale-up'
-            onClick={e => e.stopPropagation()}
-            role='dialog'
-            aria-modal='true'
-          >
-            {/* Header */}
-            <div className='flex items-center justify-between px-5 py-4 border-b border-rose-100 bg-rose-50/50'>
-              <div className='flex items-center gap-2.5 min-w-0 pr-2'>
-                <div className='w-8 h-8 rounded-full bg-rose-100 text-rose-700 flex items-center justify-center shrink-0'>
-                  <AlertTriangle size={18} />
-                </div>
-                <div>
-                  <h3 className='text-sm sm:text-base font-black text-rose-900 leading-tight'>
-                    Hapus Akun Pengguna
-                  </h3>
-                  <p className='text-[11px] text-rose-600/80'>
-                    Tindakan permanen & tak dapat dibatalkan
-                  </p>
-                </div>
-              </div>
-              <button
-                type='button'
-                onClick={() => setIsDeleteModalOpen(false)}
-                disabled={isDeleting}
-                aria-label='Tutup Modal'
-                className='w-8 h-8 rounded-full bg-rose-100/60 hover:bg-rose-200/60 text-rose-700 flex items-center justify-center transition-colors cursor-pointer shrink-0 disabled:opacity-50'
-              >
-                <X size={16} />
-              </button>
+        <div className='fixed inset-0 z-[80] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fade-in'>
+          <div className='relative z-10 bg-white rounded-3xl shadow-2xl border border-red-200 max-w-md w-full p-6 text-center animate-scale-up'>
+            <div className='w-14 h-14 rounded-2xl bg-red-100 text-red-600 flex items-center justify-center mx-auto mb-4 border border-red-200'>
+              <AlertTriangle size={28} />
             </div>
 
-            {/* Modal Body */}
-            <div className='p-5 sm:p-6 space-y-4 overflow-y-auto flex-1 text-slate-700'>
-              <div className='p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-xs text-rose-800 space-y-2'>
-                <p className='font-bold flex items-center gap-1.5'>
-                  <AlertTriangle size={14} className='text-rose-600 shrink-0' />
-                  Data yang akan dihapus permanen:
-                </p>
-                <ul className='list-disc pl-5 space-y-1 text-[11px] text-rose-700'>
-                  <li>Data identitas & profil siswi FEMORY</li>
-                  <li>Seluruh riwayat konsumsi Tablet Tambah Darah (TTD)</li>
-                  <li>Catatan streak & level kepatuhan konsumsi</li>
-                  <li>Jadwal pengingat notifikasi TTD</li>
-                  <li>Koneksi & aktivitas sesama teman (Buddy System)</li>
-                </ul>
-              </div>
+            <h3 className='text-lg font-bold text-slate-900 mb-2'>Konfirmasi Hapus Akun</h3>
+            <p className='text-xs text-slate-600 leading-relaxed mb-4'>
+              Tindakan ini akan menghapus akun akseptor Anda beserta seluruh riwayat kepatuhan 28 butir dan jadwal pengingat secara permanen.
+            </p>
 
+            <div className='mb-4 text-left'>
+              <label className='text-[11px] font-bold text-slate-700 block mb-1'>
+                Ketik kata <strong className='text-red-600'>HAPUS</strong> untuk melanjutkan:
+              </label>
+              <input
+                type='text'
+                value={deleteConfirmationText}
+                onChange={e => setDeleteConfirmationText(e.target.value)}
+                placeholder='HAPUS'
+                className='w-full bg-slate-50 border border-slate-300 focus:border-red-600 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 outline-none text-center tracking-wider'
+              />
               {deleteError && (
-                <div className='p-3 rounded-xl bg-rose-100 text-rose-900 text-xs font-semibold'>
-                  {deleteError}
-                </div>
+                <p className='text-[11px] font-semibold text-red-600 mt-1.5'>{deleteError}</p>
               )}
-
-              <div className='space-y-2'>
-                <label className='block text-xs font-bold text-slate-700'>
-                  Ketik kata{' '}
-                  <span className='text-rose-600 font-extrabold tracking-wider'>HAPUS</span> di
-                  bawah ini untuk konfirmasi:
-                </label>
-                <input
-                  type='text'
-                  value={deleteConfirmationText}
-                  onChange={e => {
-                    setDeleteConfirmationText(e.target.value);
-                    if (deleteError) setDeleteError(null);
-                  }}
-                  placeholder='Ketik HAPUS'
-                  disabled={isDeleting}
-                  className='w-full px-3.5 py-2.5 rounded-xl border border-rose-200 bg-slate-50 text-xs font-bold text-rose-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:bg-white'
-                />
-              </div>
             </div>
 
-            {/* Footer Buttons */}
-            <div
-              className='px-5 py-3.5 bg-slate-50/90 border-t border-slate-100 flex items-center justify-end gap-2.5 shrink-0'
-              style={{
-                paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom, 0px))',
-              }}
-            >
+            <div className='flex items-center gap-2 pt-2 border-t border-slate-100'>
               <button
                 type='button'
                 onClick={() => setIsDeleteModalOpen(false)}
                 disabled={isDeleting}
-                className='flex-1 sm:flex-initial px-4 py-2.5 text-xs font-bold text-slate-600 hover:text-slate-800 hover:bg-slate-200/60 rounded-xl transition-colors cursor-pointer min-h-[40px] disabled:opacity-50'
+                className='flex-1 px-4 py-2.5 text-xs font-bold text-slate-600 hover:bg-slate-100 rounded-xl transition-colors cursor-pointer'
               >
                 Batal
               </button>
@@ -489,19 +385,10 @@ export default function ProfileView() {
                 type='button'
                 onClick={handleConfirmDeleteAccount}
                 disabled={isDeleting || deleteConfirmationText.trim().toUpperCase() !== 'HAPUS'}
-                className='flex-1 sm:flex-initial px-5 py-2.5 text-xs font-bold rounded-xl bg-rose-600 text-white hover:bg-rose-700 active:scale-95 transition-all shadow-md shadow-rose-200 cursor-pointer min-h-[40px] flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100'
+                className='flex-1 px-4 py-2.5 text-xs font-bold bg-red-600 hover:bg-red-700 disabled:opacity-40 text-white rounded-xl transition-colors cursor-pointer flex items-center justify-center gap-1.5'
               >
-                {isDeleting ? (
-                  <>
-                    <Loader2 size={14} className='animate-spin' />
-                    <span>Menghapus...</span>
-                  </>
-                ) : (
-                  <>
-                    <Trash2 size={14} />
-                    <span>Hapus Akun Permanen</span>
-                  </>
-                )}
+                {isDeleting ? <Loader2 size={14} className='animate-spin' /> : <Trash2 size={14} />}
+                <span>{isDeleting ? 'Menghapus...' : 'Ya, Hapus'}</span>
               </button>
             </div>
           </div>

@@ -13,12 +13,12 @@ export default function AdminLayout() {
 
   return (
     <AuthGuard requiredRole='admin'>
-      <div className="flex flex-col min-h-screen bg-[#fff5f7]">
+      <div className="flex flex-col min-h-screen bg-[#FFF1F5]">
         {/* Mobile Top App Bar (< md) */}
         <div className="block md:hidden">
           <MobileTopBar
-            brandTitle="FEMORY 🌸"
-            brandSubtitle="Pusat Kontrol Admin"
+            brandTitle="Pilluna 🌸"
+            brandSubtitle="Bidan & Faskes KB"
             brandHref="/admin/dashboard"
             badge={adminBadge}
           />

@@ -47,11 +47,14 @@ export async function recordConsumptionAction(
   scheduledDate?: string,
 ) {
   const normalizedStatus = status === 'taken' ? 'recorded' : status;
+  const finalDate = scheduledDate || new Date().toISOString().split('T')[0];
   const response = await apiClient.post('/consumption/record', {
     scheduleId,
     status: normalizedStatus,
     notes,
-    date: scheduledDate,
+    date: finalDate,
+    targetDate: finalDate,
+    scheduledDate: finalDate,
   });
   return response.data;
 }
@@ -102,8 +105,11 @@ export async function recordConsumptionForDateAction(
   notes?: string,
 ) {
   try {
+    const finalDate = targetDate || new Date().toISOString().split('T')[0];
     const response = await apiClient.post('/consumption/record', {
-      date: targetDate,
+      date: finalDate,
+      targetDate: finalDate,
+      scheduledDate: finalDate,
       status,
       notes,
     });

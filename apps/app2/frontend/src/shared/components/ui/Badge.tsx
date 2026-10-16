@@ -5,7 +5,7 @@ import { clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 
 export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
-  variant?: 'recorded' | 'missed' | 'pending' | 'streak' | 'primary' | 'neutral'
+  variant?: 'recorded' | 'missed' | 'pending' | 'streak' | 'primary' | 'neutral' | 'protected' | 'today' | 'placebo'
   size?: 'sm' | 'md'
   dot?: boolean
   icon?: React.ReactNode
@@ -27,22 +27,28 @@ export function Badge({
     md: 'text-xs px-3 py-1 gap-1.5',
   }
 
-  const variantStyles = {
-    recorded: 'bg-[#ecfdf5] text-[#059669] border border-[#a7f3d0]',
-    missed: 'bg-[#fff1f2] text-[#e11d48] border border-[#fecdd3]',
-    pending: 'bg-[#fef3c7] text-[#d97706] border border-[#fde68a]',
-    streak: 'bg-gradient-to-r from-amber-500 to-rose-500 text-white shadow-sm shadow-orange-500/20',
-    primary: 'bg-[#ffe4e6] text-[#be123c] border border-[#fecdd3]',
-    neutral: 'bg-[#f1f5f9] text-[#475569] border border-[#e2e8f0]',
+  const variantStyles: Record<string, string> = {
+    recorded: 'bg-[#F0FDFA] text-[#0F766E] border border-[#CCFBF1]',
+    protected: 'bg-[#F0FDFA] text-[#0F766E] border border-[#CCFBF1]',
+    missed: 'bg-[#FEF2F2] text-[#B91C1C] border border-[#FECACA]',
+    pending: 'bg-[#FFF7ED] text-[#C2410C] border border-[#FED7AA]',
+    today: 'bg-[#FFF7ED] text-[#C2410C] border border-[#FED7AA]',
+    placebo: 'bg-[#F8FAFC] text-[#64748B] border border-[#E2E8F0]',
+    streak: 'bg-gradient-to-r from-[#0D9488] to-[#0F766E] text-white shadow-xs shadow-teal-700/20',
+    primary: 'bg-[#F0FDFA] text-[#0D9488] border border-[#CCFBF1]',
+    neutral: 'bg-[#F1F5F9] text-[#334155] border border-[#E2E8F0]',
   }
 
-  const dotColors = {
-    recorded: 'bg-[#10b981]',
-    missed: 'bg-[#f43f5e]',
-    pending: 'bg-[#f59e0b]',
+  const dotColors: Record<string, string> = {
+    recorded: 'bg-[#0D9488]',
+    protected: 'bg-[#0D9488]',
+    missed: 'bg-[#DC2626]',
+    pending: 'bg-[#F97316]',
+    today: 'bg-[#F97316]',
+    placebo: 'bg-[#94A3B8]',
     streak: 'bg-white',
-    primary: 'bg-[#e11d48]',
-    neutral: 'bg-[#94a3b8]',
+    primary: 'bg-[#0D9488]',
+    neutral: 'bg-[#64748B]',
   }
 
   return (

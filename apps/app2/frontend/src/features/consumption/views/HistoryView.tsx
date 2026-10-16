@@ -2,7 +2,6 @@
 
 import React, { useState, useMemo } from 'react';
 import { CalendarCheck, Flame, Activity } from 'lucide-react';
-import { StreakProgressCard } from '@/src/shared/components/domain/StreakProgressCard';
 import { useAuth } from '@/src/features/auth/context/AuthContext';
 import { useMonitoringData } from '../hooks/useMonitoringData';
 import {
@@ -12,6 +11,7 @@ import {
   ActiveDateActionCard,
   ConsumptionLogList,
   MonthlyEvaluationView,
+  FullBlisterPackCalendar,
 } from '../components';
 import { getTodayDateString, formatShortDate } from '../utils/dateHelpers';
 
@@ -52,7 +52,7 @@ export default function HistoryView() {
 
   // Filtered log items based on selected preset and status filter
   const filteredLogs = useMemo(() => {
-    return allLogs.filter(log => {
+    return allLogs.filter((log) => {
       // 1. Date filter preset
       if (dateFilterPreset === 'TODAY' && log.scheduledDate !== todayStr) return false;
       if (dateFilterPreset === 'CUSTOM' && log.scheduledDate !== selectedDate) return false;
@@ -88,55 +88,55 @@ export default function HistoryView() {
   if (loading && !dashboardData) {
     return (
       <div className='flex items-center justify-center min-h-[50vh] w-full'>
-        <div className='animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#e11d48]' />
+        <div className='animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-teal-600' />
       </div>
     );
   }
 
   const streakCount = dashboardData?.user.streakCount || 0;
-  const streakUnit = dashboardData?.user.streakUnit || 'Minggu';
-  const consecutiveDates = dashboardData?.user.consecutiveDates || [];
+  const streakUnit = dashboardData?.user.streakUnit || 'Hari';
 
   return (
     <div className='flex flex-col gap-5 sm:gap-6 w-full pb-8'>
       {/* 1. Header & Title Banner */}
       <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-3'>
         <div>
-          <h2 className='text-xl sm:text-2xl font-extrabold text-[#1e293b] tracking-tight'>
-            Monitoring Kepatuhan TTD 🌸
+          <h2 className='text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight'>
+            Kalender Blister & Monitoring Kepatuhan
           </h2>
-          <p className='text-xs sm:text-sm text-[#64748b] mt-0.5'>
-            Riwayat konsumsi TTD dan evaluasi kepatuhan
+          <p className='text-xs sm:text-sm text-slate-500 mt-0.5'>
+            Pantau riwayat 28 butir pil KB dan evaluasi efektivitas siklus kontrasepsi
           </p>
         </div>
 
         {/* Live Dynamic Streak Counter Badge */}
-        <div className='inline-flex items-center gap-2 bg-white px-3.5 py-1.5 rounded-full border border-[#fce7f3] shadow-2xs self-start sm:self-auto'>
-          <Flame size={18} className='text-amber-500 fill-amber-500' />
-          <span className='text-xs font-bold text-[#1e293b]'>
-            {streakCount} {streakUnit} Streak
+        <div className='inline-flex items-center gap-2 bg-white px-3.5 py-1.5 rounded-full border border-slate-200 shadow-2xs self-start sm:self-auto'>
+          <Flame size={18} className='text-orange-500 fill-orange-500' />
+          <span className='text-xs font-bold text-slate-800'>
+            {streakCount} {streakUnit} Disiplin
           </span>
         </div>
       </div>
 
-      {/* 2. Dynamic Streak Progress Card (Live Milestone Tracker) */}
-      <StreakProgressCard
-        streakCount={streakCount}
-        streakUnit={streakUnit}
-        consecutiveDates={consecutiveDates}
-        todayStatus={dashboardData?.todayStatus || 'pending'}
-        showDetailsLink={false}
+      {/* 2. Visual Kemasan Fisik Blister Pack 28 Butir (4 baris x 7 butir) */}
+      <FullBlisterPackCalendar
+        activityMap={activityMap}
+        selectedDate={selectedDate}
+        onSelectDate={setSelectedDate}
+        todayStr={todayStr}
+        todayStatus={dashboardData?.todayStatus}
+        currentStreak={streakCount}
       />
 
       {/* 3. View Mode Switcher: Timeline vs Evaluasi Bulanan */}
-      <div className='flex items-center p-1 bg-white rounded-2xl border border-[#fce7f3] shadow-xs max-w-sm'>
+      <div className='flex items-center p-1 bg-white rounded-2xl border border-slate-200 shadow-xs max-w-sm'>
         <button
           type='button'
           onClick={() => setViewMode('timeline')}
           className={`flex-1 py-2 text-xs sm:text-sm font-bold rounded-xl transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
             viewMode === 'timeline'
-              ? 'bg-[#e11d48] text-white shadow-sm shadow-rose-500/20'
-              : 'text-[#64748b] hover:text-[#e11d48]'
+              ? 'bg-teal-600 text-white shadow-sm shadow-teal-600/20'
+              : 'text-slate-600 hover:text-teal-700'
           }`}
         >
           <CalendarCheck size={14} />
@@ -147,8 +147,8 @@ export default function HistoryView() {
           onClick={() => setViewMode('evaluation')}
           className={`flex-1 py-2 text-xs sm:text-sm font-bold rounded-xl transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
             viewMode === 'evaluation'
-              ? 'bg-[#e11d48] text-white shadow-sm shadow-rose-500/20'
-              : 'text-[#64748b] hover:text-[#e11d48]'
+              ? 'bg-teal-600 text-white shadow-sm shadow-teal-600/20'
+              : 'text-slate-600 hover:text-teal-700'
           }`}
         >
           <Activity size={14} />
