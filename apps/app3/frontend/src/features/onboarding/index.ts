@@ -1,2 +1,3 @@
-export * from './components/OnboardingView'
-export * from './constants/slides'
+export * from './components/OnboardingIllustration';
+export * from './components/OnboardingScreenView';
+export * from './views/OnboardingView';

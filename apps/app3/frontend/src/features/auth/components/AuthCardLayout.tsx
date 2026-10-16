@@ -11,13 +11,13 @@ export function AuthCardLayout({ children }: AuthCardLayoutProps) {
     <div className='min-h-screen w-full flex bg-white relative overflow-hidden'>
       {/* Top Left Home Navigation */}
       <div className='absolute top-4 sm:top-6 left-4 sm:left-8 z-20 flex items-center gap-2'>
-        <Link
-          to='/'
+        <a
+          href={import.meta.env.VITE_PORTAL_URL || 'http://localhost:5170'}
           className='inline-flex items-center gap-1.5 text-xs font-semibold text-[#64748b] hover:text-[#1e293b] transition-all bg-slate-50 hover:bg-white px-3.5 py-1.5 rounded-full border border-slate-200 shadow-2xs hover:border-slate-300'
         >
           <ArrowLeft size={14} />
           <span>Beranda</span>
-        </Link>
+        </a>
       </div>
 
       {/* SISI KIRI: Form Area */}

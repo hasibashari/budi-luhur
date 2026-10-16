@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { SplashScreenView } from '../../splash';
+import { OnboardingScreenView } from '../../onboarding';
 
 export interface GuestGuardProps {
   children: React.ReactNode;
@@ -22,7 +22,7 @@ export function GuestGuard({ children }: GuestGuardProps) {
   }, [isAuthenticated, isInitializing, user, navigate]);
 
   if (isInitializing) {
-    return <SplashScreenView statusText='Memeriksa sesi...' />;
+    return <OnboardingScreenView statusText='Memeriksa sesi...' />;
   }
 
   if (isAuthenticated) {

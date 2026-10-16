@@ -33,7 +33,7 @@ export function OnboardingView() {
 
   const handleFinish = useCallback(() => {
     completeOnboarding();
-    navigate('/auth/login');
+    navigate('/splash', { replace: true });
   }, [completeOnboarding, navigate]);
 
   const handleNext = useCallback(() => {

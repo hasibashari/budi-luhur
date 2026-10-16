@@ -2,7 +2,7 @@
   "name": "FEMORY - Sahabat Sehat Cegah Anemia",
   "short_name": "FEMORY",
   "description": "Aplikasi Pemantauan Tablet Tambah Darah (TTD) Remaja Putri",
-  "start_url": "/auth/login",
+  "start_url": "/splash",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#fff5f7",

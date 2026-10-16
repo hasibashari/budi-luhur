@@ -4,6 +4,7 @@ export interface AppInfo {
   tagline: string;
   description: string;
   url: string;
+  onboardingUrl: string;
   loginUrl: string;
   registerUrl: string;
   port: number;
@@ -37,6 +38,7 @@ export const APPS: AppInfo[] = [
     tagline: 'Instansi & Kelompok Studi 1',
     description: 'Aplikasi PWA mandiri dengan database independen fe_tablet_app1. Dirancang untuk pemantauan kesehatan siswi kelas VII & VIII.',
     url: app1BaseUrl,
+    onboardingUrl: `${app1BaseUrl}/onboarding`,
     loginUrl: `${app1BaseUrl}/auth/login`,
     registerUrl: `${app1BaseUrl}/auth/register`,
     port: 5173,
@@ -70,6 +72,7 @@ export const APPS: AppInfo[] = [
     tagline: 'Instansi & Kelompok Studi 2',
     description: 'Aplikasi PWA mandiri dengan database independen fe_tablet_app2. Dikhususkan untuk monitoring kesehatan siswi kelas IX.',
     url: app2BaseUrl,
+    onboardingUrl: `${app2BaseUrl}/onboarding`,
     loginUrl: `${app2BaseUrl}/auth/login`,
     registerUrl: `${app2BaseUrl}/auth/register`,
     port: 5174,
@@ -103,6 +106,7 @@ export const APPS: AppInfo[] = [
     tagline: 'Instansi & Kelompok Studi 3',
     description: 'Aplikasi PWA mandiri dengan database independen fe_tablet_app3. Digunakan untuk evaluasi berkala dan fasilitas UKS Sekolah Budi Luhur.',
     url: app3BaseUrl,
+    onboardingUrl: `${app3BaseUrl}/onboarding`,
     loginUrl: `${app3BaseUrl}/auth/login`,
     registerUrl: `${app3BaseUrl}/auth/register`,
     port: 5175,

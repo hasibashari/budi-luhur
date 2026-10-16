@@ -3,7 +3,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthGuard } from '@/src/features/auth/components/AuthGuard';
 import { GuestGuard } from '@/src/features/auth/components/GuestGuard';
 import { LoginView, RegisterView } from '@/src/features/auth';
-import { SplashScreenView } from '@/src/features/splash';
+import { SplashView } from '@/src/features/splash';
 import { OnboardingView } from '@/src/features/onboarding';
 
 // User Portal Views
@@ -34,9 +34,23 @@ export function AppRoutes() {
   return (
     <Routes>
       {/* Public / Entry Routes */}
-      <Route path='/' element={<Navigate to='/auth/login' replace />} />
-      <Route path='/splash' element={<SplashScreenView />} />
-      <Route path='/onboarding' element={<OnboardingView />} />
+      <Route path='/' element={<Navigate to='/onboarding' replace />} />
+      <Route
+        path='/onboarding'
+        element={
+          <GuestGuard>
+            <OnboardingView />
+          </GuestGuard>
+        }
+      />
+      <Route
+        path='/splash'
+        element={
+          <GuestGuard>
+            <SplashView />
+          </GuestGuard>
+        }
+      />
 
       {/* Guest Only Auth Routes */}
       <Route
