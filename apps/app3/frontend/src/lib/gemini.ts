@@ -25,7 +25,7 @@ export async function askGeminiConsultationAction(
     return {
       success: false,
       answer:
-        'Halo siswi hebat! Saat ini layanan asisten kesehatan sedang sibuk. Pastikan kamu tetap mengonsumsi Tablet Tambah Darah (TTD) sesuai jadwal dan istirahat yang cukup ya! 🌸',
+        'Halo Calon Pengantin! Saat ini layanan asisten kesehatan sedang sibuk. Pastikan Anda tetap menjaga jadwal imunisasi TT dan konsultasi pranikah di Puskesmas sesuai jadwal ya!',
     };
   }
 }
@@ -44,11 +44,11 @@ export async function generateAiArticleDraftAction(
   error?: string;
 }> {
   try {
-    const prompt = `Buatkan artikel edukasi kesehatan tentang ${topic} (Kategori: ${category}) untuk aplikasi edukasi gizi dan anemia remaja FEMORY. Berikan format JSON dengan properti title, summary, content (format Markdown), dan readTime.`;
+    const prompt = `Buatkan artikel edukasi kesehatan tentang ${topic} (Kategori: ${category}) untuk aplikasi kesehatan pranikah dan imunisasi TT calon pengantin PRELUNA (Kemenkes RI). Berikan format JSON dengan properti title, summary, content (format Markdown), dan readTime.`;
     const res = await apiClient.post<{ answer: string }>('/consultation/ask', { prompt });
     let title = topic;
-    let summary = `Materi edukasi mengenai ${topic} untuk pencegahan anemia remaja putri.`;
-    let content = res.data?.answer || `## ${topic}\n\nEdukasi penting mengenai ${topic} bagi siswi dan remaja putri.`;
+    let summary = `Materi edukasi mengenai ${topic} untuk kesehatan pranikah dan persiapan kehamilan sehat.`;
+    let content = res.data?.answer || `## ${topic}\n\nEdukasi penting mengenai ${topic} bagi calon pengantin.`;
     let readTime = '3 min read';
 
     try {
@@ -71,8 +71,8 @@ export async function generateAiArticleDraftAction(
       success: true,
       data: {
         title: topic,
-        summary: `Materi penting mengenai ${topic} bagi pencegahan anemia remaja.`,
-        content: `## Pentingnya ${topic}\n\nTablet Tambah Darah (TTD) sangat esensial bagi remaja putri untuk menjaga konsentrasi belajar dan mencegah anemia defisiensi besi.\n\n> Tips UKS: Konsumsi TTD 1 tablet seminggu sekali secara teratur setelah makan.`,
+        summary: `Materi penting mengenai ${topic} bagi calon pengantin.`,
+        content: `## Pentingnya ${topic}\n\nImunisasi Tetanus Toxoid (TT) dan pemeriksaan kesehatan pranikah sangat penting bagi calon pengantin untuk mempersiapkan kehamilan sehat dan bebas stunting.\n\n> Rekomendasi Faskes: Selesaikan imunisasi TT minimal 1 bulan sebelum hari H pernikahan.`,
         readTime: '3 min read',
       },
     };
@@ -88,25 +88,25 @@ export async function generateAiUserNudgeAction(params: {
   adherenceRate?: number;
   tone?: 'friendly' | 'urgent' | 'motivational';
 }): Promise<{ success: boolean; message: string; error?: string }> {
-  const name = params.userName || params.patientName || 'Siswi';
-  const med = params.medicationName || 'Tablet Tambah Darah (TTD)';
+  const name = params.userName || params.patientName || 'Calon Pengantin';
+  const med = params.medicationName || 'Imunisasi TT / Suplementasi Pranikah';
   const tone = params.tone || 'friendly';
 
   if (tone === 'urgent') {
     return {
       success: true,
-      message: `PENGINGAT PENTING: Halo ${name}, catatan minum ${med} kamu belum terisi minggu ini. Yuk segera minum suplemen TTD kamu dan catat di aplikasi FEMORY ya! Semangat selalu! 🌸`,
+      message: `PENGINGAT PENTING: Halo ${name}, jadwal ${med} Anda perlu segera dikonfirmasi menjelang hari pernikahan. Silakan kunjungi Puskesmas rujukan Anda tepat waktu.`,
     };
   }
   if (tone === 'friendly') {
     return {
       success: true,
-      message: `Halo ${name}! Cegah anemia biar tetap fit dan semangat belajar yuk! Jangan lupa minum ${med} hari ini ya! Tetap ceria selalu 🌸✨`,
+      message: `Halo ${name}! Persiapkan kesehatan optimal menjelang hari pernikahan bahagia Anda. Jangan lupa jadwalkan kunjungan faskes untuk ${med} ya!`,
     };
   }
   return {
     success: true,
-    message: `Halo ${name}, ini pengingat dari UKS untuk minum ${med} sesuai jadwal kamu. Jangan lupa diminum setelah makan dengan air putih ya! 🌸`,
+    message: `Halo ${name}, ini pengingat resmi dari fasilitas kesehatan untuk jadwal ${med} Anda. Tetap jaga kesehatan dan konsultasikan dengan petugas kami bila ada kendala.`,
   };
 }
 

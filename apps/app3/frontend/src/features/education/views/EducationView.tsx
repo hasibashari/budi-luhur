@@ -1,25 +1,17 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, BookOpen, Sparkles, Clock, ArrowRight, X } from 'lucide-react';
+import { Search, Sparkles, Clock, ArrowRight, X, BookOpen, ShieldCheck } from 'lucide-react';
 import { Card } from '@/src/shared/components/ui/Card';
 import { Chip } from '@/src/shared/components/ui/Chip';
 import { getArticlesAction } from '../api/educationRepository';
 import { Article } from '../types';
-
-const CATEGORIES = [
-  'Semua',
-  'Anemia & TTD',
-  'Nutrisi & Gizi',
-  'Kesehatan Remaja',
-  'Tips Menstruasi',
-  'Mitos & Fakta',
-  'Gaya Hidup',
-];
+import { ARTICLE_CATEGORIES } from '../constants/education.constants';
+import ArticleCard from '../components/ArticleCard';
 
 export default function EducationView() {
   const [articles, setArticles] = useState<Article[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('Semua');
+  const [selectedCategory, setSelectedCategory] = useState<string>('Semua');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -46,7 +38,8 @@ export default function EducationView() {
     return articles.filter(art => {
       const matchCategory =
         selectedCategory === 'Semua' ||
-        art.category.toLowerCase() === selectedCategory.toLowerCase();
+        art.category.toLowerCase().includes(selectedCategory.toLowerCase()) ||
+        selectedCategory.toLowerCase().includes(art.category.toLowerCase());
       const matchSearch =
         searchQuery === '' ||
         art.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -58,14 +51,14 @@ export default function EducationView() {
   const featuredArticle = articles[0];
 
   return (
-    <div className='flex flex-col gap-6 w-full'>
+    <div className='flex flex-col gap-6 w-full pb-8'>
       {/* Screen Title */}
       <div>
-        <h2 className='text-xl sm:text-2xl font-extrabold text-[#1e293b] tracking-tight'>
-          Edukasi & Literasi Anemia
+        <h2 className='text-xl sm:text-2xl font-bold text-slate-900 tracking-tight'>
+          Pustaka Edukasi Kesehatan Pranikah & Imunisasi TT
         </h2>
-        <p className='text-xs sm:text-sm text-[#64748b] mt-0.5'>
-          Informasi medis, tips konsumsi TTD, dan panduan gizi seimbang
+        <p className='text-xs sm:text-sm text-slate-600 mt-0.5'>
+          Panduan komprehensif persiapan kesehatan reproduksi, jadwal imunisasi TT, dan nutrisi calon pengantin
         </p>
       </div>
 
@@ -73,19 +66,19 @@ export default function EducationView() {
       <div className='flex flex-col sm:flex-row items-stretch sm:items-center gap-3'>
         {/* Search Input */}
         <div className='relative flex-1 flex items-center'>
-          <Search size={16} className='absolute left-3.5 text-[#94a3b8] pointer-events-none' />
+          <Search size={16} className='absolute left-3.5 text-slate-400 pointer-events-none' />
           <input
             type='text'
-            placeholder='Cari materi, tips mual, makanan zat besi...'
+            placeholder='Cari materi imunisasi TT, skrining pranikah, pencegahan tetanus...'
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
-            className='w-full bg-white text-[#1e293b] placeholder-[#94a3b8] text-xs sm:text-sm rounded-2xl border border-[#fce7f3] focus:border-[#e11d48] pl-10 pr-4 py-3 outline-none shadow-xs'
+            className='w-full bg-white text-slate-900 placeholder-slate-400 text-xs sm:text-sm rounded-2xl border border-stone-200 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/10 pl-10 pr-4 py-3 outline-none shadow-2xs'
           />
           {searchQuery && (
             <button
               type='button'
               onClick={() => setSearchQuery('')}
-              className='absolute right-3.5 text-[#94a3b8] hover:text-[#e11d48]'
+              className='absolute right-3.5 text-slate-400 hover:text-slate-600'
             >
               <X size={15} />
             </button>
@@ -94,13 +87,13 @@ export default function EducationView() {
 
         {/* Category Chips Scroll/Wrap */}
         <div className='flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 no-scrollbar'>
-          {CATEGORIES.map(cat => (
+          {ARTICLE_CATEGORIES.map(cat => (
             <Chip
               key={cat}
               size='sm'
               active={selectedCategory === cat}
               onClick={() => setSelectedCategory(cat)}
-              className='shrink-0'
+              className={selectedCategory === cat ? 'bg-emerald-600 text-white font-bold' : ''}
             >
               {cat}
             </Chip>
@@ -108,120 +101,89 @@ export default function EducationView() {
         </div>
       </div>
 
-      {/* Featured Article Banner */}
-      {!searchQuery && selectedCategory === 'Semua' && featuredArticle && (
-        <Link to={`/user/education/${featuredArticle.id}`} className='block group'>
-          <Card padding='none' className='overflow-hidden hover:shadow-md transition-shadow'>
-            <div className='relative h-44 sm:h-60 w-full overflow-hidden'>
-              <img
-                src={featuredArticle.imageUrl}
-                alt={featuredArticle.title}
-                className='w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500'
-              />
-              <div className='absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/40 to-transparent flex flex-col justify-end p-4 sm:p-6'>
-                <span className='text-[10px] sm:text-xs font-bold text-rose-300 uppercase tracking-wider flex items-center gap-1'>
-                  <Sparkles size={13} />
-                  <span>Featured Article • {featuredArticle.readTime}</span>
-                </span>
-                <h3 className='text-base sm:text-2xl font-bold text-white leading-snug mt-1 max-w-2xl'>
-                  {featuredArticle.title}
-                </h3>
-              </div>
-            </div>
-            <div className='p-4 sm:p-5 bg-white'>
-              <p className='text-xs sm:text-sm text-[#475569] line-clamp-2 leading-relaxed'>
-                {featuredArticle.summary}
-              </p>
-              <div className='flex items-center justify-between mt-3 pt-3 border-t border-[#fce7f3]'>
-                <span className='text-xs text-[#94a3b8]'>
-                  Oleh <strong>{featuredArticle.author?.name || 'Tim Medis FEMORY'}</strong> •{' '}
-                  {featuredArticle.publishedAt}
-                </span>
-                <span className='text-xs sm:text-sm font-bold text-[#e11d48] flex items-center gap-1 group-hover:translate-x-0.5 transition-transform'>
-                  <span>Baca</span>
-                  <ArrowRight size={14} />
-                </span>
-              </div>
-            </div>
-          </Card>
-        </Link>
-      )}
-
-      {/* Responsive Articles Grid: 1 col (mobile) -> 2 col (tablet) -> 3 col (desktop) */}
-      <div>
-        <h4 className='text-sm sm:text-base font-bold text-[#1e293b] mb-3'>
-          {searchQuery ? `Hasil Pencarian (${filteredArticles.length})` : 'Materi Populer'}
-        </h4>
-
-        {loading ? (
-          <div className='flex items-center justify-center py-12'>
-            <div className='animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#e11d48]' />
-          </div>
-        ) : filteredArticles.length === 0 ? (
-          <Card padding='lg' className='text-center py-12'>
-            <div className='w-14 h-14 rounded-full bg-rose-100 text-[#e11d48] flex items-center justify-center mx-auto mb-3'>
-              <BookOpen size={28} />
-            </div>
-            <p className='text-base font-bold text-[#1e293b]'>Materi Tidak Ditemukan</p>
-            <p className='text-xs sm:text-sm text-[#64748b] mt-1 max-w-sm mx-auto'>
-              Coba gunakan kata kunci lain seperti &quot;Zat Besi&quot;, &quot;Mual&quot;, atau
-              &quot;Jeruk&quot;.
-            </p>
-          </Card>
-        ) : (
-          <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5'>
-            {filteredArticles.map(article => (
-              <Link
-                key={article.id}
-                to={`/user/education/${article.id}`}
-                className='block h-full group'
-              >
-                <Card
-                  padding='none'
-                  hoverable
-                  className='overflow-hidden h-full flex flex-col justify-between'
-                >
-                  {/* Thumbnail */}
-                  <div className='relative h-40 w-full shrink-0 overflow-hidden'>
-                    <img
-                      src={article.imageUrl}
-                      alt={article.title}
-                      className='w-full h-full object-cover group-hover:scale-105 transition-transform duration-500'
-                    />
-                    <span className='absolute top-3 left-3 text-[10px] font-bold text-white bg-slate-950/70 backdrop-blur-xs px-2.5 py-0.5 rounded-full'>
-                      {article.category}
+      {loading ? (
+        <div className='flex items-center justify-center py-16 w-full'>
+          <div className='animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-emerald-600' />
+        </div>
+      ) : (
+        <div className='flex flex-col gap-6'>
+          {/* Featured Article Banner (Only on "Semua" and when not searching) */}
+          {selectedCategory === 'Semua' && !searchQuery && featuredArticle && (
+            <section aria-label='Artikel Unggulan'>
+              <Card padding='none' className='overflow-hidden border-stone-200 shadow-sm'>
+                <div className='relative h-56 sm:h-72 w-full'>
+                  <img
+                    src={
+                      featuredArticle.imageUrl ||
+                      'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&auto=format&fit=crop&q=80'
+                    }
+                    alt={featuredArticle.title}
+                    className='w-full h-full object-cover'
+                  />
+                  <div className='absolute inset-0 bg-linear-to-t from-slate-950/90 via-slate-950/40 to-transparent flex flex-col justify-end p-5 sm:p-7'>
+                    <span className='inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-600 text-white text-xs font-bold w-fit mb-2 shadow-xs'>
+                      <Sparkles size={13} />
+                      <span>Materi Pilihan • {featuredArticle.category}</span>
                     </span>
-                  </div>
-
-                  {/* Content */}
-                  <div className='p-4 flex-1 flex flex-col justify-between'>
-                    <div>
-                      <span className='text-[10px] text-[#94a3b8] flex items-center gap-1 mb-1'>
-                        <Clock size={11} />
-                        {article.readTime}
-                      </span>
-                      <h4 className='text-xs sm:text-sm font-bold text-[#1e293b] group-hover:text-[#e11d48] transition-colors line-clamp-2 leading-snug'>
-                        {article.title}
-                      </h4>
-                      <p className='text-xs text-[#64748b] line-clamp-2 mt-1.5 leading-relaxed'>
-                        {article.summary}
-                      </p>
-                    </div>
-
-                    <div className='mt-4 pt-2.5 border-t border-[#fce7f3] flex items-center justify-between text-[11px] text-[#94a3b8]'>
-                      <span>{article.publishedAt}</span>
-                      <span className='text-[#e11d48] font-bold flex items-center gap-0.5 group-hover:translate-x-0.5 transition-transform'>
-                        <span>Baca</span>
-                        <ArrowRight size={12} />
-                      </span>
+                    <h3 className='text-lg sm:text-2xl font-bold text-white leading-snug line-clamp-2'>
+                      {featuredArticle.title}
+                    </h3>
+                    <p className='text-xs sm:text-sm text-slate-300 line-clamp-2 mt-1.5 max-w-2xl'>
+                      {featuredArticle.summary}
+                    </p>
+                    <div className='mt-4 flex items-center justify-between'>
+                      <div className='flex items-center gap-2 text-xs text-slate-300 font-medium'>
+                        <Clock size={13} className='text-emerald-400' />
+                        <span>{featuredArticle.readTime}</span>
+                        <span>•</span>
+                        <span>{featuredArticle.publishedAt}</span>
+                      </div>
+                      <Link
+                        to={`/user/education/${featuredArticle.id}`}
+                        className='inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-full transition-all shadow-md shadow-emerald-950/20'
+                      >
+                        <span>Baca Lengkap</span>
+                        <ArrowRight size={13} />
+                      </Link>
                     </div>
                   </div>
-                </Card>
-              </Link>
-            ))}
-          </div>
-        )}
-      </div>
+                </div>
+              </Card>
+            </section>
+          )}
+
+          {/* Grid of Articles */}
+          <section aria-label='Daftar Artikel'>
+            {filteredArticles.length > 0 ? (
+              <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5'>
+                {filteredArticles.map(art => (
+                  <ArticleCard key={art.id} article={art} />
+                ))}
+              </div>
+            ) : (
+              <div className='text-center py-16 bg-white rounded-3xl border border-stone-200 p-8'>
+                <div className='w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-700 flex items-center justify-center mx-auto mb-3'>
+                  <BookOpen size={24} />
+                </div>
+                <h4 className='text-base font-bold text-slate-900'>Tidak Ditemukan Artikel</h4>
+                <p className='text-xs sm:text-sm text-slate-500 mt-1 max-w-sm mx-auto'>
+                  Tidak ada materi yang sesuai dengan kata kunci atau kategori yang dipilih.
+                </p>
+                <button
+                  type='button'
+                  onClick={() => {
+                    setSearchQuery('');
+                    setSelectedCategory('Semua');
+                  }}
+                  className='mt-4 px-4 py-2 bg-stone-100 hover:bg-stone-200 text-slate-700 rounded-full text-xs font-bold transition-colors cursor-pointer'
+                >
+                  Reset Filter & Pencarian
+                </button>
+              </div>
+            )}
+          </section>
+        </div>
+      )}
     </div>
   );
 }

@@ -11,37 +11,37 @@ export interface SplashSlide {
   tagline: string;
   description: string;
   illustration: React.ComponentType<{ size?: number; className?: string }>;
-  accentColor: 'rose' | 'emerald' | 'amber';
+  accentColor: 'emerald' | 'amber' | 'teal';
 }
 
 export type OnboardingSlide = SplashSlide;
 
 export const ONBOARDING_SLIDES: OnboardingSlide[] = [
   {
-    id: 'reminder',
-    title: 'Ingat Minum TTD Tepat Waktu',
-    tagline: 'Jadwal Mingguan Otomatis ⏰',
+    id: 'tt_immunization',
+    title: 'Imunisasi TT Calon Pengantin',
+    tagline: 'Perlindungan Tetanus Lengkap',
     description:
-      'Pengingat cerdas setiap minggu agar kamu tidak lupa minum tablet tambah darah tepat waktu.',
+      'Lindungi diri dan calon buah hati dari bahaya infeksi tetanus maternal dan neonatal melalui 5 dosis imunisasi Tetanus Toxoid.',
     illustration: ReminderIllustration,
-    accentColor: 'rose',
-  },
-  {
-    id: 'tracking',
-    title: 'Pantau Kepatuhan & Hb Sehat',
-    tagline: 'Pencatatan 1-Sentuhan 📊',
-    description:
-      'Catat konsumsi tablet dengan cepat dan pantau riwayat kesehatanmu secara real-time.',
-    illustration: TrackingIllustration,
     accentColor: 'emerald',
   },
   {
-    id: 'buddy',
-    title: 'Cegah Anemia Bersama Sahabat',
-    tagline: 'Streak & Komunitas Positif 🔥',
+    id: 'schedule_tracking',
+    title: 'Jadwal & Riwayat Vaksinasi Catin',
+    tagline: 'Interval Standar Kemenkes RI',
     description:
-      'Jaga konsistensi sehat bersama teman sekolahmu dan jadilah remaja putri yang aktif & berprestasi.',
-    illustration: BuddyIllustration,
+      'Pantau riwayat suntik, jadwal dosis berikutnya, serta batas waktu vaksinasi minimal 1 bulan sebelum hari pernikahan.',
+    illustration: TrackingIllustration,
     accentColor: 'amber',
+  },
+  {
+    id: 'premarital_wellness',
+    title: 'Kesiapan Fisik Menuju Pernikahan',
+    tagline: 'Konsultasi & Edukasi Cerdas',
+    description:
+      'Pelajari panduan gizi reproduksi, skrining pranikah, dan berkonsultasi seputar imunisasi bersama asisten cerdas Luna Pranikah.',
+    illustration: BuddyIllustration,
+    accentColor: 'teal',
   },
 ];

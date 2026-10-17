@@ -20,18 +20,18 @@ export interface ProfileContactCardProps {
 }
 
 export function ProfileContactCard({
-  title = 'Informasi Kontak & Unit',
-  subtitle = 'Data resmi yang terhubung dengan akun Anda',
+  title = 'Informasi Kontak & Faskes Rujukan',
+  subtitle = 'Data resmi calon pengantin yang terhubung dengan akun Anda',
   items,
   className = '',
 }: ProfileContactCardProps) {
   return (
     <div
-      className={`rounded-3xl bg-white border border-rose-100/80 shadow-sm p-5 sm:p-6 ${className}`}
+      className={`rounded-3xl bg-white border border-stone-200 shadow-sm p-5 sm:p-6 ${className}`}
     >
-      <div className='mb-4 pb-3 border-b border-slate-100'>
-        <h2 className='text-sm sm:text-base font-bold text-slate-800'>{title}</h2>
-        {subtitle && <p className='text-xs text-slate-400 mt-0.5'>{subtitle}</p>}
+      <div className='mb-4 pb-3 border-b border-stone-100'>
+        <h2 className='text-sm sm:text-base font-bold text-slate-900'>{title}</h2>
+        {subtitle && <p className='text-xs text-slate-500 mt-0.5'>{subtitle}</p>}
       </div>
 
       <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5'>
@@ -40,20 +40,20 @@ export function ProfileContactCard({
           return (
             <div
               key={idx}
-              className='flex items-center gap-3.5 p-3.5 rounded-2xl bg-slate-50/70 border border-slate-100 hover:border-rose-200 transition-all'
+              className='flex items-center gap-3.5 p-3.5 rounded-2xl bg-stone-50/70 border border-stone-200/80 hover:border-emerald-300 transition-all'
             >
               <div
-                className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
-                  item.iconBgColor || 'bg-rose-100/70'
-                } ${item.iconColor || 'text-rose-600'}`}
+                className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 shadow-2xs ${
+                  item.iconBgColor || 'bg-emerald-50'
+                } ${item.iconColor || 'text-emerald-700'}`}
               >
                 <Icon size={18} />
               </div>
               <div className='min-w-0 flex-1'>
-                <p className='text-[11px] font-bold text-slate-400 uppercase tracking-wider'>
+                <p className='text-[10px] font-bold text-slate-400 uppercase tracking-wider'>
                   {item.label}
                 </p>
-                <p className='text-xs sm:text-sm font-bold text-slate-700 truncate mt-0.5'>
+                <p className='text-xs sm:text-sm font-bold text-slate-800 truncate mt-0.5'>
                   {item.value || item.fallbackValue || 'Belum diisi'}
                 </p>
               </div>

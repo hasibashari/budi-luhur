@@ -96,7 +96,7 @@ export default function AdminDashboardView() {
     }
     const channelName = channel === 'whatsapp' ? 'WhatsApp' : 'Notifikasi App';
     setToastMsg(
-      `Pengingat tablet Fe berhasil dikirimkan ke ${reminderData.userName} via ${channelName}!`,
+      `Pengingat imunisasi TT berhasil dikirimkan ke ${reminderData.userName} via ${channelName}!`,
     );
     setToastOpen(true);
   };
@@ -104,29 +104,29 @@ export default function AdminDashboardView() {
   return (
     <div>
       <AdminHeader
-        title='Dashboard Utama Admin'
-        subtitle='Pantau capaian kepatuhan tablet Fe, aktivitas harian siswi, dan edukasi kesehatan secara real-time.'
+        title='Dashboard Petugas Faskes & KUA'
+        subtitle='Pantau cakupan imunisasi Tetanus Toxoid (TT), jadwal vaksinasi catin, dan bimbingan pranikah secara terpadu.'
       />
 
       {/* Entry Portal Banner */}
-      <div className='mb-6 p-4 sm:p-6 rounded-3xl border border-rose-200 bg-white shadow-sm flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4'>
+      <div className='mb-6 p-4 sm:p-6 rounded-3xl border border-emerald-200 bg-white shadow-sm flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4'>
         <div className='flex items-center gap-4'>
-          <div className='w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center shrink-0 border border-rose-100'>
+          <div className='w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0 border border-emerald-100'>
             <CalendarCheck size={26} />
           </div>
           <div>
             <h3 className='font-bold text-slate-800 text-sm sm:text-base leading-tight'>
-              Pengelolaan Jadwal & Pengingat Tablet Fe
+              Pengelolaan Jadwal Imunisasi TT & Skrining Pranikah
             </h3>
             <p className='text-xs sm:text-sm text-slate-500 mt-1 leading-relaxed'>
-              Akses konfigurasi dosis, jam minum obat, dan pemantauan kepatuhan harian siswi/pengguna.
+              Akses konfigurasi dosis vaksin TT1–TT5, jadwal kunjungan faskes, dan pemantauan kepatuhan catin.
             </p>
           </div>
         </div>
 
         <Link
           to='/admin/schedules'
-          className='inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-xl bg-rose-600 text-white font-bold text-sm hover:bg-rose-700 shadow-md shadow-rose-200 transition-all cursor-pointer whitespace-nowrap'
+          className='inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-xl bg-emerald-600 text-white font-bold text-sm hover:bg-emerald-700 shadow-md shadow-emerald-200 transition-all cursor-pointer whitespace-nowrap'
         >
           <span>Buka Jadwal</span>
           <ChevronRight size={16} />
@@ -136,14 +136,14 @@ export default function AdminDashboardView() {
       {/* KPI Cards Grid */}
       <div className='grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5 mb-6'>
         <StatCard
-          title='Total Siswi (Pengguna)'
+          title='Total Calon Pengantin'
           value={stats.totalUsers}
           icon={Users}
-          iconBgColor='#ffe4e6'
-          iconColor='#e11d48'
+          iconBgColor='#d1fae5'
+          iconColor='#059669'
           subtitle={
             <div className='flex items-center gap-1 mt-1'>
-              <span className='px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 text-[10px] font-extrabold'>
+              <span className='px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-extrabold'>
                 +12 bln ini
               </span>
             </div>
@@ -151,12 +151,12 @@ export default function AdminDashboardView() {
         />
 
         <StatCard
-          title='Jadwal Aktif'
+          title='Jadwal Imunisasi Aktif'
           value={stats.activeSchedules}
           icon={CalendarCheck}
-          iconBgColor='#ffe4e6'
-          iconColor='#e11d48'
-          subtitle={`${stats.totalUsers} pengguna aktif`}
+          iconBgColor='#d1fae5'
+          iconColor='#059669'
+          subtitle={`${stats.totalUsers} catin terdaftar`}
         />
 
         <StatCard
@@ -182,7 +182,7 @@ export default function AdminDashboardView() {
           iconBgColor='#fef3c7'
           iconColor='#d97706'
           valueColor='#d97706'
-          subtitle='Butuh pantauan'
+          subtitle='Perlu tindak lanjut'
         />
       </div>
 
@@ -192,14 +192,14 @@ export default function AdminDashboardView() {
         <div className='lg:col-span-7 xl:col-span-8 p-5 sm:p-6 rounded-3xl border border-slate-200 bg-white shadow-sm flex flex-col justify-between'>
           <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4'>
             <div>
-              <h3 className='font-bold text-slate-800 text-base'>Tren Kepatuhan Tablet Fe (Mingguan)</h3>
+              <h3 className='font-bold text-slate-800 text-base'>Tren Kepatuhan Vaksinasi & Konseling TT</h3>
               <p className='text-xs text-slate-500 mt-0.5'>
-                Persentase jadwal TTD yang diminum tepat waktu oleh pengguna
+                Persentase pemenuhan jadwal imunisasi TT calon pengantin tepat waktu
               </p>
             </div>
             <Link
               to='/admin/reports'
-              className='inline-flex items-center gap-1 text-xs font-bold text-rose-600 hover:text-rose-700 transition-colors'
+              className='inline-flex items-center gap-1 text-xs font-bold text-emerald-700 hover:text-emerald-800 transition-colors'
             >
               <span>Lihat Detail</span>
               <ArrowUpRight size={14} />
@@ -227,7 +227,7 @@ export default function AdminDashboardView() {
                     </span>
                     <div
                       className={`w-1/2 max-w-[28px] rounded-t-md transition-all duration-300 hover:opacity-85 ${
-                        report.adherencePercentage >= 90 ? 'bg-rose-500' : 'bg-amber-500'
+                        report.adherencePercentage >= 90 ? 'bg-emerald-600' : 'bg-amber-500'
                       }`}
                       style={{ height: `${report.adherencePercentage * 1.3}px` }}
                     />
@@ -242,8 +242,8 @@ export default function AdminDashboardView() {
 
           <div className='flex items-center justify-center gap-6 pt-4 mt-2 border-t border-slate-100 flex-wrap'>
             <div className='flex items-center gap-2'>
-              <span className='w-2.5 h-2.5 rounded-full bg-rose-500' />
-              <span className='text-xs font-semibold text-slate-600'>Kepatuhan Tinggi (≥90%)</span>
+              <span className='w-2.5 h-2.5 rounded-full bg-emerald-600' />
+              <span className='text-xs font-semibold text-slate-600'>Kepatuhan Optimal (≥90%)</span>
             </div>
             <div className='flex items-center gap-2'>
               <span className='w-2.5 h-2.5 rounded-full bg-amber-500' />
@@ -260,11 +260,11 @@ export default function AdminDashboardView() {
             <div className='flex items-center justify-between mb-2'>
               <div className='flex items-center gap-2'>
                 <AlertTriangle size={18} className='text-amber-500' />
-                <h3 className='font-bold text-slate-800 text-base'>Siswi Perlu Perhatian</h3>
+                <h3 className='font-bold text-slate-800 text-base'>Catin Perlu Perhatian</h3>
               </div>
               <Link
                 to='/admin/users'
-                className='inline-flex items-center gap-1 text-xs font-bold text-rose-600 hover:text-rose-700 transition-colors'
+                className='inline-flex items-center gap-1 text-xs font-bold text-emerald-700 hover:text-emerald-800 transition-colors'
               >
                 <span>Semua</span>
                 <ChevronRight size={14} />
@@ -272,7 +272,7 @@ export default function AdminDashboardView() {
             </div>
 
             <p className='text-xs text-slate-500 mb-4'>
-              Siswi dengan kepatuhan rendah atau membutuhkan dorongan pengingat:
+              Calon pengantin dengan kepatuhan rendah atau membutuhkan pengingat jadwal TT:
             </p>
 
             <div className='space-y-3'>

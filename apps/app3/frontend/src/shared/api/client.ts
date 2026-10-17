@@ -1,13 +1,13 @@
 import axios from 'axios';
 
 export const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || 'http://localhost:4001/api/v1';
+  import.meta.env.VITE_API_BASE_URL || 'http://localhost:4003/api/v1';
 
 export const AUTH_STORAGE_KEY =
-  import.meta.env.VITE_AUTH_STORAGE_KEY || 'femory_auth_token';
+  import.meta.env.VITE_AUTH_STORAGE_KEY || 'app3_auth_token';
 
 export const USER_STORAGE_KEY =
-  import.meta.env.VITE_USER_STORAGE_KEY || 'femory_auth_user';
+  import.meta.env.VITE_USER_STORAGE_KEY || 'app3_auth_user';
 
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,

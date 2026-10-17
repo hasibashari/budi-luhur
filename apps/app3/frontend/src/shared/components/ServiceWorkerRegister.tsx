@@ -12,11 +12,11 @@ export default function ServiceWorkerRegister() {
         })
         .then(registration => {
           if (process.env.NODE_ENV !== 'production') {
-            console.log('FEMORY ServiceWorker registered with scope:', registration.scope);
+            console.log('PRELUNA ServiceWorker registered with scope:', registration.scope);
           }
         })
         .catch(err => {
-          console.error('FEMORY ServiceWorker registration failed:', err);
+          console.error('PRELUNA ServiceWorker registration failed:', err);
         });
     }
   }, []);

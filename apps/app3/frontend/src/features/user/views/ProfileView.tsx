@@ -1,17 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Flame,
+  ShieldCheck,
   Activity,
-  HeartPulse,
+  Heart,
   Mail,
   Phone,
-  School,
+  Building2,
+  Calendar,
   Check,
   Trash2,
   AlertTriangle,
   X,
   Loader2,
+  Award,
+  Sparkles,
 } from 'lucide-react';
 import {
   ProfileHeaderCard,
@@ -20,6 +23,8 @@ import {
   ProfileEditModal,
   ProfileSecuritySection,
 } from '@/src/shared/components/profile';
+import { DigitalImmunizationCertificateModal } from '@/src/shared/components/profile/DigitalImmunizationCertificateModal';
+import { Button } from '@/src/shared/components/ui/Button';
 import { useAuth } from '@/src/features/auth/context/AuthContext';
 import { getUserDashboardDataAction, updateUserProfileAction } from '../api/userRepository';
 
@@ -33,6 +38,7 @@ interface UserProfileState {
   hbLevel?: number | null;
   schoolOrOrg?: string | null;
   riskLevel?: string | null;
+  notes?: string | null;
 }
 
 export default function ProfileView() {
@@ -40,7 +46,7 @@ export default function ProfileView() {
   const { user: authUser, logout, updateUser, deleteAccount } = useAuth();
   const [userProfile, setUserProfile] = useState<UserProfileState>({
     id: authUser?.id || '',
-    name: authUser?.name || 'Siswi FEMORY',
+    name: authUser?.name || 'Calon Pengantin',
     email: authUser?.email || '',
     phone: authUser?.phone || '',
     avatarUrl: authUser?.avatarUrl || '',
@@ -48,14 +54,16 @@ export default function ProfileView() {
     hbLevel: authUser?.hbLevel || null,
     schoolOrOrg: authUser?.schoolOrOrg || null,
     riskLevel: null,
+    notes: null,
   });
   const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
+  const [isCertificateModalOpen, setIsCertificateModalOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   // Edit Profile Form State
   const [editName, setEditName] = useState(userProfile.name);
-  const [editSchool, setEditSchool] = useState(userProfile.schoolOrOrg || '');
+  const [editFaskes, setEditFaskes] = useState(userProfile.schoolOrOrg || '');
   const [editPhone, setEditPhone] = useState(userProfile.phone);
   const [editHb, setEditHb] = useState(userProfile.hbLevel ? String(userProfile.hbLevel) : '');
 
@@ -100,409 +108,374 @@ export default function ProfileView() {
           setUserProfile({
             id: dashboard.user.id,
             name: dashboard.user.name,
-            email: dashboard.user.email,
-            phone: dashboard.user.phone || '',
+            email: authUser?.email || '',
+            phone: authUser?.phone || '',
             avatarUrl: dashboard.user.avatarUrl || '',
             streakCount: dashboard.user.streakCount || 0,
             hbLevel: dashboard.user.hbLevel,
             schoolOrOrg: dashboard.user.schoolOrOrg,
             riskLevel: dashboard.user.riskLevel,
+            notes: (dashboard.user as any).notes || null,
           });
           setEditName(dashboard.user.name);
-          setEditSchool(dashboard.user.schoolOrOrg || '');
-          setEditPhone(dashboard.user.phone || '');
+          setEditFaskes(dashboard.user.schoolOrOrg || '');
+          setEditPhone(authUser?.phone || '');
           setEditHb(dashboard.user.hbLevel ? String(dashboard.user.hbLevel) : '');
         }
       } catch (err) {
-        console.error('Failed to load user profile:', err);
+        console.error('Failed to load profile dashboard:', err);
       }
     }
     loadData();
     return () => {
       isMounted = false;
     };
-  }, [authUser?.id]);
-
-  const showToast = (msg: string) => {
-    setToastMessage(msg);
-    setTimeout(() => setToastMessage(null), 3000);
-  };
+  }, [authUser]);
 
   const handleSaveAvatar = async (newAvatarUrl: string | null) => {
+    if (!newAvatarUrl) return;
     try {
       const res = await updateUserProfileAction(userProfile.id, {
-        avatarUrl: newAvatarUrl || '',
+        avatarUrl: newAvatarUrl,
       });
       if (res.success) {
-        setUserProfile(prev => ({
-          ...prev,
-          avatarUrl: newAvatarUrl || '',
-        }));
-        updateUser({ avatarUrl: newAvatarUrl || '' });
-        showToast(
-          newAvatarUrl
-            ? 'Foto profil berhasil diperbarui! ✨'
-            : 'Foto profil dihapus, menggunakan inisial nama.',
-        );
-      } else {
-        showToast(res.error || 'Gagal memperbarui foto profil.');
+        setUserProfile(prev => ({ ...prev, avatarUrl: newAvatarUrl }));
+        updateUser({ avatarUrl: newAvatarUrl });
+        showToast('Foto profil berhasil diperbarui');
       }
-    } catch (err) {
-      console.error('Save avatar error:', err);
-      showToast('Gagal menyimpan foto profil.');
+    } catch (e) {
+      console.error(e);
     }
-  };
-
-  const handleOpenEdit = () => {
-    setEditName(userProfile.name);
-    setEditSchool(userProfile.schoolOrOrg || '');
-    setEditPhone(userProfile.phone);
-    setEditHb(userProfile.hbLevel ? String(userProfile.hbLevel) : '');
-    setIsEditProfileModalOpen(true);
   };
 
   const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSaving(true);
     try {
-      const parsedHb = editHb.trim() ? Number(editHb) : undefined;
       const res = await updateUserProfileAction(userProfile.id, {
         name: editName,
+        schoolOrOrg: editFaskes,
         phone: editPhone,
-        schoolOrOrg: editSchool,
-        hbLevel: parsedHb,
+        hbLevel: editHb ? Number(editHb) : undefined,
       });
 
       if (res.success) {
         setUserProfile(prev => ({
           ...prev,
           name: editName,
-          schoolOrOrg: editSchool || null,
+          schoolOrOrg: editFaskes,
           phone: editPhone,
-          hbLevel: parsedHb || null,
+          hbLevel: editHb ? Number(editHb) : null,
         }));
-        updateUser({ name: editName, phone: editPhone, schoolOrOrg: editSchool });
+        updateUser({
+          name: editName,
+          schoolOrOrg: editFaskes,
+          phone: editPhone,
+          hbLevel: editHb ? Number(editHb) : undefined,
+        });
         setIsEditProfileModalOpen(false);
-        showToast('Profil berhasil diperbarui! ✨');
+        showToast('Data calon pengantin berhasil disimpan');
       } else {
-        showToast(res.error || 'Gagal memperbarui profil.');
+        showToast(res.error || 'Gagal menyimpan profil.');
       }
-    } catch (err) {
-      console.error('Save profile error:', err);
-      showToast('Terjadi kesalahan saat menyimpan.');
+    } catch {
+      showToast('Terjadi kesalahan jaringan.');
     } finally {
       setIsSaving(false);
     }
   };
 
-  const handleConfirmLogout = async () => {
-    await logout();
-    navigate('/auth/login');
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 3000);
   };
 
-  const userMetrics = [
-    {
-      id: 'streak',
-      label: 'Streak Konsumsi TTD',
-      value: `${userProfile.streakCount} Pekan`,
-      subtitle: 'Konsumsi rutin mingguan',
-      icon: Flame,
-      iconBgColor: 'bg-orange-100',
-      iconColor: 'text-orange-600',
-      badgeText: userProfile.streakCount > 0 ? 'Konsisten' : 'Mulai Sekarang',
-      badgeColor:
-        userProfile.streakCount > 0
-          ? 'bg-orange-100 text-orange-700'
-          : 'bg-slate-100 text-slate-600',
-    },
-    {
-      id: 'hb',
-      label: 'Kadar Hemoglobin (Hb)',
-      value: userProfile.hbLevel ? `${userProfile.hbLevel} g/dL` : 'Belum Diisi',
-      subtitle: userProfile.hbLevel ? 'Standar normal ≥ 12.0 g/dL' : 'Isi hasil tes lab di profil',
-      icon: Activity,
-      iconBgColor: 'bg-emerald-100',
-      iconColor: 'text-emerald-600',
-      badgeText: userProfile.hbLevel
-        ? userProfile.hbLevel >= 12
-          ? 'Normal'
-          : 'Anemia'
-        : 'Belum Tes',
-      badgeColor: userProfile.hbLevel
-        ? userProfile.hbLevel >= 12
-          ? 'bg-emerald-100 text-emerald-700'
-          : 'bg-rose-100 text-rose-700'
-        : 'bg-slate-100 text-slate-600',
-    },
-    {
-      id: 'risk',
-      label: 'Status Risiko Anemia',
-      value: userProfile.riskLevel || 'Rendah',
-      subtitle: 'Berdasarkan evaluasi UKS',
-      icon: HeartPulse,
-      iconBgColor: 'bg-rose-100',
-      iconColor: 'text-rose-600',
-      badgeText: userProfile.riskLevel === 'Tinggi' ? 'Perhatian' : 'Aman',
-      badgeColor:
-        userProfile.riskLevel === 'Tinggi'
-          ? 'bg-rose-100 text-rose-700'
-          : 'bg-emerald-100 text-emerald-700',
-    },
-  ];
-
-  const contactItems = [
-    {
-      icon: Mail,
-      label: 'Email Akun',
-      value: userProfile.email || '-',
-    },
-    {
-      icon: Phone,
-      label: 'Nomor Telepon',
-      value: userProfile.phone || 'Belum diisi',
-    },
-    {
-      icon: School,
-      label: 'Sekolah / Instansi',
-      value: userProfile.schoolOrOrg || 'Belum diatur',
-      fallbackValue: 'Belum diatur',
-    },
-  ];
+  // Meta parsing from notes
+  const notesStr = userProfile.notes || '';
+  const partnerMatch = notesStr.match(/Pasangan:\s*([^|]+)/);
+  const partnerName = partnerMatch ? partnerMatch[1].trim() : undefined;
+  const weddingMatch = notesStr.match(/Rencana Akad:\s*([^|]+)/);
+  const weddingDate = weddingMatch ? weddingMatch[1].trim() : undefined;
+  const ttLevelMatch = notesStr.match(/Status TT Awal:\s*TT(\d)/);
+  const ttLevel = ttLevelMatch ? parseInt(ttLevelMatch[1], 10) : 2;
 
   return (
-    <div className='flex flex-col gap-6 w-full max-w-5xl mx-auto'>
-      {/* Toast Notification */}
+    <div className='flex flex-col gap-6 w-full pb-10'>
+      {/* Toast Feedback */}
       {toastMessage && (
-        <div className='fixed top-16 left-1/2 -translate-x-1/2 z-50 bg-slate-900 text-white text-xs font-bold px-4 py-2.5 rounded-full shadow-xl flex items-center gap-2 animate-fade-in'>
-          <Check size={14} className='text-emerald-400' />
+        <div className='fixed top-16 left-1/2 -translate-x-1/2 z-50 bg-slate-900 text-white text-xs font-semibold px-4 py-2.5 rounded-full shadow-lg flex items-center gap-2 animate-fade-in'>
+          <Sparkles size={14} className='text-amber-400' />
           <span>{toastMessage}</span>
         </div>
       )}
 
-      {/* Screen Title */}
-      <div>
-        <h1 className='text-xl sm:text-2xl font-black text-slate-800 tracking-tight'>
-          Profil Siswi & Pengaturan
-        </h1>
-        <p className='text-xs sm:text-sm text-slate-500 mt-0.5'>
-          Kelola identitas diri, pantau metrik kesehatan TTD, dan preferensi akun.
-        </p>
-      </div>
-
-      {/* 1. Profile Header Card */}
+      {/* 1. Header Card */}
       <ProfileHeaderCard
         name={userProfile.name}
         avatarUrl={userProfile.avatarUrl}
-        roleBadgeText='SISWI TERDAFTAR'
-        roleBadgeColor='user'
-        subtitle={`${userProfile.schoolOrOrg || 'Program Pencegahan Anemia'} • FEMORY 🌸`}
+        roleBadgeText='Catin Terdaftar'
+        subtitle={`Fasilitas Kesehatan Rujukan: ${userProfile.schoolOrOrg || 'Puskesmas Kecamatan Domisili'}`}
         verified={true}
-        onEditClick={handleOpenEdit}
+        verifiedText='Terverifikasi Kemenkes'
+        canEdit={true}
+        onEditClick={() => setIsEditProfileModalOpen(true)}
         onSaveAvatar={handleSaveAvatar}
-      />
-
-      {/* 2. Health & Habit Metrics Grid */}
-      <ProfileMetricsGrid
-        title='Metrik Kesehatan & Rutinitas TTD'
-        subtitle='Catatan kepatuhan dan kondisi hemoglobin terkini'
-        metrics={userMetrics}
-        columns={3}
-      />
-
-      {/* 3. Contact & Institution Card */}
-      <ProfileContactCard
-        title='Informasi Kontak & Pendidikan'
-        subtitle='Data akun yang tercatat pada sistem pembinaan UKS/Puskesmas'
-        items={contactItems}
-      />
-
-      {/* 4. Security & Session Section */}
-      <ProfileSecuritySection
-        onLogoutClick={handleConfirmLogout}
-        onChangePasswordClick={() =>
-          showToast('Fitur ubah kata sandi dapat dilakukan melalui admin UKS.')
+        extraBadges={
+          <span className='inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-200'>
+            Status TT{ttLevel} Aktif
+          </span>
         }
+      />
+
+      {/* Certificate Callout Card */}
+      <div className='rounded-3xl bg-linear-to-r from-emerald-800 via-emerald-700 to-teal-800 text-white p-5 sm:p-6 shadow-xl shadow-emerald-950/10 border border-emerald-600/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4'>
+        <div className='flex items-center gap-3.5'>
+          <div className='w-12 h-12 rounded-2xl bg-white/15 backdrop-blur-xs flex items-center justify-center shrink-0 border border-white/20 shadow-inner'>
+            <Award size={26} className='text-emerald-200' />
+          </div>
+          <div>
+            <span className='text-[10px] font-bold uppercase tracking-wider bg-white/20 px-2.5 py-0.5 rounded-full text-emerald-100'>
+              Dokumen Resmi Catin
+            </span>
+            <h3 className='text-base sm:text-lg font-bold text-white mt-1'>
+              Surat Keterangan Imunisasi TT Calon Pengantin
+            </h3>
+            <p className='text-xs text-emerald-100/90 mt-0.5'>
+              Dapat diunduh dan dicetak untuk kelengkapan administrasi pernikahan di KUA / Catatan Sipil.
+            </p>
+          </div>
+        </div>
+
+        <Button
+          variant='primary'
+          size='md'
+          shape='pill'
+          className='bg-white text-emerald-800 hover:bg-emerald-50 font-bold shadow-xs whitespace-nowrap self-start sm:self-auto cursor-pointer'
+          onClick={() => setIsCertificateModalOpen(true)}
+        >
+          Lihat E-Sertifikat TT
+        </Button>
+      </div>
+
+      {/* 2. Premarital Metrics Grid */}
+      <ProfileMetricsGrid
+        title='Status Parameter Kesehatan Pranikah'
+        subtitle='Pemeriksaan biometrik, kadar Hb, dan tahapan imunisasi TT'
+        columns={4}
+        metrics={[
+          {
+            id: 'tt_status',
+            label: 'Status Imunisasi TT',
+            value: `TT${ttLevel}`,
+            subtitle: ttLevel >= 5 ? 'Seumur Hidup' : '3 Tahun Proteksi',
+            icon: ShieldCheck,
+            iconBgColor: 'bg-emerald-50',
+            iconColor: 'text-emerald-700',
+            badgeText: 'Aktif',
+            badgeColor: 'bg-emerald-100 text-emerald-800 border-emerald-200',
+          },
+          {
+            id: 'hb_level',
+            label: 'Kadar Hemoglobin (Hb)',
+            value: userProfile.hbLevel ? `${userProfile.hbLevel} g/dL` : 'Belum Ada',
+            subtitle: userProfile.hbLevel && userProfile.hbLevel >= 12 ? 'Bebas Anemia' : 'Perlu Suplementasi',
+            icon: Activity,
+            iconBgColor: 'bg-teal-50',
+            iconColor: 'text-teal-700',
+            badgeText: userProfile.hbLevel ? (userProfile.hbLevel >= 12 ? 'Normal' : 'Rendah') : 'Skrining',
+            badgeColor: userProfile.hbLevel && userProfile.hbLevel >= 12 ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800',
+          },
+          {
+            id: 'wedding_countdown',
+            label: 'Rencana Hari Bahagia',
+            value: weddingDate || 'Terjadwal',
+            subtitle: partnerName ? `Bersama ${partnerName}` : 'Menuju Akad Nikah',
+            icon: Heart,
+            iconBgColor: 'bg-amber-50',
+            iconColor: 'text-amber-600',
+          },
+          {
+            id: 'streak_adherence',
+            label: 'Disiplin Kunjungan',
+            value: `${userProfile.streakCount} Sesi`,
+            subtitle: 'Kepatuhan Skrining',
+            icon: Award,
+            iconBgColor: 'bg-emerald-50',
+            iconColor: 'text-emerald-700',
+          },
+        ]}
+      />
+
+      {/* 3. Contact & Faskes Information */}
+      <ProfileContactCard
+        title='Data Calon Pengantin & Faskes Rujukan'
+        subtitle='Informasi resmi yang terdaftar pada sistem kesehatan pranikah'
+        items={[
+          {
+            icon: Mail,
+            label: 'Email Akun',
+            value: userProfile.email,
+            fallbackValue: 'Belum diisi',
+            iconBgColor: 'bg-emerald-50',
+            iconColor: 'text-emerald-700',
+          },
+          {
+            icon: Phone,
+            label: 'Nomor WhatsApp',
+            value: userProfile.phone,
+            fallbackValue: 'Belum diisi',
+            iconBgColor: 'bg-teal-50',
+            iconColor: 'text-teal-700',
+          },
+          {
+            icon: Heart,
+            label: 'Nama Calon Pasangan',
+            value: partnerName,
+            fallbackValue: 'Belum diatur',
+            iconBgColor: 'bg-amber-50',
+            iconColor: 'text-amber-600',
+          },
+          {
+            icon: Building2,
+            label: 'Puskesmas / KUA Rujukan',
+            value: userProfile.schoolOrOrg,
+            fallbackValue: 'Puskesmas Domisili',
+            iconBgColor: 'bg-emerald-50',
+            iconColor: 'text-emerald-700',
+          },
+        ]}
+      />
+
+      {/* 4. Security & Account Section */}
+      <ProfileSecuritySection
+        onLogoutClick={() => {
+          logout();
+          navigate('/login');
+        }}
         onDeleteAccountClick={handleOpenDeleteModal}
       />
 
-      {/* 5. Edit Profile Dynamic Modal */}
+      {/* Edit Profile Modal */}
       <ProfileEditModal
         isOpen={isEditProfileModalOpen}
         onClose={() => setIsEditProfileModalOpen(false)}
         onSave={handleSaveProfile}
-        title='Ubah Data Siswi'
-        subtitle='Perbarui data profil dan catatan kesehatan Anda'
         isSaving={isSaving}
+        title='Ubah Data Calon Pengantin'
+        subtitle='Perbarui identitas, kontak, dan faskes rujukan Anda'
       >
         <div>
-          <label className='block text-xs font-bold text-slate-700 mb-1.5'>Nama Lengkap</label>
+          <label className='block text-xs font-bold text-slate-800 mb-1.5'>
+            Nama Lengkap Calon Pengantin
+          </label>
           <input
             type='text'
             value={editName}
             onChange={e => setEditName(e.target.value)}
             required
-            className='w-full px-3.5 py-2.5 rounded-xl border border-rose-200 bg-slate-50 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:bg-white'
+            className='w-full bg-stone-50 text-slate-900 text-xs sm:text-sm rounded-xl border border-stone-200 px-3.5 py-2.5 outline-none focus:border-emerald-600'
           />
         </div>
 
         <div>
-          <label className='block text-xs font-bold text-slate-700 mb-1.5'>
-            Sekolah / Instansi
+          <label className='block text-xs font-bold text-slate-800 mb-1.5'>
+            Faskes Rujukan / Puskesmas / KUA
           </label>
           <input
             type='text'
-            value={editSchool}
-            onChange={e => setEditSchool(e.target.value)}
-            required
-            className='w-full px-3.5 py-2.5 rounded-xl border border-rose-200 bg-slate-50 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:bg-white'
+            value={editFaskes}
+            onChange={e => setEditFaskes(e.target.value)}
+            className='w-full bg-stone-50 text-slate-900 text-xs sm:text-sm rounded-xl border border-stone-200 px-3.5 py-2.5 outline-none focus:border-emerald-600'
           />
         </div>
 
-        <div className='grid grid-cols-1 sm:grid-cols-2 gap-3'>
-          <div>
-            <label className='block text-xs font-bold text-slate-700 mb-1.5'>Nomor Telepon</label>
-            <input
-              type='tel'
-              value={editPhone}
-              onChange={e => setEditPhone(e.target.value)}
-              className='w-full px-3.5 py-2.5 rounded-xl border border-rose-200 bg-slate-50 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:bg-white'
-            />
-          </div>
+        <div>
+          <label className='block text-xs font-bold text-slate-800 mb-1.5'>
+            Nomor WhatsApp
+          </label>
+          <input
+            type='tel'
+            value={editPhone}
+            onChange={e => setEditPhone(e.target.value)}
+            className='w-full bg-stone-50 text-slate-900 text-xs sm:text-sm rounded-xl border border-stone-200 px-3.5 py-2.5 outline-none focus:border-emerald-600'
+          />
+        </div>
 
-          <div>
-            <label className='block text-xs font-bold text-slate-700 mb-1.5'>
-              Kadar Hb Terakhir (g/dL)
-            </label>
-            <input
-              type='number'
-              step='0.1'
-              value={editHb}
-              onChange={e => setEditHb(e.target.value)}
-              placeholder='Contoh: 12.4'
-              className='w-full px-3.5 py-2.5 rounded-xl border border-rose-200 bg-slate-50 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:bg-white'
-            />
-          </div>
+        <div>
+          <label className='block text-xs font-bold text-slate-800 mb-1.5'>
+            Kadar Hb Laboratorium (g/dL)
+          </label>
+          <input
+            type='number'
+            step='0.1'
+            value={editHb}
+            onChange={e => setEditHb(e.target.value)}
+            placeholder='12.5'
+            className='w-full bg-stone-50 text-slate-900 text-xs sm:text-sm rounded-xl border border-stone-200 px-3.5 py-2.5 outline-none focus:border-emerald-600'
+          />
         </div>
       </ProfileEditModal>
 
-      {/* 6. Delete Account Confirmation Modal */}
+      {/* Digital Certificate Modal */}
+      <DigitalImmunizationCertificateModal
+        isOpen={isCertificateModalOpen}
+        onClose={() => setIsCertificateModalOpen(false)}
+        catinName={userProfile.name}
+        catinId={userProfile.id}
+        partnerName={partnerName}
+        faskesName={userProfile.schoolOrOrg || 'Puskesmas Kecamatan'}
+        ttLevel={ttLevel}
+      />
+
+      {/* Delete Account Confirmation Modal */}
       {isDeleteModalOpen && (
-        <div className='fixed inset-0 z-[70] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fade-in'>
-          <div
-            className='fixed inset-0 bg-transparent'
-            onClick={() => {
-              if (!isDeleting) setIsDeleteModalOpen(false);
-            }}
-            aria-hidden='true'
-          />
-
-          <div
-            className='relative z-10 bg-white rounded-3xl shadow-2xl border border-rose-200 max-w-md w-full max-h-[90dvh] flex flex-col overflow-hidden animate-scale-up'
-            onClick={e => e.stopPropagation()}
-            role='dialog'
-            aria-modal='true'
-          >
-            {/* Header */}
-            <div className='flex items-center justify-between px-5 py-4 border-b border-rose-100 bg-rose-50/50'>
-              <div className='flex items-center gap-2.5 min-w-0 pr-2'>
-                <div className='w-8 h-8 rounded-full bg-rose-100 text-rose-700 flex items-center justify-center shrink-0'>
-                  <AlertTriangle size={18} />
-                </div>
-                <div>
-                  <h3 className='text-sm sm:text-base font-black text-rose-900 leading-tight'>
-                    Hapus Akun Pengguna
-                  </h3>
-                  <p className='text-[11px] text-rose-600/80'>
-                    Tindakan permanen & tak dapat dibatalkan
-                  </p>
-                </div>
-              </div>
-              <button
-                type='button'
-                onClick={() => setIsDeleteModalOpen(false)}
-                disabled={isDeleting}
-                aria-label='Tutup Modal'
-                className='w-8 h-8 rounded-full bg-rose-100/60 hover:bg-rose-200/60 text-rose-700 flex items-center justify-center transition-colors cursor-pointer shrink-0 disabled:opacity-50'
-              >
-                <X size={16} />
-              </button>
+        <div className='fixed inset-0 z-70 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fade-in'>
+          <div className='absolute inset-0' onClick={() => !isDeleting && setIsDeleteModalOpen(false)} />
+          <div className='relative z-10 w-full max-w-md bg-white rounded-3xl p-6 shadow-2xl border border-stone-200'>
+            <div className='w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center mx-auto mb-4'>
+              <AlertTriangle size={24} />
             </div>
+            <h3 className='text-lg font-bold text-slate-900 text-center'>Konfirmasi Hapus Akun</h3>
+            <p className='text-xs text-slate-600 text-center mt-2 leading-relaxed'>
+              Tindakan ini akan menghapus akun calon pengantin dan semua data riwayat imunisasi TT secara permanen. Ketik <strong>HAPUS</strong> untuk melanjutkan.
+            </p>
 
-            {/* Modal Body */}
-            <div className='p-5 sm:p-6 space-y-4 overflow-y-auto flex-1 text-slate-700'>
-              <div className='p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-xs text-rose-800 space-y-2'>
-                <p className='font-bold flex items-center gap-1.5'>
-                  <AlertTriangle size={14} className='text-rose-600 shrink-0' />
-                  Data yang akan dihapus permanen:
-                </p>
-                <ul className='list-disc pl-5 space-y-1 text-[11px] text-rose-700'>
-                  <li>Data identitas & profil siswi FEMORY</li>
-                  <li>Seluruh riwayat konsumsi Tablet Tambah Darah (TTD)</li>
-                  <li>Catatan streak & level kepatuhan konsumsi</li>
-                  <li>Jadwal pengingat notifikasi TTD</li>
-                  <li>Koneksi & aktivitas sesama teman (Buddy System)</li>
-                </ul>
+            {deleteError && (
+              <div className='mt-3 p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-semibold'>
+                {deleteError}
               </div>
+            )}
 
-              {deleteError && (
-                <div className='p-3 rounded-xl bg-rose-100 text-rose-900 text-xs font-semibold'>
-                  {deleteError}
-                </div>
-              )}
+            <input
+              type='text'
+              value={deleteConfirmationText}
+              onChange={e => setDeleteConfirmationText(e.target.value)}
+              placeholder='Ketik HAPUS'
+              className='w-full mt-4 bg-stone-50 border border-stone-200 rounded-xl px-3.5 py-2.5 text-center text-sm font-bold outline-none focus:border-rose-600 uppercase tracking-widest'
+            />
 
-              <div className='space-y-2'>
-                <label className='block text-xs font-bold text-slate-700'>
-                  Ketik kata{' '}
-                  <span className='text-rose-600 font-extrabold tracking-wider'>HAPUS</span> di
-                  bawah ini untuk konfirmasi:
-                </label>
-                <input
-                  type='text'
-                  value={deleteConfirmationText}
-                  onChange={e => {
-                    setDeleteConfirmationText(e.target.value);
-                    if (deleteError) setDeleteError(null);
-                  }}
-                  placeholder='Ketik HAPUS'
-                  disabled={isDeleting}
-                  className='w-full px-3.5 py-2.5 rounded-xl border border-rose-200 bg-slate-50 text-xs font-bold text-rose-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:bg-white'
-                />
-              </div>
-            </div>
-
-            {/* Footer Buttons */}
-            <div
-              className='px-5 py-3.5 bg-slate-50/90 border-t border-slate-100 flex items-center justify-end gap-2.5 shrink-0'
-              style={{
-                paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom, 0px))',
-              }}
-            >
-              <button
-                type='button'
-                onClick={() => setIsDeleteModalOpen(false)}
+            <div className='mt-5 flex items-center gap-2'>
+              <Button
+                variant='outline'
+                size='sm'
+                shape='rounded'
                 disabled={isDeleting}
-                className='flex-1 sm:flex-initial px-4 py-2.5 text-xs font-bold text-slate-600 hover:text-slate-800 hover:bg-slate-200/60 rounded-xl transition-colors cursor-pointer min-h-[40px] disabled:opacity-50'
+                className='flex-1 border-stone-200 text-slate-700'
+                onClick={() => setIsDeleteModalOpen(false)}
               >
                 Batal
-              </button>
-              <button
-                type='button'
-                onClick={handleConfirmDeleteAccount}
+              </Button>
+              <Button
+                variant='danger'
+                size='sm'
+                shape='rounded'
                 disabled={isDeleting || deleteConfirmationText.trim().toUpperCase() !== 'HAPUS'}
-                className='flex-1 sm:flex-initial px-5 py-2.5 text-xs font-bold rounded-xl bg-rose-600 text-white hover:bg-rose-700 active:scale-95 transition-all shadow-md shadow-rose-200 cursor-pointer min-h-[40px] flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100'
+                icon={isDeleting ? <Loader2 size={14} className='animate-spin' /> : <Trash2 size={14} />}
+                className='flex-1'
+                onClick={handleConfirmDeleteAccount}
               >
-                {isDeleting ? (
-                  <>
-                    <Loader2 size={14} className='animate-spin' />
-                    <span>Menghapus...</span>
-                  </>
-                ) : (
-                  <>
-                    <Trash2 size={14} />
-                    <span>Hapus Akun Permanen</span>
-                  </>
-                )}
-              </button>
+                {isDeleting ? 'Menghapus...' : 'Ya, Hapus'}
+              </Button>
             </div>
           </div>
         </div>

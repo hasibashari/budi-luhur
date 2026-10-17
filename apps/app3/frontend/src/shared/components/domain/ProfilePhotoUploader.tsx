@@ -153,7 +153,7 @@ export function ProfilePhotoUploader({
           src={currentAvatarUrl}
           name={name}
           size={size}
-          ringClassName='ring-4 ring-rose-200 group-hover:ring-rose-400 transition-all shadow-md'
+          ringClassName='ring-4 ring-emerald-200 group-hover:ring-emerald-400 transition-all shadow-md'
         />
 
         {canEdit && (
@@ -162,7 +162,7 @@ export function ProfilePhotoUploader({
             onClick={handleOpenModal}
             aria-label='Ubah Foto Profil'
             title='Ubah Foto Profil'
-            className='absolute bottom-0 right-0 w-8 h-8 sm:w-9 sm:h-9 bg-[#e11d48] hover:bg-[#be123c] text-white rounded-full flex items-center justify-center shadow-lg border-2 border-white transition-all cursor-pointer hover:scale-105 active:scale-95 z-10'
+            className='absolute bottom-0 right-0 w-8 h-8 sm:w-9 sm:h-9 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full flex items-center justify-center shadow-lg border-2 border-white transition-all cursor-pointer hover:scale-105 active:scale-95 z-10'
           >
             <Camera size={15} />
           </button>
@@ -173,14 +173,14 @@ export function ProfilePhotoUploader({
       {isModalOpen && (
         <div className='fixed inset-0 z-[70] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fade-in'>
           <div
-            className='bg-white rounded-3xl shadow-2xl border border-rose-100 max-w-md w-full p-5 sm:p-6 relative overflow-hidden animate-scale-up max-h-[88dvh] sm:max-h-[90vh] flex flex-col'
+            className='bg-white rounded-3xl shadow-2xl border border-slate-200 max-w-md w-full p-5 sm:p-6 relative overflow-hidden animate-scale-up max-h-[88dvh] sm:max-h-[90vh] flex flex-col'
             onClick={e => e.stopPropagation()}
           >
             {/* Modal Header */}
             <div className='flex items-center justify-between pb-3 border-b border-slate-100 mb-5'>
               <div>
-                <h3 className='text-base sm:text-lg font-bold text-[#1e293b]'>Foto Profil</h3>
-                <p className='text-xs text-[#64748b] mt-0.5'>
+                <h3 className='text-base sm:text-lg font-bold text-slate-800'>Foto Profil</h3>
+                <p className='text-xs text-slate-500 mt-0.5'>
                   Pilih foto profil personal atau gunakan inisial nama Anda
                 </p>
               </div>
@@ -196,19 +196,19 @@ export function ProfilePhotoUploader({
 
             {/* Error Notification */}
             {errorMessage && (
-              <div className='mb-4 p-3 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-semibold flex items-center gap-2'>
-                <AlertCircle size={15} className='text-rose-600 shrink-0' />
+              <div className='mb-4 p-3 rounded-2xl bg-amber-50 border border-amber-200 text-amber-800 text-xs font-semibold flex items-center gap-2'>
+                <AlertCircle size={15} className='text-amber-600 shrink-0' />
                 <span>{errorMessage}</span>
               </div>
             )}
 
             {/* Live Avatar Preview */}
-            <div className='flex flex-col items-center justify-center py-4 bg-gradient-to-b from-rose-50/50 to-white rounded-2xl border border-rose-100/60 mb-5'>
+            <div className='flex flex-col items-center justify-center py-4 bg-gradient-to-b from-emerald-50/50 to-white rounded-2xl border border-emerald-100/60 mb-5'>
               <Avatar
                 src={previewUrl}
                 name={name}
                 size='3xl'
-                ringClassName='ring-4 ring-rose-300 shadow-xl'
+                ringClassName='ring-4 ring-emerald-300 shadow-xl'
               />
               <span className='text-xs font-semibold text-slate-600 mt-3'>
                 {previewUrl ? 'Pratinjau Foto Profil' : 'Menggunakan Inisial Huruf Nama'}
@@ -234,7 +234,7 @@ export function ProfilePhotoUploader({
                   type='button'
                   onClick={() => fileInputRef.current?.click()}
                   disabled={isProcessing}
-                  className='flex items-center justify-center gap-2 py-2.5 px-3 bg-[#fff1f2] hover:bg-rose-100 text-[#e11d48] rounded-xl text-xs font-bold transition-all border border-rose-200 cursor-pointer disabled:opacity-50'
+                  className='flex items-center justify-center gap-2 py-2.5 px-3 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 rounded-xl text-xs font-bold transition-all border border-emerald-200 cursor-pointer disabled:opacity-50'
                 >
                   <Upload size={14} />
                   <span>Pilih Foto</span>

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { CalendarCheck, Calendar as CalendarIcon, Filter, Check } from 'lucide-react';
+import { CalendarCheck, Calendar as CalendarIcon, Filter, Check, Syringe, Building2, UserCheck } from 'lucide-react';
 import { Card } from '@/src/shared/components/ui/Card';
 import { Badge } from '@/src/shared/components/ui/Badge';
 import { ConsumptionLog } from '../types';
@@ -24,7 +24,6 @@ export function ConsumptionLogList({
   const [isStatusFilterOpen, setIsStatusFilterOpen] = useState(false);
   const statusFilterPopoverRef = useRef<HTMLDivElement>(null);
 
-  // Close popover on outside click
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (
@@ -43,21 +42,21 @@ export function ConsumptionLogList({
   }, [isStatusFilterOpen]);
 
   return (
-    <Card padding='lg' className='relative overflow-visible'>
-      <div className='flex items-center justify-between mb-4 pb-2.5 border-b border-[#fce7f3]'>
+    <Card padding='lg' className='relative overflow-visible border-stone-200'>
+      <div className='flex items-center justify-between mb-4 pb-2.5 border-b border-stone-100'>
         <div className='flex items-center gap-2'>
-          <h4 className='text-sm sm:text-base font-bold text-[#1e293b] flex items-center gap-2'>
-            <CalendarCheck size={18} className='text-[#e11d48]' />
-            <span>Riwayat Aktivitas ({logs.length})</span>
+          <h4 className='text-sm sm:text-base font-bold text-slate-900 flex items-center gap-2'>
+            <CalendarCheck size={18} className='text-emerald-700' />
+            <span>Buku Catatan Imunisasi TT & Skrining ({logs.length})</span>
           </h4>
           {filterLabel && filterLabel !== 'Semua catatan' && (
-            <span className='hidden sm:inline-block text-[11px] text-[#e11d48] font-semibold bg-rose-50 px-2 py-0.5 rounded-full border border-rose-100'>
+            <span className='hidden sm:inline-block text-[11px] text-emerald-800 font-semibold bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200'>
               {filterLabel}
             </span>
           )}
         </div>
 
-        {/* Right Side: Status Filter Icon-Only Dropdown (Menggantikan 'Semua catatan') */}
+        {/* Right Side: Status Filter Icon-Only Dropdown */}
         {onStatusFilterChange && (
           <div className='relative' ref={statusFilterPopoverRef}>
             <button
@@ -65,29 +64,28 @@ export function ConsumptionLogList({
               onClick={() => setIsStatusFilterOpen(prev => !prev)}
               className={`relative inline-flex items-center justify-center w-8 h-8 rounded-xl border transition-all cursor-pointer shadow-2xs ${
                 isStatusFilterOpen || statusFilter !== 'ALL'
-                  ? 'bg-[#fff1f2] border-[#e11d48] text-[#e11d48] ring-2 ring-rose-200'
-                  : 'bg-white border-slate-200 text-slate-600 hover:border-rose-300 hover:text-[#e11d48]'
+                  ? 'bg-emerald-50 border-emerald-600 text-emerald-800 ring-2 ring-emerald-600/20'
+                  : 'bg-white border-stone-200 text-slate-600 hover:border-emerald-300 hover:text-emerald-700'
               }`}
-              title='Filter Status Konsumsi'
-              aria-label='Filter Status Konsumsi'
+              title='Filter Status Catatan'
+              aria-label='Filter Status Catatan'
             >
               <Filter size={15} />
               {statusFilter !== 'ALL' && (
-                <span className='absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-[#e11d48] ring-2 ring-white' />
+                <span className='absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-600 ring-2 ring-white' />
               )}
             </button>
 
-            {/* Status Filter Popover Menu */}
             {isStatusFilterOpen && (
-              <div className='absolute right-0 top-full mt-2 w-48 bg-white rounded-2xl shadow-xl border border-rose-100 p-1.5 z-50 animate-fade-in'>
-                <div className='px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-100 mb-1'>
+              <div className='absolute right-0 top-full mt-2 w-48 bg-white rounded-2xl shadow-xl border border-stone-200 p-1.5 z-50 animate-fade-in'>
+                <div className='px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400 border-b border-stone-100 mb-1'>
                   Filter Status
                 </div>
                 <div className='space-y-0.5'>
                   {[
-                    { id: 'ALL', label: 'Semua Status', icon: '📋' },
-                    { id: 'ON_TIME', label: 'Hanya Selesai (✓)', icon: '✅' },
-                    { id: 'MISSED', label: 'Hanya Terlewat (✕)', icon: '⚠️' },
+                    { id: 'ALL', label: 'Semua Status' },
+                    { id: 'ON_TIME', label: 'Telah Diberikan (✓)' },
+                    { id: 'MISSED', label: 'Terlewat / Tunda (✕)' },
                   ].map(option => {
                     const isSelected = statusFilter === option.id;
                     return (
@@ -100,15 +98,12 @@ export function ConsumptionLogList({
                         }}
                         className={`w-full text-left px-2.5 py-2 rounded-xl text-xs font-semibold flex items-center justify-between transition-colors cursor-pointer ${
                           isSelected
-                            ? 'bg-rose-50 text-[#e11d48] font-bold'
-                            : 'text-slate-700 hover:bg-slate-50'
+                            ? 'bg-emerald-50 text-emerald-800 font-bold'
+                            : 'text-slate-700 hover:bg-stone-50'
                         }`}
                       >
-                        <span className='flex items-center gap-2'>
-                          <span className='text-xs'>{option.icon}</span>
-                          <span>{option.label}</span>
-                        </span>
-                        {isSelected && <Check size={14} className='text-[#e11d48] shrink-0' />}
+                        <span>{option.label}</span>
+                        {isSelected && <Check size={14} className='text-emerald-700 shrink-0' />}
                       </button>
                     );
                   })}
@@ -119,7 +114,7 @@ export function ConsumptionLogList({
         )}
       </div>
 
-      <div className='flex flex-col divide-y divide-[#fce7f3]'>
+      <div className='flex flex-col divide-y divide-stone-100'>
         {logs.length > 0 ? (
           logs.map(log => {
             const isCompleted = log.status === 'ON_TIME' || log.status === 'LATE';
@@ -128,25 +123,34 @@ export function ConsumptionLogList({
                 key={log.id}
                 className='py-3.5 first:pt-0 last:pb-0 flex items-center justify-between gap-3'
               >
-                <div>
-                  <div className='flex items-center gap-2 flex-wrap'>
-                    <span className='text-xs sm:text-sm font-bold text-[#1e293b]'>{log.title}</span>
-                    <span className='text-[11px] text-[#e11d48] font-bold bg-rose-50 px-2 py-0.5 rounded-full'>
-                      {formatShortDate(log.scheduledDate)}
-                    </span>
+                <div className='flex items-start gap-3'>
+                  <div className='w-9 h-9 rounded-xl bg-emerald-50 border border-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 mt-0.5 shadow-2xs'>
+                    <Syringe size={17} />
                   </div>
-                  <p className='text-xs text-[#64748b] mt-0.5'>
-                    Jadwal: {log.scheduledTime} WIB {log.takenAt ? `• Diminum ${log.takenAt}` : ''}
-                  </p>
-                  {log.notes && (
-                    <p className='text-[11px] text-[#94a3b8] italic mt-0.5'>{log.notes}</p>
-                  )}
+                  <div>
+                    <div className='flex items-center gap-2 flex-wrap'>
+                      <span className='text-xs sm:text-sm font-bold text-slate-900'>{log.title}</span>
+                      <span className='text-[10px] text-emerald-800 font-bold bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200'>
+                        {formatShortDate(log.scheduledDate)}
+                      </span>
+                    </div>
+                    <p className='text-xs text-slate-500 mt-0.5 flex items-center gap-1.5 flex-wrap'>
+                      <span>Waktu: {log.scheduledTime} WIB</span>
+                      {log.takenAt && <span>• Diverifikasi: {log.takenAt}</span>}
+                    </p>
+                    {log.notes && (
+                      <p className='text-[11px] text-slate-600 italic mt-0.5 flex items-center gap-1'>
+                        <Building2 size={11} className='text-slate-400' />
+                        <span>{log.notes}</span>
+                      </p>
+                    )}
+                  </div>
                 </div>
 
                 <div className='shrink-0'>
                   {isCompleted ? (
                     <Badge variant='recorded' size='sm'>
-                      ✓ Selesai
+                      ✓ Diberikan
                     </Badge>
                   ) : (
                     <Badge variant='missed' size='sm'>
@@ -158,12 +162,14 @@ export function ConsumptionLogList({
             );
           })
         ) : (
-          <div className='py-10 text-center text-xs text-[#94a3b8] flex flex-col items-center gap-2'>
-            <CalendarIcon size={26} className='text-rose-200' />
-            <span>Tidak ada riwayat konsumsi untuk filter yang dipilih.</span>
+          <div className='py-10 text-center text-xs text-slate-400 flex flex-col items-center gap-2'>
+            <CalendarIcon size={26} className='text-emerald-200' />
+            <span>Belum ada catatan riwayat imunisasi untuk filter ini.</span>
           </div>
         )}
       </div>
     </Card>
   );
 }
+
+export default ConsumptionLogList;

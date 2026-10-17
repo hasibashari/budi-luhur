@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import {
   Clock,
   Calendar as CalendarIcon,
-  Pill,
+  ShieldCheck,
   Bell,
   BellRing,
   Info,
@@ -14,11 +14,13 @@ import {
   Sparkles,
   Plus,
   CalendarPlus,
+  Building2,
 } from 'lucide-react';
 import { Card } from '@/src/shared/components/ui/Card';
 import { Button } from '@/src/shared/components/ui/Button';
 import { Chip } from '@/src/shared/components/ui/Chip';
 import { useAuth } from '@/src/features/auth/context/AuthContext';
+import { TTIntervalGuideCard } from '../components/TTIntervalGuideCard';
 import {
   getUserScheduleAction,
   createUserScheduleAction,
@@ -27,7 +29,7 @@ import {
 } from '@/src/features/user/api/userRepository';
 
 const DAYS_OF_WEEK = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
-const FREQUENCIES = ['1x Seminggu', 'Setiap Hari (Terapi Khusus)'];
+const FREQUENCIES = ['1x Seminggu (Konsultasi Rutin)', 'Sesuai Janji Temu Imunisasi TT'];
 
 export default function ScheduleView() {
   const { user } = useAuth();
@@ -38,8 +40,8 @@ export default function ScheduleView() {
 
   // Edit Form Temp States
   const [tempDay, setTempDay] = useState('Sabtu');
-  const [tempTime, setTempTime] = useState('20:00');
-  const [tempFrequency, setTempFrequency] = useState('1x Seminggu');
+  const [tempTime, setTempTime] = useState('08:00');
+  const [tempFrequency, setTempFrequency] = useState('1x Seminggu (Konsultasi Rutin)');
   const [tempRemind15, setTempRemind15] = useState(true);
 
   useEffect(() => {
@@ -53,7 +55,9 @@ export default function ScheduleView() {
             setTempDay(data.dayOfWeek);
             setTempTime(data.time);
             setTempFrequency(
-              data.frequency === 'Harian' ? 'Setiap Hari (Terapi Khusus)' : '1x Seminggu',
+              data.frequency === 'Harian'
+                ? 'Sesuai Janji Temu Imunisasi TT'
+                : '1x Seminggu (Konsultasi Rutin)',
             );
             setTempRemind15(data.remind15MinBefore);
           }
@@ -74,7 +78,7 @@ export default function ScheduleView() {
     if (!schedule) return;
     const nextEnabled = !schedule.isEnabled;
     setSchedule(prev => (prev ? { ...prev, isEnabled: nextEnabled } : null));
-    showToast(nextEnabled ? 'Pengingat TTD diaktifkan' : 'Pengingat TTD dinonaktifkan');
+    showToast(nextEnabled ? 'Pengingat kunjungan faskes diaktifkan' : 'Pengingat faskes dinonaktifkan');
 
     await updateUserScheduleSettingsAction(schedule.id, {
       isEnabled: nextEnabled,
@@ -86,13 +90,15 @@ export default function ScheduleView() {
       setTempDay(schedule.dayOfWeek);
       setTempTime(schedule.time);
       setTempFrequency(
-        schedule.frequency === 'Mingguan' ? '1x Seminggu' : 'Setiap Hari (Terapi Khusus)',
+        schedule.frequency === 'Mingguan'
+          ? '1x Seminggu (Konsultasi Rutin)'
+          : 'Sesuai Janji Temu Imunisasi TT',
       );
       setTempRemind15(schedule.remind15MinBefore);
     } else {
       setTempDay('Sabtu');
-      setTempTime('20:00');
-      setTempFrequency('1x Seminggu');
+      setTempTime('08:00');
+      setTempFrequency('1x Seminggu (Konsultasi Rutin)');
       setTempRemind15(true);
     }
     setIsModalOpen(true);
@@ -115,7 +121,7 @@ export default function ScheduleView() {
           : null,
       );
       setIsModalOpen(false);
-      showToast('Jadwal pengingat berhasil diperbarui! ✨');
+      showToast('Jadwal kunjungan faskes berhasil diperbarui');
 
       await updateUserScheduleSettingsAction(schedule.id, {
         dayOfWeek: tempDay,
@@ -125,7 +131,7 @@ export default function ScheduleView() {
       });
     } else {
       setIsModalOpen(false);
-      showToast('Jadwal pengingat berhasil dibuat! 🎉');
+      showToast('Jadwal kunjungan faskes berhasil dibuat');
 
       await createUserScheduleAction(user?.id || 'usr_1', {
         dayOfWeek: tempDay,
@@ -150,7 +156,7 @@ export default function ScheduleView() {
     <div className='flex flex-col gap-6 w-full'>
       {/* Toast Feedback */}
       {toastMessage && (
-        <div className='fixed top-16 left-1/2 -translate-x-1/2 z-50 bg-[#1e293b] text-white text-xs font-semibold px-4 py-2.5 rounded-full shadow-lg flex items-center gap-2 animate-fade-in'>
+        <div className='fixed top-16 left-1/2 -translate-x-1/2 z-50 bg-slate-900 text-white text-xs font-semibold px-4 py-2.5 rounded-full shadow-lg flex items-center gap-2 animate-fade-in'>
           <Sparkles size={14} className='text-amber-400' />
           <span>{toastMessage}</span>
         </div>
@@ -158,29 +164,28 @@ export default function ScheduleView() {
 
       {/* Screen Header */}
       <div>
-        <h2 className='text-xl sm:text-2xl font-extrabold text-[#1e293b] tracking-tight'>
-          Jadwal Pengingat TTD
+        <h2 className='text-xl sm:text-2xl font-bold text-slate-900 tracking-tight'>
+          Jadwal & Pengingat Imunisasi TT Calon Pengantin
         </h2>
-        <p className='text-xs sm:text-sm text-[#64748b]'>
-          Atur waktu rutin konsumsi Tablet Tambah Darah setiap minggu
+        <p className='text-xs sm:text-sm text-slate-600 mt-0.5'>
+          Kelola janji temu suntik vaksin TT di Puskesmas dan waktu pengingat persiapan kesehatan pranikah
         </p>
       </div>
 
       {loading ? (
         <div className='flex items-center justify-center py-16 w-full'>
-          <div className='animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#e11d48]' />
+          <div className='animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-emerald-600' />
         </div>
       ) : (
-        /* Responsive Grid: Mobile 1-col -> Tablet/Desktop 2-col */
         <div className='grid grid-cols-1 md:grid-cols-12 gap-5 md:gap-6 items-start'>
           {/* LEFT COLUMN: Active Schedule Card or Empty Schedule Card (md:col-span-7) */}
           <div className='md:col-span-7 flex flex-col gap-5'>
             {schedule ? (
-              <Card variant='hero' padding='lg' className='relative'>
+              <Card padding='lg' className='relative border-emerald-200 bg-linear-to-br from-emerald-50/40 via-white to-stone-50'>
                 <div className='flex items-center justify-between gap-2 mb-4'>
-                  <span className='inline-flex items-center gap-1.5 px-3 py-1 bg-white/90 rounded-full text-xs font-bold text-[#e11d48] border border-rose-200'>
-                    <Pill size={14} />
-                    <span>{schedule.dosage}</span>
+                  <span className='inline-flex items-center gap-1.5 px-3 py-1 bg-white rounded-full text-xs font-bold text-emerald-800 border border-emerald-200 shadow-2xs'>
+                    <ShieldCheck size={14} className='text-emerald-600' />
+                    <span>{schedule.tabletName || 'Imunisasi TT Pranikah'}</span>
                   </span>
 
                   {/* Toggle Switch */}
@@ -188,7 +193,7 @@ export default function ScheduleView() {
                     type='button'
                     onClick={handleToggleActive}
                     className={`w-12 h-6.5 rounded-full transition-colors p-0.5 flex items-center cursor-pointer ${
-                      schedule.isEnabled ? 'bg-[#e11d48]' : 'bg-slate-300'
+                      schedule.isEnabled ? 'bg-emerald-600' : 'bg-stone-300'
                     }`}
                     aria-label='Toggle Status Pengingat'
                   >
@@ -201,29 +206,29 @@ export default function ScheduleView() {
                 </div>
 
                 <div className='my-3'>
-                  <span className='text-xs text-[#64748b] font-medium block'>
-                    Hari & Waktu Rutin:
+                  <span className='text-xs text-slate-500 font-medium block'>
+                    Hari & Waktu Kunjungan Rutin:
                   </span>
-                  <div className='text-2xl sm:text-4xl font-extrabold text-[#1e293b] tracking-tight flex items-baseline gap-2 mt-1'>
+                  <div className='text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight flex items-baseline gap-2 mt-1'>
                     <span>{schedule.dayOfWeek}</span>
-                    <span className='text-[#e11d48] text-xl sm:text-2xl font-bold'>
+                    <span className='text-emerald-700 text-xl sm:text-2xl font-bold'>
                       • {schedule.time} WIB
                     </span>
                   </div>
-                  <span className='text-xs sm:text-sm font-semibold text-[#475569] mt-2 block'>
-                    {schedule.tabletName}
+                  <span className='text-xs sm:text-sm font-semibold text-slate-700 mt-2 block'>
+                    Poli KIA / Imunisasi Catin
                   </span>
                   {schedule.instructions && (
-                    <p className='text-xs text-[#64748b] mt-2 italic bg-white/80 px-3 py-1.5 rounded-lg border border-rose-100'>
+                    <p className='text-xs text-slate-600 mt-2 italic bg-white px-3 py-2 rounded-xl border border-stone-200'>
                       💡 {schedule.instructions}
                     </p>
                   )}
                 </div>
 
-                <div className='mt-5 pt-4 border-t border-rose-200 flex items-center justify-between'>
-                  <span className='text-xs text-[#64748b] flex items-center gap-1'>
-                    <BellRing size={13} className='text-[#e11d48]' />
-                    {schedule.remind15MinBefore ? 'Pengingat 15 menit sebelum' : 'Tepat pada jam'}
+                <div className='mt-5 pt-4 border-t border-emerald-100 flex items-center justify-between'>
+                  <span className='text-xs text-slate-500 flex items-center gap-1.5'>
+                    <BellRing size={14} className='text-emerald-700' />
+                    {schedule.remind15MinBefore ? 'Pengingat 15 menit sebelumnya' : 'Tepat pada jam kunjungan'}
                   </span>
 
                   <Button
@@ -231,6 +236,7 @@ export default function ScheduleView() {
                     size='sm'
                     shape='pill'
                     icon={<Edit3 size={13} />}
+                    className='bg-emerald-600 hover:bg-emerald-700 text-white font-bold'
                     onClick={handleOpenModal}
                   >
                     Ubah Jadwal
@@ -240,196 +246,139 @@ export default function ScheduleView() {
             ) : (
               <Card
                 padding='lg'
-                className='text-center py-10 border-2 border-dashed border-[#fce7f3] bg-[#fffbfb]'
+                className='text-center py-10 border-2 border-dashed border-emerald-200 bg-emerald-50/20'
               >
-                <div className='w-14 h-14 rounded-2xl bg-rose-50 text-[#e11d48] flex items-center justify-center mx-auto mb-3.5 shadow-xs'>
+                <div className='w-14 h-14 rounded-2xl bg-emerald-100 text-emerald-800 flex items-center justify-center mx-auto mb-3.5 shadow-xs'>
                   <CalendarPlus size={28} />
                 </div>
-                <h3 className='text-base font-extrabold text-[#1e293b]'>
-                  Belum Ada Jadwal Pengingat
+                <h3 className='text-base font-bold text-slate-900'>
+                  Belum Ada Jadwal Kunjungan Faskes
                 </h3>
-                <p className='text-xs sm:text-sm text-[#64748b] max-w-sm mx-auto mt-1 mb-5'>
-                  Atur jadwal mingguan konsumsi Tablet Tambah Darah agar FEMORY dapat mengingatkanmu
-                  tepat waktu.
+                <p className='text-xs sm:text-sm text-slate-600 max-w-sm mx-auto mt-1 mb-5'>
+                  Atur jadwal kunjungan ke Puskesmas agar PRELUNA dapat mengingatkan jadwal imunisasi TT dan pengambilan surat keterangan sehat tepat waktu.
                 </p>
                 <Button
                   variant='primary'
                   size='md'
                   shape='pill'
                   icon={<Plus size={16} />}
+                  className='bg-emerald-600 hover:bg-emerald-700 text-white font-bold'
                   onClick={handleOpenModal}
                 >
-                  Buat Jadwal Pengingat
+                  Buat Jadwal Kunjungan
                 </Button>
               </Card>
             )}
 
-            {/* Quick Frequency Info */}
-            <Card padding='md' className='bg-[#fff5f7]'>
-              <h4 className='text-xs font-bold text-[#1e293b] mb-1'>
-                Kenapa Cukup 1x Seminggu? 🩸
+            {/* Quick Guidance Info Card */}
+            <Card padding='md' className='bg-stone-50 border-stone-200'>
+              <h4 className='text-xs font-bold text-slate-900 mb-1 flex items-center gap-1.5'>
+                <Building2 size={14} className='text-emerald-700' />
+                <span>Pelayanan Poli Pranikah di Puskesmas</span>
               </h4>
-              <p className='text-xs text-[#475569] leading-relaxed'>
-                Bagi remaja putri sehat, suplementasi TTD mingguan sudah cukup efektif untuk
-                mencukupi simpanan zat besi tanpa menimbulkan penumpukan berlebihan.
+              <p className='text-xs text-slate-600 leading-relaxed'>
+                Pelayanan imunisasi TT dan skrining pranikah umumnya dilayani pada jam kerja (Senin–Jumat pukul 08:00–14:00 WIB, Sabtu pukul 08:00–12:00 WIB). Bawa KTP dan surat pengantar dari kelurahan/KUA saat berkunjung.
               </p>
             </Card>
           </div>
 
-          {/* RIGHT COLUMN: Medical Guidelines & FAQs (md:col-span-5) */}
+          {/* RIGHT COLUMN: Kemenkes Interval Guide & FAQs (md:col-span-5) */}
           <div className='md:col-span-5 flex flex-col gap-4'>
-            <Card padding='md'>
-              <div className='flex items-center gap-2 text-sm sm:text-base font-bold text-[#1e293b] mb-3'>
-                <div className='w-7 h-7 rounded-full bg-rose-100 text-[#e11d48] flex items-center justify-center shrink-0'>
-                  <Info size={15} />
-                </div>
-                <h4>Petunjuk Minum TTD</h4>
-              </div>
-
-              <ul className='space-y-2.5 text-xs sm:text-sm text-[#475569] leading-relaxed'>
-                <li className='flex items-start gap-2'>
-                  <span className='text-rose-500 font-bold'>•</span>
-                  <span>
-                    <strong>1 Tablet / Minggu:</strong> Minum rutin di hari yang sama.
-                  </span>
-                </li>
-                <li className='flex items-start gap-2'>
-                  <span className='text-rose-500 font-bold'>•</span>
-                  <span>
-                    <strong>Setelah Makan:</strong> Mencegah perut tidak nyaman atau mual.
-                  </span>
-                </li>
-                <li className='flex items-start gap-2'>
-                  <span className='text-rose-500 font-bold'>•</span>
-                  <span>
-                    <strong>Hindari Teh & Kopi:</strong> Beri jeda 2 jam agar zat besi terserap
-                    optimal.
-                  </span>
-                </li>
-                <li className='flex items-start gap-2'>
-                  <span className='text-rose-500 font-bold'>•</span>
-                  <span>
-                    <strong>Air Putih / Jus Jeruk:</strong> Vitamin C melipatgandakan penyerapan zat
-                    besi.
-                  </span>
-                </li>
-              </ul>
-            </Card>
+            <TTIntervalGuideCard />
           </div>
         </div>
       )}
 
       {/* Edit/Create Schedule Modal */}
       {isModalOpen && (
-        <div className='fixed inset-0 z-[60] flex items-center justify-center p-4 sm:p-6 bg-slate-950/40 backdrop-blur-xs animate-fade-in'>
-          {/* Backdrop Click Dismiss */}
+        <div className='fixed inset-0 z-60 flex items-center justify-center p-4 sm:p-6 bg-slate-950/40 backdrop-blur-xs animate-fade-in'>
           <div className='absolute inset-0' onClick={() => setIsModalOpen(false)} />
-          <div className='relative z-10 w-full max-w-md bg-white rounded-2xl sm:rounded-3xl p-5 shadow-2xl border border-[#fce7f3] max-h-[90vh] overflow-y-auto'>
-            <div className='flex items-center justify-between pb-3 border-b border-[#fce7f3] mb-4'>
+          <div className='relative z-10 w-full max-w-md bg-white rounded-3xl p-5 sm:p-6 shadow-2xl border border-stone-200 max-h-[90vh] overflow-y-auto'>
+            <div className='flex items-center justify-between pb-3 border-b border-stone-100 mb-4'>
               <div className='flex items-center gap-2'>
-                <div className='w-8 h-8 rounded-xl bg-rose-100 text-[#e11d48] flex items-center justify-center'>
+                <div className='w-8 h-8 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center'>
                   <CalendarIcon size={16} />
                 </div>
-                <h3 className='text-sm sm:text-base font-bold text-[#1e293b]'>
-                  {schedule ? 'Ubah Jadwal Pengingat' : 'Buat Jadwal Pengingat'}
+                <h3 className='text-sm sm:text-base font-bold text-slate-900'>
+                  {schedule ? 'Ubah Jadwal Kunjungan' : 'Buat Jadwal Kunjungan'}
                 </h3>
               </div>
               <button
                 type='button'
                 onClick={() => setIsModalOpen(false)}
-                className='w-7 h-7 rounded-full bg-slate-100 text-[#64748b] hover:text-[#1e293b] flex items-center justify-center transition-colors cursor-pointer'
+                className='w-7 h-7 rounded-full bg-stone-100 text-slate-500 hover:text-slate-900 flex items-center justify-center transition-colors cursor-pointer'
               >
                 <X size={15} />
               </button>
             </div>
 
-            <form onSubmit={handleSaveModal} className='flex flex-col gap-3.5'>
-              {/* Day Selector (Only when 1x Seminggu) */}
-              {tempFrequency.includes('Seminggu') && (
-                <div>
-                  <label className='text-xs font-semibold text-[#1e293b] mb-1.5 block'>
-                    Pilih Hari:
-                  </label>
-                  <div className='flex flex-wrap gap-1.5'>
-                    {DAYS_OF_WEEK.map(d => (
-                      <Chip key={d} size='sm' active={tempDay === d} onClick={() => setTempDay(d)}>
-                        {d}
-                      </Chip>
-                    ))}
-                  </div>
+            <form onSubmit={handleSaveModal} className='flex flex-col gap-4'>
+              {/* Day Selector */}
+              <div>
+                <label className='text-xs font-bold text-slate-800 mb-1.5 block'>
+                  Pilih Hari Kunjungan:
+                </label>
+                <div className='flex flex-wrap gap-1.5'>
+                  {DAYS_OF_WEEK.map(d => (
+                    <Chip key={d} size='sm' active={tempDay === d} onClick={() => setTempDay(d)}>
+                      {d}
+                    </Chip>
+                  ))}
                 </div>
-              )}
+              </div>
 
               {/* Time Selector */}
               <div>
-                <label className='text-xs font-semibold text-[#1e293b] mb-1 block'>
-                  Jam Minum:
+                <label className='text-xs font-bold text-slate-800 mb-1 block'>
+                  Jam Pelayanan Faskes:
                 </label>
                 <div className='relative flex items-center'>
-                  <Clock size={15} className='absolute left-3 text-[#94a3b8] pointer-events-none' />
+                  <Clock size={15} className='absolute left-3 text-slate-400 pointer-events-none' />
                   <input
                     type='time'
                     value={tempTime}
                     onChange={e => setTempTime(e.target.value)}
-                    className='w-full bg-slate-50 text-[#1e293b] font-semibold text-xs sm:text-sm rounded-xl border border-slate-200 focus:border-[#e11d48] pl-9 pr-3 py-2 outline-none'
+                    className='w-full bg-stone-50 text-slate-900 font-semibold text-xs sm:text-sm rounded-xl border border-stone-200 focus:border-emerald-600 pl-9 pr-3 py-2.5 outline-none'
                     required
                   />
                 </div>
               </div>
 
-              {/* Frequency Selector */}
-              <div>
-                <label className='text-xs font-semibold text-[#1e293b] mb-1 block'>
-                  Frekuensi:
-                </label>
-                <div className='flex flex-col gap-1.5'>
-                  {FREQUENCIES.map(f => (
-                    <button
-                      key={f}
-                      type='button'
-                      onClick={() => setTempFrequency(f)}
-                      className={`text-left text-xs font-medium p-2.5 rounded-xl border transition-all flex items-center justify-between cursor-pointer ${
-                        tempFrequency === f
-                          ? 'border-[#e11d48] bg-rose-50 text-[#be123c] font-bold'
-                          : 'border-slate-200 bg-white text-[#475569] hover:bg-slate-50'
-                      }`}
-                    >
-                      <span>{f}</span>
-                      {tempFrequency === f && <Check size={13} className='text-[#e11d48]' />}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
               {/* Remind 15 min toggle */}
-              <div className='flex items-center justify-between p-2.5 bg-slate-50 rounded-xl border border-slate-200'>
+              <div className='flex items-center justify-between p-3 bg-stone-50 rounded-xl border border-stone-200'>
                 <div className='flex items-center gap-2'>
-                  <Bell size={15} className='text-[#e11d48]' />
-                  <span className='text-xs font-medium text-[#1e293b]'>
-                    Ingatkan 15 Menit Sebelumnya
+                  <Bell size={15} className='text-emerald-700' />
+                  <span className='text-xs font-semibold text-slate-800'>
+                    Pengingat 15 Menit Sebelumnya
                   </span>
                 </div>
                 <input
                   type='checkbox'
                   checked={tempRemind15}
                   onChange={e => setTempRemind15(e.target.checked)}
-                  className='w-4 h-4 text-[#e11d48] accent-[#e11d48] rounded-md cursor-pointer'
+                  className='w-4.5 h-4.5 accent-emerald-600 rounded cursor-pointer'
                 />
               </div>
 
               {/* Modal Buttons */}
-              <div className='flex items-center gap-2 pt-2 border-t border-slate-100'>
+              <div className='flex items-center gap-2 pt-3 border-t border-stone-100'>
                 <Button
                   type='button'
                   variant='outline'
                   size='sm'
                   shape='pill'
-                  className='flex-1'
+                  className='flex-1 border-stone-200 text-slate-700'
                   onClick={() => setIsModalOpen(false)}
                 >
                   Batal
                 </Button>
-                <Button type='submit' variant='primary' size='sm' shape='pill' className='flex-1'>
+                <Button
+                  type='submit'
+                  variant='primary'
+                  size='sm'
+                  shape='pill'
+                  className='flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold'
+                >
                   {schedule ? 'Simpan' : 'Buat Jadwal'}
                 </Button>
               </div>

@@ -54,44 +54,44 @@ export function StatusCard({
   };
 
   return (
-    <Card padding='md' className='relative'>
+    <Card padding='md' className='relative border-stone-200'>
       <div className='flex items-center justify-between gap-2 mb-2'>
-        <h4 className='text-sm sm:text-base font-bold text-[#1e293b] flex items-center gap-1.5'>
-          <span>Status Hari Ini</span>
+        <h4 className='text-xs sm:text-sm font-bold text-slate-900 flex items-center gap-1.5'>
+          <span>Kunjungan / Konsumsi Suplemen Pranikah Hari Ini</span>
         </h4>
 
         <Badge variant={status} dot={status === 'pending'} size='sm'>
           {status === 'recorded'
-            ? '✓ Sudah Dicatat'
+            ? '✓ Sudah Tercatat'
             : status === 'missed'
-              ? '✕ Terlewat'
-              : 'Belum Dicatat'}
+              ? '✕ Belum Terlaksana'
+              : 'Menunggu Konfirmasi'}
         </Badge>
       </div>
 
       {status === 'pending' && (
         <div>
-          <p className='text-xs sm:text-sm text-[#475569] mb-3 leading-relaxed'>
-            Catat konsumsi TTD hari ini untuk menjaga streak kesehatanmu.
+          <p className='text-xs text-slate-600 mb-3 leading-relaxed'>
+            Konfirmasi kunjungan imunisasi TT atau konsumsi suplemen multivitamin pranikah hari ini.
           </p>
 
           <div className='flex items-center gap-2'>
             <Button
-              variant='success'
+              variant='primary'
               size='sm'
               shape='pill'
-              className='flex-1 text-xs sm:text-sm py-2'
+              className='flex-1 text-xs sm:text-sm py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold'
               icon={<CheckCircle2 size={16} />}
               onClick={handleSetRecorded}
             >
-              Sudah Minum
+              Sudah Terlaksana
             </Button>
 
             <Button
               variant='outline'
               size='sm'
               shape='pill'
-              className='text-xs sm:text-sm py-2 px-3.5 text-[#f43f5e] border-[#fecdd3] hover:bg-[#fff1f2]'
+              className='text-xs sm:text-sm py-2 px-3.5 text-stone-600 border-stone-200 hover:bg-stone-50'
               icon={<XCircle size={16} />}
               onClick={handleSetMissed}
             >
@@ -102,16 +102,16 @@ export function StatusCard({
       )}
 
       {status === 'recorded' && (
-        <div className='bg-[#ecfdf5] border border-[#a7f3d0] rounded-xl p-3 mt-1 flex items-center justify-between'>
+        <div className='bg-emerald-50 border border-emerald-200 rounded-2xl p-3 mt-1 flex items-center justify-between'>
           <div className='flex items-center gap-2.5'>
-            <div className='w-8 h-8 rounded-full bg-[#10b981] text-white flex items-center justify-center shrink-0 shadow-sm shadow-emerald-500/30'>
+            <div className='w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-xs'>
               <Sparkles size={16} />
             </div>
             <div>
-              <p className='text-xs sm:text-sm font-bold text-[#065f46]'>Hebat! TTD Tercatat</p>
-              <p className='text-[11px] text-[#047857] flex items-center gap-1'>
+              <p className='text-xs sm:text-sm font-bold text-emerald-950'>Bagus! Terverifikasi</p>
+              <p className='text-[11px] text-emerald-800 flex items-center gap-1'>
                 <Clock size={11} />
-                <span>Diminum pada {recordedTime || '08:15 WIB'}</span>
+                <span>Tercatat pada {recordedTime || '08:15 WIB'}</span>
               </p>
             </div>
           </div>
@@ -119,7 +119,7 @@ export function StatusCard({
           <button
             type='button'
             onClick={handleReset}
-            className='text-[11px] text-[#059669] hover:underline font-semibold px-2 py-1'
+            className='text-[11px] text-emerald-700 hover:underline font-semibold px-2 py-1 cursor-pointer'
           >
             Ubah
           </button>
@@ -127,17 +127,17 @@ export function StatusCard({
       )}
 
       {status === 'missed' && (
-        <div className='bg-[#fff1f2] border border-[#fecdd3] rounded-xl p-3 mt-1 flex items-center justify-between'>
+        <div className='bg-amber-50 border border-amber-200 rounded-2xl p-3 mt-1 flex items-center justify-between'>
           <div className='flex items-center gap-2.5'>
-            <div className='w-8 h-8 rounded-full bg-[#f43f5e] text-white flex items-center justify-center shrink-0'>
+            <div className='w-8 h-8 rounded-xl bg-amber-500 text-white flex items-center justify-center shrink-0'>
               <XCircle size={16} />
             </div>
             <div>
-              <p className='text-xs sm:text-sm font-bold text-[#9f1239]'>
-                Jadwal Hari Ini Terlewat
+              <p className='text-xs sm:text-sm font-bold text-amber-950'>
+                Jadwal Belum Terlaksana
               </p>
-              <p className='text-[11px] text-[#be123c]'>
-                Jangan patah semangat, jadwalkan kembali besok!
+              <p className='text-[11px] text-amber-800'>
+                Tetap pantau jadwal faskes agar tidak terlewat sebelum akad nikah.
               </p>
             </div>
           </div>
@@ -145,7 +145,7 @@ export function StatusCard({
           <button
             type='button'
             onClick={handleReset}
-            className='text-[11px] text-[#e11d48] hover:underline font-semibold px-2 py-1'
+            className='text-[11px] text-amber-800 hover:underline font-semibold px-2 py-1 cursor-pointer'
           >
             Ubah
           </button>
@@ -154,3 +154,5 @@ export function StatusCard({
     </Card>
   );
 }
+
+export default StatusCard;

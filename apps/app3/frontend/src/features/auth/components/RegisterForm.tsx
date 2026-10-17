@@ -25,6 +25,7 @@ export function RegisterForm({ onSwitchTab, hideHeader = false }: RegisterFormPr
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [gender, setGender] = useState<'Perempuan' | 'Laki-laki'>('Perempuan');
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -55,13 +56,13 @@ export function RegisterForm({ onSwitchTab, hideHeader = false }: RegisterFormPr
         name: name.trim(),
         email: email.trim(),
         password,
-        gender: 'Perempuan',
+        gender,
       });
 
       if (res.success) {
         setSuccessMessage(
           res.message ||
-            'Pendaftaran berhasil! Akun Anda siap digunakan. Mengalihkan ke halaman Masuk...',
+            'Pendaftaran berhasil! Akun Calon Pengantin siap digunakan. Mengalihkan ke halaman Masuk...',
         );
         setTimeout(() => {
           if (onSwitchTab) {
@@ -84,11 +85,11 @@ export function RegisterForm({ onSwitchTab, hideHeader = false }: RegisterFormPr
     <div className='w-full'>
       {!hideHeader && (
         <div className='mb-6 text-left'>
-          <h2 className='text-2xl font-extrabold text-[#1e293b] tracking-tight mb-1'>
-            Daftar Akun FEMORY
+          <h2 className='text-2xl font-extrabold text-[#0f172a] tracking-tight mb-1'>
+            Daftar Akun PRELUNA
           </h2>
           <p className='text-xs sm:text-sm text-[#64748b]'>
-            Daftarkan akun untuk mulai memantau jadwal suplemen & kesehatanmu.
+            Daftarkan akun Calon Pengantin untuk memulai pemantauan imunisasi TT dan kesehatan pranikah.
           </p>
         </div>
       )}
@@ -104,7 +105,7 @@ export function RegisterForm({ onSwitchTab, hideHeader = false }: RegisterFormPr
         <div className='mb-4 p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs sm:text-sm font-medium flex flex-col gap-2 animate-scale-up'>
           <div className='flex items-center gap-2 font-bold text-emerald-800 text-sm'>
             <CheckCircle2 size={18} className='text-emerald-600 shrink-0' />
-            <span>Pendaftaran Berhasil! 🌸</span>
+            <span>Pendaftaran Berhasil!</span>
           </div>
           <p className='text-emerald-700 leading-relaxed'>{successMessage}</p>
           <div className='pt-1 flex items-center justify-end'>
@@ -125,49 +126,79 @@ export function RegisterForm({ onSwitchTab, hideHeader = false }: RegisterFormPr
       {!successMessage && (
         <form onSubmit={handleSubmit} className='flex flex-col gap-3.5'>
           <div>
-            <label className='text-xs font-bold text-[#1e293b] mb-1.5 block'>Nama Lengkap</label>
+            <label className='text-xs font-bold text-[#0f172a] mb-1.5 block'>Nama Lengkap Calon Pengantin</label>
             <div className='relative flex items-center'>
-              <div className='absolute left-3.5 w-8 h-8 rounded-full bg-rose-50 flex items-center justify-center text-[#e11d48]'>
+              <div className='absolute left-3.5 w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center text-[#059669]'>
                 <User size={15} />
               </div>
               <input
                 type='text'
-                placeholder='Contoh: Anisa Putri Ramadhani'
+                placeholder='Contoh: Siti Rahmawati / Muhammad Rizky'
                 value={name}
                 onChange={e => setName(e.target.value)}
                 required
                 autoComplete='name'
-                className='w-full bg-white text-sm text-[#1e293b] rounded-full border border-slate-200 pl-13 pr-4 py-2.5 outline-none focus:border-[#e11d48] transition-colors shadow-2xs'
+                className='w-full bg-white text-sm text-[#0f172a] rounded-full border border-slate-200 pl-13 pr-4 py-2.5 outline-none focus:border-[#059669] focus:ring-1 focus:ring-[#059669] transition-colors shadow-2xs'
               />
             </div>
           </div>
 
           <div>
-            <label className='text-xs font-bold text-[#1e293b] mb-1.5 block'>
+            <label className='text-xs font-bold text-[#0f172a] mb-1.5 block'>
+              Jenis Kelamin
+            </label>
+            <div className='grid grid-cols-2 gap-2'>
+              <button
+                type='button'
+                onClick={() => setGender('Perempuan')}
+                className={`py-2 px-3 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
+                  gender === 'Perempuan'
+                    ? 'bg-emerald-50 border-[#059669] text-[#059669]'
+                    : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+                }`}
+              >
+                Calon Pengantin Perempuan
+              </button>
+              <button
+                type='button'
+                onClick={() => setGender('Laki-laki')}
+                className={`py-2 px-3 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
+                  gender === 'Laki-laki'
+                    ? 'bg-emerald-50 border-[#059669] text-[#059669]'
+                    : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+                }`}
+              >
+                Calon Pengantin Laki-laki
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <label className='text-xs font-bold text-[#0f172a] mb-1.5 block'>
               Alamat Email Aktif
             </label>
             <div className='relative flex items-center'>
-              <div className='absolute left-3.5 w-8 h-8 rounded-full bg-rose-50 flex items-center justify-center text-[#e11d48]'>
+              <div className='absolute left-3.5 w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center text-[#059669]'>
                 <Mail size={15} />
               </div>
               <input
                 type='email'
-                placeholder='nama@sekolah.sch.id atau email@gmail.com'
+                placeholder='calonpengantin@gmail.com'
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 required
                 autoComplete='email'
-                className='w-full bg-white text-sm text-[#1e293b] rounded-full border border-slate-200 pl-13 pr-4 py-2.5 outline-none focus:border-[#e11d48] transition-colors shadow-2xs'
+                className='w-full bg-white text-sm text-[#0f172a] rounded-full border border-slate-200 pl-13 pr-4 py-2.5 outline-none focus:border-[#059669] focus:ring-1 focus:ring-[#059669] transition-colors shadow-2xs'
               />
             </div>
           </div>
 
           <div>
-            <label className='text-xs font-bold text-[#1e293b] mb-1.5 block'>
+            <label className='text-xs font-bold text-[#0f172a] mb-1.5 block'>
               Kata Sandi (Minimal 6 karakter)
             </label>
             <div className='relative flex items-center'>
-              <div className='absolute left-3.5 w-8 h-8 rounded-full bg-rose-50 flex items-center justify-center text-[#e11d48]'>
+              <div className='absolute left-3.5 w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center text-[#059669]'>
                 <Lock size={15} />
               </div>
               <input
@@ -177,7 +208,7 @@ export function RegisterForm({ onSwitchTab, hideHeader = false }: RegisterFormPr
                 onChange={e => setPassword(e.target.value)}
                 required
                 autoComplete='new-password'
-                className='w-full bg-white text-sm text-[#1e293b] rounded-full border border-slate-200 pl-13 pr-11 py-2.5 outline-none focus:border-[#e11d48] transition-colors shadow-2xs'
+                className='w-full bg-white text-sm text-[#0f172a] rounded-full border border-slate-200 pl-13 pr-11 py-2.5 outline-none focus:border-[#059669] focus:ring-1 focus:ring-[#059669] transition-colors shadow-2xs'
               />
               <button
                 type='button'
@@ -194,23 +225,23 @@ export function RegisterForm({ onSwitchTab, hideHeader = false }: RegisterFormPr
               <button
                 type='button'
                 onClick={onSwitchTab}
-                className='text-xs text-[#64748b] hover:text-[#e11d48] font-medium transition-colors cursor-pointer bg-transparent border-none p-0 inline-flex items-center gap-1'
+                className='text-xs text-[#64748b] hover:text-[#059669] font-medium transition-colors cursor-pointer bg-transparent border-none p-0 inline-flex items-center gap-1'
               >
-                Sudah punya akun? <span className='font-bold text-[#e11d48]'>Masuk</span>
+                Sudah punya akun? <span className='font-bold text-[#059669]'>Masuk</span>
               </button>
             ) : (
               <Link
                 to='/auth?tab=login'
-                className='text-xs text-[#64748b] hover:text-[#e11d48] font-medium transition-colors inline-flex items-center gap-1'
+                className='text-xs text-[#64748b] hover:text-[#059669] font-medium transition-colors inline-flex items-center gap-1'
               >
-                Sudah punya akun? <span className='font-bold text-[#e11d48]'>Masuk</span>
+                Sudah punya akun? <span className='font-bold text-[#059669]'>Masuk</span>
               </Link>
             )}
 
             <button
               type='submit'
               disabled={loading}
-              className='px-6 py-2.5 bg-[#e11d48] hover:bg-[#be123c] text-white rounded-full text-sm font-bold shadow-md shadow-rose-500/20 transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50'
+              className='px-6 py-2.5 bg-[#059669] hover:bg-[#047857] text-white rounded-full text-sm font-bold shadow-md shadow-emerald-700/20 transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50'
             >
               {loading ? (
                 <span>Mendaftarkan...</span>

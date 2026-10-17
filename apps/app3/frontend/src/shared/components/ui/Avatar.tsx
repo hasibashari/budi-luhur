@@ -16,16 +16,16 @@ export interface AvatarProps {
 }
 
 const AVATAR_PALETTES = [
-  'bg-rose-500 text-white',
-  'bg-pink-500 text-white',
-  'bg-fuchsia-600 text-white',
-  'bg-purple-600 text-white',
-  'bg-indigo-600 text-white',
-  'bg-blue-600 text-white',
-  'bg-teal-600 text-white',
   'bg-emerald-600 text-white',
+  'bg-teal-600 text-white',
   'bg-amber-600 text-white',
-  'bg-orange-500 text-white',
+  'bg-emerald-700 text-white',
+  'bg-slate-700 text-white',
+  'bg-cyan-600 text-white',
+  'bg-emerald-800 text-white',
+  'bg-teal-700 text-white',
+  'bg-amber-700 text-white',
+  'bg-stone-700 text-white',
 ];
 
 export function getInitials(name?: string | null): string {
@@ -108,7 +108,7 @@ export function Avatar({
             {initials}
           </div>
         ) : (
-          <div className='w-full h-full flex items-center justify-center bg-rose-50 text-rose-400'>
+          <div className='w-full h-full flex items-center justify-center bg-emerald-50 text-emerald-600'>
             <User size={config.iconSize} />
           </div>
         )}

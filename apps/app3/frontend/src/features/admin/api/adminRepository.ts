@@ -3,6 +3,7 @@ import {
   AdminStats,
   ManagedUser,
   MedicationSchedule,
+  ScheduleCategory,
   HealthArticle,
   ComplianceReport,
 } from '../types/admin.types';
@@ -157,7 +158,7 @@ export async function createScheduleAction(data: {
   timeSlots: string[];
   startDate?: string;
   endDate?: string;
-  category?: 'TTD Rutin' | 'Terapi Anemia' | 'Suplemen Tambahan';
+  category?: ScheduleCategory | string;
   instructions?: string;
 }): Promise<{ success: boolean; schedule?: MedicationSchedule; error?: string }> {
   try {

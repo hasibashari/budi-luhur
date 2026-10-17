@@ -125,8 +125,8 @@ export default function UserManagementView() {
       phone: user.phone,
       email: user.email || '',
       riskLevel: (user.riskLevel as RiskLevel) || 'Rendah',
-      schoolOrOrg: user.schoolOrOrg || 'SMA Negeri 1 Sehat',
-      assignedDoctor: user.schoolOrOrg || 'SMA Negeri 1 Sehat',
+      schoolOrOrg: user.schoolOrOrg || 'Puskesmas Gambir - KUA Gambir',
+      assignedDoctor: user.schoolOrOrg || 'Puskesmas Gambir - KUA Gambir',
       medicalNotes: user.medicalNotes || '',
     });
   };
@@ -142,7 +142,7 @@ export default function UserManagementView() {
       if (editingId) {
         const res = await updateUserAction(editingId, {
           name: formData.name,
-          age: parseInt(formData.age, 10) || 16,
+          age: parseInt(formData.age, 10) || 24,
           gender: formData.gender,
           phone: formData.phone,
           email: formData.email,
@@ -154,28 +154,28 @@ export default function UserManagementView() {
         if (res.success) {
           await loadUsers();
           handleCloseModal();
-          showToast('Data siswi berhasil diperbarui di database!', 'success');
+          showToast('Data calon pengantin berhasil diperbarui di database!', 'success');
         } else {
           showToast(res.error || 'Gagal memperbarui data', 'error');
         }
       } else {
         const res = await createUserAction({
           name: formData.name,
-          age: parseInt(formData.age, 10) || 16,
+          age: parseInt(formData.age, 10) || 24,
           gender: formData.gender,
           phone: formData.phone,
-          email: formData.email || `${formData.name.toLowerCase().replace(/\s+/g, '')}@example.com`,
+          email: formData.email || `${formData.name.toLowerCase().replace(/\s+/g, '')}@catin.id`,
           riskLevel: formData.riskLevel,
-          schoolOrOrg: formData.schoolOrOrg || formData.assignedDoctor || 'SMA Negeri 1 Sehat',
+          schoolOrOrg: formData.schoolOrOrg || formData.assignedDoctor || 'Puskesmas Gambir - KUA Gambir',
           medicalNotes: formData.medicalNotes,
         });
 
         if (res.success) {
           await loadUsers();
           handleCloseModal();
-          showToast('Siswi baru berhasil ditambahkan ke database!', 'success');
+          showToast('Calon pengantin baru berhasil ditambahkan ke database!', 'success');
         } else {
-          showToast(res.error || 'Gagal menambahkan siswi', 'error');
+          showToast(res.error || 'Gagal menambahkan calon pengantin', 'error');
         }
       }
     } finally {
@@ -188,9 +188,9 @@ export default function UserManagementView() {
       const res = await deleteUserAction(userToDelete);
       if (res.success) {
         await loadUsers();
-        showToast('Data siswi berhasil dihapus dari database.', 'success');
+        showToast('Data calon pengantin berhasil dihapus dari database.', 'success');
       } else {
-        showToast(res.error || 'Gagal menghapus data siswi', 'error');
+        showToast(res.error || 'Gagal menghapus data calon pengantin', 'error');
       }
     }
     handleCloseDelete();
@@ -219,7 +219,7 @@ export default function UserManagementView() {
   const columns: Column<ManagedUser>[] = [
     {
       id: 'user',
-      label: 'Siswi (Pengguna)',
+      label: 'Calon Pengantin (Catin)',
       width: '28%',
       renderCell: user => (
         <div className='flex items-center gap-3'>
@@ -227,12 +227,12 @@ export default function UserManagementView() {
             src={user.avatarUrl}
             name={user.name}
             size='sm'
-            ringClassName='ring-1 ring-pink-100 shadow-2xs'
+            ringClassName='ring-1 ring-emerald-200 shadow-2xs'
           />
           <div className='min-w-0'>
             <div className='font-bold text-slate-800 text-sm truncate'>{user.name}</div>
             <div className='text-xs text-slate-400 truncate'>
-              {user.id} • {user.age} th
+              {user.id} • {user.age} th ({user.gender})
             </div>
           </div>
         </div>
@@ -240,15 +240,15 @@ export default function UserManagementView() {
     },
     {
       id: 'school',
-      label: 'Sekolah & Kontak',
+      label: 'Faskes/KUA & Kontak',
       width: '24%',
       renderCell: user => (
         <div>
           <div className='font-semibold text-slate-800 text-xs sm:text-sm truncate'>
-            {user.schoolOrOrg || 'SMA Negeri 1 Sehat'}
+            {user.schoolOrOrg || 'Puskesmas Gambir - KUA Gambir'}
           </div>
           <div className='text-xs text-slate-500 flex items-center gap-1 mt-0.5'>
-            <Phone size={11} className='text-rose-500 shrink-0' />
+            <Phone size={11} className='text-emerald-600 shrink-0' />
             <span>{user.phone}</span>
           </div>
         </div>
@@ -256,24 +256,24 @@ export default function UserManagementView() {
     },
     {
       id: 'adherence',
-      label: 'Kepatuhan TTD',
+      label: 'Kepatuhan Imunisasi TT',
       width: '18%',
       renderCell: user => {
         const rate = user.adherenceRate ?? 100;
         const color =
-          rate >= 90 ? 'text-emerald-600' : rate >= 80 ? 'text-amber-600' : 'text-rose-600';
+          rate >= 90 ? 'text-emerald-700' : rate >= 80 ? 'text-amber-600' : 'text-rose-600';
         return (
           <div>
             <div className='flex items-center gap-1.5'>
               <span className={`font-bold text-sm ${color}`}>{rate}%</span>
               <span className='text-[11px] text-slate-400'>
-                ({user.activeSchedulesCount || 0} Jadwal)
+                ({user.activeSchedulesCount || 0} Sesi TT)
               </span>
             </div>
             <div className='w-24 bg-slate-100 rounded-full h-1.5 mt-1 overflow-hidden'>
               <div
                 className={`h-full rounded-full ${
-                  rate >= 90 ? 'bg-emerald-500' : rate >= 80 ? 'bg-amber-500' : 'bg-rose-500'
+                  rate >= 90 ? 'bg-emerald-600' : rate >= 80 ? 'bg-amber-500' : 'bg-rose-500'
                 }`}
                 style={{ width: `${Math.min(100, Math.max(0, rate))}%` }}
               />
@@ -284,7 +284,7 @@ export default function UserManagementView() {
     },
     {
       id: 'riskLevel',
-      label: 'Tingkat Risiko',
+      label: 'Status Pranikah',
       width: '18%',
       renderCell: user => {
         const style = RISK_LEVEL_COLORS[user.riskLevel] || RISK_LEVEL_COLORS.default;
@@ -309,13 +309,13 @@ export default function UserManagementView() {
             type='button'
             title='Kirim Pengingat'
             onClick={() => handleOpenReminder(user)}
-            className='p-1.5 rounded-lg text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer'
+            className='p-1.5 rounded-lg text-emerald-700 hover:bg-emerald-50 transition-colors cursor-pointer'
           >
             <BellRing size={16} />
           </button>
           <button
             type='button'
-            title='Edit Siswi'
+            title='Edit Data Catin'
             onClick={() => onOpenEdit(user)}
             className='p-1.5 rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition-colors cursor-pointer'
           >
@@ -323,7 +323,7 @@ export default function UserManagementView() {
           </button>
           <button
             type='button'
-            title='Hapus Siswi'
+            title='Hapus Catin'
             onClick={() => handleDeleteRequest(user.id)}
             className='p-1.5 rounded-lg text-rose-500 hover:bg-rose-50 hover:text-rose-700 transition-colors cursor-pointer'
           >
@@ -337,12 +337,12 @@ export default function UserManagementView() {
   return (
     <div>
       <AdminHeader
-        title='Manajemen Siswi (Pengguna)'
-        subtitle='Pantau data kesehatan siswi, riwayat kepatuhan TTD, dan kirim pengingat langsung.'
+        title='Manajemen Calon Pengantin (Catin)'
+        subtitle='Pantau data kesehatan catin, riwayat kepatuhan vaksinasi TT, dan kirim pengingat langsung.'
       />
 
       {/* Mobile & Desktop Filter Bar */}
-      <div className='p-4 sm:p-5 mb-6 rounded-2xl sm:rounded-3xl border border-pink-100 bg-white shadow-sm flex flex-col gap-3.5'>
+      <div className='p-4 sm:p-5 mb-6 rounded-2xl sm:rounded-3xl border border-emerald-100 bg-white shadow-sm flex flex-col gap-3.5'>
         <div className='flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3'>
           <div className='flex flex-col sm:flex-row gap-3 flex-1'>
             <div className='relative flex-1'>
@@ -351,10 +351,10 @@ export default function UserManagementView() {
               </span>
               <input
                 type='text'
-                placeholder='Cari nama, ID siswi, atau no hp...'
+                placeholder='Cari nama, ID catin, atau no WhatsApp...'
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                className='w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-pink-100 bg-slate-50 text-xs sm:text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:bg-white transition-all min-h-[44px]'
+                className='w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-emerald-100 bg-slate-50 text-xs sm:text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all min-h-[44px]'
               />
             </div>
 
@@ -362,9 +362,9 @@ export default function UserManagementView() {
               <select
                 value={riskFilter}
                 onChange={e => setRiskFilter(e.target.value)}
-                className='w-full px-3.5 py-2.5 rounded-xl border border-pink-100 bg-slate-50 text-xs sm:text-sm font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:bg-white transition-all cursor-pointer min-h-[44px]'
+                className='w-full px-3.5 py-2.5 rounded-xl border border-emerald-100 bg-slate-50 text-xs sm:text-sm font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all cursor-pointer min-h-[44px]'
               >
-                <option value='Semua'>Semua Risiko</option>
+                <option value='Semua'>Semua Status</option>
                 {RISK_LEVEL_OPTIONS.map(opt => (
                   <option key={opt.value} value={opt.value}>
                     {opt.value}
@@ -377,16 +377,16 @@ export default function UserManagementView() {
           <button
             type='button'
             onClick={onOpenAdd}
-            className='inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-rose-600 text-white font-bold text-xs sm:text-sm hover:bg-rose-700 shadow-sm transition-all cursor-pointer whitespace-nowrap min-h-[44px]'
+            className='inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 text-white font-bold text-xs sm:text-sm hover:bg-emerald-700 shadow-sm transition-all cursor-pointer whitespace-nowrap min-h-[44px]'
           >
             <UserPlus size={18} />
-            <span>Tambah Siswi</span>
+            <span>Tambah Catin</span>
           </button>
         </div>
 
         {/* Mobile Horizontal Filter Chips (< sm: 640px) */}
         <div className='block sm:hidden border-t border-slate-100 pt-2.5'>
-          <p className='text-[11px] font-bold text-slate-400 mb-1.5'>Filter Tingkat Risiko:</p>
+          <p className='text-[11px] font-bold text-slate-400 mb-1.5'>Filter Kesiapan Pranikah:</p>
           <MobileFilterChips
             selectedValue={riskFilter}
             onSelect={setRiskFilter}
@@ -404,11 +404,11 @@ export default function UserManagementView() {
       <DataTable
         columns={columns}
         data={filteredUsers}
-        emptyMessage='Tidak ada siswi yang ditemukan.'
+        emptyMessage='Tidak ada calon pengantin yang ditemukan.'
         renderMobileCard={user => {
           const style = RISK_LEVEL_COLORS[user.riskLevel] || RISK_LEVEL_COLORS.default;
           return (
-            <div className='p-4 rounded-2xl border border-pink-100 bg-white shadow-xs flex flex-col gap-3.5'>
+            <div className='p-4 rounded-2xl border border-emerald-100 bg-white shadow-xs flex flex-col gap-3.5'>
               {/* Header: Avatar + Name + Risk */}
               <div className='flex items-center justify-between gap-2.5'>
                 <div className='flex items-center gap-3 min-w-0'>
@@ -416,14 +416,14 @@ export default function UserManagementView() {
                     src={user.avatarUrl}
                     name={user.name}
                     size='lg'
-                    ringClassName='ring-2 ring-pink-100 shadow-xs'
+                    ringClassName='ring-2 ring-emerald-100 shadow-xs'
                   />
                   <div className='min-w-0'>
                     <h4 className='font-bold text-slate-900 text-sm sm:text-base leading-tight truncate'>
                       {user.name}
                     </h4>
                     <p className='text-xs text-slate-500 mt-0.5 truncate'>
-                      {user.id} • {user.age} th ({user.schoolOrOrg || 'UKS Sekolah'})
+                      {user.id} • {user.age} th ({user.schoolOrOrg || 'Puskesmas / KUA Rujukan'})
                     </p>
                   </div>
                 </div>
@@ -437,10 +437,10 @@ export default function UserManagementView() {
               </div>
 
               {/* Info Row: Phone + Schedules + Adherence */}
-              <div className='grid grid-cols-2 gap-2 p-3 rounded-xl bg-[#fff5f7] border border-pink-100 text-xs'>
+              <div className='grid grid-cols-2 gap-2 p-3 rounded-xl bg-emerald-50/40 border border-emerald-100 text-xs'>
                 <div>
                   <span className='text-slate-500 block text-[11px] font-medium'>
-                    Kontak Telepon
+                    Kontak WhatsApp
                   </span>
                   <span className='font-bold text-slate-800 truncate block mt-0.5'>
                     {user.phone}
@@ -449,18 +449,18 @@ export default function UserManagementView() {
 
                 <div>
                   <span className='text-slate-500 block text-[11px] font-medium'>
-                    Kepatuhan TTD
+                    Kepatuhan Imunisasi
                   </span>
                   <span
                     className={`font-bold block mt-0.5 ${
                       user.adherenceRate >= 90
-                        ? 'text-emerald-600'
+                        ? 'text-emerald-700'
                         : user.adherenceRate >= 80
                           ? 'text-amber-600'
                           : 'text-rose-600'
                     }`}
                   >
-                    {user.adherenceRate}% ({user.activeSchedulesCount || 0} Jadwal)
+                    {user.adherenceRate}% ({user.activeSchedulesCount || 0} Sesi TT)
                   </span>
                 </div>
               </div>
@@ -470,7 +470,7 @@ export default function UserManagementView() {
                 <button
                   type='button'
                   onClick={() => handleOpenReminder(user)}
-                  className='flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-rose-600 text-white font-bold text-xs hover:bg-rose-700 shadow-xs transition-all cursor-pointer min-h-[44px]'
+                  className='flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-emerald-600 text-white font-bold text-xs hover:bg-emerald-700 shadow-xs transition-all cursor-pointer min-h-[44px]'
                 >
                   <BellRing size={16} />
                   <span>Kirim Pengingat</span>
@@ -479,15 +479,15 @@ export default function UserManagementView() {
                 <div className='flex gap-1.5'>
                   <button
                     type='button'
-                    title='Edit Data Siswi'
+                    title='Edit Data Catin'
                     onClick={() => onOpenEdit(user)}
-                    className='w-11 h-11 rounded-xl bg-slate-100 text-slate-600 hover:bg-rose-50 hover:text-rose-600 flex items-center justify-center transition-colors cursor-pointer'
+                    className='w-11 h-11 rounded-xl bg-slate-100 text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 flex items-center justify-center transition-colors cursor-pointer'
                   >
                     <Edit size={16} />
                   </button>
                   <button
                     type='button'
-                    title='Hapus Siswi'
+                    title='Hapus Catin'
                     onClick={() => handleDeleteRequest(user.id)}
                     className='w-11 h-11 rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-100 flex items-center justify-center transition-colors cursor-pointer'
                   >
@@ -514,9 +514,9 @@ export default function UserManagementView() {
       {/* Delete Confirmation Modal */}
       <ConfirmDeleteDialog
         open={deleteConfirmOpen}
-        title='Konfirmasi Hapus'
-        message='Apakah Anda yakin ingin menghapus data siswi ini? Data tidak dapat dikembalikan.'
-        confirmText='Hapus Siswi'
+        title='Konfirmasi Hapus Catin'
+        message='Apakah Anda yakin ingin menghapus data calon pengantin ini? Data tidak dapat dikembalikan.'
+        confirmText='Hapus Data Catin'
         onClose={handleCloseDelete}
         onConfirm={handleConfirmDelete}
       />

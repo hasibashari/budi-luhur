@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { CalendarCheck, Flame, Activity } from 'lucide-react';
+import { CalendarCheck, ShieldCheck, Activity } from 'lucide-react';
 import { StreakProgressCard } from '@/src/shared/components/domain/StreakProgressCard';
 import { useAuth } from '@/src/features/auth/context/AuthContext';
 import { useMonitoringData } from '../hooks/useMonitoringData';
@@ -88,7 +88,7 @@ export default function HistoryView() {
   if (loading && !dashboardData) {
     return (
       <div className='flex items-center justify-center min-h-[50vh] w-full'>
-        <div className='animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#e11d48]' />
+        <div className='animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-emerald-600' />
       </div>
     );
   }
@@ -102,24 +102,24 @@ export default function HistoryView() {
       {/* 1. Header & Title Banner */}
       <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-3'>
         <div>
-          <h2 className='text-xl sm:text-2xl font-extrabold text-[#1e293b] tracking-tight'>
-            Monitoring Kepatuhan TTD 🌸
+          <h2 className='text-xl sm:text-2xl font-bold text-slate-900 tracking-tight'>
+            Buku Riwayat Imunisasi Tetanus Toxoid (TT)
           </h2>
-          <p className='text-xs sm:text-sm text-[#64748b] mt-0.5'>
-            Riwayat konsumsi TTD dan evaluasi kepatuhan
+          <p className='text-xs sm:text-sm text-slate-600 mt-0.5'>
+            Pencatatan resmi dosis vaksin TT, verifikasi faskes, dan kepatuhan suplementasi pranikah
           </p>
         </div>
 
         {/* Live Dynamic Streak Counter Badge */}
-        <div className='inline-flex items-center gap-2 bg-white px-3.5 py-1.5 rounded-full border border-[#fce7f3] shadow-2xs self-start sm:self-auto'>
-          <Flame size={18} className='text-amber-500 fill-amber-500' />
-          <span className='text-xs font-bold text-[#1e293b]'>
-            {streakCount} {streakUnit} Streak
+        <div className='inline-flex items-center gap-2 bg-white px-3.5 py-1.5 rounded-full border border-stone-200 shadow-2xs self-start sm:self-auto'>
+          <ShieldCheck size={18} className='text-emerald-700' />
+          <span className='text-xs font-bold text-slate-800'>
+            {streakCount} {streakUnit} Disiplin
           </span>
         </div>
       </div>
 
-      {/* 2. Dynamic Streak Progress Card (Live Milestone Tracker) */}
+      {/* 2. Dynamic Streak Progress Card */}
       <StreakProgressCard
         streakCount={streakCount}
         streakUnit={streakUnit}
@@ -129,14 +129,14 @@ export default function HistoryView() {
       />
 
       {/* 3. View Mode Switcher: Timeline vs Evaluasi Bulanan */}
-      <div className='flex items-center p-1 bg-white rounded-2xl border border-[#fce7f3] shadow-xs max-w-sm'>
+      <div className='flex items-center p-1 bg-white rounded-2xl border border-stone-200 shadow-xs max-w-sm'>
         <button
           type='button'
           onClick={() => setViewMode('timeline')}
           className={`flex-1 py-2 text-xs sm:text-sm font-bold rounded-xl transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
             viewMode === 'timeline'
-              ? 'bg-[#e11d48] text-white shadow-sm shadow-rose-500/20'
-              : 'text-[#64748b] hover:text-[#e11d48]'
+              ? 'bg-emerald-600 text-white shadow-xs'
+              : 'text-slate-600 hover:text-emerald-700'
           }`}
         >
           <CalendarCheck size={14} />
@@ -147,8 +147,8 @@ export default function HistoryView() {
           onClick={() => setViewMode('evaluation')}
           className={`flex-1 py-2 text-xs sm:text-sm font-bold rounded-xl transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
             viewMode === 'evaluation'
-              ? 'bg-[#e11d48] text-white shadow-sm shadow-rose-500/20'
-              : 'text-[#64748b] hover:text-[#e11d48]'
+              ? 'bg-emerald-600 text-white shadow-xs'
+              : 'text-slate-600 hover:text-emerald-700'
           }`}
         >
           <Activity size={14} />

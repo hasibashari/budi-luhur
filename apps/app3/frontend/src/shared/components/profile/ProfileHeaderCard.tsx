@@ -1,7 +1,7 @@
 'use client';
 
 import React, { ReactNode } from 'react';
-import { Edit2, CheckCircle2 } from 'lucide-react';
+import { Edit2, CheckCircle2, Award } from 'lucide-react';
 import { Button } from '@/src/shared/components/ui/Button';
 import { ProfilePhotoUploader } from '@/src/shared/components/domain/ProfilePhotoUploader';
 
@@ -26,7 +26,7 @@ export function ProfileHeaderCard({
   roleBadgeColor = 'user',
   subtitle,
   verified = true,
-  verifiedText = 'Terverifikasi',
+  verifiedText = 'Terverifikasi Kemenkes',
   canEdit = true,
   onEditClick,
   onSaveAvatar,
@@ -35,9 +35,9 @@ export function ProfileHeaderCard({
   const isRoleAdmin = roleBadgeColor === 'admin';
 
   return (
-    <div className='relative overflow-hidden rounded-3xl bg-white border border-rose-100 shadow-sm p-5 sm:p-7'>
+    <div className='relative overflow-hidden rounded-3xl bg-white border border-stone-200 shadow-sm p-5 sm:p-7'>
       {/* Background Decorative Banner */}
-      <div className='absolute top-0 left-0 right-0 h-24 sm:h-28 bg-gradient-to-r from-rose-500 via-pink-500 to-rose-400 opacity-90' />
+      <div className='absolute top-0 left-0 right-0 h-24 sm:h-28 bg-linear-to-r from-emerald-800 via-emerald-700 to-teal-800 opacity-95' />
 
       <div className='relative z-10 flex flex-col sm:flex-row items-center sm:items-end justify-between gap-4 pt-8 sm:pt-10'>
         {/* Avatar & Identitas */}
@@ -54,21 +54,21 @@ export function ProfileHeaderCard({
 
           <div className='space-y-1.5'>
             <div className='flex flex-wrap items-center justify-center sm:justify-start gap-2'>
-              <h1 className='text-xl sm:text-2xl font-black text-slate-800 tracking-tight'>
-                {name || 'Pengguna'}
+              <h1 className='text-xl sm:text-2xl font-bold text-slate-900 tracking-tight'>
+                {name || 'Calon Pengantin'}
               </h1>
               <span
-                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-extrabold uppercase tracking-wide ${
+                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wide ${
                   isRoleAdmin
-                    ? 'bg-rose-600 text-white shadow-xs'
-                    : 'bg-pink-100 text-pink-700 border border-pink-200'
+                    ? 'bg-emerald-800 text-white shadow-xs'
+                    : 'bg-emerald-50 text-emerald-800 border border-emerald-200'
                 }`}
               >
                 {roleBadgeText}
               </span>
               {verified && (
-                <span className='inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200'>
-                  <CheckCircle2 size={12} className='text-emerald-600' />
+                <span className='inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200'>
+                  <CheckCircle2 size={12} className='text-emerald-700' />
                   {verifiedText}
                 </span>
               )}
@@ -92,9 +92,9 @@ export function ProfileHeaderCard({
               shape='rounded'
               icon={<Edit2 size={13} />}
               onClick={onEditClick}
-              className='w-full sm:w-auto text-xs font-bold py-2 px-3.5 border-rose-200 text-rose-700 hover:bg-rose-50 cursor-pointer'
+              className='w-full sm:w-auto text-xs font-bold py-2 px-3.5 border-stone-200 text-slate-700 hover:bg-stone-50 cursor-pointer'
             >
-              Ubah Profil
+              Ubah Data Catin
             </Button>
           </div>
         )}

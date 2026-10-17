@@ -24,12 +24,12 @@ function SendReminderModalContent({
   userPhone,
   patientName,
   patientPhone = '0812-3456-7890',
-  medicationName = 'Tablet Tambah Darah (TTD)',
-  dosage = '1 Tablet (Setelah makan)',
-  timeSlot = '20:00 WIB',
+  medicationName = 'Vaksin Tetanus Toxoid (TT Catin)',
+  dosage = '0.5 mL (Intramuskular)',
+  timeSlot = '09:00 WIB',
   onSendSuccess,
 }: Omit<SendReminderModalProps, 'open'>) {
-  const displayName = userName || patientName || 'Siswi';
+  const displayName = userName || patientName || 'Calon Pengantin';
   const displayPhone = userPhone || patientPhone || '0812-3456-7890';
   const [channel, setChannel] = useState<'app' | 'whatsapp'>('whatsapp');
   const [selectedTemplate, setSelectedTemplate] = useState<string>('standard');
@@ -39,13 +39,13 @@ function SendReminderModalContent({
   const getTemplateContent = (templateKey: string) => {
     switch (templateKey) {
       case 'standard':
-        return `Halo ${displayName}, ini pengingat dari Pembina UKS / FEMORY untuk minum ${medicationName} (${dosage}) pada jam ${timeSlot}. Jangan lupa diminum setelah makan dengan air putih/jeruk ya! 🌸`;
+        return `Halo ${displayName}, ini pengingat resmi dari Petugas Faskes & KUA (PRELUNA) untuk jadwal imunisasi ${medicationName} (${dosage}) pada jam ${timeSlot}. Jangan lupa hadir membawa KTP dan dokumen skrining pranikah ya!`;
       case 'friendly':
-        return `Halo ${displayName}, cegah anemia biar tetap fit dan konsentrasi belajar! Jangan lupa minum ${medicationName} (${dosage}) hari ini ya! Semangat selalu! 🌸`;
+        return `Halo ${displayName}, cegah tetanus maternal & neonatal dan lindungi calon buah hati kelak! Jangan lupa jadwal imunisasi TT (${medicationName}) kamu hari ini ya. Semoga persiapan hari bahagia lancar selalu!`;
       case 'urgent':
-        return `PENGINGAT PENTING: Halo ${displayName}, jadwal minum ${medicationName} kamu minggu ini belum tercatat. Yuk segera minum suplemen TTD kamu dan catat di aplikasi ya!`;
+        return `PENGINGAT PENTING: Halo ${displayName}, jadwal imunisasi TT (${medicationName}) kamu menjelang hari H akad nikah belum tercatat. Segera kunjungi Puskesmas rujukan agar sertifikat imunisasi catin dapat diproses untuk persyaratan KUA.`;
       default:
-        return `Halo ${displayName}, jangan lupa minum ${medicationName} (${dosage}) sesuai jadwal suplementasi kamu ya!`;
+        return `Halo ${displayName}, jangan lupa jadwal imunisasi/skrining ${medicationName} (${dosage}) sesuai jadwal persiapan pernikahan kamu ya!`;
     }
   };
 
@@ -118,22 +118,22 @@ function SendReminderModalContent({
       {/* Modal Dialog Content */}
       <div
         ref={modalRef}
-        className='relative z-10 w-full max-w-lg bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl border border-pink-100 flex flex-col max-h-[92vh] sm:max-h-[90vh] overflow-hidden animate-scale-up'
+        className='relative z-10 w-full max-w-lg bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl border border-emerald-100 flex flex-col max-h-[92vh] sm:max-h-[90vh] overflow-hidden animate-scale-up'
         role='dialog'
         aria-modal='true'
       >
         {/* Header */}
-        <div className='p-5 sm:p-6 border-b border-pink-100 flex items-center justify-between'>
+        <div className='p-5 sm:p-6 border-b border-emerald-100 flex items-center justify-between'>
           <div className='flex items-center gap-3'>
-            <div className='w-10 h-10 rounded-2xl bg-rose-50 border border-rose-100 flex items-center justify-center text-rose-600'>
+            <div className='w-10 h-10 rounded-2xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600'>
               <BellRing size={20} />
             </div>
             <div>
               <h3 className='font-extrabold text-base sm:text-lg text-slate-800 leading-tight'>
-                Kirim Pengingat Tablet Fe
+                Kirim Pengingat Imunisasi & Skrining TT
               </h3>
               <p className='text-xs text-slate-500 mt-0.5'>
-                Siswi: {displayName} • {dosage}
+                Calon Pengantin: {displayName} • {dosage}
               </p>
             </div>
           </div>
@@ -158,14 +158,14 @@ function SendReminderModalContent({
                 onClick={() => setChannel('whatsapp')}
                 className={`p-3 rounded-2xl border flex items-center gap-3 transition-all cursor-pointer ${
                   channel === 'whatsapp'
-                    ? 'border-emerald-500 bg-emerald-50/50 text-emerald-900 ring-2 ring-emerald-500/20'
+                    ? 'border-emerald-600 bg-emerald-50/70 text-emerald-900 ring-2 ring-emerald-500/20'
                     : 'border-slate-200 hover:border-slate-300 text-slate-700 bg-white'
                 }`}
               >
                 <div
                   className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${
                     channel === 'whatsapp'
-                      ? 'bg-emerald-500 text-white'
+                      ? 'bg-emerald-600 text-white'
                       : 'bg-slate-100 text-slate-500'
                   }`}
                 >
@@ -182,13 +182,13 @@ function SendReminderModalContent({
                 onClick={() => setChannel('app')}
                 className={`p-3 rounded-2xl border flex items-center gap-3 transition-all cursor-pointer ${
                   channel === 'app'
-                    ? 'border-rose-500 bg-rose-50/50 text-rose-900 ring-2 ring-rose-500/20'
+                    ? 'border-emerald-600 bg-emerald-50/70 text-emerald-900 ring-2 ring-emerald-500/20'
                     : 'border-slate-200 hover:border-slate-300 text-slate-700 bg-white'
                 }`}
               >
                 <div
                   className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${
-                    channel === 'app' ? 'bg-rose-500 text-white' : 'bg-slate-100 text-slate-500'
+                    channel === 'app' ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-500'
                   }`}
                 >
                   <Smartphone size={16} />
@@ -211,17 +211,17 @@ function SendReminderModalContent({
                 type='button'
                 onClick={handleGenerateAiMessage}
                 disabled={isGeneratingAi}
-                className='inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 text-[11px] font-bold text-purple-700 hover:from-purple-100 hover:to-pink-100 transition-all cursor-pointer disabled:opacity-50'
+                className='inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-[11px] font-bold text-emerald-800 hover:bg-emerald-100 transition-all cursor-pointer disabled:opacity-50'
               >
-                <Sparkles size={12} className='text-purple-600' />
+                <Sparkles size={12} className='text-emerald-600' />
                 <span>{isGeneratingAi ? 'AI Menulis...' : 'Generate Teks AI'}</span>
               </button>
             </div>
             <div className='flex flex-wrap gap-2'>
               {[
                 { id: 'standard', label: 'Standar Rutin' },
-                { id: 'friendly', label: 'Ramah & Semangat' },
-                { id: 'urgent', label: 'Penting (Tertinggal)' },
+                { id: 'friendly', label: 'Ramah & Hari H' },
+                { id: 'urgent', label: 'Penting (Menjelang Akad)' },
               ].map(t => (
                 <button
                   key={t.id}
@@ -229,7 +229,7 @@ function SendReminderModalContent({
                   onClick={() => handleTemplateChange(t.id)}
                   className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                     selectedTemplate === t.id
-                      ? 'bg-rose-600 text-white shadow-sm'
+                      ? 'bg-emerald-700 text-white shadow-sm'
                       : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                   }`}
                 >
@@ -248,11 +248,11 @@ function SendReminderModalContent({
               rows={4}
               value={message}
               onChange={e => setMessage(e.target.value)}
-              className='w-full p-3.5 rounded-2xl border border-pink-200 focus:border-rose-500 focus:ring-2 focus:ring-rose-500/20 text-xs sm:text-sm text-slate-800 leading-relaxed outline-none transition-all resize-none'
+              className='w-full p-3.5 rounded-2xl border border-emerald-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 text-xs sm:text-sm text-slate-800 leading-relaxed outline-none transition-all resize-none'
               placeholder='Ketik pesan pengingat di sini...'
             />
             <p className='text-[11px] text-slate-400 mt-1.5'>
-              *Pesan dapat diedit secara bebas sebelum dikirimkan ke siswi.
+              *Pesan dapat diedit secara bebas sebelum dikirimkan ke calon pengantin.
             </p>
           </div>
         </div>
@@ -269,15 +269,11 @@ function SendReminderModalContent({
           <button
             type='button'
             onClick={handleSend}
-            className={`w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl text-white font-bold text-sm shadow-md transition-all cursor-pointer ${
-              channel === 'whatsapp'
-                ? 'bg-emerald-600 hover:bg-emerald-700 shadow-emerald-200'
-                : 'bg-rose-600 hover:bg-rose-700 shadow-rose-200'
-            }`}
+            className='w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl text-white font-bold text-sm shadow-md transition-all cursor-pointer bg-emerald-600 hover:bg-emerald-700 shadow-emerald-200'
           >
             {channel === 'whatsapp' ? <MessageSquare size={16} /> : <Send size={16} />}
             <span>
-              {channel === 'whatsapp' ? 'Buka WhatsApp Siswi' : 'Kirim Pengingat Sekarang'}
+              {channel === 'whatsapp' ? 'Buka WhatsApp Catin' : 'Kirim Pengingat Sekarang'}
             </span>
           </button>
         </div>

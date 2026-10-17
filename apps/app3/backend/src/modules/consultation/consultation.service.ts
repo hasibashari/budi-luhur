@@ -7,14 +7,14 @@ interface ChatHistoryItem {
 
 const GEMINI_MODEL = 'gemini-3.8-flash';
 
-const FEMORY_SYSTEM_PROMPT = `
-Kamu adalah "Dokter & Asisten Medis Cerdas FEMORY" (Klinik Edukasi Anemia & Suplementasi Tablet Tambah Darah).
+const PRELUNA_SYSTEM_PROMPT = `
+Kamu adalah "Luna — Konselor AI Kesehatan Pranikah & Imunisasi TT" (Aplikasi PRELUNA - Program Kesehatan Pranikah Kemenkes RI).
 Tugas utamamu adalah:
-1. Menjawab pertanyaan pasien (terutama remaja putri, calon pengantin, dan ibu) seputar Anemia Defisiensi Besi, Tablet Tambah Darah (TTD), asupan nutrisi kaya zat besi, dan pola hidup sehat.
-2. Memberikan edukasi yang jelas, akurat secara medis sesuai pedoman Kemenkes RI dan WHO, ramah, menenangkan, dan mudah dimengerti.
-3. Menjelaskan cara mengatasi efek samping umum TTD (misalnya mual adaptif, rasa begah, feses berwarna gelap/kehitaman) dengan tips praktis (minum setelah makan malam/sebelum tidur, minum dengan air putih atau jus jeruk yang kaya vitamin C, hindari bersamaan dengan teh/kopi/susu dengan jeda minimal 2 jam).
-4. Menyampaikan pesan bahwa asisten ini bersifat edukatif dan menyarankan konsultasi langsung ke puskesmas/dokter bila ada keluhan berat atau kadar Hb < 8 g/dL.
-5. Format jawaban dengan rapi menggunakan poin-poin bila perlu, singkat padat, dan bahasa Indonesia yang hangat, bersahabat, serta menyemangati (gunakan emotikon sopan seperti 🌸, 💊, 💡 bila sesuai).
+1. Menjawab pertanyaan calon pengantin (catin wanita maupun pria) seputar Imunisasi Tetanus Toxoid (TT), jadwal 5 dosis TT (TT1 hingga TT5), masa perlindungan imunisasi, dan persiapan kesehatan reproduksi pranikah.
+2. Menjelaskan secara akurat aturan klinis Kemenkes RI: TT1 (skrining awal), TT2 (min. 4 minggu setelah TT1, proteksi 3 tahun, wajib min. 1 bulan sebelum nikah), TT3 (min. 6 bulan pasca TT2, proteksi 5 tahun), TT4 (min. 1 tahun pasca TT3, proteksi 10 tahun), TT5 (min. 1 tahun pasca TT4, proteksi seumur hidup >25 tahun / Status T Lengkap).
+3. Memberikan panduan skrining fisik catin: Cek Hb (mencegah anemia ibu hamil dan stunting bayi), Lingkar Lengan Atas (LILA min. 23.5 cm), Golongan Darah & Rhesus, serta edukasi gizi pra-konsepsi (asam folat & zat besi).
+4. Menenangkan calon pengantin tentang efek samping pasca suntik (KIPI) seperti nyeri lokal ringan pada lengan atas yang wajar dan hilang dalam 1-2 hari.
+5. Bersikap profesional, santun, ilmiah, ramah, dan solutif. Format jawaban dengan markdown rapi. Jangan menggunakan kata "siswi" atau "UKS", gunakan sapaan "Calon Pengantin" atau nama depan pengguna secara hangat.
 `;
 
 export interface UserConsultationContext {
@@ -35,28 +35,28 @@ export class ConsultationService {
         return {
           success: true,
           answer:
-            'Halo! 🌸 Terima kasih telah bertanya. Untuk konsumsi Tablet Tambah Darah (TTD), minumlah 1 tablet setiap minggu secara rutin setelah makan malam atau sebelum tidur dengan segelas air putih. Hindari meminumnya bersamaan dengan teh, kopi, atau susu ya agar penyerapan zat besi optimal! Bila ada keluhan pusing berkelanjutan, jangan ragu untuk periksa ke UKS atau Puskesmas terdekat.',
+            'Halo Calon Pengantin! Terima kasih telah berkonsultasi. Imunisasi Tetanus Toxoid (TT) pranikah sangat penting untuk mencegah infeksi tetanus maternal dan tetanus neonatorum pada bayi. Vaksin TT2 wajib diselesaikan minimal 1 bulan sebelum hari pernikahan Anda agar daya tahan antibodi protektif terbentuk optimal. Bila Anda membutuhkan verifikasi surat keterangan sehat, silakan kunjungi Puskesmas rujukan Anda.',
         };
       }
 
       const contextDetails: string[] = [];
       if (userContext?.name?.trim()) {
         contextDetails.push(
-          `Pasien/pengguna yang sedang berkonsultasi bernama "${userContext.name.trim()}". Sapalah dan panggil dia dengan nama depannya secara hangat (misal: "Halo ${userContext.name.trim().split(' ')[0]} 🌸").`,
+          `Calon pengantin yang sedang berkonsultasi bernama "${userContext.name.trim()}". Sapalah dengan nama depannya secara hangat (misal: "Halo ${userContext.name.trim().split(' ')[0]}").`,
         );
       } else {
-        contextDetails.push(`Sapalah pasien dengan ramah dan sopan menggunakan panggilan "Sahabat FEMORY".`);
+        contextDetails.push(`Sapalah pasien dengan ramah dan sopan menggunakan panggilan "Calon Pengantin".`);
       }
 
       if (userContext?.schoolOrOrg?.trim()) {
-        contextDetails.push(`Asal sekolah/institusi: ${userContext.schoolOrOrg.trim()}.`);
+        contextDetails.push(`Faskes rujukan / domisili catin: ${userContext.schoolOrOrg.trim()}.`);
       }
 
       if (userContext?.hbLevel) {
-        contextDetails.push(`Kadar Hb terakhir: ${userContext.hbLevel} g/dL.`);
+        contextDetails.push(`Kadar Hb lab terakhir: ${userContext.hbLevel} g/dL.`);
       }
 
-      const dynamicSystemPrompt = `${FEMORY_SYSTEM_PROMPT}\n6. ${contextDetails.join(' ')}`;
+      const dynamicSystemPrompt = `${PRELUNA_SYSTEM_PROMPT}\n6. ${contextDetails.join(' ')}`;
       const contents: ChatHistoryItem[] = [];
 
       for (const h of history.slice(-6)) {

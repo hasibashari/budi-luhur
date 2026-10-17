@@ -25,13 +25,13 @@ export default function AdminProfileView() {
 
   // Profile State
   const [profileData, setProfileData] = useState({
-    name: user?.name || 'dr. Sarah Jenkins, Sp.GK',
-    email: user?.email || 'admin@medicore.com',
+    name: user?.name || 'Bd. Siti Rahmah, S.Tr.Keb',
+    email: user?.email || 'admin@preluna.id',
     phone: user?.phone || '+62 811-2233-4455',
-    title: user?.schoolOrOrg || 'Fasilitator Kesehatan UKS',
-    department: 'Manajemen Program TTD & Anemia Remaja',
-    clinicName: 'FEMORY Puskesmas / UKS Sekolah',
-    roleLabel: 'Administrator',
+    title: user?.schoolOrOrg || 'Bidan Koordinator / Petugas KUA Pranikah',
+    department: 'Pelayanan Kesehatan Reproduksi & Imunisasi TT Catin',
+    clinicName: 'Puskesmas Gambir - KUA Gambir',
+    roleLabel: 'Administrator Petugas',
     avatarUrl: user?.avatarUrl || '',
   });
 
@@ -116,23 +116,23 @@ export default function AdminProfileView() {
       id: 'access',
       label: 'Level Hak Akses',
       value: 'Full Control',
-      subtitle: 'Pengguna, Jadwal, Edukasi, Laporan',
+      subtitle: 'Data Catin, Jadwal TT, Edukasi, Laporan',
       icon: Shield,
-      iconBgColor: 'bg-rose-100',
-      iconColor: 'text-rose-600',
-      badgeText: 'Root Admin',
-      badgeColor: 'bg-rose-100 text-rose-700',
+      iconBgColor: 'bg-emerald-100',
+      iconColor: 'text-emerald-700',
+      badgeText: 'Petugas Admin',
+      badgeColor: 'bg-emerald-100 text-emerald-800',
     },
     {
       id: 'system',
       label: 'Sistem Pengelola',
-      value: 'UKS / Puskesmas',
-      subtitle: 'Portal Terpadu TTD Remaja',
+      value: 'Puskesmas / KUA',
+      subtitle: 'Portal Terpadu Imunisasi TT Catin',
       icon: Building,
-      iconBgColor: 'bg-indigo-100',
-      iconColor: 'text-indigo-600',
+      iconBgColor: 'bg-teal-100',
+      iconColor: 'text-teal-700',
       badgeText: 'Aktif',
-      badgeColor: 'bg-indigo-100 text-indigo-700',
+      badgeColor: 'bg-teal-100 text-teal-800',
     },
     {
       id: 'status',
@@ -162,7 +162,7 @@ export default function AdminProfileView() {
       icon: Building,
       label: 'Unit Kerja / Fasilitas',
       value: profileData.department,
-      fallbackValue: 'Manajemen Program TTD & UKS',
+      fallbackValue: 'Pelayanan Imunisasi TT & KUA',
     },
   ];
 
@@ -190,7 +190,7 @@ export default function AdminProfileView() {
       <ProfileHeaderCard
         name={profileData.name}
         avatarUrl={profileData.avatarUrl}
-        roleBadgeText='ADMINISTRATOR'
+        roleBadgeText='PETUGAS FASKES / KUA'
         roleBadgeColor='admin'
         subtitle={`${profileData.title} • ${profileData.clinicName}`}
         verified={true}
@@ -210,7 +210,7 @@ export default function AdminProfileView() {
       {/* 3. Contact Card */}
       <ProfileContactCard
         title='Informasi Kontak Dinas'
-        subtitle='Saluran komunikasi resmi koordinator program FEMORY'
+        subtitle='Saluran komunikasi resmi petugas faskes & KUA PRELUNA'
         items={contactItems}
       />
 
@@ -236,7 +236,7 @@ export default function AdminProfileView() {
             value={editForm.name}
             onChange={e => setEditForm(prev => ({ ...prev, name: e.target.value }))}
             required
-            className='w-full px-3.5 py-2.5 rounded-xl border border-rose-200 bg-slate-50 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:bg-white'
+            className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white'
           />
         </div>
 
@@ -247,7 +247,7 @@ export default function AdminProfileView() {
             value={editForm.email}
             onChange={e => setEditForm(prev => ({ ...prev, email: e.target.value }))}
             required
-            className='w-full px-3.5 py-2.5 rounded-xl border border-rose-200 bg-slate-50 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:bg-white'
+            className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white'
           />
         </div>
 
@@ -258,7 +258,7 @@ export default function AdminProfileView() {
             value={editForm.phone}
             onChange={e => setEditForm(prev => ({ ...prev, phone: e.target.value }))}
             required
-            className='w-full px-3.5 py-2.5 rounded-xl border border-rose-200 bg-slate-50 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:bg-white'
+            className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white'
           />
         </div>
       </ProfileEditModal>

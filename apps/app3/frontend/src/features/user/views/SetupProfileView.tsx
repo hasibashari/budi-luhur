@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  School,
+  Building2,
   Calendar,
   Clock,
   Droplets,
@@ -11,25 +11,37 @@ import {
   Bell,
   AlertCircle,
   Loader2,
+  ShieldCheck,
+  Heart,
+  Activity,
 } from 'lucide-react';
 import { useAuth } from '@/src/features/auth/context/AuthContext';
 import { saveUserInitialSetupAction } from '../api/userRepository';
 import { Button } from '@/src/shared/components/ui/Button';
 
 const DAYS_OPTIONS = [
-  { day: 'Sabtu', desc: 'Rekomendasi UKS (Akhir Pekan)', isRecommended: true },
-  { day: 'Minggu', desc: 'Waktu santai di rumah', isRecommended: false },
-  { day: 'Jumat', desc: 'Program TTD Bersama di Sekolah', isRecommended: false },
+  { day: 'Sabtu', desc: 'Rekomendasi Catin (Akhir Pekan)', isRecommended: true },
+  { day: 'Minggu', desc: 'Waktu santai persiapan', isRecommended: false },
+  { day: 'Jumat', desc: 'Jadwal Poli Pranikah Puskesmas', isRecommended: false },
   { day: 'Senin', desc: 'Awal pekan bugar', isRecommended: false },
-  { day: 'Selasa', desc: 'Hari biasa', isRecommended: false },
+  { day: 'Selasa', desc: 'Konsultasi klinik', isRecommended: false },
   { day: 'Rabu', desc: 'Tengah pekan', isRecommended: false },
-  { day: 'Kamis', desc: 'Hari biasa', isRecommended: false },
+  { day: 'Kamis', desc: 'Pemeriksaan rutin KUA', isRecommended: false },
 ];
 
 const TIME_PRESETS = [
-  { time: '20:00', label: '20:00 Malam', desc: 'Rekomendasi UKS (8 malam / sebelum tidur)' },
-  { time: '19:00', label: '19:00 Malam', desc: 'Setelah makan malam' },
-  { time: '21:00', label: '21:00 Malam', desc: 'Menjelang tidur' },
+  { time: '08:00', label: '08:00 Pagi', desc: 'Jam Buka Faskes / Puskesmas' },
+  { time: '13:00', label: '13:00 Siang', desc: 'Istirahat & Edukasi' },
+  { time: '19:00', label: '19:00 Malam', desc: 'Waktu Santai Bersama Pasangan' },
+];
+
+const TT_HISTORY_PRESETS = [
+  { code: 'TT0', label: 'Belum Pernah TT', desc: 'Perlu skrining awal TT1' },
+  { code: 'TT1', label: 'Pernah TT1', desc: 'Perlu TT2 min. 4 minggu' },
+  { code: 'TT2', label: 'Pernah TT2', desc: 'Perlindungan 3 tahun aktif' },
+  { code: 'TT3', label: 'Pernah TT3', desc: 'Perlindungan 5 tahun aktif' },
+  { code: 'TT4', label: 'Pernah TT4', desc: 'Perlindungan 10 tahun aktif' },
+  { code: 'TT5', label: 'Lengkap (TT5)', desc: 'Perlindungan seumur hidup (>25 th)' },
 ];
 
 export function SetupProfileView() {
@@ -40,7 +52,7 @@ export function SetupProfileView() {
   const [isSaving, setIsSaving] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // Step 1 Form States (Identitas Siswi & Sekolah)
+  // Step 1 Form States (Identitas Catin & Faskes)
   const [schoolOrOrg, setSchoolOrOrg] = useState('');
   const [dateOfBirth, setDateOfBirth] = useState('');
   const [bloodType, setBloodType] = useState<string>('');
@@ -48,15 +60,18 @@ export function SetupProfileView() {
   const [weight, setWeight] = useState<string>('');
   const [hbLevel, setHbLevel] = useState<string>('');
 
-  // Step 2 Form States (Jadwal Pengingat TTD)
+  // Step 2 Form States (Rencana Akad, Riwayat TT, & Jadwal)
+  const [partnerName, setPartnerName] = useState('');
+  const [weddingDate, setWeddingDate] = useState('');
+  const [lastTTStatus, setLastTTStatus] = useState('TT0');
   const [selectedDay, setSelectedDay] = useState('Sabtu');
-  const [selectedTime, setSelectedTime] = useState('20:00');
+  const [selectedTime, setSelectedTime] = useState('08:00');
   const [remind15Min, setRemind15Min] = useState(true);
 
   const handleNextStep = (e: React.FormEvent) => {
     e.preventDefault();
     if (!schoolOrOrg.trim()) {
-      setErrorMessage('Silakan masukkan nama asal sekolah atau kelas Anda.');
+      setErrorMessage('Silakan masukkan nama Puskesmas rujukan, KUA, atau faskes domisili Anda.');
       return;
     }
     setErrorMessage(null);
@@ -74,6 +89,14 @@ export function SetupProfileView() {
     setErrorMessage(null);
 
     try {
+      const notesMeta = [
+        partnerName.trim() ? `Pasangan: ${partnerName.trim()}` : '',
+        weddingDate ? `Rencana Akad: ${weddingDate}` : '',
+        lastTTStatus ? `Status TT Awal: ${lastTTStatus}` : '',
+      ]
+        .filter(Boolean)
+        .join(' | ');
+
       const res = await saveUserInitialSetupAction(authUser.id, {
         schoolOrOrg: schoolOrOrg.trim(),
         dateOfBirth: dateOfBirth || undefined,
@@ -81,13 +104,15 @@ export function SetupProfileView() {
         height: height ? Number(height) : undefined,
         weight: weight ? Number(weight) : undefined,
         hbLevel: hbLevel ? Number(hbLevel) : undefined,
+        notes: notesMeta || undefined,
         schedule: {
           dayOfWeek: selectedDay,
           timeSlot: selectedTime,
           remind15MinBefore: remind15Min,
           frequency: 'weekly',
-          tabletName: 'Tablet Tambah Darah (TTD)',
-          dosage: '1 tablet',
+          tabletName: 'Imunisasi TT / Suplementasi Pranikah',
+          dosage: '1 dosis / edukasi berkala',
+          instructions: 'Kunjungi Puskesmas/Faskes sesuai jadwal untuk imunisasi TT dan verifikasi surat keterangan sehat pranikah.',
         },
       });
 
@@ -99,7 +124,7 @@ export function SetupProfileView() {
         });
         navigate('/user/dashboard');
       } else {
-        setErrorMessage(res.error || 'Gagal menyimpan data setup profil.');
+        setErrorMessage(res.error || 'Gagal menyimpan data profil pranikah.');
       }
     } catch {
       setErrorMessage('Terjadi kendala sistem saat menyimpan profil.');
@@ -109,31 +134,36 @@ export function SetupProfileView() {
   };
 
   return (
-    <div className='flex-1 min-h-[100dvh] w-full bg-gradient-to-b from-[#fff5f7] via-[#ffe4e6]/30 to-[#fff5f7] flex flex-col justify-center items-center p-3.5 sm:p-6 md:p-8 pb-6 sm:pb-8 box-border relative overflow-x-hidden'>
-      {/* Decorative desktop ambient bubbles */}
-      <div className='hidden md:block absolute top-12 left-12 w-64 h-64 bg-rose-300/20 rounded-full blur-3xl pointer-events-none' />
-      <div className='hidden md:block absolute bottom-12 right-12 w-80 h-80 bg-rose-400/20 rounded-full blur-3xl pointer-events-none' />
+    <div className='flex-1 min-h-[100dvh] w-full bg-linear-to-b from-emerald-50/50 via-stone-50 to-emerald-50/30 flex flex-col justify-center items-center p-3.5 sm:p-6 md:p-8 pb-6 sm:pb-8 box-border relative overflow-x-hidden'>
+      {/* Decorative desktop ambient shapes */}
+      <div className='hidden md:block absolute top-12 left-12 w-72 h-72 bg-emerald-200/25 rounded-full blur-3xl pointer-events-none' />
+      <div className='hidden md:block absolute bottom-12 right-12 w-80 h-80 bg-amber-200/20 rounded-full blur-3xl pointer-events-none' />
 
-      <div className='w-full max-w-lg min-h-[540px] sm:min-h-[580px] bg-white/95 backdrop-blur-md rounded-3xl border border-rose-100/90 shadow-2xl shadow-rose-950/5 p-5 sm:p-8 relative z-10 flex flex-col justify-between my-auto'>
+      <div className='w-full max-w-xl min-h-[560px] bg-white rounded-3xl border border-stone-200 shadow-xl shadow-emerald-950/5 p-5 sm:p-8 relative z-10 flex flex-col justify-between my-auto'>
         {/* Top Header & Progress */}
         <div>
-          <div className='mb-3.5 sm:mb-5'>
-            <div className='flex items-center justify-between mb-2 sm:mb-2.5'>
-              <div className='flex items-center gap-1.5'>
-                <span className='font-black text-lg sm:text-xl tracking-tight text-slate-800'>
-                  FEMORY
+          <div className='mb-4 sm:mb-5'>
+            <div className='flex items-center justify-between mb-2.5'>
+              <div className='flex items-center gap-2'>
+                <div className='w-8 h-8 rounded-xl bg-emerald-600 flex items-center justify-center text-white shadow-xs'>
+                  <ShieldCheck size={18} />
+                </div>
+                <span className='font-bold text-lg sm:text-xl tracking-tight text-slate-900'>
+                  PRELUNA
                 </span>
-                <span className='text-base'>🌸</span>
+                <span className='text-[10px] uppercase font-bold tracking-widest text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200'>
+                  Catin Care
+                </span>
               </div>
-              <span className='text-[11px] sm:text-xs font-bold text-rose-600 bg-rose-50 px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full border border-rose-200'>
+              <span className='text-xs font-bold text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200'>
                 Langkah {step} dari 2
               </span>
             </div>
 
             {/* Progress Bar */}
-            <div className='w-full h-1.5 sm:h-2 bg-slate-100 rounded-full overflow-hidden'>
+            <div className='w-full h-2 bg-stone-100 rounded-full overflow-hidden'>
               <div
-                className='h-full bg-[#e11d48] transition-all duration-500 rounded-full'
+                className='h-full bg-emerald-600 transition-all duration-500 rounded-full'
                 style={{ width: step === 1 ? '50%' : '100%' }}
               />
             </div>
@@ -141,54 +171,56 @@ export function SetupProfileView() {
 
           {/* Title & Greeting */}
           <div className='mb-4 sm:mb-5 text-left'>
-            <h1 className='text-lg sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2'>
-              <span>{step === 1 ? 'Lengkapi Data Dirimu ✨' : 'Atur Jadwal Minum TTD ⏰'}</span>
+            <h1 className='text-xl sm:text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2'>
+              <span>
+                {step === 1 ? 'Lengkapi Data Kesehatan Catin' : 'Rencana Pranikah & Jadwal Faskes'}
+              </span>
             </h1>
-            <p className='text-xs sm:text-sm text-slate-500 mt-1 leading-relaxed'>
+            <p className='text-xs sm:text-sm text-slate-600 mt-1 leading-relaxed'>
               {step === 1
-                ? `Halo, ${authUser?.name || 'Siswi Sehat'}! Masukkan asal sekolah dan data kesehatanmu untuk personalisasi pemantauan.`
-                : 'Pilih hari dan jam pengingat rutin mingguan yang paling nyaman untukmu minum Tablet Tambah Darah.'}
+                ? `Selamat datang, ${authUser?.name || 'Calon Pengantin'}! Lengkapi faskes rujukan dan parameter kesehatan awal untuk sertifikasi kesehatan pranikah.`
+                : 'Atur rencana tanggal pernikahan, riwayat status imunisasi TT Anda saat ini, dan waktu pengingat kunjungan faskes.'}
             </p>
           </div>
 
           {/* Error Alert */}
           {errorMessage && (
-            <div className='mb-3.5 p-3 sm:p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs sm:text-sm font-semibold flex items-center gap-2 animate-fade-in'>
+            <div className='mb-4 p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs sm:text-sm font-semibold flex items-center gap-2 animate-fade-in'>
               <AlertCircle size={16} className='text-rose-600 shrink-0' />
               <span>{errorMessage}</span>
             </div>
           )}
         </div>
 
-        {/* STEP 1: Data Siswi & Sekolah */}
+        {/* STEP 1: Data Catin & Faskes */}
         {step === 1 && (
           <form
             onSubmit={handleNextStep}
             className='flex-1 flex flex-col justify-between animate-fade-in'
           >
-            <div className='space-y-3.5 sm:space-y-4'>
-              {/* School / Class Field (Required) */}
+            <div className='space-y-4'>
+              {/* Puskesmas / KUA / Faskes Field (Required) */}
               <div>
                 <label className='block text-xs font-bold text-slate-800 mb-1.5'>
-                  Asal Sekolah & Kelas <span className='text-[#e11d48]'>*</span>
+                  Puskesmas Rujukan / KUA / Domisili <span className='text-emerald-700'>*</span>
                 </label>
                 <div className='relative flex items-center'>
-                  <div className='absolute left-3.5 w-7 sm:w-8 h-7 sm:h-8 rounded-full bg-rose-50 flex items-center justify-center text-[#e11d48]'>
-                    <School size={15} />
+                  <div className='absolute left-3.5 w-7 sm:w-8 h-7 sm:h-8 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-700'>
+                    <Building2 size={15} />
                   </div>
                   <input
                     type='text'
-                    placeholder='Contoh: SMA Negeri 1 Jakarta / Kelas X-3'
+                    placeholder='Contoh: Puskesmas Kebayoran Baru / KUA Jaksel'
                     value={schoolOrOrg}
                     onChange={e => setSchoolOrOrg(e.target.value)}
                     required
-                    className='w-full bg-white text-xs sm:text-sm text-[#1e293b] rounded-full border border-slate-200 pl-12 sm:pl-13 pr-4 py-2.5 sm:py-3 outline-none focus:border-[#e11d48] transition-colors shadow-2xs'
+                    className='w-full bg-white text-xs sm:text-sm text-slate-900 rounded-full border border-stone-200 pl-12 sm:pl-13 pr-4 py-2.5 sm:py-3 outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/10 transition-colors shadow-2xs'
                   />
                 </div>
               </div>
 
               {/* Date of Birth & Blood Type (2-column) */}
-              <div className='grid grid-cols-2 gap-2.5 sm:gap-3.5'>
+              <div className='grid grid-cols-2 gap-3'>
                 {/* Date of Birth */}
                 <div className='min-w-0'>
                   <label className='block text-xs font-bold text-slate-800 mb-1.5 truncate'>
@@ -198,14 +230,14 @@ export function SetupProfileView() {
                     </span>
                   </label>
                   <div className='relative flex items-center'>
-                    <div className='absolute left-3 w-6 sm:w-7 h-6 sm:h-7 rounded-full bg-rose-50 flex items-center justify-center text-[#e11d48]'>
+                    <div className='absolute left-3 w-6 sm:w-7 h-6 sm:h-7 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-700'>
                       <Calendar size={13} />
                     </div>
                     <input
                       type='date'
                       value={dateOfBirth}
                       onChange={e => setDateOfBirth(e.target.value)}
-                      className='w-full min-w-0 bg-white text-xs sm:text-sm text-[#1e293b] rounded-full border border-slate-200 pl-10 sm:pl-11 pr-2.5 sm:pr-3 py-2.5 sm:py-3 outline-none focus:border-[#e11d48] transition-colors shadow-2xs'
+                      className='w-full min-w-0 bg-white text-xs sm:text-sm text-slate-900 rounded-full border border-stone-200 pl-10 sm:pl-11 pr-2.5 sm:pr-3 py-2.5 sm:py-3 outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/10 transition-colors shadow-2xs'
                     />
                   </div>
                 </div>
@@ -213,42 +245,46 @@ export function SetupProfileView() {
                 {/* Blood Type */}
                 <div className='min-w-0'>
                   <label className='block text-xs font-bold text-slate-800 mb-1.5 truncate'>
-                    Gol. Darah{' '}
+                    Gol. Darah & Rhesus{' '}
                     <span className='text-slate-400 font-normal text-[10px] sm:text-[11px]'>
                       (Opsional)
                     </span>
                   </label>
                   <div className='relative flex items-center'>
-                    <div className='absolute left-3 w-6 sm:w-7 h-6 sm:h-7 rounded-full bg-rose-50 flex items-center justify-center text-[#e11d48]'>
+                    <div className='absolute left-3 w-6 sm:w-7 h-6 sm:h-7 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-700'>
                       <Droplets size={13} />
                     </div>
                     <select
                       value={bloodType}
                       onChange={e => setBloodType(e.target.value)}
-                      className='w-full min-w-0 bg-white text-xs sm:text-sm text-[#1e293b] rounded-full border border-slate-200 pl-10 sm:pl-11 pr-3 py-2.5 sm:py-3 outline-none focus:border-[#e11d48] transition-colors shadow-2xs cursor-pointer'
+                      className='w-full min-w-0 bg-white text-xs sm:text-sm text-slate-900 rounded-full border border-stone-200 pl-10 sm:pl-11 pr-3 py-2.5 sm:py-3 outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/10 transition-colors shadow-2xs cursor-pointer'
                     >
                       <option value=''>Pilih Golongan</option>
-                      <option value='A'>A</option>
-                      <option value='B'>B</option>
-                      <option value='AB'>AB</option>
-                      <option value='O'>O</option>
+                      <option value='A+'>A (Rhesus +)</option>
+                      <option value='B+'>B (Rhesus +)</option>
+                      <option value='AB+'>AB (Rhesus +)</option>
+                      <option value='O+'>O (Rhesus +)</option>
+                      <option value='A-'>A (Rhesus -)</option>
+                      <option value='B-'>B (Rhesus -)</option>
+                      <option value='AB-'>AB (Rhesus -)</option>
+                      <option value='O-'>O (Rhesus -)</option>
                     </select>
                   </div>
                 </div>
               </div>
 
               {/* Height, Weight, Hb Level (3-column compact) */}
-              <div className='grid grid-cols-3 gap-2 sm:gap-3'>
+              <div className='grid grid-cols-3 gap-2.5 sm:gap-3'>
                 <div className='min-w-0'>
                   <label className='block text-[11px] sm:text-xs font-bold text-slate-800 mb-1.5 truncate text-center sm:text-left'>
                     Tinggi <span className='text-slate-400 font-normal text-[10px]'>(cm)</span>
                   </label>
                   <input
                     type='number'
-                    placeholder='158'
+                    placeholder='160'
                     value={height}
                     onChange={e => setHeight(e.target.value)}
-                    className='w-full bg-white text-xs sm:text-sm text-[#1e293b] rounded-full border border-slate-200 px-2 sm:px-3 py-2 sm:py-2.5 sm:py-3 outline-none focus:border-[#e11d48] transition-colors shadow-2xs text-center'
+                    className='w-full bg-white text-xs sm:text-sm text-slate-900 rounded-full border border-stone-200 px-2 sm:px-3 py-2.5 sm:py-3 outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/10 transition-colors shadow-2xs text-center'
                   />
                 </div>
 
@@ -258,10 +294,10 @@ export function SetupProfileView() {
                   </label>
                   <input
                     type='number'
-                    placeholder='48'
+                    placeholder='52'
                     value={weight}
                     onChange={e => setWeight(e.target.value)}
-                    className='w-full bg-white text-xs sm:text-sm text-[#1e293b] rounded-full border border-slate-200 px-2 sm:px-3 py-2 sm:py-2.5 sm:py-3 outline-none focus:border-[#e11d48] transition-colors shadow-2xs text-center'
+                    className='w-full bg-white text-xs sm:text-sm text-slate-900 rounded-full border border-stone-200 px-2 sm:px-3 py-2.5 sm:py-3 outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/10 transition-colors shadow-2xs text-center'
                   />
                 </div>
 
@@ -272,61 +308,133 @@ export function SetupProfileView() {
                   <input
                     type='number'
                     step='0.1'
-                    placeholder='12.4'
+                    placeholder='12.5'
                     value={hbLevel}
                     onChange={e => setHbLevel(e.target.value)}
-                    className='w-full bg-white text-xs sm:text-sm text-[#1e293b] rounded-full border border-slate-200 px-2 sm:px-3 py-2 sm:py-2.5 sm:py-3 outline-none focus:border-[#e11d48] transition-colors shadow-2xs text-center'
+                    className='w-full bg-white text-xs sm:text-sm text-slate-900 rounded-full border border-stone-200 px-2 sm:px-3 py-2.5 sm:py-3 outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/10 transition-colors shadow-2xs text-center'
                   />
                 </div>
+              </div>
+
+              {/* Informative Note */}
+              <div className='p-3 rounded-2xl bg-emerald-50/70 border border-emerald-100 flex items-start gap-2.5'>
+                <Activity size={16} className='text-emerald-700 shrink-0 mt-0.5' />
+                <p className='text-[11px] text-emerald-900 leading-relaxed'>
+                  Pemeriksaan hemoglobin (Hb) dan status gizi sangat penting bagi calon ibu untuk mencegah anemia pranikah dan risiko stunting pada keturunan kelak.
+                </p>
               </div>
             </div>
 
             {/* Step 1 Bottom Action Row */}
-            <div className='pt-5 sm:pt-6 mt-4 sm:mt-6 border-t border-rose-100/60 sm:border-transparent flex items-center justify-end'>
+            <div className='pt-5 sm:pt-6 mt-4 sm:mt-6 border-t border-stone-100 flex items-center justify-end'>
               <Button
                 type='submit'
                 variant='primary'
                 size='md'
                 shape='pill'
                 icon={<ArrowRight size={16} />}
-                className='w-full sm:w-auto px-8 py-3 font-bold shadow-md shadow-rose-500/20 text-xs sm:text-sm flex items-center justify-center gap-2'
+                className='w-full sm:w-auto px-8 py-3 font-bold shadow-md shadow-emerald-900/10 text-xs sm:text-sm flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white'
               >
-                Lanjut ke Jadwal
+                Lanjut ke Rencana Pranikah
               </Button>
             </div>
           </form>
         )}
 
-        {/* STEP 2: Pengaturan Jadwal Minum TTD */}
+        {/* STEP 2: Rencana Pranikah & Jadwal Imunisasi TT */}
         {step === 2 && (
           <form
             onSubmit={handleFinalSubmit}
             className='flex-1 flex flex-col justify-between animate-fade-in'
           >
-            <div className='space-y-3.5 sm:space-y-4'>
-              {/* Day Selector - Responsive Grid (4 cols on mobile, 7 cols on desktop) */}
+            <div className='space-y-4'>
+              {/* Partner Name & Wedding Date (2 cols) */}
+              <div className='grid grid-cols-1 sm:grid-cols-2 gap-3'>
+                <div>
+                  <label className='block text-xs font-bold text-slate-800 mb-1.5'>
+                    Nama Calon Pasangan
+                  </label>
+                  <div className='relative flex items-center'>
+                    <div className='absolute left-3 w-6 sm:w-7 h-6 sm:h-7 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-700'>
+                      <Heart size={13} />
+                    </div>
+                    <input
+                      type='text'
+                      placeholder='Nama lengkap pasangan'
+                      value={partnerName}
+                      onChange={e => setPartnerName(e.target.value)}
+                      className='w-full bg-white text-xs sm:text-sm text-slate-900 rounded-full border border-stone-200 pl-10 sm:pl-11 pr-3 py-2.5 sm:py-3 outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/10 transition-colors shadow-2xs'
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className='block text-xs font-bold text-slate-800 mb-1.5'>
+                    Rencana Akad Nikah (Hari H)
+                  </label>
+                  <div className='relative flex items-center'>
+                    <div className='absolute left-3 w-6 sm:w-7 h-6 sm:h-7 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-700'>
+                      <Calendar size={13} />
+                    </div>
+                    <input
+                      type='date'
+                      value={weddingDate}
+                      onChange={e => setWeddingDate(e.target.value)}
+                      className='w-full bg-white text-xs sm:text-sm text-slate-900 rounded-full border border-stone-200 pl-10 sm:pl-11 pr-3 py-2.5 sm:py-3 outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/10 transition-colors shadow-2xs'
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* TT History Preset */}
               <div>
-                <label className='block text-xs font-bold text-slate-800 mb-2'>
-                  Pilih Hari Minum TTD (1x Seminggu)
+                <label className='block text-xs font-bold text-slate-800 mb-1.5'>
+                  Riwayat Imunisasi TT Saat Ini
                 </label>
-                <div className='grid grid-cols-4 sm:grid-cols-7 gap-1.5 sm:gap-2'>
+                <div className='grid grid-cols-3 sm:grid-cols-6 gap-1.5'>
+                  {TT_HISTORY_PRESETS.map(preset => (
+                    <button
+                      key={preset.code}
+                      type='button'
+                      onClick={() => setLastTTStatus(preset.code)}
+                      className={`py-2 px-1 rounded-xl border text-center transition-all cursor-pointer ${
+                        lastTTStatus === preset.code
+                          ? 'bg-emerald-50 border-emerald-600 text-emerald-800 font-bold shadow-2xs ring-1 ring-emerald-600'
+                          : 'bg-white border-stone-200 text-slate-700 hover:bg-stone-50 font-medium'
+                      }`}
+                    >
+                      <span className='block text-xs font-bold'>{preset.code}</span>
+                      <span className='block text-[9px] text-slate-500 leading-tight truncate mt-0.5'>
+                        {preset.label.replace('Pernah ', '')}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Day Selector */}
+              <div>
+                <label className='block text-xs font-bold text-slate-800 mb-1.5'>
+                  Pilih Hari Konsultasi / Kunjungan Rutin
+                </label>
+                <div className='grid grid-cols-4 sm:grid-cols-7 gap-1.5'>
                   {DAYS_OPTIONS.map(opt => (
                     <button
                       key={opt.day}
                       type='button'
                       onClick={() => setSelectedDay(opt.day)}
-                      className={`py-2 sm:py-2.5 px-1.5 sm:px-2 rounded-2xl border text-center transition-all cursor-pointer relative ${
+                      className={`py-2 px-1 rounded-xl border text-center transition-all cursor-pointer relative ${
                         selectedDay === opt.day
-                          ? 'bg-rose-50 border-[#e11d48] text-[#e11d48] shadow-xs font-bold'
-                          : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50 font-medium'
+                          ? 'bg-emerald-50 border-emerald-600 text-emerald-800 font-bold shadow-2xs'
+                          : 'bg-white border-stone-200 text-slate-700 hover:bg-stone-50 font-medium'
                       }`}
                     >
                       {opt.isRecommended && (
-                        <span className='absolute -top-1.5 -right-1 px-1.5 py-0.2 bg-[#e11d48] text-[8px] font-black text-white rounded-full shadow-2xs'>
-                          UKS
+                        <span className='absolute -top-1.5 -right-1 px-1 py-0.2 bg-amber-500 text-[7px] font-bold text-white rounded-full shadow-2xs'>
+                          Kemenkes
                         </span>
                       )}
-                      <span className='block text-xs sm:text-sm'>{opt.day}</span>
+                      <span className='block text-xs'>{opt.day}</span>
                     </button>
                   ))}
                 </div>
@@ -334,8 +442,8 @@ export function SetupProfileView() {
 
               {/* Time Presets & Custom Time */}
               <div>
-                <label className='block text-xs font-bold text-slate-800 mb-2'>
-                  Pilih Jam Minum Obat
+                <label className='block text-xs font-bold text-slate-800 mb-1.5'>
+                  Pilih Jam Kunjungan / Notifikasi
                 </label>
                 <div className='grid grid-cols-3 gap-2 mb-2'>
                   {TIME_PRESETS.map(preset => (
@@ -343,22 +451,21 @@ export function SetupProfileView() {
                       key={preset.time}
                       type='button'
                       onClick={() => setSelectedTime(preset.time)}
-                      className={`py-2 sm:py-2.5 px-2 rounded-2xl border text-center transition-all cursor-pointer ${
+                      className={`py-2 px-2 rounded-xl border text-center transition-all cursor-pointer ${
                         selectedTime === preset.time
-                          ? 'bg-rose-50 border-[#e11d48] text-[#e11d48] shadow-xs font-bold'
-                          : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
+                          ? 'bg-emerald-50 border-emerald-600 text-emerald-800 font-bold shadow-2xs'
+                          : 'bg-white border-stone-200 text-slate-700 hover:bg-stone-50'
                       }`}
                     >
-                      <span className='block text-xs sm:text-sm font-black'>{preset.time}</span>
-                      <span className='block text-[10px] text-slate-400 leading-none mt-0.5'>
+                      <span className='block text-xs font-bold'>{preset.time}</span>
+                      <span className='block text-[10px] text-slate-500 leading-none mt-0.5'>
                         {preset.label.split(' ')[1]}
                       </span>
                     </button>
                   ))}
                 </div>
 
-                {/* Custom Time Input */}
-                <div className='flex items-center justify-between gap-2 bg-slate-50/80 px-3.5 py-2 rounded-2xl border border-slate-200'>
+                <div className='flex items-center justify-between gap-2 bg-stone-50 px-3.5 py-2 rounded-xl border border-stone-200'>
                   <div className='flex items-center gap-2 text-xs text-slate-600 font-medium'>
                     <Clock size={14} className='text-slate-400' />
                     <span>Jam kustom:</span>
@@ -367,23 +474,23 @@ export function SetupProfileView() {
                     type='time'
                     value={selectedTime}
                     onChange={e => setSelectedTime(e.target.value)}
-                    className='bg-white px-2.5 py-1 rounded-xl border border-slate-200 text-xs font-bold text-slate-800 outline-none focus:border-[#e11d48]'
+                    className='bg-white px-2.5 py-1 rounded-lg border border-stone-200 text-xs font-bold text-slate-800 outline-none focus:border-emerald-600'
                   />
                 </div>
               </div>
 
               {/* Notification Toggle */}
-              <div className='p-3 sm:p-3.5 rounded-2xl bg-rose-50/70 border border-rose-100 flex items-center justify-between'>
+              <div className='p-3 rounded-2xl bg-emerald-50/70 border border-emerald-100 flex items-center justify-between'>
                 <div className='flex items-center gap-2.5'>
-                  <div className='w-7 sm:w-8 h-7 sm:h-8 rounded-full bg-white flex items-center justify-center text-[#e11d48] shadow-2xs shrink-0'>
+                  <div className='w-7 sm:w-8 h-7 sm:h-8 rounded-full bg-white flex items-center justify-center text-emerald-700 shadow-2xs shrink-0'>
                     <Bell size={14} />
                   </div>
                   <div>
                     <span className='block text-xs font-bold text-slate-800 leading-tight'>
                       Pengingat 15 Menit Sebelumnya
                     </span>
-                    <span className='block text-[10px] sm:text-[11px] text-slate-500 leading-tight mt-0.5'>
-                      Kirim notifikasi push sebelum waktu minum
+                    <span className='block text-[10px] sm:text-[11px] text-slate-600 leading-tight mt-0.5'>
+                      Notifikasi pengingat jadwal imunisasi TT & cek laboratorium
                     </span>
                   </div>
                 </div>
@@ -391,17 +498,17 @@ export function SetupProfileView() {
                   type='checkbox'
                   checked={remind15Min}
                   onChange={e => setRemind15Min(e.target.checked)}
-                  className='w-4.5 h-4.5 accent-[#e11d48] rounded cursor-pointer shrink-0 ml-2'
+                  className='w-4.5 h-4.5 accent-emerald-600 rounded cursor-pointer shrink-0 ml-2'
                 />
               </div>
             </div>
 
             {/* Step 2 Bottom Action Row */}
-            <div className='pt-5 sm:pt-6 mt-4 sm:mt-6 border-t border-rose-100/60 sm:border-transparent flex items-center justify-between gap-3'>
+            <div className='pt-5 sm:pt-6 mt-4 sm:mt-6 border-t border-stone-100 flex items-center justify-between gap-3'>
               <button
                 type='button'
                 onClick={() => setStep(1)}
-                className='flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-4 sm:px-5 py-3 rounded-full border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs sm:text-sm font-bold transition-all shadow-2xs cursor-pointer'
+                className='flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-4 sm:px-5 py-3 rounded-full border border-stone-200 bg-white hover:bg-stone-50 text-slate-700 text-xs sm:text-sm font-bold transition-all shadow-2xs cursor-pointer'
               >
                 <ArrowLeft size={15} />
                 <span>Kembali</span>
@@ -416,9 +523,9 @@ export function SetupProfileView() {
                 icon={
                   isSaving ? <Loader2 size={15} className='animate-spin' /> : <Check size={15} />
                 }
-                className='flex-1 sm:flex-initial px-5 sm:px-7 py-3 font-bold shadow-md shadow-rose-500/20 text-xs sm:text-sm whitespace-nowrap flex items-center justify-center gap-2'
+                className='flex-1 sm:flex-initial px-6 sm:px-8 py-3 font-bold shadow-md shadow-emerald-900/10 text-xs sm:text-sm whitespace-nowrap flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white'
               >
-                {isSaving ? 'Menyimpan...' : 'Simpan & Mulai 🌸'}
+                {isSaving ? 'Menyimpan...' : 'Simpan & Masuk Beranda'}
               </Button>
             </div>
           </form>

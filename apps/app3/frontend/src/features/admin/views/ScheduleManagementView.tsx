@@ -263,7 +263,7 @@ export default function ScheduleManagementView() {
   const handleOpenReminder = (schedule: MedicationSchedule) => {
     const targetUserId = schedule.userId || schedule.patientId || '';
     const userObj = users.find(u => u.id === targetUserId);
-    const name = schedule.userName || schedule.patientName || userObj?.name || 'Siswi';
+    const name = schedule.userName || schedule.patientName || userObj?.name || 'Calon Pengantin';
     setReminderData({
       userId: targetUserId,
       userName: name,
@@ -281,8 +281,8 @@ export default function ScheduleManagementView() {
       await sendReminderNudgeAction({
         userId: reminderData.userId,
         patientId: reminderData.userId,
-        senderName: 'Pembina UKS FEMORY',
-        senderRole: 'Pembina UKS',
+        senderName: 'Petugas Faskes PRELUNA',
+        senderRole: 'Petugas Faskes & KUA',
         scheduleId: reminderData.scheduleId,
         medicationName: reminderData.medicationName,
         dosage: reminderData.dosage,
@@ -301,24 +301,24 @@ export default function ScheduleManagementView() {
   const columns: Column<MedicationSchedule>[] = [
     {
       id: 'user',
-      label: 'Siswi (Pengguna)',
+      label: 'Calon Pengantin (Catin)',
       width: '30%',
       renderCell: schedule => {
         const targetUserId = schedule.userId || schedule.patientId || '';
         const user = userMap.get(targetUserId);
-        const name = schedule.userName || schedule.patientName || user?.name || 'Siswi';
+        const name = schedule.userName || schedule.patientName || user?.name || 'Calon Pengantin';
         return (
           <div className='flex items-center gap-3'>
             <Avatar
               src={user?.avatarUrl}
               name={name}
               size='sm'
-              ringClassName='ring-1 ring-pink-100 shadow-2xs'
+              ringClassName='ring-1 ring-emerald-200 shadow-2xs'
             />
             <div className='min-w-0'>
               <div className='font-bold text-slate-800 text-sm truncate'>{name}</div>
               <div className='text-xs text-slate-400 truncate'>
-                {targetUserId} • {user?.schoolOrOrg || 'UKS Sekolah'}
+                {targetUserId} • {user?.schoolOrOrg || 'Puskesmas / KUA Rujukan'}
               </div>
             </div>
           </div>
@@ -327,7 +327,7 @@ export default function ScheduleManagementView() {
     },
     {
       id: 'medication',
-      label: 'Obat & Dosis',
+      label: 'Vaksin / Layanan',
       width: '28%',
       renderCell: schedule => (
         <div>
@@ -340,7 +340,7 @@ export default function ScheduleManagementView() {
     },
     {
       id: 'scheduleTime',
-      label: 'Waktu Minum',
+      label: 'Waktu Layanan',
       width: '18%',
       renderCell: schedule => (
         <div>
@@ -354,13 +354,13 @@ export default function ScheduleManagementView() {
               schedule.timeSlots.map((time, idx) => (
                 <span
                   key={idx}
-                  className='px-2 py-0.5 rounded-full border border-pink-100 bg-rose-50/50 text-[11px] font-bold text-rose-700'
+                  className='px-2 py-0.5 rounded-full border border-emerald-100 bg-emerald-50/60 text-[11px] font-bold text-emerald-800'
                 >
                   {time} WIB
                 </span>
               ))
             ) : (
-              <span className='text-xs text-slate-400'>20:00 WIB</span>
+              <span className='text-xs text-slate-400'>09:00 WIB</span>
             )}
           </div>
         </div>
@@ -368,7 +368,7 @@ export default function ScheduleManagementView() {
     },
     {
       id: 'todayStatus',
-      label: 'Status Minum',
+      label: 'Status Kunjungan',
       width: '14%',
       renderCell: schedule => {
         if (schedule.todayStatus === 'COMPLETED') {
@@ -396,9 +396,9 @@ export default function ScheduleManagementView() {
         <div className='flex items-center justify-end gap-1'>
           <button
             type='button'
-            title='Ingatkan Siswi'
+            title='Ingatkan Catin'
             onClick={() => handleOpenReminder(schedule)}
-            className='p-1.5 rounded-lg text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer'
+            className='p-1.5 rounded-lg text-emerald-700 hover:bg-emerald-50 transition-colors cursor-pointer'
           >
             <BellRing size={16} />
           </button>
@@ -426,12 +426,12 @@ export default function ScheduleManagementView() {
   return (
     <div>
       <AdminHeader
-        title='Manajemen Jadwal Obat'
-        subtitle='Tetapkan instruksi dosis, frekuensi, serta jadwal pengingat otomatis untuk setiap siswi/pengguna.'
+        title='Manajemen Jadwal Imunisasi TT & Skrining'
+        subtitle='Tetapkan jadwal vaksinasi TT catin, pemeriksaan pranikah, serta pengingat otomatis faskes.'
       />
 
       {/* Filter Bar with MobileFilterChips */}
-      <div className='p-4 sm:p-5 mb-6 rounded-2xl sm:rounded-3xl border border-pink-100 bg-white shadow-sm flex flex-col gap-3.5'>
+      <div className='p-4 sm:p-5 mb-6 rounded-2xl sm:rounded-3xl border border-emerald-100 bg-white shadow-sm flex flex-col gap-3.5'>
         <div className='flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3'>
           <div className='flex flex-col sm:flex-row gap-3 flex-1'>
             <div className='relative flex-1'>
@@ -440,10 +440,10 @@ export default function ScheduleManagementView() {
               </span>
               <input
                 type='text'
-                placeholder='Cari nama obat atau siswi...'
+                placeholder='Cari nama vaksin, layanan, atau catin...'
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                className='w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-pink-100 bg-slate-50 text-xs sm:text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:bg-white transition-all min-h-[44px]'
+                className='w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-emerald-100 bg-slate-50 text-xs sm:text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all min-h-[44px]'
               />
             </div>
 
@@ -451,7 +451,7 @@ export default function ScheduleManagementView() {
               <select
                 value={frequencyFilter}
                 onChange={e => setFrequencyFilter(e.target.value)}
-                className='w-full px-3.5 py-2.5 rounded-xl border border-pink-100 bg-slate-50 text-xs sm:text-sm font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:bg-white transition-all cursor-pointer min-h-[44px]'
+                className='w-full px-3.5 py-2.5 rounded-xl border border-emerald-100 bg-slate-50 text-xs sm:text-sm font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all cursor-pointer min-h-[44px]'
               >
                 <option value='Semua'>Semua Frekuensi</option>
                 <option value='Mingguan'>1x Seminggu</option>
@@ -463,7 +463,7 @@ export default function ScheduleManagementView() {
           <button
             type='button'
             onClick={onOpenAdd}
-            className='inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-rose-600 text-white font-bold text-xs sm:text-sm hover:bg-rose-700 shadow-sm transition-all cursor-pointer whitespace-nowrap min-h-[44px]'
+            className='inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 text-white font-bold text-xs sm:text-sm hover:bg-emerald-700 shadow-sm transition-all cursor-pointer whitespace-nowrap min-h-[44px]'
           >
             <Plus size={18} />
             <span>Buat Jadwal Baru</span>
@@ -472,13 +472,13 @@ export default function ScheduleManagementView() {
 
         {/* Mobile Horizontal Filter Chips (< sm: 640px) */}
         <div className='block sm:hidden border-t border-slate-100 pt-2.5'>
-          <p className='text-[11px] font-bold text-slate-400 mb-1.5'>Filter Frekuensi Minum:</p>
+          <p className='text-[11px] font-bold text-slate-400 mb-1.5'>Filter Frekuensi Layanan:</p>
           <MobileFilterChips
             selectedValue={frequencyFilter}
             onSelect={setFrequencyFilter}
             options={[
               { label: 'Semua', value: 'Semua' },
-              { label: '1x Seminggu', value: 'Mingguan' },
+              { label: '1x Kunjungan', value: 'Mingguan' },
               { label: 'Harian', value: 'Harian' },
             ]}
           />
@@ -493,9 +493,9 @@ export default function ScheduleManagementView() {
         renderMobileCard={schedule => {
           const targetUserId = schedule.userId || schedule.patientId || '';
           const user = userMap.get(targetUserId);
-          const name = schedule.userName || schedule.patientName || user?.name || 'Siswi';
+          const name = schedule.userName || schedule.patientName || user?.name || 'Calon Pengantin';
           return (
-            <div className='p-4 rounded-2xl border border-pink-100 bg-white shadow-xs flex flex-col gap-3.5'>
+            <div className='p-4 rounded-2xl border border-emerald-100 bg-white shadow-xs flex flex-col gap-3.5'>
               {/* Header: User Avatar + Name + Status */}
               <div className='flex items-center justify-between gap-2.5'>
                 <div className='flex items-center gap-3 min-w-0'>
@@ -503,14 +503,14 @@ export default function ScheduleManagementView() {
                     src={user?.avatarUrl}
                     name={name}
                     size='lg'
-                    ringClassName='ring-2 ring-pink-100 shadow-xs'
+                    ringClassName='ring-2 ring-emerald-100 shadow-xs'
                   />
                   <div className='min-w-0'>
                     <h4 className='font-bold text-slate-900 text-sm sm:text-base leading-tight truncate'>
                       {name}
                     </h4>
                     <p className='text-xs text-slate-500 mt-0.5 truncate'>
-                      {targetUserId} • {user?.schoolOrOrg || 'UKS Sekolah'}
+                      {targetUserId} • {user?.schoolOrOrg || 'Puskesmas / KUA Rujukan'}
                     </p>
                   </div>
                 </div>
@@ -529,9 +529,9 @@ export default function ScheduleManagementView() {
               </div>
 
               {/* Middle Details Box */}
-              <div className='p-3 rounded-xl bg-[#fff5f7] border border-pink-100 space-y-1.5 text-xs'>
+              <div className='p-3 rounded-xl bg-emerald-50/40 border border-emerald-100 space-y-1.5 text-xs'>
                 <div className='flex justify-between items-center'>
-                  <span className='text-slate-500 font-medium'>Nama Obat:</span>
+                  <span className='text-slate-500 font-medium'>Vaksin / Layanan:</span>
                   <span className='font-bold text-slate-900'>{schedule.medicationName}</span>
                 </div>
 
@@ -543,7 +543,7 @@ export default function ScheduleManagementView() {
                 </div>
 
                 <div className='flex justify-between items-center'>
-                  <span className='text-slate-500 font-medium'>Waktu Minum:</span>
+                  <span className='text-slate-500 font-medium'>Waktu Layanan:</span>
                   <span className='font-bold text-slate-800'>
                     {schedule.frequency === 'Harian' || schedule.frequency === 'daily'
                       ? 'Setiap Hari'
@@ -558,10 +558,10 @@ export default function ScheduleManagementView() {
                 <button
                   type='button'
                   onClick={() => handleOpenReminder(schedule)}
-                  className='flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-rose-600 text-white font-bold text-xs hover:bg-rose-700 shadow-xs transition-all cursor-pointer min-h-[44px]'
+                  className='flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-emerald-600 text-white font-bold text-xs hover:bg-emerald-700 shadow-xs transition-all cursor-pointer min-h-[44px]'
                 >
                   <BellRing size={16} />
-                  <span>Ingatkan Siswi</span>
+                  <span>Ingatkan Catin</span>
                 </button>
 
                 <div className='flex gap-1.5'>
@@ -569,7 +569,7 @@ export default function ScheduleManagementView() {
                     type='button'
                     title='Edit Jadwal'
                     onClick={() => onOpenEdit(schedule)}
-                    className='w-11 h-11 rounded-xl bg-slate-100 text-slate-600 hover:bg-rose-50 hover:text-rose-600 flex items-center justify-center transition-colors cursor-pointer'
+                    className='w-11 h-11 rounded-xl bg-slate-100 text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 flex items-center justify-center transition-colors cursor-pointer'
                   >
                     <Edit size={16} />
                   </button>

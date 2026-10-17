@@ -1,6 +1,7 @@
 /**
  * Domain Constants
- * Centralized static domain rules, enumerations, and metadata for FEMORY.
+ * Centralized static domain rules, enumerations, and metadata for PRELUNA.
+ * (Premarital Health & Tetanus Toxoid Immunization Standards - Kemenkes RI)
  */
 
 export const DAYS_OF_WEEK = [
@@ -21,34 +22,98 @@ export const CONSUMPTION_STATUS = {
   PENDING: 'pending',
 } as const;
 
-export const HB_RISK_LEVELS = {
-  NORMAL: {
-    key: 'normal',
-    label: 'Normal (≥ 12.0 g/dL)',
-    badgeColor: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-    minHb: 12.0,
-  },
-  MILD: {
-    key: 'ringan',
-    label: 'Anemia Ringan (11.0 - 11.9 g/dL)',
-    badgeColor: 'bg-amber-50 text-amber-700 border-amber-200',
-    minHb: 11.0,
-    maxHb: 11.9,
-  },
-  MODERATE: {
-    key: 'sedang',
-    label: 'Anemia Sedang (8.0 - 10.9 g/dL)',
-    badgeColor: 'bg-orange-50 text-orange-700 border-orange-200',
-    minHb: 8.0,
-    maxHb: 10.9,
-  },
-  SEVERE: {
-    key: 'berat',
-    label: 'Anemia Berat (< 8.0 g/dL)',
-    badgeColor: 'bg-rose-50 text-rose-700 border-rose-200',
-    maxHb: 7.9,
-  },
-} as const;
+export interface TTLevelInfo {
+  level: string;
+  name: string;
+  interval: string;
+  protectionDuration: string;
+  badgeColor: string;
+  textColor: string;
+  description: string;
+  kemenkesRecommendation: string;
+}
 
-export const DEFAULT_TTD_TARGET_PER_YEAR = 52; // 1 tablet per minggu x 52 minggu
-export const DEFAULT_DOSAGE_DESCRIPTION = '1 Tablet Tambah Darah (Fe) + Air Putih';
+export const TT_DOSAGE_LEVELS: Record<string, TTLevelInfo> = {
+  TT1: {
+    level: 'TT1',
+    name: 'Dosis Pertama (Skrining Awal)',
+    interval: 'Saat kontak pertama kali / skrining pranikah',
+    protectionDuration: 'Langkah awal pembentukan antibodi (Belum ada masa proteksi)',
+    badgeColor: 'bg-amber-50 text-amber-800 border-amber-200',
+    textColor: 'text-amber-700',
+    description: 'Menstimulasi sistem imun tubuh untuk mulai memproduksi antibodi terhadap bakteri Clostridium tetani.',
+    kemenkesRecommendation: 'Diberikan segera saat calon pengantin mendaftar pemeriksaan kesehatan di Puskesmas / Faskes.',
+  },
+  TT2: {
+    level: 'TT2',
+    name: 'Dosis Kedua (Perlindungan 3 Tahun)',
+    interval: 'Minimal 4 minggu setelah TT1',
+    protectionDuration: '3 Tahun Perlindungan',
+    badgeColor: 'bg-emerald-50 text-emerald-800 border-emerald-200',
+    textColor: 'text-emerald-700',
+    description: 'Memberikan proteksi dasar terhadap infeksi tetanus maternal dan tetanus neonatorum pada persalinan.',
+    kemenkesRecommendation: 'Wajib diselesaikan minimal 2–4 minggu sebelum hari pernikahan (ijab qobul/pemberkatan).',
+  },
+  TT3: {
+    level: 'TT3',
+    name: 'Dosis Ketiga (Perlindungan 5 Tahun)',
+    interval: 'Minimal 6 bulan setelah TT2',
+    protectionDuration: '5 Tahun Perlindungan',
+    badgeColor: 'bg-teal-50 text-teal-800 border-teal-200',
+    textColor: 'text-teal-700',
+    description: 'Memperkuat daya tahan tubuh dan memperpanjang masa kekebalan hingga 5 tahun penuh.',
+    kemenkesRecommendation: 'Diberikan pada masa awal pernikahan atau saat masa kehamilan berikutnya.',
+  },
+  TT4: {
+    level: 'TT4',
+    name: 'Dosis Keempat (Perlindungan 10 Tahun)',
+    interval: 'Minimal 1 tahun setelah TT3',
+    protectionDuration: '10 Tahun Perlindungan',
+    badgeColor: 'bg-indigo-50 text-indigo-800 border-indigo-200',
+    textColor: 'text-indigo-700',
+    description: 'Memberikan perlindungan jangka panjang hingga 10 tahun bagi ibu dan kehamilan berikutnya.',
+    kemenkesRecommendation: 'Dianjurkan bagi wanita usia subur untuk perlindungan berkelanjutan.',
+  },
+  TT5: {
+    level: 'TT5',
+    name: 'Dosis Kelima (Perlindungan Seumur Hidup)',
+    interval: 'Minimal 1 tahun setelah TT4',
+    protectionDuration: 'Seumur Hidup / >25 Tahun (Status T Lengkap)',
+    badgeColor: 'bg-emerald-100 text-emerald-900 border-emerald-300',
+    textColor: 'text-emerald-800',
+    description: 'Mencapai status T5 Lengkap dengan kekebalan seumur hidup terhadap infeksi tetanus.',
+    kemenkesRecommendation: 'Tingkat perlindungan tertinggi resmi Kementerian Kesehatan RI.',
+  },
+};
+
+export const TT_DOSAGE_LIST = Object.values(TT_DOSAGE_LEVELS);
+
+export const PREMARITAL_SCREENING_TESTS = [
+  {
+    key: 'hb',
+    name: 'Pemeriksaan Hemoglobin (Hb)',
+    purpose: 'Mendeteksi dini anemia defisiensi besi untuk mencegah komplikasi kehamilan & stunting anak.',
+    normalRange: '≥ 12.0 g/dL untuk wanita usia subur',
+  },
+  {
+    key: 'blood_type_rhesus',
+    name: 'Golongan Darah & Rhesus',
+    purpose: 'Mencegah ketidakcocokan rhesus (inkompatibilitas rhesus) antara ibu dan calon janin.',
+    normalRange: 'A / B / AB / O (Rhesus Positif / Negatif)',
+  },
+  {
+    key: 'lila',
+    name: 'Lingkar Lengan Atas (LILA)',
+    purpose: 'Menilai status gizi dan risiko Kurang Energi Kronis (KEK).',
+    normalRange: '≥ 23.5 cm (Normal / Tidak KEK)',
+  },
+  {
+    key: 'imt',
+    name: 'Indeks Massa Tubuh (IMT)',
+    purpose: 'Mengetahui status kecukupan berat badan ideal calon pengantin.',
+    normalRange: '18.5 - 25.0 kg/m²',
+  },
+];
+
+export const DEFAULT_TT_TARGET = 5; // Standar 5 Dosis Tetanus Toxoid
+export const DEFAULT_VACCINE_DESCRIPTION = 'Vaksin Tetanus Toxoid (TT) 0.5 mL intramuskular pada lengan atas';

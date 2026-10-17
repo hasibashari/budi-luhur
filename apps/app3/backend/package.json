@@ -1,7 +1,7 @@
 {
-  "name": "femory-backend-app3",
+  "name": "preluna-backend-app3",
   "version": "1.0.0",
-  "description": "Modular Express.js Backend for FEMORY Ecosystem",
+  "description": "Modular Express.js Backend for PRELUNA Ecosystem",
   "type": "module",
   "main": "src/server.ts",
   "scripts": {

@@ -1,41 +1,53 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-primary: #e11d48;
-  --color-primary-hover: #be123c;
-  --color-primary-light: #ffe4e6;
-  --color-primary-subtle: #fff1f2;
+  /* 1. Primary Action & Medical Brand Identity (Royal Emerald: Perlindungan, Kesuburan, Kehidupan Baru) */
+  --color-primary: #059669;          /* Emerald 600: Tombol utama, tab aktif, brand accent */
+  --color-primary-hover: #047857;    /* Deep Emerald 700: State hover */
+  --color-primary-focus: #10b981;    /* Emerald 500: Ring fokus aksesibilitas */
+  --color-primary-subtle: #ecfdf5;   /* Emerald 50: Background badge aktif & card highlight */
+  --color-primary-soft: #d1fae5;     /* Emerald 100: Border aksen halus & progress bar fill */
 
-  --color-canvas: #fff5f7;
-  --color-surface: #ffffff;
-  --color-surface-soft: #fff5f7;
-  --color-surface-card: #ffffff;
-  --color-surface-alt: #fdf2f4;
-  --color-surface-dark: #1e293b;
+  /* 2. Secondary & Matrimonial Accent (Champagne Gold / Warm Honey: Sakral, Prestise, Masa Depan Cerah) */
+  --color-secondary: #d97706;        /* Warm Amber/Gold 600: Countdown nikah, badge dosis, sertifikat */
+  --color-secondary-hover: #b45309;  /* Deep Gold 700: Hover aksen sekunder */
+  --color-secondary-subtle: #fffbeb; /* Soft Cream Tint: Latar countdown & highlight box */
+  --color-secondary-soft: #fde68a;   /* Light Amber 200: Border penanda hari H */
 
-  --color-border: #fce7f3;
-  --color-border-subtle: #f1f5f9;
-  --color-hairline: #fce7f3;
+  /* 3. Surface & Canvas (Elegan, Hangat, & Bersih) */
+  --color-canvas: #fafaf9;           /* Ivory Mist / Stone 50: Latar aplikasi bernuansa sakral */
+  --color-surface: #ffffff;          /* Pure Clinical White: Permukaan kartu, modal, input */
+  --color-surface-soft: #f4f4f5;     /* Zinc Soft: Latar kartu sekunder & placeholder */
+  --color-surface-card: #ffffff;     /* Permukaan kartu utama */
+  --color-surface-sunken: #e4e4e7;   /* Garis pemisah hairline */
 
-  --color-ink: #1e293b;
-  --color-body: #475569;
-  --color-muted: #94a3b8;
-  --color-muted-soft: #cbd5e1;
+  /* 4. Border & Divider (Presisi & Rapi) */
+  --color-border: #e2e8f0;           /* Slate Border 1px netral */
+  --color-border-subtle: #f1f5f9;    /* Hairline divider */
 
-  --color-status-recorded: #10b981;
-  --color-status-missed: #f43f5e;
-  --color-status-pending: #f59e0b;
+  /* 5. Tipografi & Kontras Teks (WCAG AAA Compliance) */
+  --color-ink: #0f172a;              /* Deep Slate 900: Judul halaman & teks utama */
+  --color-body: #334155;             /* Slate 700: Deskripsi & isi paragraf */
+  --color-muted: #64748b;            /* Slate 500: Caption, jam, placeholder */
+  --color-muted-soft: #cbd5e1;       /* Slate 300: Disabled elements */
 
-  --color-accent-teal: #10b981;
-  --color-accent-amber: #f59e0b;
-  --color-accent-rose: #e11d48;
+  /* 6. Status Dosis Imunisasi Tetanus Toxoid (Kemenkes RI) */
+  --color-status-recorded: #059669;  /* Dosis telah diberikan / Lengkap */
+  --color-status-missed: #dc2626;    /* Terlewat / Belum vaksin */
+  --color-status-pending: #d97706;   /* Menunggu jadwal vaksinasi */
+
+  --color-tt-tt1: #f59e0b;           /* TT1: Kontak pertama / Skrining (Langkah awal) */
+  --color-tt-tt2: #059669;           /* TT2: Terlindungi 3 Tahun */
+  --color-tt-tt3: #0d9488;           /* TT3: Terlindungi 5 Tahun */
+  --color-tt-tt4: #4f46e5;           /* TT4: Terlindungi 10 Tahun */
+  --color-tt-tt5: #047857;           /* TT5: Terlindungi Seumur Hidup (>25 Tahun) */
 
   --font-sans: 'Plus Jakarta Sans', Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 :root {
-  --background: #fff5f7;
-  --foreground: #1e293b;
+  --background: #fafaf9;
+  --foreground: #0f172a;
 }
 
 body {
@@ -56,10 +68,10 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #fce7f3;
+  background: #cbd5e1;
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #fbcfe8;
+  background: #94a3b8;
 }

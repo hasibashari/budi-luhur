@@ -4,18 +4,20 @@ import {
   Sparkles,
   ArrowRight,
   ShieldCheck,
-  Flame,
+  Building2,
   Activity,
   Award,
   BellRing,
   X,
   CheckCircle2,
   CalendarClock,
+  BookOpen,
 } from 'lucide-react';
 import { StatusCard } from '@/src/shared/components/domain/StatusCard';
 import { QuickAction } from '@/src/shared/components/domain/QuickAction';
-import { BuddyCard } from '@/src/shared/components/domain/BuddyCard';
 import { StreakProgressCard } from '@/src/shared/components/domain/StreakProgressCard';
+import { ImmunityStatusBanner } from '@/src/features/dashboard/components/ImmunityStatusBanner';
+import { WeddingCountdownWidget } from '@/src/features/dashboard/components/WeddingCountdownWidget';
 import { Card } from '@/src/shared/components/ui/Card';
 import { Button } from '@/src/shared/components/ui/Button';
 import { useAuth } from '@/src/features/auth/context/AuthContext';
@@ -62,7 +64,6 @@ export default function DashboardView() {
     }
     fetchDashboard();
 
-    // Subscribe to realtime push & admin nudge events
     const unsubscribe = subscribeRealtimeEvent(async event => {
       if (event.type === 'NUDGE_SENT' && (!event.patientId || event.patientId === userId)) {
         try {
@@ -75,7 +76,7 @@ export default function DashboardView() {
               'Notification' in window &&
               Notification.permission === 'granted'
             ) {
-              showSystemNotification('Pengingat Minum TTD 🌸', {
+              showSystemNotification('Pengingat Imunisasi TT Pranikah', {
                 body: freshNudge.message,
                 url: '/user/dashboard',
               });
@@ -103,15 +104,12 @@ export default function DashboardView() {
     const currentUid = authUser?.id || dashboardData.user.id;
     const prevStatus = dashboardData.todayStatus;
 
-    // Optimistic UI update
     setDashboardData(prev => (prev ? { ...prev, todayStatus: newStatus } : null));
 
     const res = await recordUserConsumptionAction(currentUid, newStatus);
     if (!res.success) {
-      // Revert if error
       setDashboardData(prev => (prev ? { ...prev, todayStatus: prevStatus } : null));
     } else {
-      // Fetch fresh synchronized data
       const freshData = await getUserDashboardDataAction(currentUid);
       if (freshData) {
         setDashboardData(freshData);
@@ -139,130 +137,106 @@ export default function DashboardView() {
 
   const currentUser = dashboardData?.user || {
     id: authUser?.id || '',
-    name: authUser?.name || 'Siswi FEMORY',
+    name: authUser?.name || 'Calon Pengantin',
     streakCount: 0,
     streakUnit: 'Minggu' as const,
     consecutiveDates: [],
     hbLevel: authUser?.hbLevel || null,
-    schoolOrOrg: authUser?.schoolOrOrg || null,
-    avatarUrl: authUser?.avatarUrl || 'https://api.dicebear.com/7.x/avataaars/svg?seed=FEMORY',
+    schoolOrOrg: authUser?.schoolOrOrg || 'Puskesmas Binaan Kemenkes',
+    avatarUrl: authUser?.avatarUrl || 'https://api.dicebear.com/7.x/avataaars/svg?seed=PRELUNA',
   };
 
   const featuredArticle = dashboardData?.featuredArticle;
   const streakUnit = currentUser.streakUnit || 'Minggu';
 
-  // Dynamic milestone level calculation based on real streak count
-  const getMilestoneInfo = (streak: number) => {
-    if (streak >= 12) {
-      return {
-        level: 4,
-        title: 'Champion (Level 4)',
-        desc: `Konsisten ${streak} ${streakUnit.toLowerCase()} berturut-turut. Hb dan kebugaran optimal!`,
-      };
-    }
-    if (streak >= 6) {
-      return {
-        level: 3,
-        title: 'Bebas Anemia (Level 3)',
-        desc: `${streak} tablet berturut-turut. Pertahankan konsistensi mingguanmu!`,
-      };
-    }
-    if (streak >= 3) {
-      return {
-        level: 2,
-        title: 'Konsisten (Level 2)',
-        desc: `${streak} ${streakUnit.toLowerCase()} berturut-turut. Terus jaga kebiasaan baik ini!`,
-      };
-    }
-    if (streak >= 1) {
-      return {
-        level: 1,
-        title: 'Pemula Sehat (Level 1)',
-        desc: `${streak} ${streakUnit.toLowerCase()} tercatat. Lanjutkan secara teratur!`,
-      };
-    }
-    return {
-      level: 0,
-      title: 'Mulai Program Sehat',
-      desc: 'Minum tablet tambah darah teratur untuk mencegah anemia.',
-    };
-  };
-
-  const milestone = getMilestoneInfo(currentUser.streakCount);
+  // Extract meta from notes if available
+  const notesStr = (dashboardData?.user as any)?.notes || '';
+  const partnerMatch = notesStr.match(/Pasangan:\s*([^|]+)/);
+  const partnerName = partnerMatch ? partnerMatch[1].trim() : undefined;
+  const weddingMatch = notesStr.match(/Rencana Akad:\s*([^|]+)/);
+  const weddingDate = weddingMatch ? weddingMatch[1].trim() : undefined;
+  const ttLevelMatch = notesStr.match(/Status TT Awal:\s*TT(\d)/);
+  const ttLevel = ttLevelMatch ? parseInt(ttLevelMatch[1], 10) : 2;
 
   if (loading && !dashboardData) {
     return (
       <div className='flex items-center justify-center min-h-[50vh] w-full'>
-        <div className='animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#e11d48]' />
+        <div className='animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-emerald-600' />
       </div>
     );
   }
 
   return (
-    <div className='flex flex-col gap-4 sm:gap-5 w-full'>
-      {/* Mobile Health Stats Bar (< md) */}
-      <div className='flex md:hidden items-center justify-between gap-2 p-3 bg-white rounded-2xl border border-[#fce7f3] shadow-2xs'>
+    <div className='flex flex-col gap-4 sm:gap-6 w-full'>
+      {/* Mobile Top Stats Bar (< md) */}
+      <div className='flex md:hidden items-center justify-between gap-2 p-3 bg-white rounded-2xl border border-stone-200 shadow-2xs'>
         <div className='flex items-center gap-2'>
-          <div className='w-8 h-8 rounded-full bg-amber-50 flex items-center justify-center text-amber-500'>
-            <Flame size={18} className='fill-amber-500' />
+          <div className='w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-700'>
+            <ShieldCheck size={18} />
           </div>
           <div>
-            <span className='text-[10px] text-[#64748b] block leading-tight'>Streak Minum</span>
-            <span className='text-xs font-extrabold text-[#1e293b]'>
-              {currentUser.streakCount} {streakUnit}
-            </span>
+            <span className='text-[10px] text-slate-500 block leading-tight'>Status Imunisasi</span>
+            <span className='text-xs font-bold text-slate-900'>TT{ttLevel} Terlindungi</span>
           </div>
         </div>
 
-        <div className='h-7 w-[1px] bg-[#fce7f3]' />
+        <div className='h-7 w-px bg-stone-200' />
 
         <div className='flex items-center gap-2'>
-          <div className='w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-500'>
+          <div className='w-8 h-8 rounded-full bg-teal-50 flex items-center justify-center text-teal-700'>
             <Activity size={18} />
           </div>
           <div>
-            <span className='text-[10px] text-[#64748b] block leading-tight'>Kadar Hb</span>
+            <span className='text-[10px] text-slate-500 block leading-tight'>Kadar Hb Lab</span>
             <span
-              className={`text-xs font-extrabold ${currentUser.hbLevel ? 'text-[#10b981]' : 'text-slate-500'}`}
+              className={`text-xs font-bold ${currentUser.hbLevel ? 'text-emerald-700' : 'text-slate-500'}`}
             >
-              {currentUser.hbLevel ? `${currentUser.hbLevel} g/dL` : 'Belum Ada'}
+              {currentUser.hbLevel ? `${currentUser.hbLevel} g/dL` : 'Belum Cek'}
             </span>
           </div>
         </div>
       </div>
 
-      {/* Mobile Quick Action Menu (Visible on < md at top) */}
-      <section aria-label='Menu Cepat Navigasi Mobile' className='block md:hidden'>
-        <Card padding='md'>
+      {/* Mobile Quick Action Menu (< md) */}
+      <section aria-label='Menu Cepat Pranikah Mobile' className='block md:hidden'>
+        <Card padding='md' className='border-stone-200'>
           <QuickAction />
         </Card>
       </section>
 
-      {/* Desktop Welcome Banner (Visible on md+) */}
-      <div className='hidden md:flex items-center justify-between pb-2 border-b border-[#fce7f3]'>
+      {/* Desktop Welcome Banner (md+) */}
+      <div className='hidden md:flex items-center justify-between pb-3 border-b border-stone-200'>
         <div>
-          <h1 className='text-2xl font-extrabold text-[#1e293b] tracking-tight'>
-            Dashboard Siswi FEMORY 🌸
+          <div className='flex items-center gap-2 mb-1'>
+            <span className='text-xs font-bold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200'>
+              Calon Pengantin Terdaftar
+            </span>
+            <span className='text-xs text-slate-500'>
+              Faskes: <strong>{currentUser.schoolOrOrg || 'Puskesmas Domisili Catin'}</strong>
+            </span>
+          </div>
+          <h1 className='text-2xl font-bold text-slate-900 tracking-tight'>
+            Selamat Datang, {currentUser.name}!
           </h1>
-          <p className='text-sm text-[#64748b] mt-0.5'>
-            Selamat datang kembali, <strong>{currentUser.name}</strong>! Pertahankan konsistensi minum TTD pekan ini.
+          <p className='text-xs sm:text-sm text-slate-600 mt-0.5'>
+            Persiapkan kesehatan reproduksi prima dan lengkapi imunisasi Tetanus Toxoid menjelang hari bahagia.
           </p>
         </div>
 
         <div className='flex items-center gap-3'>
-          <div className='flex items-center gap-2 bg-white px-3.5 py-1.5 rounded-full border border-[#fce7f3] shadow-2xs'>
-            <Flame size={18} className='text-amber-500 fill-amber-500' />
-            <span className='text-xs font-bold text-[#1e293b]'>
-              {currentUser.streakCount} {streakUnit} Streak
+          <div className='flex items-center gap-2 bg-white px-3.5 py-1.5 rounded-full border border-stone-200 shadow-2xs'>
+            <Building2 size={16} className='text-emerald-700' />
+            <span className='text-xs font-semibold text-slate-800 truncate max-w-[180px]'>
+              {currentUser.schoolOrOrg || 'Puskesmas / KUA'}
             </span>
           </div>
-          <div className='flex items-center gap-2 bg-white px-3.5 py-1.5 rounded-full border border-[#fce7f3] shadow-2xs'>
+          <div className='flex items-center gap-2 bg-white px-3.5 py-1.5 rounded-full border border-stone-200 shadow-2xs'>
             <Activity
-              size={18}
-              className={currentUser.hbLevel ? 'text-emerald-500' : 'text-slate-400'}
+              size={16}
+              className={currentUser.hbLevel ? 'text-emerald-600' : 'text-slate-400'}
             />
             <span
-              className={`text-xs font-bold ${currentUser.hbLevel ? 'text-[#10b981]' : 'text-slate-500'}`}
+              className={`text-xs font-bold ${currentUser.hbLevel ? 'text-emerald-700' : 'text-slate-500'}`}
             >
               {currentUser.hbLevel ? `Hb ${currentUser.hbLevel} g/dL` : 'Belum Ada Data Hb'}
             </span>
@@ -270,10 +244,10 @@ export default function DashboardView() {
         </div>
       </div>
 
-      {/* Realtime Admin / UKS Reminder Nudge Banner (If Admin sent a reminder) */}
+      {/* Realtime Admin / Nakes Reminder Nudge Banner */}
       {activeNudge && (
-        <section aria-label='Pengingat Langsung dari UKS'>
-          <div className='p-4 sm:p-5 rounded-3xl bg-gradient-to-r from-rose-500 via-rose-600 to-rose-700 text-white shadow-xl shadow-rose-500/20 border border-rose-300/30 animate-fade-in'>
+        <section aria-label='Pengingat Langsung dari Petugas Faskes'>
+          <div className='p-4 sm:p-5 rounded-3xl bg-linear-to-r from-emerald-800 via-emerald-700 to-teal-800 text-white shadow-xl shadow-emerald-950/15 border border-emerald-500/30 animate-fade-in'>
             <div className='flex items-start justify-between gap-3'>
               <div className='flex items-start gap-3.5'>
                 <div className='w-11 h-11 rounded-2xl bg-white/20 backdrop-blur-xs flex items-center justify-center shrink-0 text-white mt-0.5 shadow-inner'>
@@ -281,10 +255,10 @@ export default function DashboardView() {
                 </div>
                 <div>
                   <div className='flex items-center gap-2 flex-wrap'>
-                    <span className='text-[10px] sm:text-xs font-black uppercase tracking-wider bg-white/25 px-2.5 py-0.5 rounded-full'>
-                      Pesan Pengingat UKS • {activeNudge.senderName}
+                    <span className='text-[10px] sm:text-xs font-bold uppercase tracking-wider bg-white/25 px-2.5 py-0.5 rounded-full'>
+                      Pesan Nakes Faskes • {activeNudge.senderName}
                     </span>
-                    <span className='text-[11px] text-rose-200'>{activeNudge.sentAt}</span>
+                    <span className='text-[11px] text-emerald-200'>{activeNudge.sentAt}</span>
                   </div>
                   <h3 className='text-sm sm:text-base font-bold mt-1 text-white leading-snug'>
                     {activeNudge.message}
@@ -295,7 +269,7 @@ export default function DashboardView() {
               <button
                 type='button'
                 onClick={handleDismissNudge}
-                className='text-rose-200 hover:text-white p-1.5 rounded-xl hover:bg-white/10 transition-colors cursor-pointer shrink-0'
+                className='text-emerald-200 hover:text-white p-1.5 rounded-xl hover:bg-white/10 transition-colors cursor-pointer shrink-0'
                 title='Tutup Pengingat'
               >
                 <X size={18} />
@@ -308,15 +282,15 @@ export default function DashboardView() {
                 size='sm'
                 shape='pill'
                 icon={<CheckCircle2 size={14} />}
-                className='bg-white text-rose-600 hover:bg-rose-50 font-extrabold shadow-sm text-xs'
+                className='bg-white text-emerald-800 hover:bg-emerald-50 font-bold shadow-xs text-xs'
                 onClick={handleTakeFromNudge}
               >
-                Catat Minum
+                Konfirmasi Kunjungan
               </Button>
               <button
                 type='button'
                 onClick={handleDismissNudge}
-                className='text-xs font-semibold text-rose-100 hover:text-white px-3 py-1.5 rounded-full hover:bg-white/10 transition-colors cursor-pointer'
+                className='text-xs font-semibold text-emerald-100 hover:text-white px-3 py-1.5 rounded-full hover:bg-white/10 transition-colors cursor-pointer'
               >
                 Sudah Mengerti
               </button>
@@ -325,25 +299,33 @@ export default function DashboardView() {
         </section>
       )}
 
-      {/* Main Responsive Layout: Mobile Stack -> Desktop Bento Grid */}
+      {/* Hero 5-Dose TT Immunity Status Banner */}
+      <section aria-label='Status Imunisasi TT 5 Dosis'>
+        <ImmunityStatusBanner
+          currentDoseLevel={ttLevel}
+          nextAppointmentDate={dashboardData?.activeSchedule ? `${dashboardData.activeSchedule.dayOfWeek}, ${dashboardData.activeSchedule.time}` : undefined}
+          partnerName={partnerName}
+        />
+      </section>
+
+      {/* Main Responsive Grid: Left Column (Hero & Actions) | Right Column (Countdown & Widgets) */}
       <div className='grid grid-cols-1 md:grid-cols-12 gap-5 md:gap-6 items-start'>
-        {/* LEFT COLUMN: Main Health Actions & Hero (md:col-span-7 lg:col-span-8) */}
+        {/* LEFT COLUMN: Main Health Actions (md:col-span-7 lg:col-span-8) */}
         <div className='md:col-span-7 lg:col-span-8 flex flex-col gap-5'>
           {/* Missing Schedule Setup Prompt Banner */}
           {dashboardData && !dashboardData.activeSchedule && (
-            <section aria-label='Pengingat Atur Jadwal Konsumsi'>
-              <div className='p-4 sm:p-4.5 rounded-2xl bg-amber-50 border border-amber-200/80 text-amber-950 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs'>
+            <section aria-label='Pengingat Atur Jadwal Faskes'>
+              <div className='p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-950 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs'>
                 <div className='flex items-start gap-3'>
                   <div className='w-9 h-9 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center shrink-0 mt-0.5'>
                     <CalendarClock size={20} />
                   </div>
                   <div>
                     <h4 className='text-xs sm:text-sm font-bold text-amber-900'>
-                      Jadwal Minum TTD Belum Dikonfigurasi
+                      Jadwal Kunjungan Faskes Belum Dikonfigurasi
                     </h4>
-                    <p className='text-[11px] sm:text-xs text-amber-800/80 mt-0.5 leading-relaxed'>
-                      Tentukan hari dan jam rutin minum Tablet Tambah Darah agar FEMORY dapat
-                      mengingatkanmu tepat waktu.
+                    <p className='text-[11px] sm:text-xs text-amber-800 mt-0.5 leading-relaxed'>
+                      Tentukan hari dan jam kunjungan ke Puskesmas agar PRELUNA dapat mengingatkan jadwal imunisasi TT tepat waktu.
                     </p>
                   </div>
                 </div>
@@ -358,8 +340,8 @@ export default function DashboardView() {
             </section>
           )}
 
-          {/* 1. Status Hari Ini Card */}
-          <section aria-label='Status Konsumsi Hari Ini'>
+          {/* 1. Status Kunjungan Hari Ini Card */}
+          <section aria-label='Status Aktivitas Hari Ini'>
             <StatusCard
               initialStatus={dashboardData?.todayStatus || 'pending'}
               initialRecordedTime={dashboardData?.todayRecordedTime}
@@ -367,33 +349,33 @@ export default function DashboardView() {
             />
           </section>
 
-          {/* 2. Visual Streak Progression Card (100% Dynamic & Elongating) */}
-          <section aria-label='Progres Streak Kepatuhan Konsumsi'>
+          {/* 2. Streak Progress Card */}
+          <section aria-label='Progres Kepatuhan Suplementasi'>
             <StreakProgressCard
               streakCount={currentUser.streakCount}
-              streakUnit={currentUser.streakUnit || 'Minggu'}
+              streakUnit={streakUnit}
               consecutiveDates={currentUser.consecutiveDates}
               todayStatus={dashboardData?.todayStatus || 'pending'}
             />
           </section>
 
-          {/* 3. Edukasi Pilihan (Featured Article Banner) */}
+          {/* 3. Featured Article Banner */}
           {featuredArticle && (
-            <section aria-label='Materi Edukasi Pilihan'>
-              <Card padding='none' className='overflow-hidden'>
+            <section aria-label='Materi Edukasi Pranikah Pilihan'>
+              <Card padding='none' className='overflow-hidden border-stone-200'>
                 <div className='relative h-36 sm:h-44 w-full'>
                   <img
                     src={
                       featuredArticle.imageUrl ||
-                      'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=800&auto=format&fit=crop&q=80'
+                      'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&auto=format&fit=crop&q=80'
                     }
                     alt={featuredArticle.title}
                     className='w-full h-full object-cover'
                   />
-                  <div className='absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/40 to-transparent flex flex-col justify-end p-4 sm:p-5'>
-                    <span className='text-[10px] font-bold text-rose-300 uppercase tracking-wider flex items-center gap-1'>
+                  <div className='absolute inset-0 bg-linear-to-t from-slate-950/85 via-slate-950/40 to-transparent flex flex-col justify-end p-4 sm:p-5'>
+                    <span className='text-[10px] font-bold text-emerald-300 uppercase tracking-wider flex items-center gap-1'>
                       <Sparkles size={11} />
-                      <span>Edukasi Pilihan • {featuredArticle.readTime}</span>
+                      <span>Edukasi Pranikah • {featuredArticle.readTime}</span>
                     </span>
                     <h3 className='text-sm sm:text-base font-bold text-white leading-snug line-clamp-2 mt-0.5'>
                       {featuredArticle.title}
@@ -402,12 +384,12 @@ export default function DashboardView() {
                 </div>
 
                 <div className='p-4 bg-white flex items-center justify-between'>
-                  <p className='text-xs text-[#64748b] line-clamp-1 flex-1 pr-3'>
+                  <p className='text-xs text-slate-600 line-clamp-1 flex-1 pr-3'>
                     {featuredArticle.summary}
                   </p>
                   <Link
                     to={`/user/education/${featuredArticle.id}`}
-                    className='inline-flex items-center gap-1 text-xs font-bold text-[#e11d48] hover:text-[#be123c] shrink-0'
+                    className='inline-flex items-center gap-1 text-xs font-bold text-emerald-700 hover:text-emerald-800 shrink-0'
                   >
                     <span>Baca Selengkapnya</span>
                     <ArrowRight size={13} />
@@ -418,44 +400,62 @@ export default function DashboardView() {
           )}
         </div>
 
-        {/* RIGHT COLUMN: Quick Widgets, Buddy & Stats (md:col-span-5 lg:col-span-4) */}
+        {/* RIGHT COLUMN: Wedding Countdown, Quick Menu & Clinical Guidance (md:col-span-5 lg:col-span-4) */}
         <div className='md:col-span-5 lg:col-span-4 flex flex-col gap-5'>
-          {/* Desktop Quick Menu */}
+          {/* 1. Wedding Countdown & Clinical Readiness Widget */}
+          <section aria-label='Hitung Mundur Pernikahan'>
+            <WeddingCountdownWidget
+              weddingDateStr={weddingDate}
+              partnerName={partnerName}
+              currentTTLevel={ttLevel}
+            />
+          </section>
+
+          {/* 2. Desktop Quick Menu */}
           <section aria-label='Menu Cepat Navigasi' className='hidden md:block'>
-            <Card padding='md'>
+            <Card padding='md' className='border-stone-200'>
               <QuickAction />
             </Card>
           </section>
 
-          {/* Group Buddy Card (100% Dynamic from PostgreSQL) */}
-          <section aria-label='Group Buddy & Komunitas'>
-            <BuddyCard
-              groupData={dashboardData?.primaryGroup}
-              userName={currentUser.name.split(' ')[0]}
-            />
-          </section>
-
-          {/* Motivation & Level Milestone Widget */}
-          <Card padding='md' className='bg-gradient-to-br from-[#fff5f7] to-[#ffe4e6]/50'>
+          {/* 3. Clinical Guidelines / Education Highlight */}
+          <Card padding='md' className='bg-linear-to-br from-emerald-50/50 to-teal-50/30 border-emerald-100'>
             <div className='flex items-center gap-2.5 mb-2'>
-              <div className='w-8 h-8 rounded-full bg-rose-100 text-[#e11d48] flex items-center justify-center'>
+              <div className='w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-xs'>
                 <Award size={18} />
               </div>
               <div>
-                <h4 className='text-xs font-bold text-[#1e293b]'>Tingkat Kepatuhan</h4>
-                <span className='text-[11px] font-semibold text-[#e11d48]'>{milestone.title}</span>
+                <h4 className='text-xs font-bold text-slate-900'>Standar Skrining Catin</h4>
+                <span className='text-[11px] font-semibold text-emerald-800'>Pedoman Kemenkes RI</span>
               </div>
             </div>
-            <p className='text-xs text-[#475569] leading-relaxed'>{milestone.desc}</p>
+            <p className='text-xs text-slate-700 leading-relaxed'>
+              Pemeriksaan pranikah meliputi skrining TT (5 dosis), cek Hb (mencegah anemia ibu hamil), status gizi (LILA min. 23.5 cm), dan skrining calon ayah untuk generasi bebas stunting.
+            </p>
+            <div className='mt-3 pt-2.5 border-t border-emerald-200/60 flex items-center justify-between'>
+              <Link
+                to='/user/education'
+                className='text-[11px] font-bold text-emerald-700 hover:underline inline-flex items-center gap-1'
+              >
+                <BookOpen size={12} />
+                <span>Pelajari Buku Saku Catin</span>
+              </Link>
+              <Link
+                to='/user/consultation'
+                className='text-[11px] font-bold text-teal-700 hover:underline'
+              >
+                Tanya Luna AI
+              </Link>
+            </div>
           </Card>
         </div>
       </div>
 
       {/* Footer Trust Badge */}
       <footer className='pt-2 pb-4 text-center'>
-        <div className='inline-flex items-center gap-1.5 text-[11px] text-[#94a3b8]'>
-          <ShieldCheck size={14} className='text-emerald-500' />
-          <span>Program Pencegahan Anemia • FEMORY v2.0</span>
+        <div className='inline-flex items-center gap-1.5 text-[11px] text-slate-400'>
+          <ShieldCheck size={14} className='text-emerald-600' />
+          <span>Program Imunisasi Tetanus Toxoid Pranikah • PRELUNA Kemenkes RI</span>
         </div>
       </footer>
     </div>

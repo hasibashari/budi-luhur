@@ -117,7 +117,7 @@ export default function ArticleFormModal({
         />
 
         {formData.imageUrl ? (
-          <div className='relative rounded-2xl overflow-hidden border border-pink-100 bg-slate-50'>
+          <div className='relative rounded-2xl overflow-hidden border border-emerald-100 bg-slate-50'>
             <img
               src={formData.imageUrl}
               alt='Cover Preview'
@@ -143,9 +143,9 @@ export default function ArticleFormModal({
         ) : (
           <div
             onClick={() => fileInputRef.current?.click()}
-            className='p-6 text-center border-2 border-dashed border-pink-200 rounded-2xl bg-rose-50/50 hover:bg-rose-50 hover:border-rose-400 transition-all cursor-pointer'
+            className='p-6 text-center border-2 border-dashed border-emerald-200 rounded-2xl bg-emerald-50/40 hover:bg-emerald-50 hover:border-emerald-400 transition-all cursor-pointer'
           >
-            <div className='w-11 h-11 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center mx-auto mb-2'>
+            <div className='w-11 h-11 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto mb-2'>
               <UploadCloud size={24} />
             </div>
             <p className='text-sm font-bold text-slate-800'>Klik untuk upload gambar cover</p>
@@ -164,20 +164,20 @@ export default function ArticleFormModal({
             placeholder='Atau tempelkan tautan URL gambar cover di sini...'
             value={formData.imageUrl}
             onChange={e => updateFormData({ imageUrl: e.target.value })}
-            className='w-full pl-10 pr-3.5 py-2 rounded-xl border border-slate-200 bg-white text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-400 focus:border-transparent transition-all'
+            className='w-full pl-10 pr-3.5 py-2 rounded-xl border border-slate-200 bg-white text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all'
           />
         </div>
       </div>
 
       {/* AI Assistant Generator Banner */}
-      <div className='p-4 rounded-2xl border border-rose-200 bg-rose-50/70 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3'>
+      <div className='p-4 rounded-2xl border border-emerald-200 bg-emerald-50/70 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3'>
         <div className='flex items-center gap-3'>
-          <div className='w-9 h-9 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center shrink-0'>
+          <div className='w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0'>
             <Sparkles size={18} />
           </div>
           <div>
             <div className='font-bold text-slate-900 text-xs sm:text-sm'>
-              Asisten Penulis Medis AI
+              Asisten Penulis Medis Pranikah AI
             </div>
             <div className='text-[11px] text-slate-500'>
               Buat judul, ringkasan, dan materi edukasi otomatis dengan Gemini AI
@@ -189,7 +189,7 @@ export default function ArticleFormModal({
           type='button'
           disabled={isGeneratingAi}
           onClick={handleGenerateAiArticle}
-          className='inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-rose-600 text-white font-bold text-xs hover:bg-rose-700 shadow-sm transition-all cursor-pointer disabled:opacity-50 shrink-0'
+          className='inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 text-white font-bold text-xs hover:bg-emerald-700 shadow-sm transition-all cursor-pointer disabled:opacity-50 shrink-0'
         >
           <Sparkles size={14} />
           <span>{isGeneratingAi ? 'Menulis Artikel...' : 'Tulis dengan AI ✨'}</span>
@@ -198,13 +198,13 @@ export default function ArticleFormModal({
 
       <div>
         <label className='block text-xs font-bold text-slate-700 mb-1'>
-          Judul Artikel <span className='text-rose-500'>*</span>
+          Judul Artikel <span className='text-emerald-600'>*</span>
         </label>
         <input
           type='text'
           value={formData.title}
           onChange={e => updateFormData({ title: e.target.value })}
-          className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-400 focus:border-transparent transition-all'
+          className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all'
         />
       </div>
 
@@ -218,7 +218,7 @@ export default function ArticleFormModal({
                 category: e.target.value as ArticleFormData['category'],
               })
             }
-            className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-400 focus:border-transparent transition-all'
+            className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all'
           >
             {ARTICLE_CATEGORIES.filter(c => c !== 'Semua').map(cat => (
               <option key={cat} value={cat}>
@@ -229,13 +229,13 @@ export default function ArticleFormModal({
         </div>
         <div>
           <label className='block text-xs font-bold text-slate-700 mb-1'>
-            Penulis / Ahli Gizi UKS
+            Penulis / Petugas Faskes & KUA
           </label>
           <input
             type='text'
             value={formData.author}
             onChange={e => updateFormData({ author: e.target.value })}
-            className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-400 focus:border-transparent transition-all'
+            className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all'
           />
         </div>
       </div>
@@ -249,7 +249,7 @@ export default function ArticleFormModal({
             type='text'
             value={formData.readTime}
             onChange={e => updateFormData({ readTime: e.target.value })}
-            className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-400 focus:border-transparent transition-all'
+            className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all'
           />
         </div>
         <div>
@@ -261,7 +261,7 @@ export default function ArticleFormModal({
                 status: e.target.value as ArticleFormData['status'],
               })
             }
-            className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-400 focus:border-transparent transition-all'
+            className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all'
           >
             <option value='Terbit'>Terbit Langsung</option>
             <option value='Draf'>Simpan Sebagai Draf</option>
@@ -278,7 +278,7 @@ export default function ArticleFormModal({
           placeholder='Ringkasan 1-2 kalimat untuk kartu artikel...'
           value={formData.summary}
           onChange={e => updateFormData({ summary: e.target.value })}
-          className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-400 focus:border-transparent transition-all resize-none'
+          className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all resize-none'
         />
       </div>
 

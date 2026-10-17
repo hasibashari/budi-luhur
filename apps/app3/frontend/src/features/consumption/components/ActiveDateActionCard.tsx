@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { CheckCircle2, XCircle } from 'lucide-react';
+import { CheckCircle2, XCircle, ShieldCheck } from 'lucide-react';
 import { Card } from '@/src/shared/components/ui/Card';
 import { Badge } from '@/src/shared/components/ui/Badge';
 import { Button } from '@/src/shared/components/ui/Button';
@@ -24,49 +24,52 @@ export function ActiveDateActionCard({
   isToday,
   activity,
   effectiveStatus,
-  fallbackTabletName = 'Tablet Tambah Darah (TTD)',
-  fallbackTime = '20:00',
+  fallbackTabletName = 'Imunisasi TT / Suplementasi Pranikah',
+  fallbackTime = '08:00',
   isUpdating,
   onUpdateStatus,
 }: ActiveDateActionCardProps) {
   return (
     <Card
       padding='md'
-      className='border border-rose-200 bg-gradient-to-br from-[#fff5f7] to-white'
+      className='border border-emerald-200 bg-linear-to-br from-emerald-50/40 via-white to-stone-50'
     >
       <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-3'>
         {/* Left side: Date & Status Details */}
         <div>
           <div className='flex items-center gap-2'>
-            <span className='text-xs font-extrabold text-[#1e293b]'>
+            <div className='w-6 h-6 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0'>
+              <ShieldCheck size={14} />
+            </div>
+            <span className='text-xs font-bold text-slate-900'>
               {formatFullDateText(selectedDate)}
             </span>
             {isToday && (
-              <span className='text-[10px] font-bold text-rose-600 bg-rose-100 px-2 py-0.5 rounded-full'>
+              <span className='text-[10px] font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full'>
                 Hari Ini
               </span>
             )}
           </div>
-          <p className='text-xs text-[#64748b] mt-0.5'>
+          <p className='text-xs text-slate-600 mt-1 pl-8'>
             {activity?.title || fallbackTabletName}
             {' • '}
             Jadwal {activity?.scheduledTime || fallbackTime} WIB
-            {activity?.takenAt ? ` (Diminum ${activity.takenAt})` : ''}
+            {activity?.takenAt ? ` (Diverifikasi ${activity.takenAt})` : ''}
           </p>
         </div>
 
         {/* Right side: Direct Quick Status Action */}
-        <div className='flex items-center gap-2'>
+        <div className='flex items-center gap-2 self-start sm:self-auto pl-8 sm:pl-0'>
           {effectiveStatus === 'recorded' && (
             <div className='flex items-center gap-2'>
               <Badge variant='recorded' size='sm'>
-                ✓ Selesai
+                ✓ Telah Diberikan
               </Badge>
               <button
                 type='button'
                 disabled={isUpdating}
                 onClick={() => onUpdateStatus(selectedDate, 'pending')}
-                className='text-[11px] font-semibold text-slate-500 hover:text-rose-600 hover:underline cursor-pointer'
+                className='text-[11px] font-semibold text-slate-500 hover:text-emerald-700 hover:underline cursor-pointer'
               >
                 Ubah
               </button>
@@ -82,7 +85,7 @@ export function ActiveDateActionCard({
                 type='button'
                 disabled={isUpdating}
                 onClick={() => onUpdateStatus(selectedDate, 'pending')}
-                className='text-[11px] font-semibold text-slate-500 hover:text-rose-600 hover:underline cursor-pointer'
+                className='text-[11px] font-semibold text-slate-500 hover:text-emerald-700 hover:underline cursor-pointer'
               >
                 Ubah
               </button>
@@ -92,23 +95,23 @@ export function ActiveDateActionCard({
           {effectiveStatus === 'pending' && (
             <div className='flex items-center gap-2'>
               <Button
-                variant='success'
+                variant='primary'
                 size='sm'
                 shape='pill'
                 disabled={isUpdating}
                 icon={<CheckCircle2 size={14} />}
-                className='text-xs py-1.5 px-3'
+                className='text-xs py-1.5 px-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold'
                 onClick={() => onUpdateStatus(selectedDate, 'recorded')}
               >
-                {isUpdating ? '...' : 'Sudah Minum'}
+                Catat Sudah Diberikan
               </Button>
               <Button
                 variant='outline'
                 size='sm'
                 shape='pill'
                 disabled={isUpdating}
-                className='text-xs py-1.5 px-3 text-[#f43f5e] border-[#fecdd3] hover:bg-rose-50'
                 icon={<XCircle size={14} />}
+                className='text-xs py-1.5 px-3 text-stone-600 border-stone-200 hover:bg-stone-50'
                 onClick={() => onUpdateStatus(selectedDate, 'missed')}
               >
                 Terlewat
@@ -120,3 +123,5 @@ export function ActiveDateActionCard({
     </Card>
   );
 }
+
+export default ActiveDateActionCard;

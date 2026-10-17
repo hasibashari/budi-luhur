@@ -50,12 +50,12 @@ export interface MedicationSchedule {
 }
 
 export type ArticleCategory =
-  | 'Anemia & TTD'
-  | 'Nutrisi & Gizi'
-  | 'Kesehatan Remaja'
-  | 'Tips Menstruasi'
-  | 'Mitos & Fakta'
-  | 'Gaya Hidup';
+  | 'Imunisasi TT'
+  | 'Kesehatan Pranikah'
+  | 'Nutrisi & Anemia'
+  | 'Persiapan Kehamilan'
+  | 'Mitos & Fakta TT'
+  | 'Skrining Laboratorium';
 
 export interface HealthArticle {
   id: string;

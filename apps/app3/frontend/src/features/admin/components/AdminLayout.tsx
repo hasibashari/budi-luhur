@@ -6,19 +6,19 @@ import MobileTopBar from '@/src/shared/components/MobileTopBar';
 
 export default function AdminLayout() {
   const adminBadge = (
-    <span className="px-2 py-0.5 rounded-full bg-rose-600 text-white text-[10px] font-extrabold shadow-sm shadow-rose-200 uppercase tracking-wide">
-      ADMIN
+    <span className="px-2 py-0.5 rounded-full bg-emerald-600 text-white text-[10px] font-extrabold shadow-sm shadow-emerald-200 uppercase tracking-wide">
+      PETUGAS
     </span>
   );
 
   return (
     <AuthGuard requiredRole='admin'>
-      <div className="flex flex-col min-h-screen bg-[#fff5f7]">
+      <div className="flex flex-col min-h-screen bg-[#FAFAF9]">
         {/* Mobile Top App Bar (< md) */}
         <div className="block md:hidden">
           <MobileTopBar
-            brandTitle="FEMORY 🌸"
-            brandSubtitle="Pusat Kontrol Admin"
+            brandTitle="PRELUNA"
+            brandSubtitle="Portal Faskes & KUA"
             brandHref="/admin/dashboard"
             badge={adminBadge}
           />

@@ -28,8 +28,8 @@ export interface AppSidebarProps {
 
 export default function AppSidebar({
   navItems,
-  brandTitle = 'FEMORY',
-  brandSubtitle = 'Admin Panel',
+  brandTitle = 'PRELUNA',
+  brandSubtitle = 'Portal Faskes & KUA',
   brandIcon: BrandIcon,
   brandHref = '/admin/dashboard',
   badge,
@@ -54,29 +54,29 @@ export default function AppSidebar({
   const sidebarInner = (
     <div className='flex flex-col h-full bg-white px-4 py-5'>
       {/* Header Section */}
-      <div className='flex items-center justify-between pb-4 mb-4 border-b border-[#fce7f3]'>
+      <div className='flex items-center justify-between pb-4 mb-4 border-b border-slate-100'>
         <Link
           to={brandHref}
           onClick={onMobileClose}
           className='flex items-center gap-3 group min-w-0'
         >
           {BrandIcon ? (
-            <div className='w-10 h-10 rounded-xl bg-gradient-to-tr from-[#e11d48] to-[#fb7185] text-white flex items-center justify-center shadow-md shadow-rose-500/20 shrink-0 group-hover:scale-105 transition-transform'>
+            <div className='w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 text-white flex items-center justify-center shadow-md shadow-emerald-600/20 shrink-0 group-hover:scale-105 transition-transform'>
               <BrandIcon size={20} />
             </div>
           ) : (
-            <div className='w-10 h-10 rounded-xl bg-gradient-to-tr from-[#e11d48] to-[#fb7185] text-white flex items-center justify-center text-lg shadow-md shadow-rose-500/20 shrink-0 group-hover:scale-105 transition-transform'>
-              🌸
+            <div className='w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 text-white flex items-center justify-center text-lg shadow-md shadow-emerald-600/20 shrink-0 group-hover:scale-105 transition-transform'>
+              💍
             </div>
           )}
           <div className='flex flex-col min-w-0'>
             <div className='flex items-center gap-1.5'>
-              <span className='font-extrabold text-base text-[#1e293b] leading-tight truncate'>
+              <span className='font-extrabold text-base text-slate-900 leading-tight truncate'>
                 {brandTitle}
               </span>
               {badge}
             </div>
-            <span className='text-[11px] font-bold text-[#e11d48] uppercase tracking-wider leading-tight'>
+            <span className='text-[11px] font-bold text-emerald-700 uppercase tracking-wider leading-tight'>
               {brandSubtitle}
             </span>
           </div>
@@ -87,7 +87,7 @@ export default function AppSidebar({
           <button
             type='button'
             onClick={onMobileClose}
-            className='md:hidden p-1.5 rounded-lg text-[#64748b] hover:bg-rose-50 hover:text-[#e11d48] transition-colors cursor-pointer'
+            className='md:hidden p-1.5 rounded-lg text-slate-500 hover:bg-emerald-50 hover:text-emerald-700 transition-colors cursor-pointer'
           >
             <X size={18} />
           </button>
@@ -108,13 +108,13 @@ export default function AppSidebar({
               onClick={onMobileClose}
               className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-150 select-none ${
                 isActive
-                  ? 'bg-[#ffe4e6] text-[#e11d48] font-bold shadow-xs'
-                  : 'text-[#64748b] hover:bg-[#fff5f7] hover:text-[#e11d48]'
+                  ? 'bg-emerald-50 text-emerald-800 font-bold shadow-xs'
+                  : 'text-slate-600 hover:bg-emerald-50/60 hover:text-emerald-700'
               }`}
             >
               <Icon
                 size={18}
-                className={isActive ? 'text-[#e11d48] shrink-0' : 'text-[#64748b] shrink-0'}
+                className={isActive ? 'text-emerald-700 shrink-0' : 'text-slate-400 shrink-0'}
               />
               <span className='truncate'>{item.name}</span>
             </Link>
@@ -123,7 +123,7 @@ export default function AppSidebar({
       </nav>
 
       {/* Footer Action */}
-      {footerAction && <div className='pt-3 mt-3 border-t border-[#fce7f3]'>{footerAction}</div>}
+      {footerAction && <div className='pt-3 mt-3 border-t border-slate-100'>{footerAction}</div>}
     </div>
   );
 

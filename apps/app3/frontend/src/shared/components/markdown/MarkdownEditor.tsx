@@ -31,53 +31,55 @@ interface MarkdownEditorProps {
 
 const TEMPLATES = [
   {
-    title: 'Panduan Suplementasi TTD Remaja',
-    content: `## Pentingnya Tablet Tambah Darah (TTD)
-Remaja putri memiliki risiko anemia yang lebih tinggi karena siklus menstruasi bulanan dan masa pertumbuhan yang pesat.
+    title: 'Panduan Imunisasi Tetanus Toxoid (TT) Pranikah',
+    content: `## Pentingnya Imunisasi TT bagi Calon Pengantin
+Imunisasi Tetanus Toxoid (TT) wajib dijalani oleh calon pengantin wanita untuk mencegah infeksi Tetanus Neonatorum pada bayi yang kelak dilahirkan serta melindungi calon ibu saat bersalin.
 
-> Tips UKS: Minum 1 tablet TTD setiap minggu setelah makan malam atau sarapan untuk penyerapan optimal!
+> Tips Medis Pranikah: Pastikan imunisasi TT2 diselesaikan minimal 4 minggu sebelum akad nikah untuk kekebalan protektif 3 tahun!
 
-### Manfaat Rutin Minum TTD:
-- Menjaga konsentrasi belajar tetap optimal di sekolah
-- Mencegah tubuh cepat lemas, letih, lesu, dan lunglai (5L)
-- Meningkatkan daya tahan tubuh dari serangan penyakit
+### Jadwal 5 Dosis Imunisasi TT Kemenkes:
+- **TT1**: Langkah awal (skrining saat pendaftaran catin di KUA/faskes)
+- **TT2**: 4 minggu setelah TT1 (masa perlindungan 3 tahun)
+- **TT3**: 6 bulan setelah TT2 (masa perlindungan 5 tahun)
+- **TT4**: 1 tahun setelah TT3 (masa perlindungan 10 tahun)
+- **TT5**: 1 tahun setelah TT4 (perlindungan seumur hidup / >25 tahun)
 
-### Aturan Minum yang Benar:
-1. Minum dengan **air putih** atau **jus jeruk/buah segar** (Vitamin C membantu penyerapan zat besi).
-2. Hindari minum TTD bersamaan dengan **teh**, **kopi**, atau **susu** karena dapat menghambat penyerapan zat besi.
-3. Jangan minum dalam keadaan perut kosong untuk menghindari rasa mual.`,
+### Yang Perlu Disiapkan Sebelum Imunisasi:
+1. Istirahat cukup dan sarapan sehat sebelum ke Puskesmas / klinik.
+2. Bawa KTP dan surat pengantar pengantin dari kelurahan / KUA.
+3. Sampaikan riwayat alergi atau imunisasi sebelumnya kepada bidan/dokter.`,
   },
   {
-    title: 'Mitos vs Fakta Seputar Anemia & TTD',
-    content: `## Mitos & Fakta Tablet Tambah Darah
+    title: 'Mitos vs Fakta Seputar Imunisasi TT & Skrining Pranikah',
+    content: `## Mitos & Fakta Imunisasi TT Calon Pengantin
 
-Masih banyak anggapan keliru mengenai konsumsi suplemen zat besi di kalangan siswi sekolah. Mari kita bedah faktanya!
+Masih banyak kesalahpahaman seputar vaksinasi sebelum menikah. Mari kita bedah faktanya secara medis!
 
 | Mitos | Fakta Sebenarnya |
 |---|---|
-| Minum TTD bikin tensi darah tinggi | TTD hanya menambah zat besi (Hb), bukan menaikkan tekanan darah |
-| Tubuh gemuk pasti bebas anemia | Anemia berkaitan dengan kadar zat besi, bukan berat badan |
-| TTD menyebabkan ketergantungan | TTD adalah suplemen nutrisi pencegahan, bukan obat adiktif |
+| Imunisasi TT adalah bentuk KB mandul | TT sama sekali bukan alat kontrasepsi; murni vaksin pencegah bakteri tetanus |
+| Catin yang sehat tidak butuh skrining | Skrining mendeteksi dini anemia (Hb), thalasemia, dan status TT tanpa gejala |
+| Suntik TT menimbulkan efek samping berat | Efeknya hanya nyeri ringan atau pegal pada lengan suntik selama 1–2 hari |
 
-> Fakta Medis: Minum TTD secara teratur 1 kali seminggu aman dikonsumsi jangka panjang dan direkomendasikan Kemenkes RI.`,
+> Fakta Medis: Program imunisasi TT pranikah telah menyelamatkan jutaan ibu dan bayi dari risiko tetanus obstetrik yang fatal.`,
   },
   {
-    title: 'Daftar Makanan Sumber Zat Besi & Gizi Seimbang',
-    content: `## Pilihan Makanan Pencegah Anemia
+    title: 'Pedoman Gizi Pranikah & Pencegahan Stunting',
+    content: `## Pilihan Nutrisi Optimal Menjelang Kehamilan
 
-Selain rutin meminum TTD, siswi disarankan memperbanyak konsumsi makanan tinggi zat besi:
+Persiapan generasi sehat bebas stunting dimulai dari pemenuhan gizi optimal calon ibu dan calon ayah:
 
-### 1. Sumber Hewani (Zat Besi Heme):
-- Hati ayam / sapi
-- Daging merah tanpa lemak
-- Ikan dan telur ayam
+### 1. Zat Besi & Asam Folat (Mencegah Anemia & Cacat Janin):
+- Suplemen asam folat 400 mcg setiap hari
+- Hati ayam/sapi, daging merah tanpa lemak, dan bayam
+- Telur dan kacang-kacangan
 
-### 2. Sumber Nabati (Zat Besi Non-Heme):
-- Bayam, daun kelor, dan brokoli
-- Kacang kedelai, tahu, dan tempe
-- Kacang merah dan kacang hijau
+### 2. Kalsium & Seng (Zinc):
+- Susu, yogurt, dan keju pasteurisasi
+- Ikan dengan duri lunak (teri, sarden)
+- Biji labu dan kacang almond
 
-> Tips Sehat: Padukan makanan sumber zat besi dengan buah kaya Vitamin C (jeruk, jambu biji, tomat) agar penyerapannya maksimal di dalam tubuh!`,
+> Tips Sehat: Ukur Lingkar Lengan Atas (LILA) di Puskesmas. Pastikan LILA minimal 23.5 cm untuk mencegah risiko Kurang Energi Kronis (KEK).`,
   },
 ];
 
@@ -132,9 +134,9 @@ export default function MarkdownEditor({
   };
 
   return (
-    <div className='w-full rounded-2xl border border-[#fce7f3] bg-white overflow-hidden shadow-xs flex flex-col'>
+    <div className='w-full rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-xs flex flex-col'>
       {/* Top Toolbar */}
-      <div className='flex items-center justify-between flex-wrap gap-2 p-2 border-b border-[#fce7f3] bg-[#fff5f7]/60'>
+      <div className='flex items-center justify-between flex-wrap gap-2 p-2 border-b border-slate-200 bg-emerald-50/40'>
         {/* Formatting Tools */}
         <div className='flex items-center gap-1 flex-wrap'>
           <button
@@ -142,7 +144,7 @@ export default function MarkdownEditor({
             title='Tebal (Ctrl+B)'
             onClick={() => insertToken('**', '**', 'teks tebal')}
             disabled={readOnly}
-            className='p-1.5 rounded-lg text-[#475569] hover:bg-rose-100/70 hover:text-[#e11d48] transition-colors cursor-pointer disabled:opacity-40'
+            className='p-1.5 rounded-lg text-slate-600 hover:bg-emerald-100/70 hover:text-emerald-700 transition-colors cursor-pointer disabled:opacity-40'
           >
             <Bold size={15} />
           </button>
@@ -151,19 +153,19 @@ export default function MarkdownEditor({
             title='Miring (Ctrl+I)'
             onClick={() => insertToken('*', '*', 'teks miring')}
             disabled={readOnly}
-            className='p-1.5 rounded-lg text-[#475569] hover:bg-rose-100/70 hover:text-[#e11d48] transition-colors cursor-pointer disabled:opacity-40'
+            className='p-1.5 rounded-lg text-slate-600 hover:bg-emerald-100/70 hover:text-emerald-700 transition-colors cursor-pointer disabled:opacity-40'
           >
             <Italic size={15} />
           </button>
 
-          <div className='w-px h-5 bg-rose-200/80 mx-1' />
+          <div className='w-px h-5 bg-emerald-200/80 mx-1' />
 
           <button
             type='button'
             title='Heading 2'
             onClick={() => insertToken('## ', '\n', 'Judul Bagian')}
             disabled={readOnly}
-            className='p-1.5 rounded-lg text-[#475569] hover:bg-rose-100/70 hover:text-[#e11d48] transition-colors cursor-pointer disabled:opacity-40'
+            className='p-1.5 rounded-lg text-slate-600 hover:bg-emerald-100/70 hover:text-emerald-700 transition-colors cursor-pointer disabled:opacity-40'
           >
             <Heading2 size={15} />
           </button>
@@ -172,19 +174,19 @@ export default function MarkdownEditor({
             title='Heading 3'
             onClick={() => insertToken('### ', '\n', 'Subjudul')}
             disabled={readOnly}
-            className='p-1.5 rounded-lg text-[#475569] hover:bg-rose-100/70 hover:text-[#e11d48] transition-colors cursor-pointer disabled:opacity-40'
+            className='p-1.5 rounded-lg text-slate-600 hover:bg-emerald-100/70 hover:text-emerald-700 transition-colors cursor-pointer disabled:opacity-40'
           >
             <Heading3 size={15} />
           </button>
 
-          <div className='w-px h-5 bg-rose-200/80 mx-1' />
+          <div className='w-px h-5 bg-emerald-200/80 mx-1' />
 
           <button
             type='button'
             title='Daftar Poin (Bullet List)'
             onClick={() => insertToken('- ', '\n', 'Poin informasi')}
             disabled={readOnly}
-            className='p-1.5 rounded-lg text-[#475569] hover:bg-rose-100/70 hover:text-[#e11d48] transition-colors cursor-pointer disabled:opacity-40'
+            className='p-1.5 rounded-lg text-slate-600 hover:bg-emerald-100/70 hover:text-emerald-700 transition-colors cursor-pointer disabled:opacity-40'
           >
             <List size={15} />
           </button>
@@ -193,19 +195,19 @@ export default function MarkdownEditor({
             title='Daftar Bernomor'
             onClick={() => insertToken('1. ', '\n', 'Langkah')}
             disabled={readOnly}
-            className='p-1.5 rounded-lg text-[#475569] hover:bg-rose-100/70 hover:text-[#e11d48] transition-colors cursor-pointer disabled:opacity-40'
+            className='p-1.5 rounded-lg text-slate-600 hover:bg-emerald-100/70 hover:text-emerald-700 transition-colors cursor-pointer disabled:opacity-40'
           >
             <ListOrdered size={15} />
           </button>
 
-          <div className='w-px h-5 bg-rose-200/80 mx-1' />
+          <div className='w-px h-5 bg-emerald-200/80 mx-1' />
 
           <button
             type='button'
             title='Kotak Tips / Quote (> )'
-            onClick={() => insertToken('> Tips UKS: ', '\n', 'Informasi penting pencegahan anemia')}
+            onClick={() => insertToken('> Tips Medis Pranikah: ', '\n', 'Informasi penting kesehatan reproduksi & imunisasi')}
             disabled={readOnly}
-            className='p-1.5 rounded-lg text-[#475569] hover:bg-rose-100/70 hover:text-[#e11d48] transition-colors cursor-pointer disabled:opacity-40'
+            className='p-1.5 rounded-lg text-slate-600 hover:bg-emerald-100/70 hover:text-emerald-700 transition-colors cursor-pointer disabled:opacity-40'
           >
             <Quote size={15} />
           </button>
@@ -216,7 +218,7 @@ export default function MarkdownEditor({
               insertToken('\n| Kolom 1 | Kolom 2 |\n|---|---|\n| Data 1 | Data 2 |\n', '', '')
             }
             disabled={readOnly}
-            className='p-1.5 rounded-lg text-[#475569] hover:bg-rose-100/70 hover:text-[#e11d48] transition-colors cursor-pointer disabled:opacity-40'
+            className='p-1.5 rounded-lg text-slate-600 hover:bg-emerald-100/70 hover:text-emerald-700 transition-colors cursor-pointer disabled:opacity-40'
           >
             <TableIcon size={15} />
           </button>
@@ -225,7 +227,7 @@ export default function MarkdownEditor({
             title='Tautan / Link'
             onClick={() => insertToken('[Teks Tautan](', ')', 'https://example.com')}
             disabled={readOnly}
-            className='p-1.5 rounded-lg text-[#475569] hover:bg-rose-100/70 hover:text-[#e11d48] transition-colors cursor-pointer disabled:opacity-40'
+            className='p-1.5 rounded-lg text-slate-600 hover:bg-emerald-100/70 hover:text-emerald-700 transition-colors cursor-pointer disabled:opacity-40'
           >
             <LinkIcon size={15} />
           </button>
@@ -236,23 +238,23 @@ export default function MarkdownEditor({
               type='button'
               onClick={() => setShowTemplateDropdown(prev => !prev)}
               disabled={readOnly}
-              className='inline-flex items-center gap-1 px-2.5 py-1 bg-white border border-[#fce7f3] text-[#e11d48] rounded-lg text-xs font-bold hover:bg-rose-50 transition-colors cursor-pointer'
+              className='inline-flex items-center gap-1 px-2.5 py-1 bg-white border border-slate-200 text-emerald-700 rounded-lg text-xs font-bold hover:bg-emerald-50 transition-colors cursor-pointer'
             >
               <Sparkles size={13} />
               <span>Gunakan Template</span>
             </button>
 
             {showTemplateDropdown && (
-              <div className='absolute left-0 top-full mt-1.5 w-64 bg-white rounded-xl shadow-xl border border-[#fce7f3] z-50 p-1.5 flex flex-col gap-1'>
-                <span className='text-[10px] font-bold text-[#94a3b8] px-2.5 py-1 uppercase tracking-wider'>
-                  Template Edukasi TTD
+              <div className='absolute left-0 top-full mt-1.5 w-72 bg-white rounded-xl shadow-xl border border-slate-200 z-50 p-1.5 flex flex-col gap-1'>
+                <span className='text-[10px] font-bold text-slate-400 px-2.5 py-1 uppercase tracking-wider'>
+                  Template Edukasi Pranikah
                 </span>
                 {TEMPLATES.map((tmpl, idx) => (
                   <button
                     key={idx}
                     type='button'
                     onClick={() => handleApplyTemplate(tmpl.content)}
-                    className='text-left px-2.5 py-1.5 text-xs font-semibold text-[#1e293b] hover:bg-rose-50 hover:text-[#e11d48] rounded-lg transition-colors cursor-pointer'
+                    className='text-left px-2.5 py-1.5 text-xs font-semibold text-slate-800 hover:bg-emerald-50 hover:text-emerald-700 rounded-lg transition-colors cursor-pointer'
                   >
                     {tmpl.title}
                   </button>
@@ -263,15 +265,15 @@ export default function MarkdownEditor({
         </div>
 
         {/* View Mode Switcher */}
-        <div className='flex items-center bg-white border border-[#fce7f3] rounded-lg p-0.5 gap-0.5'>
+        <div className='flex items-center bg-white border border-slate-200 rounded-lg p-0.5 gap-0.5'>
           <button
             type='button'
             title='Tulis Markdown'
             onClick={() => setViewMode('edit')}
             className={`px-2 py-1 rounded-md text-xs font-bold flex items-center gap-1 transition-all cursor-pointer ${
               viewMode === 'edit'
-                ? 'bg-[#e11d48] text-white shadow-xs'
-                : 'text-[#64748b] hover:text-[#1e293b]'
+                ? 'bg-emerald-600 text-white shadow-xs'
+                : 'text-slate-500 hover:text-slate-800'
             }`}
           >
             <Edit3 size={13} />
@@ -283,8 +285,8 @@ export default function MarkdownEditor({
             onClick={() => setViewMode('split')}
             className={`hidden md:flex px-2 py-1 rounded-md text-xs font-bold items-center gap-1 transition-all cursor-pointer ${
               viewMode === 'split'
-                ? 'bg-[#e11d48] text-white shadow-xs'
-                : 'text-[#64748b] hover:text-[#1e293b]'
+                ? 'bg-emerald-600 text-white shadow-xs'
+                : 'text-slate-500 hover:text-slate-800'
             }`}
           >
             <Columns2 size={13} />
@@ -296,8 +298,8 @@ export default function MarkdownEditor({
             onClick={() => setViewMode('preview')}
             className={`px-2 py-1 rounded-md text-xs font-bold flex items-center gap-1 transition-all cursor-pointer ${
               viewMode === 'preview'
-                ? 'bg-[#e11d48] text-white shadow-xs'
-                : 'text-[#64748b] hover:text-[#1e293b]'
+                ? 'bg-emerald-600 text-white shadow-xs'
+                : 'text-slate-500 hover:text-slate-800'
             }`}
           >
             <Eye size={13} />
@@ -309,7 +311,7 @@ export default function MarkdownEditor({
       {/* Editor & Preview Area */}
       <div
         style={{ minHeight }}
-        className='grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-[#fce7f3] flex-1'
+        className='grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-slate-200 flex-1'
       >
         {/* Write View */}
         {(viewMode === 'edit' || viewMode === 'split') && (
@@ -320,7 +322,7 @@ export default function MarkdownEditor({
               onChange={e => onChange(e.target.value)}
               placeholder={placeholder}
               readOnly={readOnly}
-              className='w-full h-full min-h-[260px] bg-transparent text-sm text-[#1e293b] font-mono leading-relaxed outline-none resize-none'
+              className='w-full h-full min-h-[260px] bg-transparent text-sm text-slate-800 font-mono leading-relaxed outline-none resize-none'
             />
           </div>
         )}
@@ -335,7 +337,7 @@ export default function MarkdownEditor({
             {value.trim() ? (
               <MarkdownRenderer content={value} />
             ) : (
-              <div className='text-xs text-[#94a3b8] italic py-8 text-center'>
+              <div className='text-xs text-slate-400 italic py-8 text-center'>
                 Pratinjau artikel akan tampil di sini saat kamu menulis markdown.
               </div>
             )}
@@ -344,7 +346,7 @@ export default function MarkdownEditor({
       </div>
 
       {/* Footer Stats Bar */}
-      <div className='flex items-center justify-between flex-wrap gap-2 px-4 py-2 border-t border-[#fce7f3] bg-[#fff5f7]/40 text-xs text-[#64748b]'>
+      <div className='flex items-center justify-between flex-wrap gap-2 px-4 py-2 border-t border-slate-200 bg-slate-50 text-xs text-slate-500'>
         <div className='flex items-center gap-3'>
           <span className='flex items-center gap-1'>
             <FileText size={13} />
@@ -353,7 +355,7 @@ export default function MarkdownEditor({
           <span>•</span>
           <span>{stats.charCount} karakter</span>
           <span>•</span>
-          <span className='flex items-center gap-1 text-[#e11d48] font-bold'>
+          <span className='flex items-center gap-1 text-emerald-700 font-bold'>
             <Clock size={13} />
             <span>{stats.readTime}</span>
           </span>
@@ -363,7 +365,7 @@ export default function MarkdownEditor({
           <button
             type='button'
             onClick={() => onChange('')}
-            className='text-xs text-[#94a3b8] hover:text-[#e11d48] font-semibold flex items-center gap-1 cursor-pointer'
+            className='text-xs text-slate-400 hover:text-emerald-700 font-semibold flex items-center gap-1 cursor-pointer'
           >
             <RotateCcw size={12} />
             <span>Reset Konten</span>

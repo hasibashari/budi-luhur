@@ -1,12 +1,12 @@
 {
-  "name": "FEMORY - Sahabat Sehat Cegah Anemia",
-  "short_name": "FEMORY",
-  "description": "Aplikasi Pemantauan Tablet Tambah Darah (TTD) Remaja Putri",
+  "name": "PRELUNA - Kesehatan Pranikah & Imunisasi TT",
+  "short_name": "PRELUNA",
+  "description": "Aplikasi Kesehatan Pranikah & Pemantauan Imunisasi Tetanus Toxoid Calon Pengantin",
   "start_url": "/splash",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#fff5f7",
-  "theme_color": "#e11d48",
+  "background_color": "#fafaf9",
+  "theme_color": "#059669",
   "icons": [
     {
       "src": "/icons/icon-192x192.png",

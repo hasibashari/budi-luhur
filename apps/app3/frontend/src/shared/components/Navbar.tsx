@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { Menu, X, Heart, LogOut, LayoutDashboard, Sparkles, ChevronDown } from 'lucide-react';
+import { Menu, X, ShieldCheck, LogOut, LayoutDashboard, Sparkles, ChevronDown } from 'lucide-react';
 import { Avatar } from './ui/Avatar';
 import { cn } from '../utils/cn';
-import { useAuth } from '@/features/auth';
+import { useAuth } from '@/src/features/auth';
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -39,25 +39,24 @@ export default function Navbar() {
   }, [isProfileMenuOpen]);
 
   const dashboardHref = user?.role === 'admin' ? '/admin/dashboard' : '/user/dashboard';
-  const roleLabel = user?.role === 'admin' ? 'ADMIN' : 'PASIEN';
+  const roleLabel = user?.role === 'admin' ? 'PETUGAS FASKES' : 'CALON PENGANTIN';
 
   return (
     <header
       className={cn(
         'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
         isScrolled
-          ? 'bg-white/95 backdrop-blur-md shadow-sm py-3 border-b border-rose-100'
+          ? 'bg-white/95 backdrop-blur-md shadow-sm py-3 border-b border-[#e2e8f0]'
           : 'bg-transparent py-5',
       )}
     >
       <div className='container mx-auto px-4 sm:px-6 max-w-7xl flex items-center justify-between'>
         <Link to='/' className='flex items-center gap-2.5 group'>
-          <div className='bg-gradient-to-tr from-[#e11d48] to-[#fb7185] text-white p-2 rounded-xl group-hover:scale-105 transition-transform shadow-md shadow-rose-500/20'>
-            <Heart size={20} className='fill-white' />
+          <div className='bg-gradient-to-tr from-[#059669] to-[#10b981] text-white p-2 rounded-xl group-hover:scale-105 transition-transform shadow-md shadow-emerald-700/20'>
+            <ShieldCheck size={22} className='text-white' />
           </div>
-          <span className='text-xl font-extrabold text-[#1e293b] tracking-tight flex items-center gap-1'>
-            <span>FEMORY</span>
-            <span className='text-base'>🌸</span>
+          <span className='text-xl font-extrabold text-[#0f172a] tracking-tight flex items-center gap-1.5'>
+            <span>PRELUNA</span>
           </span>
         </Link>
 
@@ -65,25 +64,25 @@ export default function Navbar() {
         <nav className='hidden lg:flex items-center gap-6 xl:gap-8'>
           <a
             href='/#benefits'
-            className='text-sm font-medium text-[#475569] hover:text-[#e11d48] transition-colors'
+            className='text-sm font-medium text-[#475569] hover:text-[#059669] transition-colors'
           >
-            Manfaat TTD
+            Manfaat Imunisasi TT
           </a>
           <a
-            href='/#features'
-            className='text-sm font-medium text-[#475569] hover:text-[#e11d48] transition-colors'
+            href='/#schedule'
+            className='text-sm font-medium text-[#475569] hover:text-[#059669] transition-colors'
           >
-            Fitur Aplikasi
+            Jadwal 5 Dosis Kemenkes
           </a>
           <a
-            href='/#ingredients'
-            className='text-sm font-medium text-[#475569] hover:text-[#e11d48] transition-colors'
+            href='/#screening'
+            className='text-sm font-medium text-[#475569] hover:text-[#059669] transition-colors'
           >
-            Kandungan Nutrisi
+            Skrining Pranikah
           </a>
           <a
             href='/#faq'
-            className='text-sm font-medium text-[#475569] hover:text-[#e11d48] transition-colors'
+            className='text-sm font-medium text-[#475569] hover:text-[#059669] transition-colors'
           >
             Tanya Jawab
           </a>
@@ -97,21 +96,21 @@ export default function Navbar() {
                 onClick={() => setIsProfileMenuOpen(prev => !prev)}
                 aria-expanded={isProfileMenuOpen}
                 aria-haspopup='true'
-                className='flex items-center gap-2 bg-white/90 hover:bg-white border border-slate-200/80 hover:border-rose-200 rounded-full py-1.5 pl-1.5 pr-3 shadow-xs hover:shadow-sm transition-all cursor-pointer group'
+                className='flex items-center gap-2 bg-white/90 hover:bg-white border border-slate-200/80 hover:border-emerald-200 rounded-full py-1.5 pl-1.5 pr-3 shadow-xs hover:shadow-sm transition-all cursor-pointer group'
               >
                 <Avatar
                   src={user.avatarUrl}
                   name={user.name}
                   size='sm'
-                  ringClassName='ring-1.5 ring-[#e11d48]'
+                  ringClassName='ring-1.5 ring-[#059669]'
                 />
                 <div className='flex items-center gap-1.5 text-left'>
-                  <span className='text-xs font-bold text-slate-800 leading-none truncate max-w-28 group-hover:text-[#e11d48] transition-colors'>
+                  <span className='text-xs font-bold text-slate-800 leading-none truncate max-w-28 group-hover:text-[#059669] transition-colors'>
                     {user.name.split(',')[0]}
                   </span>
                   <span
                     className={`text-[9px] font-extrabold px-1.5 py-0.5 rounded-full text-white ${
-                      user.role === 'admin' ? 'bg-[#e11d48]' : 'bg-[#10b981]'
+                      user.role === 'admin' ? 'bg-[#059669]' : 'bg-[#d97706]'
                     }`}
                   >
                     {roleLabel}
@@ -121,22 +120,22 @@ export default function Navbar() {
                   size={14}
                   className={cn(
                     'text-slate-400 group-hover:text-slate-600 transition-transform duration-200 ml-0.5',
-                    isProfileMenuOpen && 'rotate-180 text-[#e11d48]',
+                    isProfileMenuOpen && 'rotate-180 text-[#059669]',
                   )}
                 />
               </button>
 
               {/* Profile Dropdown Menu */}
               {isProfileMenuOpen && (
-                <div className='absolute right-0 top-full mt-2 w-56 rounded-2xl bg-white border border-rose-100 shadow-xl shadow-rose-900/10 py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150'>
+                <div className='absolute right-0 top-full mt-2 w-56 rounded-2xl bg-white border border-emerald-100 shadow-xl shadow-emerald-950/10 py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150'>
                   {/* Menu Links */}
                   <div className='p-1 flex flex-col gap-0.5'>
                     <Link
                       to={dashboardHref}
                       onClick={() => setIsProfileMenuOpen(false)}
-                      className='flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-slate-700 hover:text-[#e11d48] hover:bg-rose-50/70 rounded-xl transition-colors'
+                      className='flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-slate-700 hover:text-[#059669] hover:bg-emerald-50/70 rounded-xl transition-colors'
                     >
-                      <LayoutDashboard size={15} className='text-[#e11d48]' />
+                      <LayoutDashboard size={15} className='text-[#059669]' />
                       <span>Ke Dashboard</span>
                     </Link>
 
@@ -158,7 +157,7 @@ export default function Navbar() {
           ) : (
             <Link
               to='/splash'
-              className='bg-gradient-to-r from-[#e11d48] to-[#fb7185] hover:from-[#be123c] hover:to-[#e11d48] text-white px-5 py-2.25 rounded-full text-sm font-bold transition-all shadow-md shadow-rose-500/25 flex items-center gap-1.5 hover:scale-105 active:scale-95'
+              className='bg-gradient-to-r from-[#059669] to-[#10b981] hover:from-[#047857] hover:to-[#059669] text-white px-5 py-2.25 rounded-full text-sm font-bold transition-all shadow-md shadow-emerald-700/20 flex items-center gap-1.5 hover:scale-105 active:scale-95'
             >
               <Sparkles size={16} />
               <span>Buka Aplikasi</span>
@@ -168,7 +167,7 @@ export default function Navbar() {
 
         {/* Mobile Toggle (< lg) */}
         <button
-          className='lg:hidden text-[#1e293b] p-2 cursor-pointer'
+          className='lg:hidden text-[#0f172a] p-2 cursor-pointer'
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           aria-label='Toggle Menu'
         >
@@ -178,27 +177,27 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div className='absolute top-full left-0 right-0 bg-white border-b border-rose-100 shadow-xl py-4 px-6 flex flex-col gap-4 lg:hidden animate-fade-in'>
+        <div className='absolute top-full left-0 right-0 bg-white border-b border-emerald-100 shadow-xl py-4 px-6 flex flex-col gap-4 lg:hidden animate-fade-in'>
           <a
             href='/#benefits'
             onClick={() => setIsMobileMenuOpen(false)}
             className='text-base font-medium text-slate-700 py-2 border-b border-slate-100'
           >
-            Manfaat TTD
+            Manfaat Imunisasi TT
           </a>
           <a
-            href='/#features'
+            href='/#schedule'
             onClick={() => setIsMobileMenuOpen(false)}
             className='text-base font-medium text-slate-700 py-2 border-b border-slate-100'
           >
-            Fitur Aplikasi
+            Jadwal 5 Dosis Kemenkes
           </a>
           <a
-            href='/#ingredients'
+            href='/#screening'
             onClick={() => setIsMobileMenuOpen(false)}
             className='text-base font-medium text-slate-700 py-2 border-b border-slate-100'
           >
-            Kandungan Nutrisi
+            Skrining Pranikah
           </a>
           <a
             href='/#faq'
@@ -210,14 +209,14 @@ export default function Navbar() {
 
           <div className='pt-2 flex flex-col gap-3'>
             {isAuthenticated && user ? (
-              <div className='flex flex-col gap-2 bg-rose-50/50 p-3.5 rounded-2xl border border-rose-100'>
+              <div className='flex flex-col gap-2 bg-emerald-50/50 p-3.5 rounded-2xl border border-emerald-100'>
                 <div className='flex items-center justify-between'>
                   <div className='flex items-center gap-2'>
                     <Avatar
                       src={user.avatarUrl}
                       name={user.name}
                       size='sm'
-                      ringClassName='ring-1.5 ring-[#e11d48]'
+                      ringClassName='ring-1.5 ring-[#059669]'
                     />
                     <div>
                       <div className='text-sm font-bold text-slate-800'>{user.name}</div>
@@ -226,7 +225,7 @@ export default function Navbar() {
                   </div>
                   <span
                     className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full text-white ${
-                      user.role === 'admin' ? 'bg-[#e11d48]' : 'bg-[#10b981]'
+                      user.role === 'admin' ? 'bg-[#059669]' : 'bg-[#d97706]'
                     }`}
                   >
                     {roleLabel}
@@ -235,7 +234,7 @@ export default function Navbar() {
                 <Link
                   to={dashboardHref}
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className='bg-[#e11d48] text-white text-center py-2.5 rounded-full font-semibold text-sm flex items-center justify-center gap-2 mt-1 shadow-sm'
+                  className='bg-[#059669] text-white text-center py-2.5 rounded-full font-semibold text-sm flex items-center justify-center gap-2 mt-1 shadow-sm'
                 >
                   <LayoutDashboard size={16} />
                   <span>Buka Dashboard ({roleLabel})</span>
@@ -255,7 +254,7 @@ export default function Navbar() {
               <Link
                 to='/splash'
                 onClick={() => setIsMobileMenuOpen(false)}
-                className='bg-gradient-to-r from-[#e11d48] to-[#fb7185] text-white text-center py-3 rounded-full font-bold shadow-md shadow-rose-500/20 flex items-center justify-center gap-2'
+                className='bg-gradient-to-r from-[#059669] to-[#10b981] text-white text-center py-3 rounded-full font-bold shadow-md shadow-emerald-700/20 flex items-center justify-center gap-2'
               >
                 <Sparkles size={16} />
                 <span>Buka Aplikasi Sekarang</span>

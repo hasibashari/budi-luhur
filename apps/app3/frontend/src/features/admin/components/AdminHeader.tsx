@@ -8,7 +8,7 @@ interface AdminHeaderProps {
 
 export default function AdminHeader({ title, subtitle, action }: AdminHeaderProps) {
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 mb-6 border-b border-pink-100">
+    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 mb-6 border-b border-emerald-100/70">
       {/* Title & Subtitle Section */}
       <div className="flex-1 min-w-0">
         <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-800 tracking-tight leading-tight">

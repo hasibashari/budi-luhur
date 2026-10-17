@@ -1,7 +1,8 @@
 export const SCHEDULE_CATEGORIES = [
-  { value: 'TTD Rutin', label: 'TTD Rutin (Pencegahan - 1x Seminggu)' },
-  { value: 'Terapi Anemia', label: 'Terapi Anemia (Intensif - Harian)' },
-  { value: 'Suplemen Tambahan', label: 'Suplemen Tambahan (Vitamin / Pendukung)' },
+  { value: 'Imunisasi TT', label: 'Imunisasi TT Catin (Tetanus Toxoid)' },
+  { value: 'Skrining Pranikah', label: 'Skrining Pranikah (Laboratorium & Fisik)' },
+  { value: 'Bimbingan KUA', label: 'Bimbingan & Konseling Pranikah (KUA/Faskes)' },
+  { value: 'Suplemen Pranikah', label: 'Suplemen Pranikah (Asam Folat / TTD)' },
 ] as const;
 
 export type ScheduleCategory = (typeof SCHEDULE_CATEGORIES)[number]['value'];
@@ -10,14 +11,16 @@ export const SCHEDULE_CATEGORY_COLORS: Record<
   string,
   { bg: string; text: string; border?: string }
 > = {
-  'Terapi Anemia': { bg: '#fee2e2', text: '#dc2626' },
-  'Suplemen Tambahan': { bg: '#e0f2fe', text: '#0284c7' },
-  'TTD Rutin': { bg: '#ffe4e6', text: '#e11d48' },
+  'Imunisasi TT': { bg: '#d1fae5', text: '#047857' },
+  'Skrining Pranikah': { bg: '#e0f2fe', text: '#0284c7' },
+  'Bimbingan KUA': { bg: '#fef3c7', text: '#b45309' },
+  'Suplemen Pranikah': { bg: '#ecfdf5', text: '#059669' },
   default: { bg: '#f1f5f9', text: '#475569' },
 };
 
 export const FREQUENCY_OPTIONS = [
-  { value: '1x Seminggu', label: '1x Seminggu (Mingguan)' },
+  { value: '1x Sesuai Dosis', label: '1x Kunjungan Sesuai Jadwal' },
+  { value: '1x Seminggu', label: '1x Seminggu (Suplementasi)' },
   { value: 'Harian', label: 'Harian (Setiap Hari)' },
 ] as const;
 
@@ -38,32 +41,37 @@ export interface ScheduleFormData {
 export const INITIAL_SCHEDULE_FORM_DATA: ScheduleFormData = {
   userId: '',
   patientId: '',
-  medicationName: 'Tablet Tambah Darah (TTD)',
-  dosage: '1 Tablet',
-  frequency: '1x Seminggu',
+  medicationName: 'Vaksin Tetanus Toxoid (TT Catin)',
+  dosage: '0.5 mL (Intramuskular)',
+  frequency: '1x Sesuai Dosis',
   dayOfWeek: 'Sabtu',
-  timeSlot: '20:00',
-  category: 'TTD Rutin',
-  instructions: 'Minum 1 tablet setelah makan malam atau sebelum tidur dengan air putih.',
+  timeSlot: '09:00',
+  category: 'Imunisasi TT',
+  instructions: 'Hadir ke Puskesmas/Klinik rujukan membawa KTP dan buku KIA/Sertifikat Imunisasi.',
 };
 
 export const CATEGORY_PRESETS: Record<
   ScheduleCategory,
   { medicationName: string; frequency: ScheduleFrequency; instructions: string }
 > = {
-  'TTD Rutin': {
-    medicationName: 'Tablet Tambah Darah (TTD)',
-    frequency: '1x Seminggu',
-    instructions: 'Minum 1 tablet setelah makan malam atau sebelum tidur dengan air putih.',
+  'Imunisasi TT': {
+    medicationName: 'Vaksin Tetanus Toxoid (TT Catin)',
+    frequency: '1x Sesuai Dosis',
+    instructions: 'Suntik intramuskular pada lengan atas di Faskes rujukan. Minimal 1 bulan sebelum akad nikah.',
   },
-  'Terapi Anemia': {
-    medicationName: 'Tablet Tambah Darah (Terapi Intensif)',
-    frequency: 'Harian',
-    instructions: 'Minum 1 tablet setiap hari secara teratur setelah makan.',
+  'Skrining Pranikah': {
+    medicationName: 'Paket Skrining Laboratorium Catin',
+    frequency: '1x Sesuai Dosis',
+    instructions: 'Pemeriksaan darah lengkap, golongan darah & rhesus, Hb, hepatitis, dan HIV di Puskesmas.',
   },
-  'Suplemen Tambahan': {
-    medicationName: 'Vitamin C / Asam Folat',
+  'Bimbingan KUA': {
+    medicationName: 'Bimwin / Kursus Calon Pengantin',
+    frequency: '1x Sesuai Dosis',
+    instructions: 'Mengikuti kelas bimbingan perkawinan dan kesehatan keluarga bersama BP4/KUA setempat.',
+  },
+  'Suplemen Pranikah': {
+    medicationName: 'Asam Folat & Tablet Tambah Darah (TTD)',
     frequency: '1x Seminggu',
-    instructions: 'Minum 1 tablet bersamaan dengan TTD untuk meningkatkan penyerapan zat besi.',
+    instructions: 'Minum 1 tablet asam folat/TTD sesudah makan malam untuk persiapan kehamilan sehat.',
   },
 };

@@ -115,13 +115,13 @@ export function DateFilterBar({
               onClick={() => setIsCalendarOpen(prev => !prev)}
               className={`inline-flex items-center justify-center gap-1.5 sm:gap-2 w-8 h-8 sm:w-auto sm:h-auto sm:px-3 sm:py-2 rounded-xl text-xs font-bold border transition-all cursor-pointer shadow-2xs ${
                 isCalendarOpen || dateFilterPreset === 'CUSTOM'
-                  ? 'bg-[#fff1f2] border-[#e11d48] text-[#e11d48] ring-2 ring-rose-200'
-                  : 'bg-white border-slate-200 text-slate-700 hover:border-rose-300'
+                  ? 'bg-emerald-50 border-emerald-600 text-emerald-800 ring-2 ring-emerald-600/20'
+                  : 'bg-white border-stone-200 text-slate-700 hover:border-emerald-300'
               }`}
               title='Pilih Tanggal dari Kalender'
               aria-label='Pilih Tanggal dari Kalender'
             >
-              <CalendarIcon size={15} className='text-[#e11d48] shrink-0' />
+              <CalendarIcon size={15} className='text-emerald-700 shrink-0' />
               <span className='hidden sm:inline'>
                 {dateFilterPreset === 'CUSTOM'
                   ? formatShortDate(selectedDate)
@@ -137,7 +137,7 @@ export function DateFilterBar({
 
             {/* 🗓️ MINI CALENDAR POPOVER DROPDOWN WITH ACTIVITY DOTS */}
             {isCalendarOpen && (
-              <div className='absolute left-0 top-full mt-2 w-72 sm:w-80 bg-white rounded-2xl shadow-2xl border border-rose-100 p-3.5 z-50 animate-fade-in'>
+              <div className='absolute left-0 top-full mt-2 w-72 sm:w-80 bg-white rounded-2xl shadow-2xl border border-stone-200 p-3.5 z-50 animate-fade-in'>
                 {/* Popover Header: Month & Year Navigator */}
                 <div className='flex items-center justify-between mb-2.5 pb-2 border-b border-slate-100'>
                   <button
@@ -156,7 +156,7 @@ export function DateFilterBar({
                     <ChevronLeft size={16} />
                   </button>
 
-                  <span className='text-xs font-bold text-[#1e293b]'>
+                  <span className='text-xs font-bold text-slate-900'>
                     {calendarViewDate.toLocaleDateString('id-ID', {
                       month: 'long',
                       year: 'numeric',
@@ -209,9 +209,9 @@ export function DateFilterBar({
                         onClick={() => handleSelectDay(day.dateKey)}
                         className={`relative h-8 rounded-xl flex flex-col items-center justify-center text-[11px] font-bold transition-all cursor-pointer ${
                           isSelected
-                            ? 'bg-[#e11d48] text-white shadow-xs font-black'
+                            ? 'bg-emerald-600 text-white shadow-xs font-black'
                             : day.isToday
-                              ? 'bg-rose-50 text-[#e11d48] border border-rose-300'
+                              ? 'bg-emerald-50 text-emerald-800 border border-emerald-300'
                               : 'text-slate-700 hover:bg-slate-100'
                         }`}
                       >
@@ -229,7 +229,7 @@ export function DateFilterBar({
                           {isMissed && (
                             <span
                               className={`w-1.5 h-1.5 rounded-full ${
-                                isSelected ? 'bg-white' : 'bg-rose-500 ring-1 ring-white'
+                                isSelected ? 'bg-white' : 'bg-amber-500 ring-1 ring-white'
                               }`}
                             />
                           )}
@@ -238,7 +238,7 @@ export function DateFilterBar({
                               className={`w-1.5 h-1.5 rounded-full ${
                                 isSelected
                                   ? 'bg-white'
-                                  : 'bg-amber-400 animate-pulse ring-1 ring-white'
+                                  : 'bg-emerald-400 animate-pulse ring-1 ring-white'
                               }`}
                             />
                           )}
@@ -255,11 +255,11 @@ export function DateFilterBar({
                     <span>Selesai</span>
                   </div>
                   <div className='flex items-center gap-1'>
-                    <span className='w-2 h-2 rounded-full bg-rose-500' />
+                    <span className='w-2 h-2 rounded-full bg-amber-500' />
                     <span>Terlewat</span>
                   </div>
                   <div className='flex items-center gap-1'>
-                    <span className='w-2 h-2 rounded-full bg-amber-400' />
+                    <span className='w-2 h-2 rounded-full bg-emerald-400' />
                     <span>Hari Ini</span>
                   </div>
                 </div>
@@ -274,8 +274,8 @@ export function DateFilterBar({
               onClick={() => onDateFilterPresetChange('ALL')}
               className={`text-xs font-bold px-3 py-1.5 rounded-xl transition-all cursor-pointer shrink-0 ${
                 dateFilterPreset === 'ALL'
-                  ? 'bg-[#e11d48] text-white shadow-2xs'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  ? 'bg-emerald-600 text-white shadow-2xs'
+                  : 'bg-stone-100 text-slate-600 hover:bg-stone-200'
               }`}
             >
               Semua
@@ -288,8 +288,8 @@ export function DateFilterBar({
               }}
               className={`text-xs font-bold px-3 py-1.5 rounded-xl transition-all cursor-pointer shrink-0 ${
                 dateFilterPreset === 'TODAY'
-                  ? 'bg-[#e11d48] text-white shadow-2xs'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  ? 'bg-emerald-600 text-white shadow-2xs'
+                  : 'bg-stone-100 text-slate-600 hover:bg-stone-200'
               }`}
             >
               Hari Ini
@@ -299,8 +299,8 @@ export function DateFilterBar({
               onClick={() => onDateFilterPresetChange('7_DAYS')}
               className={`text-xs font-bold px-3 py-1.5 rounded-xl transition-all cursor-pointer shrink-0 ${
                 dateFilterPreset === '7_DAYS'
-                  ? 'bg-[#e11d48] text-white shadow-2xs'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  ? 'bg-emerald-600 text-white shadow-2xs'
+                  : 'bg-stone-100 text-slate-600 hover:bg-stone-200'
               }`}
             >
               7 Hari
@@ -310,8 +310,8 @@ export function DateFilterBar({
               onClick={() => onDateFilterPresetChange('30_DAYS')}
               className={`text-xs font-bold px-3 py-1.5 rounded-xl transition-all cursor-pointer shrink-0 ${
                 dateFilterPreset === '30_DAYS'
-                  ? 'bg-[#e11d48] text-white shadow-2xs'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  ? 'bg-emerald-600 text-white shadow-2xs'
+                  : 'bg-stone-100 text-slate-600 hover:bg-stone-200'
               }`}
             >
               30 Hari
@@ -325,7 +325,7 @@ export function DateFilterBar({
             <button
               type='button'
               onClick={() => onDateFilterPresetChange('ALL')}
-              className='inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold text-slate-500 hover:text-[#e11d48] hover:bg-rose-50 rounded-xl transition-colors cursor-pointer border border-slate-200 hover:border-[#fce7f3]'
+              className='inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold text-slate-500 hover:text-emerald-700 hover:bg-emerald-50 rounded-xl transition-colors cursor-pointer border border-stone-200 hover:border-emerald-200'
               title='Reset Filter Tanggal'
             >
               <X size={14} />
