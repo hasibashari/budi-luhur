@@ -1,15 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import {
-  Eye,
-  EyeOff,
-  Mail,
-  Lock,
-  User,
-  ArrowRight,
-  CheckCircle2,
-  AlertCircle,
-} from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, User, ArrowRight, CheckCircle2, AlertCircle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 export interface RegisterFormProps {
@@ -96,7 +87,11 @@ export function RegisterForm({ onSwitchTab, hideHeader = false }: RegisterFormPr
       {errorMessage && (
         <div className='mb-4 p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs sm:text-sm font-semibold flex items-center gap-2 animate-fade-in'>
           <AlertCircle size={16} className='text-rose-600 shrink-0' />
-          <span>{errorMessage}</span>
+          <span>
+            {typeof errorMessage === 'string'
+              ? errorMessage
+              : (errorMessage as any)?.message || JSON.stringify(errorMessage)}
+          </span>
         </div>
       )}
 

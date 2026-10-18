@@ -2,7 +2,7 @@ import axios from 'axios';
 
 export const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL ||
-  (import.meta.env.PROD ? '/api/app3/api/v1' : 'http://localhost:4003/api/v1');
+  (import.meta.env.PROD ? '/api/v1' : 'http://localhost:4003/api/v1');
 
 export const AUTH_STORAGE_KEY =
   import.meta.env.VITE_AUTH_STORAGE_KEY || 'app3_auth_token';

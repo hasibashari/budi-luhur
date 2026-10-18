@@ -7,17 +7,25 @@ export const app = express();
 // Middlewares
 app.use(
   cors({
-    origin: config.corsOrigin === '*' ? '*' : config.corsOrigin.split(','),
+    origin: (origin, callback) => {
+      // Allow requests with no origin (mobile, curl) or any web origin with credentials
+      if (!origin) return callback(null, true);
+      return callback(null, true);
+    },
     credentials: true,
   }),
 );
+app.options('*', cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Prefix-stripping middleware for Vercel service rewrites
+// Prefix-stripping middleware for Vercel serverless rewrites
 app.use((req: Request, _res: Response, next: NextFunction) => {
   if (req.url.startsWith('/api/app1')) {
     req.url = req.url.slice('/api/app1'.length) || '/';
+  }
+  if (req.url.startsWith('/api/index')) {
+    req.url = req.url.slice('/api/index'.length) || '/';
   }
   next();
 });

@@ -2,7 +2,7 @@ import axios from 'axios';
 
 export const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL ||
-  (import.meta.env.PROD ? '/api/app1/api/v1' : 'http://localhost:4001/api/v1');
+  (import.meta.env.PROD ? '/api/v1' : 'http://localhost:4001/api/v1');
 
 export const AUTH_STORAGE_KEY = import.meta.env.VITE_AUTH_STORAGE_KEY || 'femory_auth_token';
 
@@ -41,7 +41,12 @@ apiClient.interceptors.response.use(
 export function extractErrorMessage(err: any, fallback = 'Terjadi kesalahan sistem.'): string {
   if (!err) return fallback;
   const data = err.response?.data;
-  if (typeof data === 'string' && data.trim()) return data;
+  if (typeof data === 'string' && data.trim()) {
+    if (data.toLowerCase().startsWith('<!doctype') || data.toLowerCase().startsWith('<html')) {
+      return 'Koneksi ke server API belum terhubung. Pastikan backend sudah aktif dan VITE_API_BASE_URL sudah disetel.';
+    }
+    return data;
+  }
   if (typeof data?.error === 'string' && data.error.trim()) return data.error;
   if (typeof data?.error?.message === 'string' && data.error.message.trim()) return data.error.message;
   if (typeof data?.message === 'string' && data.message.trim()) return data.message;
