@@ -6,10 +6,11 @@ import { BuddyService } from '../buddy/buddy.service.js';
 export class ConsumptionService {
   static async recordConsumption(
     userId: string,
-    targetDate: string,
-    status: 'recorded' | 'missed' | 'pending',
+    targetDate?: string,
+    status: 'recorded' | 'missed' | 'pending' = 'recorded',
     notes?: string,
   ) {
+    const finalTargetDate = (targetDate && targetDate.trim()) || new Date().toLocaleDateString('en-CA');
     const timeFormatter = new Intl.DateTimeFormat('en-GB', {
       timeZone: 'Asia/Jakarta',
       hour: '2-digit',
@@ -32,14 +33,14 @@ export class ConsumptionService {
     if (status === 'pending') {
       await db.query(
         `DELETE FROM consumption_logs WHERE user_id = $1 AND scheduled_date = $2`,
-        [userId, targetDate],
+        [userId, finalTargetDate],
       );
     } else {
       const dbStatus = status === 'recorded' ? 'ON_TIME' : 'MISSED';
 
       const existingLogRes = await db.query<{ id: string }>(
         `SELECT id FROM consumption_logs WHERE user_id = $1 AND scheduled_date = $2 ORDER BY created_at DESC LIMIT 1`,
-        [userId, targetDate],
+        [userId, finalTargetDate],
       );
 
       if (existingLogRes.rows.length > 0) {
@@ -61,7 +62,7 @@ export class ConsumptionService {
             schedId,
             title,
             dosage,
-            targetDate,
+            finalTargetDate,
             dbStatus === 'ON_TIME' ? nowTimeStr : null,
             dbStatus,
             notes || null,

@@ -11,7 +11,12 @@ export class ConsumptionController {
         return;
       }
 
-      const { targetDate, status, notes } = req.body;
+      const targetDate =
+        req.body.targetDate ||
+        req.body.date ||
+        req.body.scheduledDate ||
+        new Date().toLocaleDateString('en-CA');
+      const { status, notes } = req.body;
       const result = await ConsumptionService.recordConsumption(userId, targetDate, status, notes);
       res.json(result);
     } catch (error: any) {
