@@ -1,7 +1,8 @@
 import axios from 'axios';
 
 export const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || 'http://localhost:4001/api/v1';
+  import.meta.env.VITE_API_BASE_URL ||
+  (import.meta.env.PROD ? '/api/app2/api/v1' : 'http://localhost:4002/api/v1');
 
 export const AUTH_STORAGE_KEY =
   import.meta.env.VITE_AUTH_STORAGE_KEY || 'app2_auth_token';

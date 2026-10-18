@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { Menu, X, ShieldCheck, LogOut, LayoutDashboard, Sparkles, ChevronDown } from 'lucide-react';
+import { Menu, X, ShieldCheck, LogOut, LayoutDashboard, Sparkles, ChevronDown, ArrowLeft } from 'lucide-react';
 import { Avatar } from './ui/Avatar';
 import { cn } from '../utils/cn';
 import { useAuth } from '@/src/features/auth';
@@ -51,14 +51,24 @@ export default function Navbar() {
       )}
     >
       <div className='container mx-auto px-4 sm:px-6 max-w-7xl flex items-center justify-between'>
-        <Link to='/' className='flex items-center gap-2.5 group'>
-          <div className='bg-gradient-to-tr from-[#aa294d] to-[#cb4364] text-white p-2 rounded-xl group-hover:scale-105 transition-transform shadow-md shadow-rose-950/20'>
-            <ShieldCheck size={22} className='text-white' />
-          </div>
-          <span className='text-xl font-extrabold text-[#0f172a] tracking-tight flex items-center gap-1.5'>
-            <span>PRELUNA</span>
-          </span>
-        </Link>
+        <div className='flex items-center gap-3'>
+          <a
+            href='/'
+            className='inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-slate-600 hover:text-[#aa294d] bg-white/80 hover:bg-[#fff0f2] border border-slate-200/80 shadow-2xs transition-all'
+            title='Kembali ke Portal Utama STIKes Budi Luhur'
+          >
+            <ArrowLeft size={13} className='text-[#aa294d]' />
+            <span className='hidden sm:inline'>Portal</span>
+          </a>
+          <Link to='/' className='flex items-center gap-2.5 group'>
+            <div className='bg-gradient-to-tr from-[#aa294d] to-[#cb4364] text-white p-2 rounded-xl group-hover:scale-105 transition-transform shadow-md shadow-rose-950/20'>
+              <ShieldCheck size={22} className='text-white' />
+            </div>
+            <span className='text-xl font-extrabold text-[#0f172a] tracking-tight flex items-center gap-1.5'>
+              <span>PRELUNA</span>
+            </span>
+          </Link>
+        </div>
 
         {/* Desktop Nav (>= lg) */}
         <nav className='hidden lg:flex items-center gap-6 xl:gap-8'>
@@ -178,6 +188,13 @@ export default function Navbar() {
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
         <div className='absolute top-full left-0 right-0 bg-white border-b border-[#ffd9de] shadow-xl py-4 px-6 flex flex-col gap-4 lg:hidden animate-fade-in'>
+          <a
+            href='/'
+            className='flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-bold text-[#aa294d] bg-[#fff0f2] border border-[#ffd9de]'
+          >
+            <ArrowLeft size={14} />
+            <span>Kembali ke Portal Utama Budi Luhur</span>
+          </a>
           <a
             href='/#benefits'
             onClick={() => setIsMobileMenuOpen(false)}

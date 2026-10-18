@@ -2,6 +2,7 @@
   "name": "budi-luhur-ecosystem",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "description": "Ekosistem Tiga Aplikasi Mandiri Berbasis Fe-Tablet dengan Landing Page Portal Budi-Luhur",
   "scripts": {
     "dev:portal": "npm --prefix frontend run dev",
@@ -16,10 +17,29 @@
     "dev:app3": "concurrently -n \"app3-be,app3-fe\" -c \"magenta,pink\" \"npm run dev:app3:backend\" \"npm run dev:app3:frontend\"",
     "dev:all": "concurrently -n \"portal,app1-be,app1-fe,app2-be,app2-fe,app3-be,app3-fe\" -c \"yellow,blue,cyan,green,emerald,magenta,pink\" \"npm run dev:portal\" \"npm run dev:app1:backend\" \"npm run dev:app1:frontend\" \"npm run dev:app2:backend\" \"npm run dev:app2:frontend\" \"npm run dev:app3:backend\" \"npm run dev:app3:frontend\"",
     "build:all": "npm --prefix frontend run build && npm --prefix apps/app1/backend run build && npm --prefix apps/app1/frontend run build && npm --prefix apps/app2/backend run build && npm --prefix apps/app2/frontend run build && npm --prefix apps/app3/backend run build && npm --prefix apps/app3/frontend run build",
+    "build:vercel": "node scripts/build-vercel.js",
+    "build": "node scripts/build-vercel.js",
     "db:init:all": "npm --prefix apps/app1/backend run db:init && npm --prefix apps/app2/backend run db:init && npm --prefix apps/app3/backend run db:init",
     "db:seed:all": "npm --prefix apps/app1/backend run db:seed && npm --prefix apps/app2/backend run db:seed && npm --prefix apps/app3/backend run db:seed"
   },
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.13.3"
+  },
   "devDependencies": {
-    "concurrently": "^9.2.5"
+    "@types/bcryptjs": "^2.4.6",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/jsonwebtoken": "^9.0.9",
+    "@types/node": "^22.13.9",
+    "@types/pg": "^8.11.11",
+    "@vercel/node": "^5.1.13",
+    "concurrently": "^9.2.5",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2"
   }
 }

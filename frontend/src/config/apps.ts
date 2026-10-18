@@ -27,9 +27,10 @@ export interface AppInfo {
   }[];
 }
 
-const app1BaseUrl = import.meta.env.VITE_APP_1_URL || 'http://localhost:5173';
-const app2BaseUrl = import.meta.env.VITE_APP_2_URL || 'http://localhost:5174';
-const app3BaseUrl = import.meta.env.VITE_APP_3_URL || 'http://localhost:5175';
+const isProd = import.meta.env.PROD;
+const app1BaseUrl = import.meta.env.VITE_APP_1_URL || (isProd ? '/app1' : 'http://localhost:5173');
+const app2BaseUrl = import.meta.env.VITE_APP_2_URL || (isProd ? '/app2' : 'http://localhost:5174');
+const app3BaseUrl = import.meta.env.VITE_APP_3_URL || (isProd ? '/app3' : 'http://localhost:5175');
 
 export const APPS: AppInfo[] = [
   {

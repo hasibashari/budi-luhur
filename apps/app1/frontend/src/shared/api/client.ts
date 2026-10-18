@@ -1,13 +1,12 @@
 import axios from 'axios';
 
 export const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || 'http://localhost:4001/api/v1';
+  import.meta.env.VITE_API_BASE_URL ||
+  (import.meta.env.PROD ? '/api/app1/api/v1' : 'http://localhost:4001/api/v1');
 
-export const AUTH_STORAGE_KEY =
-  import.meta.env.VITE_AUTH_STORAGE_KEY || 'femory_auth_token';
+export const AUTH_STORAGE_KEY = import.meta.env.VITE_AUTH_STORAGE_KEY || 'femory_auth_token';
 
-export const USER_STORAGE_KEY =
-  import.meta.env.VITE_USER_STORAGE_KEY || 'femory_auth_user';
+export const USER_STORAGE_KEY = import.meta.env.VITE_USER_STORAGE_KEY || 'femory_auth_user';
 
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,
@@ -17,7 +16,7 @@ export const apiClient = axios.create({
 });
 
 // Request interceptor: attach token
-apiClient.interceptors.request.use((config) => {
+apiClient.interceptors.request.use(config => {
   const token = localStorage.getItem(AUTH_STORAGE_KEY);
   if (token && config.headers) {
     config.headers.Authorization = `Bearer ${token}`;
@@ -27,8 +26,8 @@ apiClient.interceptors.request.use((config) => {
 
 // Response interceptor: handle 401
 apiClient.interceptors.response.use(
-  (response) => response,
-  (error) => {
+  response => response,
+  error => {
     if (error.response?.status === 401) {
       localStorage.removeItem(AUTH_STORAGE_KEY);
       localStorage.removeItem(USER_STORAGE_KEY);

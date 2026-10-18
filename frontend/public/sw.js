@@ -1,8 +1,8 @@
-// Pilluna PWA Service Worker v3
-const CACHE_NAME = 'pilluna-pwa-v3';
+// STIKes Budi Luhur Portal PWA Service Worker v1
+const CACHE_NAME = 'budi-luhur-portal-v1';
 const OFFLINE_URL = '/offline.html';
 
-const STATIC_ASSETS = [
+const PRECACHE_ASSETS = [
   '/',
   OFFLINE_URL,
   '/manifest.webmanifest',
@@ -10,8 +10,8 @@ const STATIC_ASSETS = [
   '/icons/icon-512x512.png',
   '/icons/icon-maskable-192x192.png',
   '/icons/icon-maskable-512x512.png',
-  '/icons/icon-192x192.svg',
-  '/icons/icon-512x512.svg',
+  '/icons/apple-touch-icon.png',
+  '/images/stikes-logo.png',
 ];
 
 // ============================================================
@@ -21,9 +21,8 @@ const STATIC_ASSETS = [
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(STATIC_ASSETS).catch((err) => {
-        // Precache error handled gracefully
-        console.warn('[SW] Failed to precache some assets:', err);
+      return cache.addAll(PRECACHE_ASSETS).catch((err) => {
+        console.warn('[BudiLuhur-SW] Precache asset warning:', err);
       });
     })
   );
@@ -54,12 +53,17 @@ self.addEventListener('fetch', (event) => {
 
   const url = new URL(event.request.url);
 
-  // Skip dynamic API requests, server actions, and external origins
-  if (url.pathname.startsWith('/api/') || url.origin !== self.origin) {
+  // Skip dynamic API requests, dev socket, and external origins
+  if (
+    url.pathname.startsWith('/api/') ||
+    url.pathname.startsWith('/@vite') ||
+    url.pathname.startsWith('/@fs') ||
+    url.origin !== self.origin
+  ) {
     return;
   }
 
-  // 1. Navigation requests (HTML pages) -> Network first, fallback to cache, then offline.html (200 OK)
+  // 1. Navigation requests (HTML pages) -> Network first, fallback to cache, then offline.html
   if (event.request.mode === 'navigate') {
     event.respondWith(
       fetch(event.request)
@@ -80,7 +84,7 @@ self.addEventListener('fetch', (event) => {
             return offlineFallback;
           }
           return new Response(
-            '<!DOCTYPE html><html><head><meta charset="utf-8"><title>Pilluna Offline</title></head><body style="font-family:sans-serif;padding:2rem;text-align:center;"><h2>Anda sedang offline</h2><p>Silakan periksa koneksi internet Anda.</p></body></html>',
+            '<!DOCTYPE html><html><head><meta charset="utf-8"><title>Budi Luhur Offline</title></head><body style="font-family:sans-serif;padding:2rem;text-align:center;"><h2>Anda sedang offline</h2><p>Silakan periksa koneksi internet Anda.</p></body></html>',
             {
               status: 200,
               headers: { 'Content-Type': 'text/html; charset=utf-8' },
@@ -94,11 +98,12 @@ self.addEventListener('fetch', (event) => {
   // 2. Static Assets (Icons, Images, Manifest) -> Cache first, fallback to network
   if (
     url.pathname.startsWith('/icons/') ||
-    url.pathname.startsWith('/screenshots/') ||
+    url.pathname.startsWith('/images/') ||
     url.pathname === '/manifest.webmanifest' ||
     url.pathname.endsWith('.png') ||
     url.pathname.endsWith('.svg') ||
-    url.pathname.endsWith('.ico')
+    url.pathname.endsWith('.ico') ||
+    url.pathname.endsWith('.woff2')
   ) {
     event.respondWith(
       caches.match(event.request).then((cachedResponse) => {
@@ -117,7 +122,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // 3. Other GET requests -> Stale-while-revalidate / Network first
+  // 3. Stale-while-revalidate for script/style bundles
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
       const fetchPromise = fetch(event.request)
@@ -136,19 +141,6 @@ self.addEventListener('fetch', (event) => {
 });
 
 // ============================================================
-// BACKGROUND SYNC
-// ============================================================
-
-self.addEventListener('sync', (event) => {
-  if (event.tag === 'sync-pilluna-consumption' || event.tag === 'sync-femory-ttd' || event.tag === 'sync-consumption') {
-    event.waitUntil(
-      // Trigger background sync task when back online
-      Promise.resolve()
-    );
-  }
-});
-
-// ============================================================
 // SKIP WAITING MESSAGE HANDLER
 // ============================================================
 
@@ -156,70 +148,4 @@ self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
   }
-});
-
-// ============================================================
-// WEB NOTIFICATIONS & PUSH HANDLERS
-// ============================================================
-
-// 1. Notification Click Handler
-self.addEventListener('notificationclick', (event) => {
-  event.notification.close();
-
-  const targetUrl = event.notification.data?.url || '/user/dashboard';
-
-  event.waitUntil(
-    clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
-      for (const client of clientList) {
-        if (client.url.includes(self.location.origin) && 'focus' in client) {
-          if (client.url !== self.location.origin + targetUrl && 'navigate' in client) {
-            client.navigate(targetUrl);
-          }
-          return client.focus();
-        }
-      }
-      if (clients.openWindow) {
-        return clients.openWindow(targetUrl);
-      }
-    })
-  );
-});
-
-// 2. Server Push Event Handler
-self.addEventListener('push', (event) => {
-  if (!event.data) return;
-
-  let data = {
-    title: 'Pengingat Minum Pil KB Pilluna',
-    body: 'Waktunya meminum Pil KB harian Anda agar efektivitas perlindungan tetap terjaga.',
-    icon: '/icons/icon-192x192.png',
-    badge: '/icons/icon-192x192.png',
-    url: '/user/dashboard',
-  };
-
-  try {
-    const json = event.data.json();
-    data = { ...data, ...json };
-  } catch {
-    data.body = event.data.text();
-  }
-
-  const options = {
-    body: data.body,
-    icon: data.icon || '/icons/icon-192x192.png',
-    badge: data.badge || '/icons/icon-192x192.png',
-    vibrate: [200, 100, 200, 100, 200],
-    tag: data.tag || 'pilluna-reminder',
-    renotify: true,
-    data: {
-      url: data.url || '/user/dashboard',
-      dateOfArrival: Date.now(),
-    },
-    actions: [
-      { action: 'open', title: 'Buka Jadwal' },
-      { action: 'dismiss', title: 'Tutup' },
-    ],
-  };
-
-  event.waitUntil(self.registration.showNotification(data.title, options));
 });

@@ -7,6 +7,7 @@ import { Benefits } from './components/Benefits';
 import { Features } from './components/Features';
 import { FAQ } from './components/FAQ';
 import { Footer } from './components/Footer';
+import { PWAInstallPrompt } from './components/PWAInstallPrompt';
 
 export const App: React.FC = () => {
   return (
@@ -21,6 +22,7 @@ export const App: React.FC = () => {
         <FAQ />
       </main>
       <Footer />
+      <PWAInstallPrompt />
     </div>
   );
 };

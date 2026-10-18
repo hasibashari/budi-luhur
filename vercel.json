@@ -1,0 +1,82 @@
+{
+  "buildCommand": "node scripts/build-vercel.js",
+  "outputDirectory": "dist",
+  "cleanUrls": true,
+  "trailingSlash": true,
+  "rewrites": [
+    {
+      "source": "/api/app1/:path*",
+      "destination": "/api/app1"
+    },
+    {
+      "source": "/api/app2/:path*",
+      "destination": "/api/app2"
+    },
+    {
+      "source": "/api/app3/:path*",
+      "destination": "/api/app3"
+    },
+    {
+      "source": "/app1/:path*",
+      "destination": "/app1/index.html"
+    },
+    {
+      "source": "/app2/:path*",
+      "destination": "/app2/index.html"
+    },
+    {
+      "source": "/app3/:path*",
+      "destination": "/app3/index.html"
+    },
+    {
+      "source": "/:path*",
+      "destination": "/index.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/sw.js",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
+        },
+        {
+          "key": "Service-Worker-Allowed",
+          "value": "/"
+        }
+      ]
+    },
+    {
+      "source": "/manifest.webmanifest",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/manifest+json"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/icons/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/(.*)/assets/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    }
+  ]
+}

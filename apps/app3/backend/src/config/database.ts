@@ -17,7 +17,7 @@ function createDatabasePool(): Pool {
     connectionTimeoutMillis: 10000,
   });
 
-  pool.on('error', (err) => {
+  pool.on('error', err => {
     console.error('Unexpected error on idle PostgreSQL client:', err);
   });
 
@@ -28,14 +28,12 @@ export const pool = createDatabasePool();
 
 export async function query<T extends QueryResultRow = QueryResultRow>(
   text: string,
-  params?: unknown[]
+  params?: unknown[],
 ): Promise<QueryResult<T>> {
   return pool.query<T>(text, params);
 }
 
-export async function transaction<T>(
-  callback: (client: PoolClient) => Promise<T>
-): Promise<T> {
+export async function transaction<T>(callback: (client: PoolClient) => Promise<T>): Promise<T> {
   const client = await pool.connect();
   try {
     await client.query('BEGIN');

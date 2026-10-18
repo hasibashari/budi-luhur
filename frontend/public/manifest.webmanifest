@@ -1,0 +1,64 @@
+{
+  "id": "/",
+  "name": "STIKes Budi Luhur Cimahi — Portal Terpadu",
+  "short_name": "Budi Luhur",
+  "description": "Portal Resmi & Ekosistem Digital STIKes Budi Luhur Cimahi. Akses terpadu aplikasi kesehatan FEMORY, Kelompok Studi, dan PRELUNA.",
+  "start_url": "/?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#ffffff",
+  "theme_color": "#005EB8",
+  "lang": "id",
+  "dir": "ltr",
+  "categories": ["education", "medical", "health"],
+  "icons": [
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-maskable-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/icon-maskable-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Portal Utama",
+      "short_name": "Portal",
+      "description": "Buka Beranda Portal Terpadu Kampus",
+      "url": "/?source=pwa",
+      "icons": [{ "src": "/icons/icon-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "FEMORY (App 1)",
+      "short_name": "FEMORY",
+      "description": "Pencegahan Anemia Siswi SMP",
+      "url": "/app1/",
+      "icons": [{ "src": "/icons/icon-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "PRELUNA (App 3)",
+      "short_name": "PRELUNA",
+      "description": "Kesehatan Pranikah & Imunisasi TT",
+      "url": "/app3/",
+      "icons": [{ "src": "/icons/icon-192x192.png", "sizes": "192x192" }]
+    }
+  ]
+}

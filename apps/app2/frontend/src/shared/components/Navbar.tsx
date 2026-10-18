@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { Menu, X, Heart, LogOut, LayoutDashboard, Sparkles, ChevronDown } from 'lucide-react';
+import { Menu, X, Heart, LogOut, LayoutDashboard, Sparkles, ChevronDown, ArrowLeft } from 'lucide-react';
 import { Avatar } from './ui/Avatar';
 import { cn } from '../utils/cn';
 import { useAuth } from '@/features/auth';
@@ -51,15 +51,25 @@ export default function Navbar() {
       )}
     >
       <div className='container mx-auto px-4 sm:px-6 max-w-7xl flex items-center justify-between'>
-        <Link to='/' className='flex items-center gap-2.5 group'>
-          <div className='bg-gradient-to-tr from-[#E94383] to-[#F58CB4] text-white p-2 rounded-xl group-hover:scale-105 transition-transform shadow-md shadow-pink-500/20'>
-            <Heart size={20} className='fill-white' />
-          </div>
-          <span className='text-xl font-extrabold text-[#24354D] tracking-tight flex items-center gap-1'>
-            <span>Pilluna</span>
-            <span className='text-base'>🌸</span>
-          </span>
-        </Link>
+        <div className='flex items-center gap-3'>
+          <a
+            href='/'
+            className='inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-slate-600 hover:text-[#E94383] bg-white/80 hover:bg-pink-50 border border-slate-200/80 shadow-2xs transition-all'
+            title='Kembali ke Portal Utama STIKes Budi Luhur'
+          >
+            <ArrowLeft size={13} className='text-[#E94383]' />
+            <span className='hidden sm:inline'>Portal</span>
+          </a>
+          <Link to='/' className='flex items-center gap-2.5 group'>
+            <div className='bg-gradient-to-tr from-[#E94383] to-[#F58CB4] text-white p-2 rounded-xl group-hover:scale-105 transition-transform shadow-md shadow-pink-500/20'>
+              <Heart size={20} className='fill-white' />
+            </div>
+            <span className='text-xl font-extrabold text-[#24354D] tracking-tight flex items-center gap-1'>
+              <span>Pilluna</span>
+              <span className='text-base'>🌸</span>
+            </span>
+          </Link>
+        </div>
 
         {/* Desktop Nav (>= lg) */}
         <nav className='hidden lg:flex items-center gap-6 xl:gap-8'>
@@ -179,6 +189,13 @@ export default function Navbar() {
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
         <div className='absolute top-full left-0 right-0 bg-white border-b border-pink-100 shadow-xl py-4 px-6 flex flex-col gap-4 lg:hidden animate-fade-in'>
+          <a
+            href='/'
+            className='flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-bold text-[#E94383] bg-pink-50 border border-pink-200/60'
+          >
+            <ArrowLeft size={14} />
+            <span>Kembali ke Portal Utama Budi Luhur</span>
+          </a>
           <a
             href='/#benefits'
             onClick={() => setIsMobileMenuOpen(false)}
