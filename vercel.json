@@ -3,41 +3,34 @@
   "services": {
     "portal": {
       "root": "frontend",
-      "framework": "vite",
-      "routePrefix": "/"
+      "framework": "vite"
     },
     "femory-frontend": {
       "root": "apps/app1/frontend",
-      "framework": "vite",
-      "routePrefix": "/app1"
+      "framework": "vite"
     },
     "femory-backend": {
       "root": "apps/app1/backend",
       "framework": "express",
-      "entrypoint": "src/server.ts",
-      "routePrefix": "/api/app1"
+      "entrypoint": "src/server.ts"
     },
     "pilluna-frontend": {
       "root": "apps/app2/frontend",
-      "framework": "vite",
-      "routePrefix": "/app2"
+      "framework": "vite"
     },
     "pilluna-backend": {
       "root": "apps/app2/backend",
       "framework": "express",
-      "entrypoint": "src/server.ts",
-      "routePrefix": "/api/app2"
+      "entrypoint": "src/server.ts"
     },
     "preluna-frontend": {
       "root": "apps/app3/frontend",
-      "framework": "vite",
-      "routePrefix": "/app3"
+      "framework": "vite"
     },
     "preluna-backend": {
       "root": "apps/app3/backend",
       "framework": "express",
-      "entrypoint": "src/server.ts",
-      "routePrefix": "/api/app3"
+      "entrypoint": "src/server.ts"
     },
     "template-backend": {
       "root": "apps/template-backend",
