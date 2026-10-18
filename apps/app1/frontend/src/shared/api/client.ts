@@ -48,7 +48,8 @@ export function extractErrorMessage(err: any, fallback = 'Terjadi kesalahan sist
     return data;
   }
   if (typeof data?.error === 'string' && data.error.trim()) return data.error;
-  if (typeof data?.error?.message === 'string' && data.error.message.trim()) return data.error.message;
+  if (typeof data?.error?.message === 'string' && data.error.message.trim())
+    return data.error.message;
   if (typeof data?.message === 'string' && data.message.trim()) return data.message;
   if (typeof data?.code === 'string' && data?.message) return `${data.code}: ${data.message}`;
   if (typeof err.message === 'string' && err.message.trim()) return err.message;
