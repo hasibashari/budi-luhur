@@ -11,12 +11,22 @@ export async function getArticlesAction(category?: string): Promise<Article[]> {
 export async function getArticleDetailAction(
   id: string,
   _userId?: string,
-): Promise<{ article: Article; relatedArticles: Article[] } | null> {
+): Promise<{ article: Article; relatedArticles: Article[]; isBookmarked?: boolean } | null> {
   try {
-    const response = await apiClient.get<{ article: Article; relatedArticles: Article[] }>(
-      `/articles/${id}`,
-    );
-    return response.data;
+    const response = await apiClient.get<any>(`/articles/${id}`);
+    if (!response.data) return null;
+
+    if (response.data.article) {
+      return response.data;
+    }
+
+    // Backend returns article fields at top level with relatedArticles and isBookmarked
+    const { relatedArticles, isBookmarked, ...articleData } = response.data;
+    return {
+      article: articleData as Article,
+      relatedArticles: relatedArticles || [],
+      isBookmarked: Boolean(isBookmarked),
+    };
   } catch {
     return null;
   }
@@ -37,9 +47,10 @@ export async function getRelatedArticlesAction(
 
 export async function isArticleBookmarkedAction(
   _userId: string,
-  _articleId: string,
+  articleId: string,
 ): Promise<boolean> {
-  return false;
+  const data = await getArticleDetailAction(articleId);
+  return Boolean(data?.isBookmarked);
 }
 
 export async function toggleArticleBookmarkAction(

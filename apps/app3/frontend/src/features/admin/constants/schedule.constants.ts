@@ -11,11 +11,11 @@ export const SCHEDULE_CATEGORY_COLORS: Record<
   string,
   { bg: string; text: string; border?: string }
 > = {
-  'Imunisasi TT': { bg: '#d1fae5', text: '#047857' },
-  'Skrining Pranikah': { bg: '#e0f2fe', text: '#0284c7' },
-  'Bimbingan KUA': { bg: '#fef3c7', text: '#b45309' },
-  'Suplemen Pranikah': { bg: '#ecfdf5', text: '#059669' },
-  default: { bg: '#f1f5f9', text: '#475569' },
+  'Imunisasi TT': { bg: '#ffd9de', text: '#8c0f39', border: '#ffd9de' },
+  'Skrining Pranikah': { bg: '#eff4ff', text: '#1d4ed8', border: '#dee9fc' },
+  'Bimbingan KUA': { bg: '#aff1d0', text: '#0a5139', border: '#6ee7b7' },
+  'Suplemen Pranikah': { bg: '#fef3c7', text: '#b45309', border: '#fde68a' },
+  default: { bg: '#f8f9ff', text: '#574144', border: '#dee9fc' },
 };
 
 export const FREQUENCY_OPTIONS = [

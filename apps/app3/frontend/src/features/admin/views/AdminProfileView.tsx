@@ -118,10 +118,10 @@ export default function AdminProfileView() {
       value: 'Full Control',
       subtitle: 'Data Catin, Jadwal TT, Edukasi, Laporan',
       icon: Shield,
-      iconBgColor: 'bg-emerald-100',
-      iconColor: 'text-emerald-700',
+      iconBgColor: 'bg-[#ffd9de]',
+      iconColor: 'text-[#aa294d]',
       badgeText: 'Petugas Admin',
-      badgeColor: 'bg-emerald-100 text-emerald-800',
+      badgeColor: 'bg-[#ffd9de] text-[#8c0f39]',
     },
     {
       id: 'system',
@@ -129,21 +129,21 @@ export default function AdminProfileView() {
       value: 'Puskesmas / KUA',
       subtitle: 'Portal Terpadu Imunisasi TT Catin',
       icon: Building,
-      iconBgColor: 'bg-teal-100',
-      iconColor: 'text-teal-700',
-      badgeText: 'Aktif',
-      badgeColor: 'bg-teal-100 text-teal-800',
+      iconBgColor: 'bg-[#eff4ff]',
+      iconColor: 'text-[#1d4ed8]',
+      badgeText: 'Aktif Terpadu',
+      badgeColor: 'bg-[#eff4ff] text-[#1d4ed8]',
     },
     {
       id: 'status',
       label: 'Status Kredensial',
       value: 'Valid & Aman',
-      subtitle: 'Autentikasi tingkat lanjut aktif',
+      subtitle: 'Autentikasi faskes terverifikasi',
       icon: CheckCircle2,
-      iconBgColor: 'bg-emerald-100',
-      iconColor: 'text-emerald-600',
+      iconBgColor: 'bg-[#aff1d0]',
+      iconColor: 'text-[#0a5139]',
       badgeText: 'Terverifikasi',
-      badgeColor: 'bg-emerald-100 text-emerald-700',
+      badgeColor: 'bg-[#aff1d0] text-[#0a5139]',
     },
   ];
 
@@ -230,35 +230,35 @@ export default function AdminProfileView() {
         isSaving={isSaving}
       >
         <div>
-          <label className='block text-xs font-bold text-slate-700 mb-1.5'>Nama Lengkap & Gelar</label>
+          <label className='block text-xs font-bold text-[#121c2a] mb-1.5'>Nama Lengkap & Gelar</label>
           <input
             type='text'
             value={editForm.name}
             onChange={e => setEditForm(prev => ({ ...prev, name: e.target.value }))}
             required
-            className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white'
+            className='w-full px-3.5 py-2.5 rounded-xl border border-[#dee9fc] bg-[#f8f9ff] text-xs font-semibold text-[#121c2a] focus:outline-none focus:ring-2 focus:ring-[#ffd9de] focus:border-[#aa294d] focus:bg-white transition-all'
           />
         </div>
 
         <div>
-          <label className='block text-xs font-bold text-slate-700 mb-1.5'>Email Dinas</label>
+          <label className='block text-xs font-bold text-[#121c2a] mb-1.5'>Email Dinas</label>
           <input
             type='email'
             value={editForm.email}
             onChange={e => setEditForm(prev => ({ ...prev, email: e.target.value }))}
             required
-            className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white'
+            className='w-full px-3.5 py-2.5 rounded-xl border border-[#dee9fc] bg-[#f8f9ff] text-xs font-semibold text-[#121c2a] focus:outline-none focus:ring-2 focus:ring-[#ffd9de] focus:border-[#aa294d] focus:bg-white transition-all'
           />
         </div>
 
         <div>
-          <label className='block text-xs font-bold text-slate-700 mb-1.5'>Nomor Telepon Dinas</label>
+          <label className='block text-xs font-bold text-[#121c2a] mb-1.5'>Nomor Telepon Dinas</label>
           <input
             type='tel'
             value={editForm.phone}
             onChange={e => setEditForm(prev => ({ ...prev, phone: e.target.value }))}
             required
-            className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white'
+            className='w-full px-3.5 py-2.5 rounded-xl border border-[#dee9fc] bg-[#f8f9ff] text-xs font-semibold text-[#121c2a] focus:outline-none focus:ring-2 focus:ring-[#ffd9de] focus:border-[#aa294d] focus:bg-white transition-all'
           />
         </div>
       </ProfileEditModal>

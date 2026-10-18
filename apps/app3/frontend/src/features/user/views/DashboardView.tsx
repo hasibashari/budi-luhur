@@ -1,25 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  Sparkles,
-  ArrowRight,
-  ShieldCheck,
-  Building2,
-  Activity,
-  Award,
   BellRing,
   X,
   CheckCircle2,
   CalendarClock,
+  ArrowRight,
+  Sparkles,
+  Bot,
+  MessageSquare,
+  Bookmark,
+  BookmarkCheck,
+  ShieldCheck,
+  Clock,
+  Award,
   BookOpen,
 } from 'lucide-react';
-import { StatusCard } from '@/src/shared/components/domain/StatusCard';
-import { QuickAction } from '@/src/shared/components/domain/QuickAction';
-import { StreakProgressCard } from '@/src/shared/components/domain/StreakProgressCard';
 import { ImmunityStatusBanner } from '@/src/features/dashboard/components/ImmunityStatusBanner';
+import { QuickAction } from '@/src/shared/components/domain/QuickAction';
 import { WeddingCountdownWidget } from '@/src/features/dashboard/components/WeddingCountdownWidget';
-import { Card } from '@/src/shared/components/ui/Card';
+import { VaccineCardModal } from '@/src/features/dashboard/components/VaccineCardModal';
+import { StatusCard } from '@/src/shared/components/domain/StatusCard';
 import { Button } from '@/src/shared/components/ui/Button';
+import { Card } from '@/src/shared/components/ui/Card';
 import { useAuth } from '@/src/features/auth/context/AuthContext';
 import { publishRealtimeEvent, subscribeRealtimeEvent } from '@/src/shared/utils/realtimeSync';
 import { playNotificationTone, showSystemNotification } from '@/src/shared/utils/notifications';
@@ -33,6 +36,8 @@ import {
   dismissNudgeAction,
 } from '@/src/features/schedule/api/scheduleRepository';
 import { AdminNudge } from '@/src/features/schedule/types';
+import { getArticlesAction } from '@/src/features/education/api/educationRepository';
+import { Article } from '@/src/features/education/types';
 
 type DashboardConsumptionStatus = 'recorded' | 'missed' | 'pending';
 
@@ -40,21 +45,35 @@ export default function DashboardView() {
   const { user: authUser } = useAuth();
   const [dashboardData, setDashboardData] = useState<UserDashboardData | null>(null);
   const [activeNudge, setActiveNudge] = useState<AdminNudge | null>(null);
+  const [featuredArticle, setFeaturedArticle] = useState<Article | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isVaccineCardOpen, setIsVaccineCardOpen] = useState(false);
+  const [isBookmarked, setIsBookmarked] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const userId = authUser?.id || 'usr_1';
+
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 3000);
+  };
 
   useEffect(() => {
     let isMounted = true;
     async function fetchDashboard() {
       try {
-        const [data, nudge] = await Promise.all([
+        const [data, nudge, articles] = await Promise.all([
           getUserDashboardDataAction(userId),
           getActiveNudgeAction(userId),
+          getArticlesAction().catch(() => []),
         ]);
         if (isMounted) {
           setDashboardData(data);
           setActiveNudge(nudge);
+          if (articles && articles.length > 0) {
+            const topArt = articles.find((a: Article) => a.id === 'art_tt_1') || articles[0];
+            setFeaturedArticle(topArt);
+          }
           setLoading(false);
         }
       } catch (err) {
@@ -64,7 +83,7 @@ export default function DashboardView() {
     }
     fetchDashboard();
 
-    const unsubscribe = subscribeRealtimeEvent(async event => {
+    const unsubscribe = subscribeRealtimeEvent(async (event) => {
       if (event.type === 'NUDGE_SENT' && (!event.patientId || event.patientId === userId)) {
         try {
           const freshNudge = await getActiveNudgeAction(userId);
@@ -104,11 +123,11 @@ export default function DashboardView() {
     const currentUid = authUser?.id || dashboardData.user.id;
     const prevStatus = dashboardData.todayStatus;
 
-    setDashboardData(prev => (prev ? { ...prev, todayStatus: newStatus } : null));
+    setDashboardData((prev) => (prev ? { ...prev, todayStatus: newStatus } : null));
 
     const res = await recordUserConsumptionAction(currentUid, newStatus);
     if (!res.success) {
-      setDashboardData(prev => (prev ? { ...prev, todayStatus: prevStatus } : null));
+      setDashboardData((prev) => (prev ? { ...prev, todayStatus: prevStatus } : null));
     } else {
       const freshData = await getUserDashboardDataAction(currentUid);
       if (freshData) {
@@ -137,160 +156,160 @@ export default function DashboardView() {
 
   const currentUser = dashboardData?.user || {
     id: authUser?.id || '',
-    name: authUser?.name || 'Calon Pengantin',
+    name: authUser?.name || 'Shofa Zulfia Zahra',
     streakCount: 0,
     streakUnit: 'Minggu' as const,
     consecutiveDates: [],
     hbLevel: authUser?.hbLevel || null,
-    schoolOrOrg: authUser?.schoolOrOrg || 'Puskesmas Binaan Kemenkes',
+    schoolOrOrg: authUser?.schoolOrOrg || 'Puskesmas Kebayoran',
     avatarUrl: authUser?.avatarUrl || 'https://api.dicebear.com/7.x/avataaars/svg?seed=PRELUNA',
   };
-
-  const featuredArticle = dashboardData?.featuredArticle;
-  const streakUnit = currentUser.streakUnit || 'Minggu';
 
   // Extract meta from notes if available
   const notesStr = (dashboardData?.user as any)?.notes || '';
   const partnerMatch = notesStr.match(/Pasangan:\s*([^|]+)/);
-  const partnerName = partnerMatch ? partnerMatch[1].trim() : undefined;
+  const partnerName = partnerMatch ? partnerMatch[1].trim() : 'Farhan Ramadhan';
   const weddingMatch = notesStr.match(/Rencana Akad:\s*([^|]+)/);
   const weddingDate = weddingMatch ? weddingMatch[1].trim() : undefined;
   const ttLevelMatch = notesStr.match(/Status TT Awal:\s*TT(\d)/);
-  const ttLevel = ttLevelMatch ? parseInt(ttLevelMatch[1], 10) : 2;
+  const ttLevel = ttLevelMatch ? parseInt(ttLevelMatch[1], 10) : 3;
+
+  const nextAppointmentDate = dashboardData?.activeSchedule
+    ? `${dashboardData.activeSchedule.dayOfWeek}, ${dashboardData.activeSchedule.time}`
+    : '12 Juli 2026';
 
   if (loading && !dashboardData) {
     return (
-      <div className='flex items-center justify-center min-h-[50vh] w-full'>
-        <div className='animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-emerald-600' />
+      <div className="flex items-center justify-center min-h-[50vh] w-full">
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#aa294d]" />
       </div>
     );
   }
 
   return (
-    <div className='flex flex-col gap-4 sm:gap-6 w-full'>
-      {/* Mobile Top Stats Bar (< md) */}
-      <div className='flex md:hidden items-center justify-between gap-2 p-3 bg-white rounded-2xl border border-stone-200 shadow-2xs'>
-        <div className='flex items-center gap-2'>
-          <div className='w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-700'>
-            <ShieldCheck size={18} />
+    <div className="flex flex-col gap-5 sm:gap-6 w-full max-w-5xl mx-auto pb-10">
+      {/* Toast Feedback */}
+      {toastMessage && (
+        <div className="fixed top-20 right-4 z-50 bg-[#121c2a] text-white px-4 py-2.5 rounded-2xl shadow-xl flex items-center gap-2 text-xs font-semibold animate-fade-in border border-white/10">
+          <CheckCircle2 size={16} className="text-[#aff1d0]" />
+          <span>{toastMessage}</span>
+        </div>
+      )}
+
+      {/* Vaccine Card Modal */}
+      <VaccineCardModal
+        isOpen={isVaccineCardOpen}
+        onClose={() => setIsVaccineCardOpen(false)}
+        userName={currentUser.name}
+        faskesName={currentUser.schoolOrOrg || 'Puskesmas Kebayoran'}
+        partnerName={partnerName}
+        currentTTLevel={ttLevel}
+      />
+
+      {/* Top Personal Greeting & Notification Bar (Screen 2 Stitch) */}
+      <div className="flex items-center justify-between pb-1">
+        <div className="flex flex-col">
+          <div className="flex items-center gap-1.5">
+            <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-[#121c2a] tracking-tight">
+              Halo, {currentUser.name}
+            </h1>
+            <span className="text-lg animate-bounce select-none">👋</span>
           </div>
-          <div>
-            <span className='text-[10px] text-slate-500 block leading-tight'>Status Imunisasi</span>
-            <span className='text-xs font-bold text-slate-900'>TT{ttLevel} Terlindungi</span>
+          <div className="flex items-center gap-2 mt-1 flex-wrap">
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-[#ffd9de] text-[#8c0f39] text-xs font-semibold">
+              Calon Pengantin (Catin)
+            </span>
+            <span className="text-[#debfc2] text-[8px]">•</span>
+            <span className="text-xs text-[#574144] flex items-center gap-1">
+              <CheckCircle2 size={14} className="text-[#2a6950]" />
+              Faskes Terdaftar:{' '}
+              <strong className="text-[#121c2a] font-semibold">
+                {currentUser.schoolOrOrg || 'Puskesmas Kebayoran'}
+              </strong>
+            </span>
           </div>
         </div>
 
-        <div className='h-7 w-px bg-stone-200' />
-
-        <div className='flex items-center gap-2'>
-          <div className='w-8 h-8 rounded-full bg-teal-50 flex items-center justify-center text-teal-700'>
-            <Activity size={18} />
-          </div>
-          <div>
-            <span className='text-[10px] text-slate-500 block leading-tight'>Kadar Hb Lab</span>
-            <span
-              className={`text-xs font-bold ${currentUser.hbLevel ? 'text-emerald-700' : 'text-slate-500'}`}
-            >
-              {currentUser.hbLevel ? `${currentUser.hbLevel} g/dL` : 'Belum Cek'}
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {/* Mobile Quick Action Menu (< md) */}
-      <section aria-label='Menu Cepat Pranikah Mobile' className='block md:hidden'>
-        <Card padding='md' className='border-stone-200'>
-          <QuickAction />
-        </Card>
-      </section>
-
-      {/* Desktop Welcome Banner (md+) */}
-      <div className='hidden md:flex items-center justify-between pb-3 border-b border-stone-200'>
-        <div>
-          <div className='flex items-center gap-2 mb-1'>
-            <span className='text-xs font-bold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200'>
-              Calon Pengantin Terdaftar
-            </span>
-            <span className='text-xs text-slate-500'>
-              Faskes: <strong>{currentUser.schoolOrOrg || 'Puskesmas Domisili Catin'}</strong>
-            </span>
-          </div>
-          <h1 className='text-2xl font-bold text-slate-900 tracking-tight'>
-            Selamat Datang, {currentUser.name}!
-          </h1>
-          <p className='text-xs sm:text-sm text-slate-600 mt-0.5'>
-            Persiapkan kesehatan reproduksi prima dan lengkapi imunisasi Tetanus Toxoid menjelang hari bahagia.
-          </p>
-        </div>
-
-        <div className='flex items-center gap-3'>
-          <div className='flex items-center gap-2 bg-white px-3.5 py-1.5 rounded-full border border-stone-200 shadow-2xs'>
-            <Building2 size={16} className='text-emerald-700' />
-            <span className='text-xs font-semibold text-slate-800 truncate max-w-[180px]'>
-              {currentUser.schoolOrOrg || 'Puskesmas / KUA'}
-            </span>
-          </div>
-          <div className='flex items-center gap-2 bg-white px-3.5 py-1.5 rounded-full border border-stone-200 shadow-2xs'>
-            <Activity
-              size={16}
-              className={currentUser.hbLevel ? 'text-emerald-600' : 'text-slate-400'}
+        {/* Quick Micro-Logo / Heart Accent from PRELUNA Brand Inspiration */}
+        <div className="relative flex items-center justify-center w-11 h-11 rounded-full bg-[#ffd9de]/50 shadow-xs shrink-0 transition-transform active:scale-95">
+          <svg
+            className="w-7 h-7 text-[#aa294d]"
+            fill="none"
+            viewBox="0 0 48 48"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M24 41.5C24 41.5 6 29.5 6 17.5C6 11.5 10.5 7 16.5 7C20 7 22.8 8.8 24 10.8C25.2 8.8 28 7 31.5 7C37.5 7 42 11.5 42 17.5C42 29.5 24 41.5 24 41.5Z"
+              fill="#ffd9de"
+              stroke="#aa294d"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="3"
             />
-            <span
-              className={`text-xs font-bold ${currentUser.hbLevel ? 'text-emerald-700' : 'text-slate-500'}`}
-            >
-              {currentUser.hbLevel ? `Hb ${currentUser.hbLevel} g/dL` : 'Belum Ada Data Hb'}
-            </span>
-          </div>
+            <path
+              d="M24 16V28M18 22H30"
+              stroke="#aa294d"
+              strokeLinecap="round"
+              strokeWidth="3.2"
+            />
+            <path
+              d="M34 11C37 9 40 10.5 39 14.5"
+              stroke="#2a6950"
+              strokeLinecap="round"
+              strokeWidth="2.5"
+            />
+          </svg>
+          <span className="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-[#aa294d] ring-2 ring-white" />
         </div>
       </div>
 
       {/* Realtime Admin / Nakes Reminder Nudge Banner */}
       {activeNudge && (
-        <section aria-label='Pengingat Langsung dari Petugas Faskes'>
-          <div className='p-4 sm:p-5 rounded-3xl bg-linear-to-r from-emerald-800 via-emerald-700 to-teal-800 text-white shadow-xl shadow-emerald-950/15 border border-emerald-500/30 animate-fade-in'>
-            <div className='flex items-start justify-between gap-3'>
-              <div className='flex items-start gap-3.5'>
-                <div className='w-11 h-11 rounded-2xl bg-white/20 backdrop-blur-xs flex items-center justify-center shrink-0 text-white mt-0.5 shadow-inner'>
-                  <BellRing size={22} className='animate-pulse' />
+        <section aria-label="Pengingat Langsung dari Petugas Faskes">
+          <div className="p-4 sm:p-5 rounded-3xl bg-linear-to-r from-[#aa294d] via-[#cb4364] to-[#2a6950] text-white shadow-xl shadow-rose-950/15 border border-rose-300/30 animate-fade-in">
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex items-start gap-3.5">
+                <div className="w-11 h-11 rounded-2xl bg-white/20 backdrop-blur-xs flex items-center justify-center shrink-0 text-white mt-0.5 shadow-inner">
+                  <BellRing size={22} className="animate-pulse" />
                 </div>
                 <div>
-                  <div className='flex items-center gap-2 flex-wrap'>
-                    <span className='text-[10px] sm:text-xs font-bold uppercase tracking-wider bg-white/25 px-2.5 py-0.5 rounded-full'>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider bg-white/25 px-2.5 py-0.5 rounded-full">
                       Pesan Nakes Faskes • {activeNudge.senderName}
                     </span>
-                    <span className='text-[11px] text-emerald-200'>{activeNudge.sentAt}</span>
+                    <span className="text-[11px] text-rose-100">{activeNudge.sentAt}</span>
                   </div>
-                  <h3 className='text-sm sm:text-base font-bold mt-1 text-white leading-snug'>
+                  <h3 className="text-sm sm:text-base font-bold mt-1 text-white leading-snug">
                     {activeNudge.message}
                   </h3>
                 </div>
               </div>
 
               <button
-                type='button'
+                type="button"
                 onClick={handleDismissNudge}
-                className='text-emerald-200 hover:text-white p-1.5 rounded-xl hover:bg-white/10 transition-colors cursor-pointer shrink-0'
-                title='Tutup Pengingat'
+                className="text-rose-100 hover:text-white p-1.5 rounded-xl hover:bg-white/10 transition-colors cursor-pointer shrink-0"
+                title="Tutup Pengingat"
               >
                 <X size={18} />
               </button>
             </div>
 
-            <div className='mt-3.5 pt-3 border-t border-white/20 flex items-center gap-2.5 flex-wrap'>
+            <div className="mt-3.5 pt-3 border-t border-white/20 flex items-center gap-2.5 flex-wrap">
               <Button
-                variant='primary'
-                size='sm'
-                shape='pill'
+                variant="primary"
+                size="sm"
+                shape="pill"
                 icon={<CheckCircle2 size={14} />}
-                className='bg-white text-emerald-800 hover:bg-emerald-50 font-bold shadow-xs text-xs'
+                className="bg-white text-[#aa294d] hover:bg-rose-50 font-bold shadow-xs text-xs"
                 onClick={handleTakeFromNudge}
               >
                 Konfirmasi Kunjungan
               </Button>
               <button
-                type='button'
+                type="button"
                 onClick={handleDismissNudge}
-                className='text-xs font-semibold text-emerald-100 hover:text-white px-3 py-1.5 rounded-full hover:bg-white/10 transition-colors cursor-pointer'
+                className="text-xs font-semibold text-rose-100 hover:text-white px-3 py-1.5 rounded-full hover:bg-white/10 transition-colors cursor-pointer"
               >
                 Sudah Mengerti
               </button>
@@ -299,111 +318,163 @@ export default function DashboardView() {
         </section>
       )}
 
-      {/* Hero 5-Dose TT Immunity Status Banner */}
-      <section aria-label='Status Imunisasi TT 5 Dosis'>
-        <ImmunityStatusBanner
-          currentDoseLevel={ttLevel}
-          nextAppointmentDate={dashboardData?.activeSchedule ? `${dashboardData.activeSchedule.dayOfWeek}, ${dashboardData.activeSchedule.time}` : undefined}
-          partnerName={partnerName}
-        />
-      </section>
+      {/* Main Responsive Grid: Stitch Core Experience on Left / Countdown & Clinical Context on Right */}
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-5 sm:gap-6 items-start">
+        {/* LEFT COLUMN: Stitch Screen 2 Core Mobile Flow (md:col-span-7 lg:col-span-8) */}
+        <div className="md:col-span-7 lg:col-span-8 flex flex-col gap-5">
+          {/* 1. Hero Status Card: Status Imunisasi TT Utama (Stitch Screen 2) */}
+          <section aria-label="Status Imunisasi TT">
+            <ImmunityStatusBanner
+              currentDoseLevel={ttLevel}
+              nextAppointmentDate={nextAppointmentDate}
+              partnerName={partnerName}
+              onDownloadCard={() => setIsVaccineCardOpen(true)}
+            />
+          </section>
 
-      {/* Main Responsive Grid: Left Column (Hero & Actions) | Right Column (Countdown & Widgets) */}
-      <div className='grid grid-cols-1 md:grid-cols-12 gap-5 md:gap-6 items-start'>
-        {/* LEFT COLUMN: Main Health Actions (md:col-span-7 lg:col-span-8) */}
-        <div className='md:col-span-7 lg:col-span-8 flex flex-col gap-5'>
-          {/* Missing Schedule Setup Prompt Banner */}
-          {dashboardData && !dashboardData.activeSchedule && (
-            <section aria-label='Pengingat Atur Jadwal Faskes'>
-              <div className='p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-950 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs'>
-                <div className='flex items-start gap-3'>
-                  <div className='w-9 h-9 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center shrink-0 mt-0.5'>
-                    <CalendarClock size={20} />
-                  </div>
-                  <div>
-                    <h4 className='text-xs sm:text-sm font-bold text-amber-900'>
-                      Jadwal Kunjungan Faskes Belum Dikonfigurasi
-                    </h4>
-                    <p className='text-[11px] sm:text-xs text-amber-800 mt-0.5 leading-relaxed'>
-                      Tentukan hari dan jam kunjungan ke Puskesmas agar PRELUNA dapat mengingatkan jadwal imunisasi TT tepat waktu.
-                    </p>
-                  </div>
+          {/* 2. Akses Cepat Layanan (2x2 Grid from Stitch Screen 2) */}
+          <section aria-label="Akses Cepat Layanan">
+            <QuickAction
+              currentTTLevel={ttLevel}
+              nextScheduleDate={nextAppointmentDate}
+              onToggleReminder={(active) => {
+                showToast(
+                  active
+                    ? 'Pengingat imunisasi via WhatsApp & App diaktifkan!'
+                    : 'Pengingat imunisasi dinonaktifkan.'
+                );
+              }}
+            />
+          </section>
+
+          {/* 3. Konsultasi Bidan / Faskes Banner Ringan (Stitch Screen 2) */}
+          <section aria-label="Konsultasi Bidan Puskesmas">
+            <div className="rounded-2xl bg-linear-to-r from-[#aff1d0]/40 via-[#eff4ff] to-[#ffd9de]/30 p-4 sm:p-4.5 flex items-center justify-between border border-[#aff1d0]/30 shadow-xs">
+              <div className="flex items-center gap-3">
+                <div className="w-11 h-11 rounded-full bg-white shadow-xs flex items-center justify-center text-[#2a6950] shrink-0">
+                  <Bot size={24} />
                 </div>
-                <Link
-                  to='/user/schedule'
-                  className='inline-flex items-center justify-center gap-1.5 px-3.5 py-2 bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold rounded-xl transition-colors shadow-2xs shrink-0 self-start sm:self-auto'
-                >
-                  <span>Atur Jadwal</span>
-                  <ArrowRight size={13} />
-                </Link>
+                <div className="flex flex-col">
+                  <span className="text-xs sm:text-sm font-bold text-[#121c2a]">
+                    Tanya Bidan Puskesmas
+                  </span>
+                  <span className="text-[11px] sm:text-xs text-[#574144]">
+                    Layanan konsultasi TT & skrining pranikah
+                  </span>
+                </div>
               </div>
-            </section>
-          )}
-
-          {/* 1. Status Kunjungan Hari Ini Card */}
-          <section aria-label='Status Aktivitas Hari Ini'>
-            <StatusCard
-              initialStatus={dashboardData?.todayStatus || 'pending'}
-              initialRecordedTime={dashboardData?.todayRecordedTime}
-              onStatusChange={handleStatusChange}
-            />
+              <Link
+                to="/user/consultation"
+                className="w-10 h-10 rounded-full bg-white shadow-xs flex items-center justify-center text-[#aa294d] hover:bg-[#ffd9de] transition-colors shrink-0"
+                title="Mulai Konsultasi"
+              >
+                <MessageSquare size={18} />
+              </Link>
+            </div>
           </section>
 
-          {/* 2. Streak Progress Card */}
-          <section aria-label='Progres Kepatuhan Suplementasi'>
-            <StreakProgressCard
-              streakCount={currentUser.streakCount}
-              streakUnit={streakUnit}
-              consecutiveDates={currentUser.consecutiveDates}
-              todayStatus={dashboardData?.todayStatus || 'pending'}
-            />
-          </section>
+          {/* 4. Banner Informasi Catin Terpadu (Educational Article Highlight from Stitch Screen 2) */}
+          {(() => {
+            const activeArticleId = featuredArticle?.id || 'art_tt_1';
+            const articleTitle =
+              featuredArticle?.title || 'Mengapa Skrining TT itu Sangat Penting Sebelum Ijab Kabul?';
+            const articleSummary =
+              featuredArticle?.summary ||
+              'Imunisasi Tetanus Toxoid (TT) bukan sekadar syarat administratif KUA, melainkan benteng proteksi seumur hidup bagi calon ibu dan buah hati dari risiko tetanus neonatorum saat persalinan.';
+            const articleImage =
+              featuredArticle?.imageUrl ||
+              'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&auto=format&fit=crop&q=80';
+            const articleReadTime = featuredArticle?.readTime || '4 Menit Baca';
+            const articleAuthor =
+              featuredArticle?.author?.name || 'dr. Sarah Jenkins, Sp.GK & Tim Medis Kemenkes';
 
-          {/* 3. Featured Article Banner */}
-          {featuredArticle && (
-            <section aria-label='Materi Edukasi Pranikah Pilihan'>
-              <Card padding='none' className='overflow-hidden border-stone-200'>
-                <div className='relative h-36 sm:h-44 w-full'>
-                  <img
-                    src={
-                      featuredArticle.imageUrl ||
-                      'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&auto=format&fit=crop&q=80'
-                    }
-                    alt={featuredArticle.title}
-                    className='w-full h-full object-cover'
-                  />
-                  <div className='absolute inset-0 bg-linear-to-t from-slate-950/85 via-slate-950/40 to-transparent flex flex-col justify-end p-4 sm:p-5'>
-                    <span className='text-[10px] font-bold text-emerald-300 uppercase tracking-wider flex items-center gap-1'>
-                      <Sparkles size={11} />
-                      <span>Edukasi Pranikah • {featuredArticle.readTime}</span>
-                    </span>
-                    <h3 className='text-sm sm:text-base font-bold text-white leading-snug line-clamp-2 mt-0.5'>
-                      {featuredArticle.title}
-                    </h3>
+            return (
+              <section aria-label="Banner Edukasi Pranikah Pilihan">
+                <div className="relative overflow-hidden rounded-2xl bg-white border border-[#eff4ff] shadow-[0_4px_16px_rgba(0,0,0,0.04)] flex flex-col group">
+                  {/* Image Card Header with Editorial Scrim */}
+                  <Link
+                    to={`/user/education/${activeArticleId}`}
+                    className="relative w-full h-44 sm:h-48 bg-stone-100 overflow-hidden block cursor-pointer"
+                  >
+                    <img
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      src={articleImage}
+                      alt={articleTitle}
+                    />
+                    <div className="absolute inset-0 bg-linear-to-t from-[#121c2a]/85 via-[#121c2a]/20 to-transparent" />
+                    <div className="absolute top-3 left-3">
+                      <span className="px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-md text-[#aa294d] text-[11px] font-bold shadow-xs">
+                        Wajib bagi Catin
+                      </span>
+                    </div>
+                  </Link>
+
+                  {/* Article Content */}
+                  <div className="p-4 sm:p-5 flex flex-col gap-2.5">
+                    <div className="flex items-center gap-2 text-[#574144] text-[11px]">
+                      <span className="flex items-center gap-1">
+                        <Clock size={13} /> {articleReadTime}
+                      </span>
+                      <span>•</span>
+                      <span className="truncate">{articleAuthor}</span>
+                    </div>
+
+                    <Link to={`/user/education/${activeArticleId}`}>
+                      <h3 className="text-sm sm:text-base font-bold text-[#121c2a] group-hover:text-[#aa294d] transition-colors leading-snug">
+                        {articleTitle}
+                      </h3>
+                    </Link>
+
+                    <p className="text-xs text-[#574144] leading-relaxed line-clamp-2">
+                      {articleSummary}
+                    </p>
+
+                    <div className="pt-2 flex items-center justify-between">
+                      <Link
+                        to={`/user/education/${activeArticleId}`}
+                        className="inline-flex items-center justify-center px-4 py-2 rounded-full bg-[#aa294d] text-white text-xs font-bold shadow-[0_4px_12px_rgba(170,41,77,0.25)] hover:bg-[#cb4364] transition-all active:scale-95"
+                      >
+                        Baca Selengkapnya
+                      </Link>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsBookmarked(!isBookmarked);
+                          showToast(
+                            !isBookmarked
+                              ? 'Artikel disimpan ke daftar bacaan!'
+                              : 'Artikel dihapus dari simpanan.'
+                          );
+                        }}
+                        className="w-9 h-9 rounded-full flex items-center justify-center text-[#574144] hover:text-[#aa294d] hover:bg-[#ffd9de]/30 transition-colors cursor-pointer"
+                        title="Simpan Artikel"
+                      >
+                        {isBookmarked ? (
+                          <BookmarkCheck size={20} className="text-[#aa294d]" />
+                        ) : (
+                          <Bookmark size={20} />
+                        )}
+                      </button>
+                    </div>
                   </div>
                 </div>
+              </section>
+            );
+          })()}
 
-                <div className='p-4 bg-white flex items-center justify-between'>
-                  <p className='text-xs text-slate-600 line-clamp-1 flex-1 pr-3'>
-                    {featuredArticle.summary}
-                  </p>
-                  <Link
-                    to={`/user/education/${featuredArticle.id}`}
-                    className='inline-flex items-center gap-1 text-xs font-bold text-emerald-700 hover:text-emerald-800 shrink-0'
-                  >
-                    <span>Baca Selengkapnya</span>
-                    <ArrowRight size={13} />
-                  </Link>
-                </div>
-              </Card>
-            </section>
-          )}
+          {/* Bottom Reassurance Micro-Banner (Stitch Screen 2) */}
+          <div className="py-2 flex items-center justify-center gap-2 text-[#574144]/80 text-xs">
+            <ShieldCheck size={16} className="text-[#2a6950]" />
+            <span className="font-semibold">
+              Standar Pelayanan Kesehatan Kementerian Kesehatan RI
+            </span>
+          </div>
         </div>
 
-        {/* RIGHT COLUMN: Wedding Countdown, Quick Menu & Clinical Guidance (md:col-span-5 lg:col-span-4) */}
-        <div className='md:col-span-5 lg:col-span-4 flex flex-col gap-5'>
-          {/* 1. Wedding Countdown & Clinical Readiness Widget */}
-          <section aria-label='Hitung Mundur Pernikahan'>
+        {/* RIGHT COLUMN: Wedding Countdown, Clinical Guidance & Daily Status (md:col-span-5 lg:col-span-4) */}
+        <div className="md:col-span-5 lg:col-span-4 flex flex-col gap-5">
+          {/* 1. Hitung Mundur Hari Bahagia & Kesiapan Klinis */}
+          <section aria-label="Hitung Mundur Hari Bahagia">
             <WeddingCountdownWidget
               weddingDateStr={weddingDate}
               partnerName={partnerName}
@@ -411,38 +482,40 @@ export default function DashboardView() {
             />
           </section>
 
-          {/* 2. Desktop Quick Menu */}
-          <section aria-label='Menu Cepat Navigasi' className='hidden md:block'>
-            <Card padding='md' className='border-stone-200'>
-              <QuickAction />
-            </Card>
+          {/* 2. Status Kunjungan Hari Ini Card */}
+          <section aria-label="Status Kunjungan Hari Ini">
+            <StatusCard
+              initialStatus={dashboardData?.todayStatus || 'pending'}
+              initialRecordedTime={dashboardData?.todayRecordedTime}
+              onStatusChange={handleStatusChange}
+            />
           </section>
 
-          {/* 3. Clinical Guidelines / Education Highlight */}
-          <Card padding='md' className='bg-linear-to-br from-emerald-50/50 to-teal-50/30 border-emerald-100'>
-            <div className='flex items-center gap-2.5 mb-2'>
-              <div className='w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-xs'>
+          {/* 3. Standar Skrining Catin Kemenkes Box */}
+          <Card padding="md" className="bg-linear-to-br from-[#aff1d0]/25 to-[#eff4ff] border-[#aff1d0]/40">
+            <div className="flex items-center gap-2.5 mb-2">
+              <div className="w-8 h-8 rounded-xl bg-[#2a6950] text-white flex items-center justify-center shrink-0 shadow-xs">
                 <Award size={18} />
               </div>
               <div>
-                <h4 className='text-xs font-bold text-slate-900'>Standar Skrining Catin</h4>
-                <span className='text-[11px] font-semibold text-emerald-800'>Pedoman Kemenkes RI</span>
+                <h4 className="text-xs font-bold text-[#121c2a]">Standar Skrining Catin</h4>
+                <span className="text-[11px] font-semibold text-[#2a6950]">Pedoman Kemenkes RI</span>
               </div>
             </div>
-            <p className='text-xs text-slate-700 leading-relaxed'>
+            <p className="text-xs text-[#574144] leading-relaxed">
               Pemeriksaan pranikah meliputi skrining TT (5 dosis), cek Hb (mencegah anemia ibu hamil), status gizi (LILA min. 23.5 cm), dan skrining calon ayah untuk generasi bebas stunting.
             </p>
-            <div className='mt-3 pt-2.5 border-t border-emerald-200/60 flex items-center justify-between'>
+            <div className="mt-3 pt-2.5 border-t border-[#aff1d0]/50 flex items-center justify-between">
               <Link
-                to='/user/education'
-                className='text-[11px] font-bold text-emerald-700 hover:underline inline-flex items-center gap-1'
+                to={`/user/education/${featuredArticle?.id || 'art_tt_1'}`}
+                className="text-[11px] font-bold text-[#2a6950] hover:underline inline-flex items-center gap-1"
               >
                 <BookOpen size={12} />
                 <span>Pelajari Buku Saku Catin</span>
               </Link>
               <Link
-                to='/user/consultation'
-                className='text-[11px] font-bold text-teal-700 hover:underline'
+                to="/user/consultation"
+                className="text-[11px] font-bold text-[#aa294d] hover:underline"
               >
                 Tanya Luna AI
               </Link>
@@ -450,14 +523,6 @@ export default function DashboardView() {
           </Card>
         </div>
       </div>
-
-      {/* Footer Trust Badge */}
-      <footer className='pt-2 pb-4 text-center'>
-        <div className='inline-flex items-center gap-1.5 text-[11px] text-slate-400'>
-          <ShieldCheck size={14} className='text-emerald-600' />
-          <span>Program Imunisasi Tetanus Toxoid Pranikah • PRELUNA Kemenkes RI</span>
-        </div>
-      </footer>
     </div>
   );
 }

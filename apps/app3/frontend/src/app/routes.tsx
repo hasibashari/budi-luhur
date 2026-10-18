@@ -2,9 +2,8 @@ import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthGuard } from '@/src/features/auth/components/AuthGuard';
 import { GuestGuard } from '@/src/features/auth/components/GuestGuard';
-import { LoginView, RegisterView } from '@/src/features/auth';
-import { SplashView } from '@/src/features/splash';
-import { OnboardingView } from '@/src/features/onboarding';
+import { LoginView, RegisterView, useAuth } from '@/src/features/auth';
+import { OnboardingView, OnboardingScreenView } from '@/src/features/onboarding';
 
 // User Portal Views
 import {
@@ -29,11 +28,34 @@ import {
   AdminProfileView,
 } from '@/src/features/admin';
 
+function RootEntry() {
+  const { isInitializing, isAuthenticated, user, hasCompletedOnboarding } = useAuth();
+
+  if (isInitializing) {
+    return <OnboardingScreenView statusText='Memuat aplikasi PRELUNA...' />;
+  }
+
+  if (isAuthenticated) {
+    if (user?.role === 'admin') {
+      return <Navigate to='/admin/dashboard' replace />;
+    }
+    return <Navigate to='/user/dashboard' replace />;
+  }
+
+  if (!hasCompletedOnboarding) {
+    return <Navigate to='/onboarding' replace />;
+  }
+
+  return <Navigate to='/auth/login' replace />;
+}
+
 export function AppRoutes() {
   return (
     <Routes>
-      {/* Public / Entry Routes */}
-      <Route path='/' element={<Navigate to='/onboarding' replace />} />
+      {/* Root Entry: Menuju Onboarding (tamu baru), Login (tamu lama), atau Dashboard (login) */}
+      <Route path='/' element={<RootEntry />} />
+
+      {/* Onboarding 3 Slide */}
       <Route
         path='/onboarding'
         element={
@@ -42,14 +64,11 @@ export function AppRoutes() {
           </GuestGuard>
         }
       />
-      <Route
-        path='/splash'
-        element={
-          <GuestGuard>
-            <SplashView />
-          </GuestGuard>
-        }
-      />
+
+      {/* Redirect untuk rute lama agar tidak 404 */}
+      <Route path='/splash' element={<Navigate to='/' replace />} />
+      <Route path='/welcome' element={<Navigate to='/auth/login' replace />} />
+      <Route path='/auth' element={<Navigate to='/auth/login' replace />} />
 
       {/* Guest Only Auth Routes */}
       <Route
@@ -92,6 +111,7 @@ export function AppRoutes() {
         <Route path='dashboard' element={<DashboardView />} />
         <Route path='schedule' element={<ScheduleView />} />
         <Route path='history' element={<HistoryView />} />
+        <Route path='imunisasi' element={<HistoryView />} />
         <Route path='buddy' element={<Navigate to='/user/dashboard' replace />} />
         <Route path='education' element={<EducationView />} />
         <Route path='education/:id' element={<ArticleDetailView />} />
@@ -118,8 +138,8 @@ export function AppRoutes() {
         <Route path='profile' element={<AdminProfileView />} />
       </Route>
 
-      {/* Fallback */}
-      <Route path='*' element={<Navigate to='/auth/login' replace />} />
+      {/* Catch-all: redirect to / */}
+      <Route path='*' element={<Navigate to='/' replace />} />
     </Routes>
   );
 }

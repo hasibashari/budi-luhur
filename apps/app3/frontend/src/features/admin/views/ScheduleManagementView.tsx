@@ -1,5 +1,17 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { Search, Plus, BellRing, Edit, Trash2 } from 'lucide-react';
+import {
+  Search,
+  Plus,
+  BellRing,
+  Edit,
+  Trash2,
+  Calendar,
+  Clock,
+  CheckCircle2,
+  AlertCircle,
+  Heart,
+  Syringe,
+} from 'lucide-react';
 import AdminHeader from '../components/AdminHeader';
 import SendReminderModal from '../components/SendReminderModal';
 import ScheduleFormModal from '../components/ScheduleFormModal';
@@ -24,6 +36,8 @@ import {
   INITIAL_SCHEDULE_FORM_DATA,
   ScheduleFormData,
   ScheduleCategory,
+  SCHEDULE_CATEGORIES,
+  SCHEDULE_CATEGORY_COLORS,
 } from '../constants/schedule.constants';
 import { publishRealtimeEvent, subscribeRealtimeEvent } from '@/src/shared/utils/realtimeSync';
 
@@ -31,7 +45,8 @@ export default function ScheduleManagementView() {
   const [schedules, setSchedules] = useState<MedicationSchedule[]>([]);
   const [users, setUsers] = useState<ManagedUser[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [frequencyFilter, setFrequencyFilter] = useState('Semua');
+  const [categoryFilter, setCategoryFilter] = useState('Semua');
+  const [statusFilter, setStatusFilter] = useState('Semua');
   const [submitting, setSubmitting] = useState(false);
 
   // 1. Hook Form Modal Add/Edit
@@ -125,7 +140,7 @@ export default function ScheduleManagementView() {
     };
   }, []);
 
-  // Quick lookup user details for avatar & school
+  // Quick lookup user details for avatar & partner
   const userMap = useMemo(() => {
     const map = new Map<string, ManagedUser>();
     users.forEach(u => map.set(u.id, u));
@@ -133,23 +148,39 @@ export default function ScheduleManagementView() {
   }, [users]);
 
   const filteredSchedules = schedules.filter(s => {
-    const name = s.userName || s.patientName || '';
-    const id = s.userId || s.patientId || '';
+    const targetUserId = s.userId || s.patientId || '';
+    const user = userMap.get(targetUserId);
+    const name = s.userName || s.patientName || user?.name || '';
+    const partner = user?.partnerName || '';
+    const q = searchQuery.toLowerCase();
+
     const matchesSearch =
-      name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      s.medicationName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      id.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesFrequency =
-      frequencyFilter === 'Semua' ||
-      (frequencyFilter === 'Harian' && s.frequency === 'Harian') ||
-      (frequencyFilter === 'Mingguan' && s.frequency !== 'Harian');
-    return matchesSearch && matchesFrequency;
+      name.toLowerCase().includes(q) ||
+      partner.toLowerCase().includes(q) ||
+      s.medicationName.toLowerCase().includes(q) ||
+      targetUserId.toLowerCase().includes(q);
+
+    const matchesCategory = categoryFilter === 'Semua' || s.category === categoryFilter;
+
+    const matchesStatus =
+      statusFilter === 'Semua' ||
+      (statusFilter === 'COMPLETED' && s.todayStatus === 'COMPLETED') ||
+      (statusFilter === 'PENDING' && s.todayStatus !== 'COMPLETED');
+
+    return matchesSearch && matchesCategory && matchesStatus;
   });
 
   const onOpenAdd = () => {
     handleOpenAdd({
       userId: users[0]?.id || 'usr_1',
       patientId: users[0]?.id || 'usr_1',
+      medicationName: 'Vaksin TT2 (Syarat Minimal KUA)',
+      dosage: '0.5 mL (Intramuskular)',
+      frequency: '1x Sesuai Dosis',
+      dayOfWeek: 'Sabtu',
+      timeSlot: '09:00',
+      category: 'Imunisasi TT',
+      instructions: 'Hadir ke Puskesmas Gambir membawa KTP dan dokumen skrining pranikah.',
     });
   };
 
@@ -159,17 +190,17 @@ export default function ScheduleManagementView() {
       patientId: schedule.userId || schedule.patientId || 'usr_1',
       medicationName: schedule.medicationName,
       dosage: schedule.dosage,
-      frequency: schedule.frequency === 'Harian' ? 'Harian' : '1x Seminggu',
+      frequency: schedule.frequency as any,
       dayOfWeek: schedule.dayOfWeek || 'Sabtu',
       timeSlot: schedule.timeSlots.join(', '),
-      category: (schedule.category as ScheduleCategory) || 'TTD Rutin',
+      category: (schedule.category as ScheduleCategory) || 'Imunisasi TT',
       instructions: schedule.instructions,
     });
   };
 
   const handleSaveSchedule = async () => {
     if (!formData.medicationName) {
-      showToast('Nama obat / suplemen wajib diisi', 'error');
+      showToast('Nama vaksin / layanan wajib diisi', 'error');
       return;
     }
 
@@ -178,7 +209,7 @@ export default function ScheduleManagementView() {
       .map(s => s.trim().replace('.', ':'))
       .filter(s => s.length > 0);
 
-    const timeSlotsArray = rawSlots.length > 0 ? rawSlots : ['20:00'];
+    const timeSlotsArray = rawSlots.length > 0 ? rawSlots : ['09:00'];
     const today = new Date().toISOString().split('T')[0];
 
     setSubmitting(true);
@@ -208,7 +239,7 @@ export default function ScheduleManagementView() {
             scheduleId: editingId,
           });
           handleCloseModal();
-          showToast('Jadwal berhasil diperbarui di database!', 'success');
+          showToast('Jadwal imunisasi TT/skrining berhasil diperbarui!', 'success');
         } else {
           showToast(res.error || 'Gagal memperbarui jadwal', 'error');
         }
@@ -226,7 +257,7 @@ export default function ScheduleManagementView() {
           category: formData.category,
           instructions:
             formData.instructions ||
-            'Minum 1 tablet setelah sarapan atau sebelum tidur dengan air putih.',
+            'Hadir ke Faskes rujukan membawa KTP dan berkas skrining pranikah.',
         });
 
         if (res.success) {
@@ -301,8 +332,8 @@ export default function ScheduleManagementView() {
   const columns: Column<MedicationSchedule>[] = [
     {
       id: 'user',
-      label: 'Calon Pengantin (Catin)',
-      width: '30%',
+      label: 'Calon Pengantin & Pasangan',
+      width: '28%',
       renderCell: schedule => {
         const targetUserId = schedule.userId || schedule.patientId || '';
         const user = userMap.get(targetUserId);
@@ -312,13 +343,19 @@ export default function ScheduleManagementView() {
             <Avatar
               src={user?.avatarUrl}
               name={name}
-              size='sm'
-              ringClassName='ring-1 ring-emerald-200 shadow-2xs'
+              size='md'
+              ringClassName='ring-1 ring-[#ffd9de] shadow-2xs'
             />
             <div className='min-w-0'>
-              <div className='font-bold text-slate-800 text-sm truncate'>{name}</div>
-              <div className='text-xs text-slate-400 truncate'>
-                {targetUserId} • {user?.schoolOrOrg || 'Puskesmas / KUA Rujukan'}
+              <div className='font-bold text-[#121c2a] text-sm truncate'>{name}</div>
+              {user?.partnerName && (
+                <div className='text-[11px] text-[#aa294d] font-semibold flex items-center gap-1 mt-0.5 truncate'>
+                  <Heart size={10} className='fill-[#ffd9de] shrink-0' />
+                  <span className='truncate'>Pasangan: {user.partnerName}</span>
+                </div>
+              )}
+              <div className='text-xs text-[#8b7074] truncate mt-0.5'>
+                {user?.schoolOrOrg || 'Puskesmas Gambir - KUA Gambir'}
               </div>
             </div>
           </div>
@@ -327,16 +364,32 @@ export default function ScheduleManagementView() {
     },
     {
       id: 'medication',
-      label: 'Vaksin / Layanan',
+      label: 'Vaksin / Layanan Pranikah',
       width: '28%',
-      renderCell: schedule => (
-        <div>
-          <div className='font-bold text-slate-900 text-sm'>{schedule.medicationName}</div>
-          <div className='text-xs text-slate-500 mt-0.5'>
-            {schedule.dosage} • {schedule.frequency}
+      renderCell: schedule => {
+        const cat = schedule.category || 'Imunisasi TT';
+        const catStyle = SCHEDULE_CATEGORY_COLORS[cat] || SCHEDULE_CATEGORY_COLORS['Imunisasi TT'];
+
+        return (
+          <div>
+            <span
+              className='inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-extrabold border mb-1'
+              style={{
+                backgroundColor: catStyle.bg,
+                color: catStyle.text,
+                borderColor: catStyle.border,
+              }}
+            >
+              <Syringe size={10} className='shrink-0' />
+              <span>{cat}</span>
+            </span>
+            <div className='font-bold text-[#121c2a] text-sm'>{schedule.medicationName}</div>
+            <div className='text-xs text-[#574144] mt-0.5'>
+              {schedule.dosage} • {schedule.frequency}
+            </div>
           </div>
-        </div>
-      ),
+        );
+      },
     },
     {
       id: 'scheduleTime',
@@ -344,23 +397,26 @@ export default function ScheduleManagementView() {
       width: '18%',
       renderCell: schedule => (
         <div>
-          <div className='font-semibold text-slate-800 text-xs sm:text-sm'>
-            {schedule.frequency === 'Harian' || schedule.frequency === 'daily'
-              ? 'Setiap Hari'
-              : schedule.dayOfWeek || 'Sabtu'}
+          <div className='font-bold text-[#121c2a] text-xs sm:text-sm flex items-center gap-1'>
+            <Calendar size={12} className='text-[#aa294d]' />
+            <span>
+              {schedule.frequency === 'Harian' || schedule.frequency === 'daily'
+                ? 'Setiap Hari'
+                : schedule.dayOfWeek || 'Sabtu'}
+            </span>
           </div>
-          <div className='flex gap-1 flex-wrap mt-0.5'>
+          <div className='flex gap-1 flex-wrap mt-1'>
             {schedule.timeSlots?.length > 0 ? (
               schedule.timeSlots.map((time, idx) => (
                 <span
                   key={idx}
-                  className='px-2 py-0.5 rounded-full border border-emerald-100 bg-emerald-50/60 text-[11px] font-bold text-emerald-800'
+                  className='px-2 py-0.5 rounded-full border border-[#dee9fc] bg-[#f8f9ff] text-[11px] font-extrabold text-[#8c0f39]'
                 >
                   {time} WIB
                 </span>
               ))
             ) : (
-              <span className='text-xs text-slate-400'>09:00 WIB</span>
+              <span className='text-xs text-[#8b7074]'>09:00 WIB</span>
             )}
           </div>
         </div>
@@ -368,21 +424,21 @@ export default function ScheduleManagementView() {
     },
     {
       id: 'todayStatus',
-      label: 'Status Kunjungan',
+      label: 'Status Layanan',
       width: '14%',
       renderCell: schedule => {
         if (schedule.todayStatus === 'COMPLETED') {
           return (
-            <span className='inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold'>
-              <span className='w-1.5 h-1.5 rounded-full bg-emerald-500'></span>
-              Sudah
+            <span className='inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#aff1d0] text-[#0a5139] border border-[#6ee7b7] text-xs font-extrabold'>
+              <CheckCircle2 size={12} />
+              <span>Sudah</span>
             </span>
           );
         }
         return (
-          <span className='inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200 text-xs font-bold'>
-            <span className='w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse'></span>
-            Belum
+          <span className='inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#ffd9de] text-[#8c0f39] border border-[#fca5a5] text-xs font-extrabold'>
+            <Clock size={12} className='animate-pulse' />
+            <span>Belum</span>
           </span>
         );
       },
@@ -391,14 +447,14 @@ export default function ScheduleManagementView() {
       id: 'aksi',
       label: 'Aksi',
       align: 'right',
-      width: '10%',
+      width: '12%',
       renderCell: schedule => (
         <div className='flex items-center justify-end gap-1'>
           <button
             type='button'
-            title='Ingatkan Catin'
+            title='Kirim Pengingat TT'
             onClick={() => handleOpenReminder(schedule)}
-            className='p-1.5 rounded-lg text-emerald-700 hover:bg-emerald-50 transition-colors cursor-pointer'
+            className='p-1.5 rounded-lg text-[#aa294d] hover:bg-[#ffd9de]/50 transition-colors cursor-pointer'
           >
             <BellRing size={16} />
           </button>
@@ -406,7 +462,7 @@ export default function ScheduleManagementView() {
             type='button'
             title='Edit Jadwal'
             onClick={() => onOpenEdit(schedule)}
-            className='p-1.5 rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition-colors cursor-pointer'
+            className='p-1.5 rounded-lg text-[#574144] hover:bg-[#eff4ff] hover:text-[#121c2a] transition-colors cursor-pointer'
           >
             <Edit size={16} />
           </button>
@@ -414,7 +470,7 @@ export default function ScheduleManagementView() {
             type='button'
             title='Hapus Jadwal'
             onClick={() => handleDeleteRequest(schedule.id)}
-            className='p-1.5 rounded-lg text-rose-500 hover:bg-rose-50 hover:text-rose-700 transition-colors cursor-pointer'
+            className='p-1.5 rounded-lg text-[#cb4364] hover:bg-[#ffd9de]/40 hover:text-[#8c0f39] transition-colors cursor-pointer'
           >
             <Trash2 size={16} />
           </button>
@@ -427,35 +483,50 @@ export default function ScheduleManagementView() {
     <div>
       <AdminHeader
         title='Manajemen Jadwal Imunisasi TT & Skrining'
-        subtitle='Tetapkan jadwal vaksinasi TT catin, pemeriksaan pranikah, serta pengingat otomatis faskes.'
+        subtitle='Tetapkan jadwal vaksinasi TT catin, pemeriksaan laboratorium pranikah, dan bimbingan KUA terpadu.'
       />
 
-      {/* Filter Bar with MobileFilterChips */}
-      <div className='p-4 sm:p-5 mb-6 rounded-2xl sm:rounded-3xl border border-emerald-100 bg-white shadow-sm flex flex-col gap-3.5'>
+      {/* Filter Bar */}
+      <div className='p-4 sm:p-5 mb-6 rounded-2xl sm:rounded-3xl border border-[#eff4ff] bg-white shadow-xs flex flex-col gap-3.5'>
         <div className='flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3'>
           <div className='flex flex-col sm:flex-row gap-3 flex-1'>
             <div className='relative flex-1'>
-              <span className='absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-400'>
+              <span className='absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-[#8b7074]'>
                 <Search size={18} />
               </span>
               <input
                 type='text'
-                placeholder='Cari nama vaksin, layanan, atau catin...'
+                placeholder='Cari nama vaksin, layanan, catin, atau pasangan...'
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                className='w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-emerald-100 bg-slate-50 text-xs sm:text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all min-h-[44px]'
+                className='w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-[#dee9fc] bg-[#f8f9ff] text-xs sm:text-sm text-[#121c2a] focus:outline-none focus:ring-2 focus:ring-[#ffd9de] focus:border-[#aa294d] focus:bg-white transition-all min-h-[44px]'
               />
             </div>
 
-            <div className='hidden sm:block sm:min-w-[180px]'>
+            <div className='hidden sm:block sm:min-w-[190px]'>
               <select
-                value={frequencyFilter}
-                onChange={e => setFrequencyFilter(e.target.value)}
-                className='w-full px-3.5 py-2.5 rounded-xl border border-emerald-100 bg-slate-50 text-xs sm:text-sm font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all cursor-pointer min-h-[44px]'
+                value={categoryFilter}
+                onChange={e => setCategoryFilter(e.target.value)}
+                className='w-full px-3.5 py-2.5 rounded-xl border border-[#dee9fc] bg-[#f8f9ff] text-xs sm:text-sm font-medium text-[#121c2a] focus:outline-none focus:ring-2 focus:ring-[#ffd9de] focus:border-[#aa294d] focus:bg-white transition-all cursor-pointer min-h-[44px]'
               >
-                <option value='Semua'>Semua Frekuensi</option>
-                <option value='Mingguan'>1x Seminggu</option>
-                <option value='Harian'>Harian</option>
+                <option value='Semua'>Semua Kategori</option>
+                {SCHEDULE_CATEGORIES.map(cat => (
+                  <option key={cat.value} value={cat.value}>
+                    {cat.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className='hidden sm:block sm:min-w-[160px]'>
+              <select
+                value={statusFilter}
+                onChange={e => setStatusFilter(e.target.value)}
+                className='w-full px-3.5 py-2.5 rounded-xl border border-[#dee9fc] bg-[#f8f9ff] text-xs sm:text-sm font-medium text-[#121c2a] focus:outline-none focus:ring-2 focus:ring-[#ffd9de] focus:border-[#aa294d] focus:bg-white transition-all cursor-pointer min-h-[44px]'
+              >
+                <option value='Semua'>Semua Status</option>
+                <option value='COMPLETED'>Sudah Layanan</option>
+                <option value='PENDING'>Belum Layanan</option>
               </select>
             </div>
           </div>
@@ -463,7 +534,7 @@ export default function ScheduleManagementView() {
           <button
             type='button'
             onClick={onOpenAdd}
-            className='inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 text-white font-bold text-xs sm:text-sm hover:bg-emerald-700 shadow-sm transition-all cursor-pointer whitespace-nowrap min-h-[44px]'
+            className='inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-[#aa294d] text-white font-bold text-xs sm:text-sm hover:bg-[#cb4364] shadow-md shadow-[#aa294d]/20 transition-all cursor-pointer whitespace-nowrap min-h-[44px]'
           >
             <Plus size={18} />
             <span>Buat Jadwal Baru</span>
@@ -471,15 +542,16 @@ export default function ScheduleManagementView() {
         </div>
 
         {/* Mobile Horizontal Filter Chips (< sm: 640px) */}
-        <div className='block sm:hidden border-t border-slate-100 pt-2.5'>
-          <p className='text-[11px] font-bold text-slate-400 mb-1.5'>Filter Frekuensi Layanan:</p>
+        <div className='block sm:hidden border-t border-[#eff4ff] pt-2.5'>
+          <p className='text-[11px] font-bold text-[#8b7074] mb-1.5'>Filter Kategori Layanan:</p>
           <MobileFilterChips
-            selectedValue={frequencyFilter}
-            onSelect={setFrequencyFilter}
+            selectedValue={categoryFilter}
+            onSelect={setCategoryFilter}
             options={[
               { label: 'Semua', value: 'Semua' },
-              { label: '1x Kunjungan', value: 'Mingguan' },
-              { label: 'Harian', value: 'Harian' },
+              { label: 'Imunisasi TT', value: 'Imunisasi TT' },
+              { label: 'Skrining Lab', value: 'Skrining Pranikah' },
+              { label: 'Bimbingan KUA', value: 'Bimbingan KUA' },
             ]}
           />
         </div>
@@ -489,76 +561,99 @@ export default function ScheduleManagementView() {
       <DataTable
         columns={columns}
         data={filteredSchedules}
-        emptyMessage='Tidak ada jadwal yang ditemukan.'
+        emptyMessage='Tidak ada jadwal yang sesuai dengan filter pencarian.'
         renderMobileCard={schedule => {
           const targetUserId = schedule.userId || schedule.patientId || '';
           const user = userMap.get(targetUserId);
           const name = schedule.userName || schedule.patientName || user?.name || 'Calon Pengantin';
+          const cat = schedule.category || 'Imunisasi TT';
+          const catStyle = SCHEDULE_CATEGORY_COLORS[cat] || SCHEDULE_CATEGORY_COLORS['Imunisasi TT'];
+
           return (
-            <div className='p-4 rounded-2xl border border-emerald-100 bg-white shadow-xs flex flex-col gap-3.5'>
+            <div className='p-4 rounded-2xl border border-[#eff4ff] bg-white shadow-xs flex flex-col gap-3.5'>
               {/* Header: User Avatar + Name + Status */}
-              <div className='flex items-center justify-between gap-2.5'>
+              <div className='flex items-start justify-between gap-2.5'>
                 <div className='flex items-center gap-3 min-w-0'>
                   <Avatar
                     src={user?.avatarUrl}
                     name={name}
                     size='lg'
-                    ringClassName='ring-2 ring-emerald-100 shadow-xs'
+                    ringClassName='ring-2 ring-[#ffd9de] shadow-xs'
                   />
                   <div className='min-w-0'>
-                    <h4 className='font-bold text-slate-900 text-sm sm:text-base leading-tight truncate'>
+                    <h4 className='font-bold text-[#121c2a] text-sm sm:text-base leading-tight truncate'>
                       {name}
                     </h4>
-                    <p className='text-xs text-slate-500 mt-0.5 truncate'>
-                      {targetUserId} • {user?.schoolOrOrg || 'Puskesmas / KUA Rujukan'}
+                    {user?.partnerName && (
+                      <p className='text-[11px] text-[#aa294d] font-semibold flex items-center gap-1 mt-0.5 truncate'>
+                        <Heart size={10} className='fill-[#ffd9de] shrink-0' />
+                        <span className='truncate'>Pasangan: {user.partnerName}</span>
+                      </p>
+                    )}
+                    <p className='text-xs text-[#8b7074] mt-0.5 truncate'>
+                      {user?.schoolOrOrg || 'Puskesmas Gambir - KUA Gambir'}
                     </p>
                   </div>
                 </div>
 
                 {schedule.todayStatus === 'COMPLETED' ? (
-                  <span className='inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 font-extrabold text-[11px] shrink-0'>
-                    <span className='w-1.5 h-1.5 rounded-full bg-emerald-500'></span>
-                    Sudah
+                  <span className='inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#aff1d0] text-[#0a5139] border border-[#6ee7b7] text-[11px] font-extrabold shrink-0'>
+                    <CheckCircle2 size={11} />
+                    <span>Sudah</span>
                   </span>
                 ) : (
-                  <span className='inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 font-extrabold text-[11px] shrink-0'>
-                    <span className='w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse'></span>
-                    Belum
+                  <span className='inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#ffd9de] text-[#8c0f39] border border-[#fca5a5] text-[11px] font-extrabold shrink-0'>
+                    <Clock size={11} className='animate-pulse' />
+                    <span>Belum</span>
                   </span>
                 )}
               </div>
 
               {/* Middle Details Box */}
-              <div className='p-3 rounded-xl bg-emerald-50/40 border border-emerald-100 space-y-1.5 text-xs'>
+              <div className='p-3 rounded-xl bg-[#f8f9ff] border border-[#ffd9de]/60 space-y-2 text-xs'>
                 <div className='flex justify-between items-center'>
-                  <span className='text-slate-500 font-medium'>Vaksin / Layanan:</span>
-                  <span className='font-bold text-slate-900'>{schedule.medicationName}</span>
-                </div>
-
-                <div className='flex justify-between items-center'>
-                  <span className='text-slate-500 font-medium'>Dosis & Aturan:</span>
-                  <span className='font-bold text-slate-800'>
-                    {schedule.dosage} • {schedule.frequency}
+                  <span
+                    className='inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-extrabold border'
+                    style={{
+                      backgroundColor: catStyle.bg,
+                      color: catStyle.text,
+                      borderColor: catStyle.border,
+                    }}
+                  >
+                    <Syringe size={10} />
+                    <span>{cat}</span>
+                  </span>
+                  <span className='font-bold text-[#8c0f39] text-[11px]'>
+                    {schedule.dosage}
                   </span>
                 </div>
 
-                <div className='flex justify-between items-center'>
-                  <span className='text-slate-500 font-medium'>Waktu Layanan:</span>
-                  <span className='font-bold text-slate-800'>
-                    {schedule.frequency === 'Harian' || schedule.frequency === 'daily'
-                      ? 'Setiap Hari'
-                      : schedule.dayOfWeek || 'Sabtu'}
-                    , {schedule.timeSlots.join(', ')} WIB
-                  </span>
+                <div>
+                  <div className='font-bold text-[#121c2a] text-sm'>{schedule.medicationName}</div>
+                  <div className='text-xs text-[#574144] mt-0.5 flex items-center gap-1'>
+                    <Calendar size={11} className='text-[#aa294d]' />
+                    <span>
+                      {schedule.frequency === 'Harian' || schedule.frequency === 'daily'
+                        ? 'Setiap Hari'
+                        : schedule.dayOfWeek || 'Sabtu'}
+                      , {schedule.timeSlots.join(', ')} WIB
+                    </span>
+                  </div>
                 </div>
+
+                {schedule.instructions && (
+                  <p className='text-[11px] text-[#8b7074] italic border-t border-[#eff4ff] pt-1.5'>
+                    "{schedule.instructions}"
+                  </p>
+                )}
               </div>
 
               {/* Actions Row */}
-              <div className='flex items-center justify-between gap-2 pt-1 border-t border-slate-100'>
+              <div className='flex items-center justify-between gap-2 pt-1 border-t border-[#eff4ff]'>
                 <button
                   type='button'
                   onClick={() => handleOpenReminder(schedule)}
-                  className='flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-emerald-600 text-white font-bold text-xs hover:bg-emerald-700 shadow-xs transition-all cursor-pointer min-h-[44px]'
+                  className='flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-[#aa294d] text-white font-bold text-xs hover:bg-[#cb4364] shadow-xs transition-all cursor-pointer min-h-[44px]'
                 >
                   <BellRing size={16} />
                   <span>Ingatkan Catin</span>
@@ -569,7 +664,7 @@ export default function ScheduleManagementView() {
                     type='button'
                     title='Edit Jadwal'
                     onClick={() => onOpenEdit(schedule)}
-                    className='w-11 h-11 rounded-xl bg-slate-100 text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 flex items-center justify-center transition-colors cursor-pointer'
+                    className='w-11 h-11 rounded-xl bg-[#eff4ff] text-[#574144] hover:bg-[#dee9fc] hover:text-[#aa294d] flex items-center justify-center transition-colors cursor-pointer'
                   >
                     <Edit size={16} />
                   </button>
@@ -577,7 +672,7 @@ export default function ScheduleManagementView() {
                     type='button'
                     title='Hapus Jadwal'
                     onClick={() => handleDeleteRequest(schedule.id)}
-                    className='w-11 h-11 rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-100 flex items-center justify-center transition-colors cursor-pointer'
+                    className='w-11 h-11 rounded-xl bg-[#ffd9de]/50 text-[#8c0f39] hover:bg-[#ffd9de] flex items-center justify-center transition-colors cursor-pointer'
                   >
                     <Trash2 size={16} />
                   </button>
@@ -604,7 +699,7 @@ export default function ScheduleManagementView() {
       <ConfirmDeleteDialog
         open={deleteConfirmOpen}
         title='Konfirmasi Hapus'
-        message='Apakah Anda yakin ingin menghapus jadwal ini? Data yang dihapus tidak dapat dikembalikan.'
+        message='Apakah Anda yakin ingin menghapus jadwal ini? Data jadwal yang dihapus tidak dapat dikembalikan.'
         confirmText='Hapus Jadwal'
         onClose={handleCloseDelete}
         onConfirm={handleConfirmDelete}

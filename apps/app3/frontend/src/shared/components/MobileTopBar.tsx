@@ -25,15 +25,15 @@ export default function MobileTopBar({
   avatarUrl,
 }: MobileTopBarProps) {
   return (
-    <header className='sticky top-0 z-40 w-full bg-white/95 backdrop-blur-md border-b border-[#e2e8f0] shadow-2xs'>
-      <div className='w-full px-4 h-14 flex items-center justify-between'>
+    <header className='sticky top-0 z-40 w-full bg-[#ffffff]/92 backdrop-blur-xl border-b border-[#e6eeff] shadow-[0_1px_8px_rgba(170,41,77,0.04)]'>
+      <div className='w-full px-4 h-14 flex items-center justify-between max-w-[430px] mx-auto'>
         {/* Left: Sidebar Toggle Button (if onOpenSidebar provided) + Brand */}
         <div className='flex items-center gap-2.5'>
           {onOpenSidebar && (
             <button
               type='button'
               onClick={onOpenSidebar}
-              className='w-9 h-9 rounded-xl bg-[#fafaf9] border border-[#e2e8f0] text-[#0f172a] hover:text-[#059669] hover:bg-[#ecfdf5] flex items-center justify-center transition-colors cursor-pointer shrink-0'
+              className='w-9 h-9 rounded-xl bg-[#f8f9ff] border border-[#e6eeff] text-[#121c2a] hover:text-[#aa294d] hover:bg-[#ffd9de]/40 flex items-center justify-center transition-colors cursor-pointer shrink-0'
               aria-label='Buka Menu Navigasi'
             >
               <Menu size={20} />
@@ -41,13 +41,13 @@ export default function MobileTopBar({
           )}
 
           <Link to={brandHref} className='flex items-center gap-2.5 text-inherit no-underline'>
-            <div className='w-8 h-8 rounded-xl bg-gradient-to-tr from-[#059669] to-[#10b981] text-white flex items-center justify-center shadow-xs shadow-emerald-700/20 shrink-0'>
+            <div className='w-8 h-8 rounded-xl bg-gradient-to-tr from-[#aa294d] to-[#cb4364] text-white flex items-center justify-center shadow-xs shadow-rose-900/20 shrink-0'>
               <ShieldCheck size={18} className='text-white' />
             </div>
 
             <div className='flex flex-col'>
               <div className='flex items-center gap-1.5'>
-                <span className='text-sm font-bold text-[#0f172a] leading-tight'>
+                <span className='text-sm font-bold text-[#121c2a] leading-tight'>
                   {brandTitle || `Hai, ${userName}`}
                 </span>
                 {badge}
@@ -57,7 +57,7 @@ export default function MobileTopBar({
                   {brandSubtitle}
                 </span>
               ) : (
-                <span className='text-[10px] sm:text-[11px] text-[#059669] font-medium leading-none'>
+                <span className='text-[10px] sm:text-[11px] text-[#aa294d] font-semibold leading-none'>
                   PRELUNA Pranikah
                 </span>
               )}
@@ -73,11 +73,11 @@ export default function MobileTopBar({
             {/* Notification Bell */}
             <Link
               to={brandHref}
-              className='w-9 h-9 rounded-full bg-[#fafaf9] border border-[#e2e8f0] flex items-center justify-center text-[#475569] hover:text-[#059669] hover:bg-[#ecfdf5] transition-colors relative'
+              className='w-9 h-9 rounded-full bg-[#f8f9ff] border border-[#e6eeff] flex items-center justify-center text-[#475569] hover:text-[#aa294d] hover:bg-[#ffd9de]/50 transition-colors relative'
               aria-label='Notifikasi'
             >
               <Bell size={17} />
-              <span className='absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#d97706] ring-2 ring-white' />
+              <span className='absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#aa294d] ring-2 ring-white' />
             </Link>
 
             {/* Profile Avatar */}
@@ -90,7 +90,7 @@ export default function MobileTopBar({
                 src={avatarUrl}
                 name={userName}
                 size='sm'
-                ringClassName='ring-2 ring-emerald-200 hover:ring-[#059669]'
+                ringClassName='ring-2 ring-[#ffd9de] hover:ring-[#aa294d]'
               />
             </Link>
           </div>

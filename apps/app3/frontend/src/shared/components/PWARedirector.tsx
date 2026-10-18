@@ -7,7 +7,7 @@ export default function PWARedirector() {
 
   useEffect(() => {
     if (isStandalonePWA()) {
-      navigate('/splash', { replace: true });
+      navigate('/', { replace: true });
     }
   }, [navigate]);
 

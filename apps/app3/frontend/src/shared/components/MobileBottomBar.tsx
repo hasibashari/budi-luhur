@@ -1,19 +1,24 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, CalendarCheck, Clock, BookOpen, User } from 'lucide-react';
+import { Home, BookOpen, ShieldCheck, User } from 'lucide-react';
 
 export interface BottomNavItem {
   name: string;
   href: string;
   icon: React.ComponentType<{ size?: number; className?: string; strokeWidth?: number }>;
+  matchPrefixes?: string[];
 }
 
 export const USER_BOTTOM_NAV_ITEMS: BottomNavItem[] = [
   { name: 'Beranda', href: '/user/dashboard', icon: Home },
-  { name: 'Riwayat TT', href: '/user/history', icon: CalendarCheck },
-  { name: 'Jadwal TT', href: '/user/schedule', icon: Clock },
-  { name: 'Edukasi', href: '/user/education', icon: BookOpen },
-  { name: 'Profil Catin', href: '/user/profile', icon: User },
+  { name: 'Edukasi', href: '/user/education', icon: BookOpen, matchPrefixes: ['/user/education'] },
+  {
+    name: 'Imunisasi',
+    href: '/user/imunisasi',
+    icon: ShieldCheck,
+    matchPrefixes: ['/user/imunisasi', '/user/history', '/user/schedule'],
+  },
+  { name: 'Profil', href: '/user/profile', icon: User, matchPrefixes: ['/user/profile'] },
 ];
 
 export interface MobileBottomBarProps {
@@ -26,14 +31,14 @@ export default function MobileBottomBar({ items = USER_BOTTOM_NAV_ITEMS }: Mobil
 
   return (
     <nav
-      aria-label='Navigasi Bawah Mobile'
-      className='fixed bottom-0 left-0 right-0 z-50 md:hidden bg-white/95 backdrop-blur-md border-t border-[#e2e8f0] shadow-[0_-4px_16px_rgba(5,150,105,0.06)]'
-      style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
+      aria-label='Navigasi Bawah PRELUNA'
+      className='fixed bottom-0 left-0 right-0 z-50 md:hidden bg-[#ffffff]/92 backdrop-blur-xl border-t border-[#e6eeff] shadow-[0_-4px_20px_rgba(170,41,77,0.06)] pb-safe'
     >
-      <div className='max-w-md mx-auto h-16 px-2 flex items-center justify-around'>
+      <div className='max-w-[430px] mx-auto h-16 px-3 flex items-center justify-around'>
         {items.map(item => {
           const isActive =
             pathname === item.href ||
+            (item.matchPrefixes && item.matchPrefixes.some(prefix => pathname?.startsWith(prefix))) ||
             (item.href !== '/user/dashboard' && pathname?.startsWith(item.href));
           const Icon = item.icon;
 
@@ -41,25 +46,25 @@ export default function MobileBottomBar({ items = USER_BOTTOM_NAV_ITEMS }: Mobil
             <Link
               key={item.name}
               to={item.href}
-              className={`flex flex-col items-center justify-center min-w-[56px] h-full py-1 px-1.5 rounded-xl transition-all duration-150 relative select-none ${
-                isActive ? 'text-[#059669]' : 'text-[#64748b] hover:text-[#059669]'
+              className={`flex flex-col items-center justify-center min-w-[64px] h-full py-1 px-1 rounded-2xl transition-all duration-200 relative select-none ${
+                isActive ? 'text-[#aa294d]' : 'text-[#64748b] hover:text-[#aa294d]'
               }`}
             >
               <div
-                className={`flex items-center justify-center w-10 h-7 rounded-xl transition-all duration-200 ${
-                  isActive ? 'bg-[#ecfdf5] scale-105' : 'bg-transparent'
+                className={`flex items-center justify-center w-12 h-7 rounded-full transition-all duration-200 ${
+                  isActive ? 'bg-[#ffd9de]/80 scale-105 shadow-2xs' : 'bg-transparent'
                 }`}
               >
                 <Icon
-                  size={20}
-                  strokeWidth={isActive ? 2.5 : 1.8}
-                  className={isActive ? 'text-[#059669]' : 'text-[#64748b]'}
+                  size={21}
+                  strokeWidth={isActive ? 2.4 : 1.8}
+                  className={isActive ? 'text-[#aa294d]' : 'text-[#64748b]'}
                 />
               </div>
 
               <span
-                className={`text-[10px] mt-0.5 tracking-tight font-medium ${
-                  isActive ? 'text-[#059669] font-bold' : 'text-[#64748b]'
+                className={`text-[11px] mt-0.5 tracking-tight ${
+                  isActive ? 'text-[#aa294d] font-bold' : 'text-[#64748b] font-medium'
                 }`}
               >
                 {item.name}

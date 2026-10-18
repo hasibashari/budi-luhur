@@ -24,6 +24,10 @@ export interface ManagedUser {
   joinDate: string;
   medicalNotes?: string;
   lastReminderSent?: string;
+  weddingDate?: string;
+  ttStatus?: 'TT0' | 'TT1' | 'TT2' | 'TT3' | 'TT4' | 'TT5';
+  kuaStatus?: 'Terverifikasi' | 'Menunggu Skrining' | 'Belum Lengkap';
+  partnerName?: string;
 }
 
 import type { ScheduleCategory } from '../constants/schedule.constants';

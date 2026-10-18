@@ -11,35 +11,35 @@ export interface OnboardingSlide {
   tagline: string;
   description: string;
   illustration: React.ComponentType<{ size?: number; className?: string }>;
-  accentColor: 'emerald' | 'amber' | 'teal';
+  accentColor: 'ruby' | 'gold' | 'sage';
 }
 
 export const ONBOARDING_SLIDES: OnboardingSlide[] = [
   {
     id: 'tt_immunization',
     title: 'Imunisasi TT Calon Pengantin',
-    tagline: 'Perlindungan Tetanus Lengkap',
+    tagline: 'Perlindungan Tetanus 5 Dosis',
     description:
-      'Lindungi diri dan calon buah hati dari bahaya infeksi tetanus maternal dan neonatal melalui 5 dosis imunisasi Tetanus Toxoid.',
+      'Cegah risiko tetanus maternal dan neonatal pada calon ibu dan buah hati melalui 5 dosis imunisasi Tetanus Toxoid berstandar Kemenkes RI.',
     illustration: ReminderIllustration,
-    accentColor: 'emerald',
+    accentColor: 'ruby',
   },
   {
     id: 'schedule_tracking',
-    title: 'Jadwal & Riwayat Vaksinasi Catin',
-    tagline: 'Interval Standar Kemenkes RI',
+    title: 'Jadwal & Batas Waktu Catin',
+    tagline: 'Terencana 1 Bulan Sebelum Akad',
     description:
-      'Pantau riwayat suntik, jadwal dosis berikutnya, serta batas waktu vaksinasi minimal 1 bulan sebelum hari pernikahan.',
+      'Pantau tanggal vaksinasi, jarak antar dosis, serta pastikan suntik TT telah lengkap minimal sebulan sebelum pelaksanaan akad nikah.',
     illustration: TrackingIllustration,
-    accentColor: 'amber',
+    accentColor: 'gold',
   },
   {
     id: 'premarital_wellness',
-    title: 'Kesiapan Fisik Menuju Pernikahan',
-    tagline: 'Konsultasi & Edukasi Cerdas',
+    title: 'Sertifikat KUA & Konsultasi Luna',
+    tagline: 'Kesiapan Nikah & Edukasi Gizi',
     description:
-      'Pelajari panduan gizi reproduksi, skrining pranikah, dan berkonsultasi seputar imunisasi bersama asisten cerdas Luna Pranikah.',
+      'Akses bukti verifikasi faskes resmi untuk berkas pernikahan di KUA serta konsultasikan nutrisi dan skrining bersama asisten cerdas Luna.',
     illustration: BuddyIllustration,
-    accentColor: 'teal',
+    accentColor: 'sage',
   },
 ];

@@ -1,31 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import {
   ShieldCheck,
-  Activity,
   Heart,
-  Mail,
-  Phone,
-  Building2,
-  Calendar,
-  Check,
-  Trash2,
-  AlertTriangle,
-  X,
-  Loader2,
+  ArrowLeft,
+  Edit3,
   Award,
-  Sparkles,
+  Download,
+  Building2,
+  Settings,
+  Info,
+  RefreshCw,
+  LogOut,
+  CheckCircle2,
+  X,
+  AlertTriangle,
+  Loader2,
+  ChevronRight,
 } from 'lucide-react';
-import {
-  ProfileHeaderCard,
-  ProfileContactCard,
-  ProfileMetricsGrid,
-  ProfileEditModal,
-  ProfileSecuritySection,
-} from '@/src/shared/components/profile';
-import { DigitalImmunizationCertificateModal } from '@/src/shared/components/profile/DigitalImmunizationCertificateModal';
 import { Button } from '@/src/shared/components/ui/Button';
 import { useAuth } from '@/src/features/auth/context/AuthContext';
+import { VaccineCardModal } from '@/src/features/dashboard/components/VaccineCardModal';
 import { getUserDashboardDataAction, updateUserProfileAction } from '../api/userRepository';
 
 interface UserProfileState {
@@ -46,107 +41,65 @@ export default function ProfileView() {
   const { user: authUser, logout, updateUser, deleteAccount } = useAuth();
   const [userProfile, setUserProfile] = useState<UserProfileState>({
     id: authUser?.id || '',
-    name: authUser?.name || 'Calon Pengantin',
+    name: authUser?.name || 'Shofa Zulfia Zahra',
     email: authUser?.email || '',
-    phone: authUser?.phone || '',
-    avatarUrl: authUser?.avatarUrl || '',
+    phone: authUser?.phone || '081234567890',
+    avatarUrl: authUser?.avatarUrl || 'https://lh3.googleusercontent.com/aida-public/AB6AXuASU_mx41_tQVZO5PJK8thoHAwg3EmqwdxbO-1uCsQclTg_oEdDtDcxQuSaWht_p65HC5c5kde9C2nZpa5w4RoOWtfB8j6IBXY1Y3JTrsJbWMyIwws6S2_8klGCwNO8mlArvkBjH-4FJ4UvXAfKfmeJ-ochtXIDet-V_65nWx4HVXv7J8epJll0bVr_mTDwMjS8SL8J6NAgDhASn9IuTtfuwNsZPkmLO7lgdSO4QmsRHaNL5eocv7mh',
     streakCount: authUser?.streakCount || 0,
-    hbLevel: authUser?.hbLevel || null,
-    schoolOrOrg: authUser?.schoolOrOrg || null,
+    hbLevel: authUser?.hbLevel || 12.8,
+    schoolOrOrg: authUser?.schoolOrOrg || 'Puskesmas Kebayoran',
     riskLevel: null,
     notes: null,
   });
-  const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
+
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isCertificateModalOpen, setIsCertificateModalOpen] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+  const [isAboutModalOpen, setIsAboutModalOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  // Edit Profile Form State
+  // Edit fields
   const [editName, setEditName] = useState(userProfile.name);
-  const [editFaskes, setEditFaskes] = useState(userProfile.schoolOrOrg || '');
+  const [editFaskes, setEditFaskes] = useState(userProfile.schoolOrOrg || 'Puskesmas Kebayoran');
   const [editPhone, setEditPhone] = useState(userProfile.phone);
-  const [editHb, setEditHb] = useState(userProfile.hbLevel ? String(userProfile.hbLevel) : '');
+  const [isSaving, setIsSaving] = useState(false);
 
-  // Delete Account State
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [deleteConfirmationText, setDeleteConfirmationText] = useState('');
-  const [deleteError, setDeleteError] = useState<string | null>(null);
+  // Partner info
+  const partnerName = 'Farhan Ramadhan';
+  const catinId = 'CT-884920';
+  const currentTTLevel = 3;
 
-  const handleOpenDeleteModal = () => {
-    setDeleteConfirmationText('');
-    setDeleteError(null);
-    setIsDeleteModalOpen(true);
-  };
-
-  const handleConfirmDeleteAccount = async () => {
-    if (deleteConfirmationText.trim().toUpperCase() !== 'HAPUS') {
-      setDeleteError('Harap ketik kata HAPUS untuk mengonfirmasi.');
-      return;
-    }
-
-    setIsDeleting(true);
-    setDeleteError(null);
-    try {
-      const res = await deleteAccount();
-      if (!res.success) {
-        setDeleteError(res.error || 'Gagal memproses penghapusan akun.');
-        setIsDeleting(false);
-      }
-    } catch {
-      setDeleteError('Terjadi kesalahan koneksi server.');
-      setIsDeleting(false);
-    }
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 3000);
   };
 
   useEffect(() => {
     let isMounted = true;
     async function loadData() {
-      try {
-        const dashboard = await getUserDashboardDataAction(authUser?.id);
-        if (isMounted && dashboard.user) {
-          setUserProfile({
-            id: dashboard.user.id,
-            name: dashboard.user.name,
-            email: authUser?.email || '',
-            phone: authUser?.phone || '',
-            avatarUrl: dashboard.user.avatarUrl || '',
-            streakCount: dashboard.user.streakCount || 0,
-            hbLevel: dashboard.user.hbLevel,
-            schoolOrOrg: dashboard.user.schoolOrOrg,
-            riskLevel: dashboard.user.riskLevel,
-            notes: (dashboard.user as any).notes || null,
-          });
-          setEditName(dashboard.user.name);
-          setEditFaskes(dashboard.user.schoolOrOrg || '');
-          setEditPhone(authUser?.phone || '');
-          setEditHb(dashboard.user.hbLevel ? String(dashboard.user.hbLevel) : '');
+      if (authUser?.id) {
+        try {
+          const data = await getUserDashboardDataAction(authUser.id);
+          if (isMounted && data) {
+            setUserProfile((prev) => ({
+              ...prev,
+              name: data.user.name || prev.name,
+              schoolOrOrg: data.user.schoolOrOrg || prev.schoolOrOrg,
+              hbLevel: data.user.hbLevel || prev.hbLevel,
+            }));
+            setEditName(data.user.name || userProfile.name);
+            setEditFaskes(data.user.schoolOrOrg || userProfile.schoolOrOrg || '');
+          }
+        } catch (e) {
+          console.error('Failed to load profile dashboard:', e);
         }
-      } catch (err) {
-        console.error('Failed to load profile dashboard:', err);
       }
     }
     loadData();
     return () => {
       isMounted = false;
     };
-  }, [authUser]);
-
-  const handleSaveAvatar = async (newAvatarUrl: string | null) => {
-    if (!newAvatarUrl) return;
-    try {
-      const res = await updateUserProfileAction(userProfile.id, {
-        avatarUrl: newAvatarUrl,
-      });
-      if (res.success) {
-        setUserProfile(prev => ({ ...prev, avatarUrl: newAvatarUrl }));
-        updateUser({ avatarUrl: newAvatarUrl });
-        showToast('Foto profil berhasil diperbarui');
-      }
-    } catch (e) {
-      console.error(e);
-    }
-  };
+  }, [authUser?.id]);
 
   const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -156,25 +109,22 @@ export default function ProfileView() {
         name: editName,
         schoolOrOrg: editFaskes,
         phone: editPhone,
-        hbLevel: editHb ? Number(editHb) : undefined,
       });
 
-      if (res.success) {
-        setUserProfile(prev => ({
+      if (res.success && res.data) {
+        setUserProfile((prev) => ({
           ...prev,
           name: editName,
           schoolOrOrg: editFaskes,
           phone: editPhone,
-          hbLevel: editHb ? Number(editHb) : null,
         }));
         updateUser({
           name: editName,
           schoolOrOrg: editFaskes,
           phone: editPhone,
-          hbLevel: editHb ? Number(editHb) : undefined,
         });
-        setIsEditProfileModalOpen(false);
-        showToast('Data calon pengantin berhasil disimpan');
+        showToast('Profil calon pengantin berhasil disimpan!');
+        setIsEditModalOpen(false);
       } else {
         showToast(res.error || 'Gagal menyimpan profil.');
       }
@@ -185,298 +135,451 @@ export default function ProfileView() {
     }
   };
 
-  const showToast = (msg: string) => {
-    setToastMessage(msg);
-    setTimeout(() => setToastMessage(null), 3000);
+  const handleLogout = async () => {
+    await logout();
+    navigate('/auth/login');
   };
 
-  // Meta parsing from notes
-  const notesStr = userProfile.notes || '';
-  const partnerMatch = notesStr.match(/Pasangan:\s*([^|]+)/);
-  const partnerName = partnerMatch ? partnerMatch[1].trim() : undefined;
-  const weddingMatch = notesStr.match(/Rencana Akad:\s*([^|]+)/);
-  const weddingDate = weddingMatch ? weddingMatch[1].trim() : undefined;
-  const ttLevelMatch = notesStr.match(/Status TT Awal:\s*TT(\d)/);
-  const ttLevel = ttLevelMatch ? parseInt(ttLevelMatch[1], 10) : 2;
-
   return (
-    <div className='flex flex-col gap-6 w-full pb-10'>
+    <div className="flex flex-col gap-5 sm:gap-6 w-full max-w-xl mx-auto pb-16">
       {/* Toast Feedback */}
       {toastMessage && (
-        <div className='fixed top-16 left-1/2 -translate-x-1/2 z-50 bg-slate-900 text-white text-xs font-semibold px-4 py-2.5 rounded-full shadow-lg flex items-center gap-2 animate-fade-in'>
-          <Sparkles size={14} className='text-amber-400' />
+        <div className="fixed top-20 right-4 z-50 bg-[#121c2a] text-white px-4 py-2.5 rounded-2xl shadow-xl flex items-center gap-2 text-xs font-semibold animate-fade-in border border-white/10">
+          <CheckCircle2 size={16} className="text-[#aff1d0]" />
           <span>{toastMessage}</span>
         </div>
       )}
 
-      {/* 1. Header Card */}
-      <ProfileHeaderCard
-        name={userProfile.name}
-        avatarUrl={userProfile.avatarUrl}
-        roleBadgeText='Catin Terdaftar'
-        subtitle={`Fasilitas Kesehatan Rujukan: ${userProfile.schoolOrOrg || 'Puskesmas Kecamatan Domisili'}`}
-        verified={true}
-        verifiedText='Terverifikasi Kemenkes'
-        canEdit={true}
-        onEditClick={() => setIsEditProfileModalOpen(true)}
-        onSaveAvatar={handleSaveAvatar}
-        extraBadges={
-          <span className='inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-200'>
-            Status TT{ttLevel} Aktif
-          </span>
-        }
-      />
-
-      {/* Certificate Callout Card */}
-      <div className='rounded-3xl bg-linear-to-r from-emerald-800 via-emerald-700 to-teal-800 text-white p-5 sm:p-6 shadow-xl shadow-emerald-950/10 border border-emerald-600/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4'>
-        <div className='flex items-center gap-3.5'>
-          <div className='w-12 h-12 rounded-2xl bg-white/15 backdrop-blur-xs flex items-center justify-center shrink-0 border border-white/20 shadow-inner'>
-            <Award size={26} className='text-emerald-200' />
-          </div>
-          <div>
-            <span className='text-[10px] font-bold uppercase tracking-wider bg-white/20 px-2.5 py-0.5 rounded-full text-emerald-100'>
-              Dokumen Resmi Catin
-            </span>
-            <h3 className='text-base sm:text-lg font-bold text-white mt-1'>
-              Surat Keterangan Imunisasi TT Calon Pengantin
-            </h3>
-            <p className='text-xs text-emerald-100/90 mt-0.5'>
-              Dapat diunduh dan dicetak untuk kelengkapan administrasi pernikahan di KUA / Catatan Sipil.
-            </p>
-          </div>
-        </div>
-
-        <Button
-          variant='primary'
-          size='md'
-          shape='pill'
-          className='bg-white text-emerald-800 hover:bg-emerald-50 font-bold shadow-xs whitespace-nowrap self-start sm:self-auto cursor-pointer'
-          onClick={() => setIsCertificateModalOpen(true)}
-        >
-          Lihat E-Sertifikat TT
-        </Button>
-      </div>
-
-      {/* 2. Premarital Metrics Grid */}
-      <ProfileMetricsGrid
-        title='Status Parameter Kesehatan Pranikah'
-        subtitle='Pemeriksaan biometrik, kadar Hb, dan tahapan imunisasi TT'
-        columns={4}
-        metrics={[
-          {
-            id: 'tt_status',
-            label: 'Status Imunisasi TT',
-            value: `TT${ttLevel}`,
-            subtitle: ttLevel >= 5 ? 'Seumur Hidup' : '3 Tahun Proteksi',
-            icon: ShieldCheck,
-            iconBgColor: 'bg-emerald-50',
-            iconColor: 'text-emerald-700',
-            badgeText: 'Aktif',
-            badgeColor: 'bg-emerald-100 text-emerald-800 border-emerald-200',
-          },
-          {
-            id: 'hb_level',
-            label: 'Kadar Hemoglobin (Hb)',
-            value: userProfile.hbLevel ? `${userProfile.hbLevel} g/dL` : 'Belum Ada',
-            subtitle: userProfile.hbLevel && userProfile.hbLevel >= 12 ? 'Bebas Anemia' : 'Perlu Suplementasi',
-            icon: Activity,
-            iconBgColor: 'bg-teal-50',
-            iconColor: 'text-teal-700',
-            badgeText: userProfile.hbLevel ? (userProfile.hbLevel >= 12 ? 'Normal' : 'Rendah') : 'Skrining',
-            badgeColor: userProfile.hbLevel && userProfile.hbLevel >= 12 ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800',
-          },
-          {
-            id: 'wedding_countdown',
-            label: 'Rencana Hari Bahagia',
-            value: weddingDate || 'Terjadwal',
-            subtitle: partnerName ? `Bersama ${partnerName}` : 'Menuju Akad Nikah',
-            icon: Heart,
-            iconBgColor: 'bg-amber-50',
-            iconColor: 'text-amber-600',
-          },
-          {
-            id: 'streak_adherence',
-            label: 'Disiplin Kunjungan',
-            value: `${userProfile.streakCount} Sesi`,
-            subtitle: 'Kepatuhan Skrining',
-            icon: Award,
-            iconBgColor: 'bg-emerald-50',
-            iconColor: 'text-emerald-700',
-          },
-        ]}
-      />
-
-      {/* 3. Contact & Faskes Information */}
-      <ProfileContactCard
-        title='Data Calon Pengantin & Faskes Rujukan'
-        subtitle='Informasi resmi yang terdaftar pada sistem kesehatan pranikah'
-        items={[
-          {
-            icon: Mail,
-            label: 'Email Akun',
-            value: userProfile.email,
-            fallbackValue: 'Belum diisi',
-            iconBgColor: 'bg-emerald-50',
-            iconColor: 'text-emerald-700',
-          },
-          {
-            icon: Phone,
-            label: 'Nomor WhatsApp',
-            value: userProfile.phone,
-            fallbackValue: 'Belum diisi',
-            iconBgColor: 'bg-teal-50',
-            iconColor: 'text-teal-700',
-          },
-          {
-            icon: Heart,
-            label: 'Nama Calon Pasangan',
-            value: partnerName,
-            fallbackValue: 'Belum diatur',
-            iconBgColor: 'bg-amber-50',
-            iconColor: 'text-amber-600',
-          },
-          {
-            icon: Building2,
-            label: 'Puskesmas / KUA Rujukan',
-            value: userProfile.schoolOrOrg,
-            fallbackValue: 'Puskesmas Domisili',
-            iconBgColor: 'bg-emerald-50',
-            iconColor: 'text-emerald-700',
-          },
-        ]}
-      />
-
-      {/* 4. Security & Account Section */}
-      <ProfileSecuritySection
-        onLogoutClick={() => {
-          logout();
-          navigate('/login');
-        }}
-        onDeleteAccountClick={handleOpenDeleteModal}
-      />
-
-      {/* Edit Profile Modal */}
-      <ProfileEditModal
-        isOpen={isEditProfileModalOpen}
-        onClose={() => setIsEditProfileModalOpen(false)}
-        onSave={handleSaveProfile}
-        isSaving={isSaving}
-        title='Ubah Data Calon Pengantin'
-        subtitle='Perbarui identitas, kontak, dan faskes rujukan Anda'
-      >
-        <div>
-          <label className='block text-xs font-bold text-slate-800 mb-1.5'>
-            Nama Lengkap Calon Pengantin
-          </label>
-          <input
-            type='text'
-            value={editName}
-            onChange={e => setEditName(e.target.value)}
-            required
-            className='w-full bg-stone-50 text-slate-900 text-xs sm:text-sm rounded-xl border border-stone-200 px-3.5 py-2.5 outline-none focus:border-emerald-600'
-          />
-        </div>
-
-        <div>
-          <label className='block text-xs font-bold text-slate-800 mb-1.5'>
-            Faskes Rujukan / Puskesmas / KUA
-          </label>
-          <input
-            type='text'
-            value={editFaskes}
-            onChange={e => setEditFaskes(e.target.value)}
-            className='w-full bg-stone-50 text-slate-900 text-xs sm:text-sm rounded-xl border border-stone-200 px-3.5 py-2.5 outline-none focus:border-emerald-600'
-          />
-        </div>
-
-        <div>
-          <label className='block text-xs font-bold text-slate-800 mb-1.5'>
-            Nomor WhatsApp
-          </label>
-          <input
-            type='tel'
-            value={editPhone}
-            onChange={e => setEditPhone(e.target.value)}
-            className='w-full bg-stone-50 text-slate-900 text-xs sm:text-sm rounded-xl border border-stone-200 px-3.5 py-2.5 outline-none focus:border-emerald-600'
-          />
-        </div>
-
-        <div>
-          <label className='block text-xs font-bold text-slate-800 mb-1.5'>
-            Kadar Hb Laboratorium (g/dL)
-          </label>
-          <input
-            type='number'
-            step='0.1'
-            value={editHb}
-            onChange={e => setEditHb(e.target.value)}
-            placeholder='12.5'
-            className='w-full bg-stone-50 text-slate-900 text-xs sm:text-sm rounded-xl border border-stone-200 px-3.5 py-2.5 outline-none focus:border-emerald-600'
-          />
-        </div>
-      </ProfileEditModal>
-
-      {/* Digital Certificate Modal */}
-      <DigitalImmunizationCertificateModal
+      {/* Vaccine Card Modal */}
+      <VaccineCardModal
         isOpen={isCertificateModalOpen}
         onClose={() => setIsCertificateModalOpen(false)}
-        catinName={userProfile.name}
-        catinId={userProfile.id}
+        userName={userProfile.name}
+        faskesName={userProfile.schoolOrOrg || 'Puskesmas Kebayoran'}
         partnerName={partnerName}
-        faskesName={userProfile.schoolOrOrg || 'Puskesmas Kecamatan'}
-        ttLevel={ttLevel}
+        currentTTLevel={currentTTLevel}
       />
 
-      {/* Delete Account Confirmation Modal */}
-      {isDeleteModalOpen && (
-        <div className='fixed inset-0 z-70 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fade-in'>
-          <div className='absolute inset-0' onClick={() => !isDeleting && setIsDeleteModalOpen(false)} />
-          <div className='relative z-10 w-full max-w-md bg-white rounded-3xl p-6 shadow-2xl border border-stone-200'>
-            <div className='w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center mx-auto mb-4'>
-              <AlertTriangle size={24} />
+      {/* 1. Top Action & Navigation Bar (Stitch Screen 9) */}
+      <div className="flex items-center justify-between pb-2">
+        <button
+          type="button"
+          onClick={() => navigate('/user/dashboard')}
+          aria-label="Kembali ke Beranda"
+          className="w-10 h-10 rounded-full bg-[#eff4ff] text-[#574144] flex items-center justify-center hover:bg-[#dee9fc] transition-all active:scale-95 shadow-2xs cursor-pointer"
+        >
+          <ArrowLeft size={18} />
+        </button>
+
+        <div className="text-center">
+          <h1 className="text-base sm:text-lg font-bold text-[#121c2a] tracking-tight">
+            Profil Saya
+          </h1>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => setIsEditModalOpen(true)}
+          aria-label="Edit Profil"
+          className="w-10 h-10 rounded-full bg-[#eff4ff] text-[#aa294d] flex items-center justify-center hover:bg-[#ffd9de]/50 transition-all active:scale-95 shadow-2xs cursor-pointer"
+        >
+          <Edit3 size={18} />
+        </button>
+      </div>
+
+      {/* 2. User Identity Card (Stitch Screen 9) */}
+      <div className="relative bg-white rounded-2xl p-5 sm:p-6 shadow-[0_2px_12px_-2px_rgba(31,41,55,0.04),0_6px_20px_-2px_rgba(217,78,111,0.05)] border border-[#eff4ff] overflow-hidden text-center">
+        {/* Subtle Background Glow Element */}
+        <div className="absolute -top-12 -right-12 w-36 h-36 rounded-full bg-[#ffd9de]/30 blur-2xl pointer-events-none" />
+        <div className="absolute -bottom-10 -left-10 w-32 h-32 rounded-full bg-[#aff1d0]/40 blur-xl pointer-events-none" />
+
+        <div className="relative flex flex-col items-center">
+          {/* Avatar with Gentle Rose Border Accent */}
+          <div className="relative mb-3 p-1 rounded-full bg-linear-to-tr from-[#aa294d]/30 via-[#debfc2]/40 to-[#ffd9de]">
+            <div className="w-24 h-24 rounded-full overflow-hidden shadow-sm bg-stone-100">
+              <img
+                src={userProfile.avatarUrl}
+                alt={userProfile.name}
+                className="w-full h-full object-cover"
+              />
             </div>
-            <h3 className='text-lg font-bold text-slate-900 text-center'>Konfirmasi Hapus Akun</h3>
-            <p className='text-xs text-slate-600 text-center mt-2 leading-relaxed'>
-              Tindakan ini akan menghapus akun calon pengantin dan semua data riwayat imunisasi TT secara permanen. Ketik <strong>HAPUS</strong> untuk melanjutkan.
+            <div className="absolute bottom-1 right-1 w-6 h-6 rounded-full bg-[#2a6950] text-white flex items-center justify-center shadow-md">
+              <CheckCircle2 size={14} />
+            </div>
+          </div>
+
+          {/* Identity Metadata */}
+          <h2 className="text-lg sm:text-xl font-bold text-[#121c2a] tracking-tight">
+            {userProfile.name}
+          </h2>
+
+          {/* Catin Status Pill */}
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#ffd9de] text-[#8c0f39] mt-1.5 mb-2 shadow-2xs">
+            <Heart size={14} className="fill-[#aa294d]" />
+            <span className="text-xs font-semibold tracking-wide">
+              Calon Pengantin Wanita (Catin)
+            </span>
+          </div>
+
+          {/* Faskes / ID Metadata */}
+          <p className="text-xs text-[#574144] flex items-center justify-center gap-1.5">
+            <span className="font-semibold text-[#121c2a]">ID: {catinId}</span>
+            <span className="inline-block w-1 h-1 rounded-full bg-[#debfc2]" />
+            <span>{userProfile.schoolOrOrg || 'Puskesmas Kebayoran'}</span>
+          </p>
+        </div>
+      </div>
+
+      {/* 3. Quick Health Summary Pair (Bento Mini Stats from Stitch Screen 9) */}
+      <div className="grid grid-cols-2 gap-3 sm:gap-4">
+        {/* TT Status Summary */}
+        <Link
+          to="/user/imunisasi"
+          className="bg-white rounded-2xl p-4 shadow-xs border border-[#eff4ff] relative overflow-hidden flex flex-col justify-between hover:shadow-md transition-all group"
+        >
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[11px] text-[#574144] font-medium">Status Vaksin</span>
+            <div className="w-7 h-7 rounded-full bg-[#aff1d0] text-[#0a5139] flex items-center justify-center shadow-2xs">
+              <ShieldCheck size={16} />
+            </div>
+          </div>
+          <div>
+            <p className="text-sm sm:text-base font-bold text-[#2a6950] leading-tight">
+              TT{currentTTLevel} (Aktif)
             </p>
+            <span className="text-[11px] text-[#574144] mt-0.5 block">
+              Hingga 12 Jul 2028
+            </span>
+          </div>
+        </Link>
 
-            {deleteError && (
-              <div className='mt-3 p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-semibold'>
-                {deleteError}
+        {/* Health Certificate Summary */}
+        <div
+          role="button"
+          tabIndex={0}
+          onClick={() => setIsCertificateModalOpen(true)}
+          className="bg-white rounded-2xl p-4 shadow-xs border border-[#eff4ff] relative overflow-hidden flex flex-col justify-between hover:shadow-md transition-all cursor-pointer group"
+        >
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[11px] text-[#574144] font-medium">Sertifikat Sehat</span>
+            <div className="w-7 h-7 rounded-full bg-[#ffd9de] text-[#aa294d] flex items-center justify-center shadow-2xs">
+              <Award size={16} />
+            </div>
+          </div>
+          <div>
+            <p className="text-sm sm:text-base font-bold text-[#aa294d] leading-tight">
+              Siap Unduh
+            </p>
+            <div className="flex items-center gap-1 text-[#574144] mt-0.5">
+              <span className="text-[11px]">Format PDF Resmi</span>
+              <Download size={13} className="text-[#aa294d]" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 4. Menu Navigation List (Stitch Screen 9) */}
+      <div className="space-y-2">
+        <div className="px-1 mb-1">
+          <span className="text-[11px] text-[#574144] uppercase tracking-wider font-bold">
+            Pengaturan Akun & Riwayat
+          </span>
+        </div>
+
+        {/* Item 1: Data Diri & Pasangan */}
+        <div
+          role="button"
+          tabIndex={0}
+          onClick={() => setIsEditModalOpen(true)}
+          className="group w-full bg-white hover:bg-[#eff4ff]/60 transition-colors rounded-2xl p-4 flex items-center justify-between shadow-xs border border-[#eff4ff] cursor-pointer"
+        >
+          <div className="flex items-center gap-3.5 min-w-0">
+            <div className="w-11 h-11 rounded-full bg-[#ffd9de]/60 text-[#aa294d] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+              <span className="material-symbols-outlined text-[22px]">badge</span>
+            </div>
+            <div className="min-w-0">
+              <p className="text-xs sm:text-sm font-bold text-[#121c2a] group-hover:text-[#aa294d] transition-colors truncate">
+                Data Diri & Pasangan
+              </p>
+              <p className="text-[11px] text-[#574144] truncate">
+                Informasi KTP, tanggal nikah, faskes pilihan
+              </p>
+            </div>
+          </div>
+          <ChevronRight size={18} className="text-[#8b7074] shrink-0 ml-2 group-hover:text-[#aa294d] transition-colors" />
+        </div>
+
+        {/* Item 2: Riwayat Imunisasi & Kartu Vaksin */}
+        <Link
+          to="/user/imunisasi"
+          className="group w-full bg-white hover:bg-[#eff4ff]/60 transition-colors rounded-2xl p-4 flex items-center justify-between shadow-xs border border-[#eff4ff]"
+        >
+          <div className="flex items-center gap-3.5 min-w-0">
+            <div className="w-11 h-11 rounded-full bg-[#aff1d0] text-[#2a6950] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+              <span className="material-symbols-outlined text-[22px]">vaccines</span>
+            </div>
+            <div className="min-w-0">
+              <p className="text-xs sm:text-sm font-bold text-[#121c2a] group-hover:text-[#2a6950] transition-colors truncate">
+                Riwayat Imunisasi & Kartu Vaksin
+              </p>
+              <p className="text-[11px] text-[#574144] truncate">
+                Histori lengkap & unduh e-sertifikat TT
+              </p>
+            </div>
+          </div>
+          <ChevronRight size={18} className="text-[#8b7074] shrink-0 ml-2 group-hover:text-[#2a6950] transition-colors" />
+        </Link>
+
+        {/* Item 3: Fasilitas Kesehatan Terdaftar */}
+        <Link
+          to="/user/schedule"
+          className="group w-full bg-white hover:bg-[#eff4ff]/60 transition-colors rounded-2xl p-4 flex items-center justify-between shadow-xs border border-[#eff4ff]"
+        >
+          <div className="flex items-center gap-3.5 min-w-0">
+            <div className="w-11 h-11 rounded-full bg-[#dee9fc] text-[#121c2a] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+              <Building2 size={20} />
+            </div>
+            <div className="min-w-0">
+              <p className="text-xs sm:text-sm font-bold text-[#121c2a] group-hover:text-[#aa294d] transition-colors truncate">
+                Fasilitas Kesehatan Terdaftar
+              </p>
+              <p className="text-[11px] text-[#574144] truncate">
+                {userProfile.schoolOrOrg || 'Puskesmas Kebayoran'} & Bidan pembina
+              </p>
+            </div>
+          </div>
+          <ChevronRight size={18} className="text-[#8b7074] shrink-0 ml-2 group-hover:text-[#aa294d] transition-colors" />
+        </Link>
+
+        {/* Item 4: Pengaturan Akun & Keamanan */}
+        <div
+          role="button"
+          tabIndex={0}
+          onClick={() => showToast('Fitur keamanan akun tersinkronisasi dengan Kemenkes ID')}
+          className="group w-full bg-white hover:bg-[#eff4ff]/60 transition-colors rounded-2xl p-4 flex items-center justify-between shadow-xs border border-[#eff4ff] cursor-pointer"
+        >
+          <div className="flex items-center gap-3.5 min-w-0">
+            <div className="w-11 h-11 rounded-full bg-[#eff4ff] text-[#574144] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+              <Settings size={20} />
+            </div>
+            <div className="min-w-0">
+              <p className="text-xs sm:text-sm font-bold text-[#121c2a] group-hover:text-[#aa294d] transition-colors truncate">
+                Pengaturan Akun & Keamanan
+              </p>
+              <p className="text-[11px] text-[#574144] truncate">
+                Verifikasi nomor WhatsApp, proteksi data medis
+              </p>
+            </div>
+          </div>
+          <ChevronRight size={18} className="text-[#8b7074] shrink-0 ml-2 group-hover:text-[#aa294d] transition-colors" />
+        </div>
+
+        {/* Item 5: Tentang Aplikasi PRELUNA */}
+        <div
+          role="button"
+          tabIndex={0}
+          onClick={() => setIsAboutModalOpen(true)}
+          className="group w-full bg-white hover:bg-[#eff4ff]/60 transition-colors rounded-2xl p-4 flex items-center justify-between shadow-xs border border-[#eff4ff] cursor-pointer"
+        >
+          <div className="flex items-center gap-3.5 min-w-0">
+            <div className="w-11 h-11 rounded-full bg-[#eff4ff] text-[#574144] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+              <Info size={20} />
+            </div>
+            <div className="min-w-0">
+              <div className="flex items-center gap-2">
+                <p className="text-xs sm:text-sm font-bold text-[#121c2a] group-hover:text-[#aa294d] transition-colors truncate">
+                  Tentang Aplikasi PRELUNA
+                </p>
+                <span className="px-1.5 py-0.5 rounded text-[10px] bg-[#eff4ff] text-[#574144] font-medium">
+                  v2.4.0
+                </span>
               </div>
-            )}
+              <p className="text-[11px] text-[#574144] truncate">
+                Kemenkes RI, syarat & ketentuan privasi
+              </p>
+            </div>
+          </div>
+          <ChevronRight size={18} className="text-[#8b7074] shrink-0 ml-2 group-hover:text-[#aa294d] transition-colors" />
+        </div>
+      </div>
 
-            <input
-              type='text'
-              value={deleteConfirmationText}
-              onChange={e => setDeleteConfirmationText(e.target.value)}
-              placeholder='Ketik HAPUS'
-              className='w-full mt-4 bg-stone-50 border border-stone-200 rounded-xl px-3.5 py-2.5 text-center text-sm font-bold outline-none focus:border-rose-600 uppercase tracking-widest'
-            />
+      {/* 5. Partner Sync Gentle Banner (Stitch Screen 9) */}
+      <div className="bg-[#eff4ff] rounded-2xl p-4 flex items-center gap-3.5 shadow-2xs border border-[#d9e3f6]/60">
+        <div className="w-10 h-10 rounded-full bg-[#ffd9de] flex items-center justify-center text-[#aa294d] shrink-0">
+          <RefreshCw size={18} />
+        </div>
+        <div className="min-w-0 flex-1">
+          <p className="text-xs font-bold text-[#121c2a]">
+            Tersinkronisasi dengan Pasangan
+          </p>
+          <p className="text-[11px] text-[#574144] truncate mt-0.5">
+            {partnerName} (Calon Pengantin Pria)
+          </p>
+        </div>
+        <CheckCircle2 size={18} className="text-[#2a6950] shrink-0" />
+      </div>
 
-            <div className='mt-5 flex items-center gap-2'>
+      {/* 6. Logout Action (Stitch Screen 9) */}
+      <div className="flex flex-col items-center justify-center pt-2 pb-4">
+        <button
+          type="button"
+          onClick={() => setIsLogoutModalOpen(true)}
+          className="group inline-flex items-center justify-center gap-2 py-3 px-6 rounded-full text-rose-700 hover:bg-rose-50 active:scale-95 transition-all text-center cursor-pointer"
+        >
+          <LogOut size={18} className="group-hover:-translate-x-0.5 transition-transform" />
+          <span className="text-xs sm:text-sm font-bold tracking-wide">
+            Keluar dari Akun
+          </span>
+        </button>
+        <p className="text-[11px] text-[#8b7074] mt-2 text-center">
+          PRELUNA • Sahabat Sehat Pranikah Indonesia
+        </p>
+      </div>
+
+      {/* Edit Profile Modal */}
+      {isEditModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/50 backdrop-blur-xs animate-fade-in">
+          <div className="relative w-full max-w-md bg-white rounded-3xl p-5 sm:p-6 shadow-2xl border border-stone-200">
+            <div className="flex items-center justify-between pb-3 border-b border-stone-100 mb-4">
+              <h3 className="text-sm sm:text-base font-bold text-[#121c2a]">
+                Ubah Data Calon Pengantin
+              </h3>
+              <button
+                type="button"
+                onClick={() => setIsEditModalOpen(false)}
+                className="w-8 h-8 rounded-full bg-stone-100 flex items-center justify-center text-slate-500 hover:text-slate-800"
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveProfile} className="flex flex-col gap-3.5">
+              <div>
+                <label className="text-xs font-bold text-slate-800 mb-1 block">Nama Lengkap</label>
+                <input
+                  type="text"
+                  value={editName}
+                  onChange={(e) => setEditName(e.target.value)}
+                  className="w-full h-11 px-3.5 rounded-xl bg-stone-50 border border-stone-200 text-xs sm:text-sm font-semibold focus:outline-none focus:border-[#aa294d]"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-slate-800 mb-1 block">Fasilitas Kesehatan / Puskesmas</label>
+                <input
+                  type="text"
+                  value={editFaskes}
+                  onChange={(e) => setEditFaskes(e.target.value)}
+                  className="w-full h-11 px-3.5 rounded-xl bg-stone-50 border border-stone-200 text-xs sm:text-sm font-semibold focus:outline-none focus:border-[#aa294d]"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-slate-800 mb-1 block">Nomor WhatsApp</label>
+                <input
+                  type="tel"
+                  value={editPhone}
+                  onChange={(e) => setEditPhone(e.target.value)}
+                  className="w-full h-11 px-3.5 rounded-xl bg-stone-50 border border-stone-200 text-xs sm:text-sm font-semibold focus:outline-none focus:border-[#aa294d]"
+                  required
+                />
+              </div>
+
+              <div className="flex items-center gap-2 pt-3 border-t border-stone-100">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  shape="pill"
+                  className="flex-1"
+                  onClick={() => setIsEditModalOpen(false)}
+                >
+                  Batal
+                </Button>
+                <Button
+                  type="submit"
+                  variant="primary"
+                  size="sm"
+                  shape="pill"
+                  disabled={isSaving}
+                  className="flex-1 bg-[#aa294d] hover:bg-[#cb4364] text-white font-bold"
+                >
+                  {isSaving ? 'Menyimpan...' : 'Simpan Data'}
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Logout Confirmation Modal */}
+      {isLogoutModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/50 backdrop-blur-xs animate-fade-in">
+          <div className="relative w-full max-w-sm bg-white rounded-3xl p-5 sm:p-6 shadow-2xl border border-stone-200 text-center">
+            <div className="w-12 h-12 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center mx-auto mb-3">
+              <LogOut size={22} />
+            </div>
+            <h3 className="text-base font-bold text-slate-900">Keluar dari PRELUNA?</h3>
+            <p className="text-xs text-slate-600 mt-1 mb-5">
+              Anda perlu masuk kembali untuk mengakses kartu vaksin dan jadwal kunjungan Faskes.
+            </p>
+            <div className="flex items-center gap-2">
               <Button
-                variant='outline'
-                size='sm'
-                shape='rounded'
-                disabled={isDeleting}
-                className='flex-1 border-stone-200 text-slate-700'
-                onClick={() => setIsDeleteModalOpen(false)}
+                variant="outline"
+                size="sm"
+                shape="pill"
+                className="flex-1"
+                onClick={() => setIsLogoutModalOpen(false)}
               >
                 Batal
               </Button>
               <Button
-                variant='danger'
-                size='sm'
-                shape='rounded'
-                disabled={isDeleting || deleteConfirmationText.trim().toUpperCase() !== 'HAPUS'}
-                icon={isDeleting ? <Loader2 size={14} className='animate-spin' /> : <Trash2 size={14} />}
-                className='flex-1'
-                onClick={handleConfirmDeleteAccount}
+                variant="primary"
+                size="sm"
+                shape="pill"
+                className="flex-1 bg-rose-600 hover:bg-rose-700 text-white font-bold"
+                onClick={handleLogout}
               >
-                {isDeleting ? 'Menghapus...' : 'Ya, Hapus'}
+                Ya, Keluar
               </Button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* About App Modal */}
+      {isAboutModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/50 backdrop-blur-xs animate-fade-in">
+          <div className="relative w-full max-w-md bg-white rounded-3xl p-5 sm:p-6 shadow-2xl border border-stone-200 text-left">
+            <div className="flex items-center justify-between pb-3 border-b border-stone-100 mb-3">
+              <h3 className="text-base font-bold text-slate-900">Tentang PRELUNA</h3>
+              <button
+                type="button"
+                onClick={() => setIsAboutModalOpen(false)}
+                className="w-8 h-8 rounded-full bg-stone-100 flex items-center justify-center text-slate-500 hover:text-slate-800"
+              >
+                <X size={16} />
+              </button>
+            </div>
+            <p className="text-xs text-slate-600 leading-relaxed mb-3">
+              <strong>PRELUNA (Premarital Health & TT Immunization)</strong> adalah platform kesehatan terpadu calon pengantin berbasis standar pelayanan Kementerian Kesehatan Republik Indonesia.
+            </p>
+            <div className="p-3 bg-[#eff4ff] rounded-xl text-[11px] text-[#574144] space-y-1 mb-4">
+              <p>• Versi Aplikasi: <strong>v2.4.0 (Stitch Release)</strong></p>
+              <p>• Kerjasama: <strong>Fasilitas Kesehatan Tingkat Pertama (FKTP) & KUA</strong></p>
+              <p>• Standar TT: <strong>5 Dosis Kumulatif Seumur Hidup</strong></p>
+            </div>
+            <Button
+              variant="primary"
+              size="sm"
+              shape="pill"
+              className="w-full bg-[#aa294d] text-white font-bold"
+              onClick={() => setIsAboutModalOpen(false)}
+            >
+              Tutup
+            </Button>
           </div>
         </div>
       )}

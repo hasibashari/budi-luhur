@@ -26,7 +26,7 @@ export default function UserLayout({ children }: UserLayoutProps) {
 
   return (
     <AuthGuard requiredRole='user'>
-      <div className='min-h-screen bg-[#fafaf9] flex flex-col md:flex-row selection:bg-emerald-100 selection:text-emerald-900'>
+      <div className='min-h-screen bg-[#f8f9ff] flex flex-col md:flex-row selection:bg-[#ffd9de] selection:text-[#400014]'>
         {/* Mobile Top Header (< md) */}
         <div className='block md:hidden'>
           <MobileTopBar userName={displayName} avatarUrl={avatarUrl} />

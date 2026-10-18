@@ -71,7 +71,7 @@
     {
       "userId": "usr_1",
       "friendCode": "FE-SARAH-9901",
-      "schoolOrOrg": "SMA Negeri 1 Sehat",
+      "schoolOrOrg": "Puskesmas Gambir - KUA Gambir",
       "hbLevel": 12.4,
       "hbStatus": "Normal",
       "riskLevel": "Rendah",
@@ -86,7 +86,7 @@
     {
       "userId": "usr_2",
       "friendCode": "FE-ALYA-2026",
-      "schoolOrOrg": "SMA Negeri 1 Sehat",
+      "schoolOrOrg": "Puskesmas Gambir - KUA Gambir",
       "hbLevel": 12.1,
       "hbStatus": "Normal",
       "riskLevel": "Rendah",
@@ -101,7 +101,7 @@
     {
       "userId": "usr_3",
       "friendCode": "FE-NADIA-7712",
-      "schoolOrOrg": "SMA Negeri 1 Sehat",
+      "schoolOrOrg": "Puskesmas Gambir - KUA Gambir",
       "hbLevel": 10.8,
       "hbStatus": "Anemia Ringan",
       "riskLevel": "Sedang",
@@ -364,6 +364,48 @@
   ],
   "articles": [
     {
+      "id": "art_tt_1",
+      "title": "Mengapa Skrining TT itu Sangat Penting Sebelum Ijab Kabul?",
+      "category": "Imunisasi TT",
+      "summary": "Imunisasi Tetanus Toxoid (TT) bukan sekadar syarat administratif KUA, melainkan benteng proteksi seumur hidup bagi calon ibu dan buah hati dari risiko tetanus neonatorum saat persalinan.",
+      "leadParagraph": "Pernikahan adalah awal perjalanan baru keluarga. Di balik serangkaian persiapan pesta pernikahan, ada satu langkah medis vital yang wajib dilalui calon mempelai wanita: Imunisasi Tetanus Toxoid (TT).",
+      "imageUrl": "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&auto=format&fit=crop&q=80",
+      "imageCaption": "Pelayanan imunisasi TT pranikah di fasilitas kesehatan primer",
+      "readTime": "4 Menit Baca",
+      "status": "Terbit",
+      "isFeatured": true,
+      "views": 540,
+      "publishedAt": "2026-10-15",
+      "authorId": "adm_1",
+      "authorName": "dr. Sarah Jenkins, Sp.GK & Tim Medis Kemenkes",
+      "authorRole": "Konselor Pranikah & Kesehatan Ibu Anak",
+      "authorAvatarUrl": "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?q=80&w=200&auto=format&fit=crop",
+      "keyTakeaways": "[\"Imunisasi TT memberikan perlindungan maternal dan neonatal terhadap bakteri Clostridium tetani.\", \"Sertifikat TT adalah berkas kesehatan resmi yang disyaratkan KUA & Dinas Kesehatan.\", \"Rangkaian 5 dosis TT lengkap (TT1 hingga TT5) memberikan proteksi kumulatif hingga 25+ tahun (seumur hidup).\"]",
+      "tags": "[\"Imunisasi TT\", \"Catin\", \"Kemenkes RI\", \"Pranikah\", \"Kesehatan Ibu\"]",
+      "sections": [
+        {
+          "orderIndex": 1,
+          "heading": "Bahaya Infeksi Tetanus Saat Proses Melahirkan",
+          "subheading": "Fakta klinis seputar Clostridium tetani",
+          "paragraphs": "[\"Tetanus disebabkan oleh spora bakteri Clostridium tetani yang dapat masuk melalui luka persalinan atau pemotongan tali pusat bayi baru lahir bila alat atau lingkungan persalinan tidak steril.\", \"Tanpa perlindungan antibodi yang memadai dari ibu, tetanus neonatorum memiliki angka fatalitas yang sangat tinggi pada bayi berumur beberapa hari.\"]",
+          "calloutType": "warning",
+          "calloutTitle": "Penting Diketahui",
+          "calloutText": "Spora tetanus ada di mana-mana di lingkungan sekitar dan tidak dapat dibasmi dengan antibiotik biasa setelah racun neurotoksin terbentuk dalam darah.",
+          "bulletPoints": "[\"Masa inkubasi bakteri: 3 hingga 21 hari pasca persalinan\", \"Gejala awal: Kejang kaku pada rahang bayi (trismus) dan sulit menyusu\", \"Vaksinasi TT memberikan antibodi IgG aktif yang menembus plasenta untuk melindungi janin\"]"
+        },
+        {
+          "orderIndex": 2,
+          "heading": "Jadwal dan Rekomendasi Interval 5 Dosis Vaksin TT",
+          "subheading": "Panduan Buku KIA Kementerian Kesehatan RI",
+          "paragraphs": "[\"Calon pengantin dianjurkan melakukan skrining status TT minimal 1 bulan sebelum akad nikah. Jika belum pernah menerima vaksin sebelumnya, TT1 diberikan saat skrining awal dan TT2 diberikan minimal 4 minggu kemudian.\", \"Untuk perlindungan seumur hidup, lanjutkan dosis TT3, TT4, dan TT5 sesuai rekomendasi petugas Puskesmas.\"]",
+          "calloutType": "tip",
+          "calloutTitle": "Rekomendasi Waktu",
+          "calloutText": "Datanglah ke Puskesmas atau faskes terdekat 1-2 bulan sebelum pernikahan agar antibodi terbentuk sempurna sebelum hari H.",
+          "bulletPoints": "[\"TT1: Skrining awal catin (Langkah awal pembentukan kekebalan)\", \"TT2: 4 minggu setelah TT1 (Perlindungan 3 tahun)\", \"TT3: 6 bulan setelah TT2 (Perlindungan 5 tahun)\", \"TT4: 1 tahun setelah TT3 (Perlindungan 10 tahun)\", \"TT5: 1 tahun setelah TT4 (Perlindungan 25+ tahun / seumur hidup)\"]"
+        }
+      ]
+    },
+    {
       "id": "art_1",
       "title": "Kenali Anemia: Penyebab, Gejala 5L, dan Dampaknya pada Remaja Putri",
       "category": "Anemia",
@@ -504,18 +546,18 @@
   "buddyGroups": [
     {
       "id": "grp_1",
-      "name": "Pejuang TTD X-IPA 1",
-      "description": "Grup penyemangat konsumsi TTD mingguan siswi kelas X-IPA 1 SMA Negeri 1 Sehat 🌸",
-      "groupCode": "GRP-XIPA1-2026",
+      "name": "Catin Sehat Gambir 2026",
+      "description": "Grup penyemangat imunisasi TT & konseling pranikah calon pengantin Puskesmas Gambir 🌸",
+      "groupCode": "GRP-CATIN-2026",
       "creatorId": "usr_1",
       "streakCount": 6,
       "avatarUrl": "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=150&auto=format&fit=crop&q=80"
     },
     {
       "id": "grp_2",
-      "name": "Sahabat Sehat UKS",
-      "description": "Komunitas siswi kader kesehatan remaja dan peduli anemia UKS.",
-      "groupCode": "GRP-UKS-7701",
+      "name": "Sahabat Pranikah KUA",
+      "description": "Komunitas calon pengantin dan fasilitator bimbingan pernikahan sehat KUA.",
+      "groupCode": "GRP-KUA-7701",
       "creatorId": "usr_2",
       "streakCount": 3,
       "avatarUrl": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80"

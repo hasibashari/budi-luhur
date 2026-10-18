@@ -26,6 +26,10 @@ export interface ManagedUser {
   joinDate: string;
   medicalNotes: string;
   lastReminderSent: string;
+  weddingDate?: string;
+  ttStatus?: 'TT0' | 'TT1' | 'TT2' | 'TT3' | 'TT4' | 'TT5';
+  kuaStatus?: 'Terverifikasi' | 'Menunggu Skrining' | 'Belum Lengkap';
+  partnerName?: string;
 }
 
 export interface HealthArticle {
@@ -107,8 +111,9 @@ export class AdminService {
   static async getManagedUsers(): Promise<ManagedUser[]> {
     const res = await db.query<any>(`
       SELECT 
-        u.id, u.name, u.gender, u.phone, u.email, u.avatar_url, u.created_at,
+        u.id, u.name, u.gender, u.phone, u.email, u.avatar_url, u.date_of_birth, u.created_at,
         p.risk_level, p.status, p.notes, p.school_or_org, p.hb_level, p.friend_code, p.streak_count, p.last_active_at,
+        p.wedding_date, p.tt_status, p.kua_status, p.partner_name,
         (SELECT count(*) FROM reminder_schedules WHERE user_id = u.id AND status = 'Aktif') as active_schedules_count,
         (SELECT count(*) FROM consumption_logs WHERE user_id = u.id) as total_logs,
         (SELECT count(*) FROM consumption_logs WHERE user_id = u.id AND status IN ('ON_TIME', 'LATE')) as completed_logs
@@ -128,12 +133,43 @@ export class AdminService {
         ? d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })
         : 'Hari ini';
 
-      const schoolOrOrg = r.school_or_org || 'SMA Negeri 1 Sehat';
+      const schoolOrOrg = r.school_or_org || 'Puskesmas Gambir - KUA Gambir';
+
+      let age = 24;
+      if (r.date_of_birth) {
+        const birthDate = new Date(r.date_of_birth);
+        if (!isNaN(birthDate.getTime())) {
+          const diff = Date.now() - birthDate.getTime();
+          age = Math.floor(diff / (365.25 * 24 * 60 * 60 * 1000));
+        }
+      }
+
+      const weddingDate = r.wedding_date
+        ? new Date(r.wedding_date).toISOString().split('T')[0]
+        : '2026-11-20';
+      const ttStatus =
+        r.tt_status || (r.risk_level === 'Tinggi' ? 'TT0' : r.risk_level === 'Sedang' ? 'TT1' : 'TT2');
+      const kuaStatus =
+        r.kua_status ||
+        (r.risk_level === 'Rendah'
+          ? 'Terverifikasi'
+          : r.risk_level === 'Sedang'
+            ? 'Menunggu Skrining'
+            : 'Belum Lengkap');
+      const partnerName =
+        r.partner_name ||
+        (r.name.includes('Sarah')
+          ? 'Rian Pratama'
+          : r.name.includes('Alya')
+            ? 'Dimas Anggara'
+            : r.name.includes('Nadia')
+              ? 'Bayu Setiawan'
+              : 'Fajar Hidayat');
 
       return {
         id: r.id,
         name: r.name,
-        age: 16,
+        age,
         gender: r.gender || 'Perempuan',
         phone: r.phone || '-',
         email: r.email,
@@ -148,8 +184,12 @@ export class AdminService {
         adherenceRate,
         lastActive: lastActiveStr,
         joinDate: r.created_at ? new Date(r.created_at).toISOString().split('T')[0] : '2026-09-01',
-        medicalNotes: `Kadar Hb: ${r.hb_level || 12.4} g/dL • ${r.notes || 'Rutin suplementasi'}`,
+        medicalNotes: r.notes || `Kadar Hb: ${r.hb_level || 12.4} g/dL • Skrining Pranikah Faskes`,
         lastReminderSent: 'Hari ini, 20:00 WIB',
+        weddingDate,
+        ttStatus,
+        kuaStatus,
+        partnerName,
       };
     });
   }
@@ -157,8 +197,9 @@ export class AdminService {
   static async getManagedUserById(userId: string): Promise<ManagedUser | null> {
     const res = await db.query<any>(
       `SELECT 
-        u.id, u.name, u.gender, u.phone, u.email, u.avatar_url, u.created_at,
+        u.id, u.name, u.gender, u.phone, u.email, u.avatar_url, u.date_of_birth, u.created_at,
         p.risk_level, p.status, p.notes, p.school_or_org, p.hb_level, p.friend_code, p.streak_count, p.last_active_at,
+        p.wedding_date, p.tt_status, p.kua_status, p.partner_name,
         (SELECT count(*) FROM reminder_schedules WHERE user_id = u.id AND status = 'Aktif') as active_schedules_count,
         (SELECT count(*) FROM consumption_logs WHERE user_id = u.id) as total_logs,
         (SELECT count(*) FROM consumption_logs WHERE user_id = u.id AND status IN ('ON_TIME', 'LATE')) as completed_logs
@@ -180,12 +221,43 @@ export class AdminService {
       ? d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })
       : 'Hari ini';
 
-    const schoolOrOrg = r.school_or_org || 'SMA Negeri 1 Sehat';
+    const schoolOrOrg = r.school_or_org || 'Puskesmas Gambir - KUA Gambir';
+
+    let age = 24;
+    if (r.date_of_birth) {
+      const birthDate = new Date(r.date_of_birth);
+      if (!isNaN(birthDate.getTime())) {
+        const diff = Date.now() - birthDate.getTime();
+        age = Math.floor(diff / (365.25 * 24 * 60 * 60 * 1000));
+      }
+    }
+
+    const weddingDate = r.wedding_date
+      ? new Date(r.wedding_date).toISOString().split('T')[0]
+      : '2026-11-20';
+    const ttStatus =
+      r.tt_status || (r.risk_level === 'Tinggi' ? 'TT0' : r.risk_level === 'Sedang' ? 'TT1' : 'TT2');
+    const kuaStatus =
+      r.kua_status ||
+      (r.risk_level === 'Rendah'
+        ? 'Terverifikasi'
+        : r.risk_level === 'Sedang'
+          ? 'Menunggu Skrining'
+          : 'Belum Lengkap');
+    const partnerName =
+      r.partner_name ||
+      (r.name.includes('Sarah')
+        ? 'Rian Pratama'
+        : r.name.includes('Alya')
+          ? 'Dimas Anggara'
+          : r.name.includes('Nadia')
+            ? 'Bayu Setiawan'
+            : 'Fajar Hidayat');
 
     return {
       id: r.id,
       name: r.name,
-      age: 16,
+      age,
       gender: r.gender || 'Perempuan',
       phone: r.phone || '-',
       email: r.email,
@@ -200,8 +272,12 @@ export class AdminService {
       adherenceRate,
       lastActive: lastActiveStr,
       joinDate: r.created_at ? new Date(r.created_at).toISOString().split('T')[0] : '2026-09-01',
-      medicalNotes: `Kadar Hb: ${r.hb_level || 12.4} g/dL • ${r.notes || 'Rutin suplementasi'}`,
+      medicalNotes: r.notes || `Kadar Hb: ${r.hb_level || 12.4} g/dL • Skrining Pranikah Faskes`,
       lastReminderSent: 'Hari ini, 20:00 WIB',
+      weddingDate,
+      ttStatus,
+      kuaStatus,
+      partnerName,
     };
   }
 
@@ -209,10 +285,15 @@ export class AdminService {
     name: string;
     email: string;
     phone: string;
+    age?: number;
     gender?: string;
     riskLevel?: string;
     schoolOrOrg?: string;
     medicalNotes?: string;
+    weddingDate?: string;
+    ttStatus?: string;
+    kuaStatus?: string;
+    partnerName?: string;
   }) {
     const newId = `usr_${Date.now().toString().slice(-6)}`;
     const avatarUrl = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(data.name)}`;
@@ -220,14 +301,18 @@ export class AdminService {
       data.name
         .toUpperCase()
         .replace(/[^A-Z]/g, '')
-        .slice(0, 5) || 'USER';
-    const friendCode = `FE-${cleanTag}-${Math.floor(1000 + Math.random() * 9000)}`;
-    const school = data.schoolOrOrg || 'SMA Negeri 1 Sehat';
+        .slice(0, 5) || 'CATIN';
+    const friendCode = `CATIN-${cleanTag}-${Math.floor(1000 + Math.random() * 9000)}`;
+    const school = data.schoolOrOrg || 'Puskesmas Gambir - KUA Gambir';
+    const catinAge = data.age || 24;
+    const birthDate = new Date(new Date().getFullYear() - catinAge, 5, 15)
+      .toISOString()
+      .split('T')[0];
 
     await db.transaction(async (client) => {
       await client.query(
-        `INSERT INTO users (id, name, email, role, phone, avatar_url, gender)
-         VALUES ($1, $2, $3, 'user', $4, $5, $6)`,
+        `INSERT INTO users (id, name, email, role, phone, avatar_url, gender, date_of_birth)
+         VALUES ($1, $2, $3, 'user', $4, $5, $6, $7)`,
         [
           newId,
           data.name,
@@ -235,18 +320,29 @@ export class AdminService {
           data.phone,
           avatarUrl,
           data.gender || 'Perempuan',
+          birthDate,
         ],
       );
 
       await client.query(
-        `INSERT INTO user_profiles (user_id, friend_code, school_or_org, risk_level, status, notes)
-         VALUES ($1, $2, $3, $4, 'Aktif', $5)`,
-        [newId, friendCode, school, data.riskLevel || 'Rendah', data.medicalNotes || null],
+        `INSERT INTO user_profiles (user_id, friend_code, school_or_org, risk_level, status, notes, wedding_date, tt_status, kua_status, partner_name)
+         VALUES ($1, $2, $3, $4, 'Aktif', $5, $6, $7, $8, $9)`,
+        [
+          newId,
+          friendCode,
+          school,
+          data.riskLevel || 'Rendah',
+          data.medicalNotes || null,
+          data.weddingDate || null,
+          data.ttStatus || 'TT1',
+          data.kuaStatus || 'Menunggu Skrining',
+          data.partnerName || null,
+        ],
       );
 
       await client.query(
         `INSERT INTO reminder_schedules (id, user_id, tablet_name, dosage, frequency, day_of_week, time_slot, is_enabled, status)
-         VALUES ($1, $2, 'Tablet Tambah Darah (TTD)', '1 tablet', 'weekly', 'Sabtu', '20:00', true, 'Aktif')`,
+         VALUES ($1, $2, 'Vaksin Tetanus Toxoid (TT Catin)', '0.5 mL (Intramuskular)', 'weekly', 'Sabtu', '09:00', true, 'Aktif')`,
         [`sch_${newId}`, newId],
       );
     });
@@ -256,7 +352,13 @@ export class AdminService {
 
   static async updateUser(userId: string, data: any) {
     await db.transaction(async (client) => {
-      if (data.name || data.email || data.phone || data.gender) {
+      const birthDate = data.age
+        ? new Date(new Date().getFullYear() - (parseInt(data.age, 10) || 24), 5, 15)
+            .toISOString()
+            .split('T')[0]
+        : null;
+
+      if (data.name || data.email || data.phone || data.gender || birthDate) {
         await client.query(
           `UPDATE users 
            SET 
@@ -264,20 +366,31 @@ export class AdminService {
              email = COALESCE($2, email),
              phone = COALESCE($3, phone),
              gender = COALESCE($4, gender),
+             date_of_birth = COALESCE($5, date_of_birth),
              updated_at = CURRENT_TIMESTAMP
-           WHERE id = $5`,
+           WHERE id = $6`,
           [
             data.name ?? null,
             data.email ? data.email.toLowerCase().trim() : null,
             data.phone ?? null,
             data.gender ?? null,
+            birthDate ?? null,
             userId,
           ],
         );
       }
 
       const school = data.schoolOrOrg || data.assignedDoctor;
-      if (data.riskLevel || data.status || data.medicalNotes || school) {
+      if (
+        data.riskLevel ||
+        data.status ||
+        data.medicalNotes ||
+        school ||
+        data.weddingDate !== undefined ||
+        data.ttStatus ||
+        data.kuaStatus ||
+        data.partnerName !== undefined
+      ) {
         await client.query(
           `UPDATE user_profiles
            SET 
@@ -285,13 +398,21 @@ export class AdminService {
              status = COALESCE($2, status),
              school_or_org = COALESCE($3, school_or_org),
              notes = COALESCE($4, notes),
+             wedding_date = COALESCE($5, wedding_date),
+             tt_status = COALESCE($6, tt_status),
+             kua_status = COALESCE($7, kua_status),
+             partner_name = COALESCE($8, partner_name),
              last_active_at = CURRENT_TIMESTAMP
-           WHERE user_id = $5`,
+           WHERE user_id = $9`,
           [
             data.riskLevel ?? null,
             data.status ?? null,
             school ?? null,
             data.medicalNotes ?? null,
+            data.weddingDate ? data.weddingDate : null,
+            data.ttStatus ?? null,
+            data.kuaStatus ?? null,
+            data.partnerName ?? null,
             userId,
           ],
         );

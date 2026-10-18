@@ -38,3 +38,21 @@ export function authMiddleware(req: AuthRequest, res: Response, next: NextFuncti
     return;
   }
 }
+
+export function optionalAuthMiddleware(req: AuthRequest, res: Response, next: NextFunction): void {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return next();
+  }
+
+  const token = authHeader.split(' ')[1];
+
+  try {
+    const decoded = jwt.verify(token, config.jwtSecret) as TokenPayload;
+    req.user = decoded;
+  } catch {
+    // Silently continue for optional auth
+  }
+  next();
+}

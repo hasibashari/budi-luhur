@@ -16,7 +16,7 @@ export default function AdminMobileBottomNav() {
 
   return (
     <nav
-      className='fixed bottom-0 left-0 right-0 z-50 md:hidden bg-white/95 backdrop-blur-lg border-t border-emerald-100 shadow-[0_-4px_20px_rgba(5,150,105,0.06)]'
+      className='fixed bottom-0 left-0 right-0 z-50 md:hidden bg-white/95 backdrop-blur-lg border-t border-[#eff4ff] shadow-[0_-4px_20px_rgba(170,41,77,0.06)]'
       style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
       aria-label='Navigasi Bawah Petugas'
     >
@@ -33,20 +33,20 @@ export default function AdminMobileBottomNav() {
               to={item.href}
               className={`flex flex-col items-center justify-center flex-1 py-1.5 px-1 rounded-2xl transition-all duration-200 select-none ${
                 isActive
-                  ? 'text-emerald-700 font-bold'
-                  : 'text-slate-500 hover:text-emerald-600 font-medium'
+                  ? 'text-[#aa294d] font-bold'
+                  : 'text-[#8b7074] hover:text-[#aa294d] font-medium'
               }`}
             >
               <div
                 className={`relative flex items-center justify-center w-10 h-7 rounded-full transition-all duration-200 ${
-                  isActive ? 'bg-emerald-100/70 text-emerald-700 scale-105 shadow-2xs' : 'text-slate-500'
+                  isActive ? 'bg-[#ffd9de]/70 text-[#aa294d] scale-105 shadow-2xs' : 'text-[#8b7074]'
                 }`}
               >
                 <Icon size={19} className={isActive ? 'stroke-[2.5]' : 'stroke-[1.8]'} />
               </div>
               <span
                 className={`text-[10px] mt-0.5 tracking-tight transition-all duration-200 ${
-                  isActive ? 'font-bold text-emerald-700' : 'font-medium text-slate-500'
+                  isActive ? 'font-bold text-[#aa294d]' : 'font-medium text-[#8b7074]'
                 }`}
               >
                 {item.name}

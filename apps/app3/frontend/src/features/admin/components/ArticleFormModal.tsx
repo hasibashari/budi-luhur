@@ -81,7 +81,7 @@ export default function ArticleFormModal({
           content: res.data.content,
           readTime: res.data.readTime,
         });
-        showToast('Draf artikel berhasil dibuat oleh Gemini AI!', 'success');
+        showToast('Draf materi edukasi pranikah berhasil dibuat oleh Gemini AI!', 'success');
       } else {
         showToast(res.error || 'Gagal membuat artikel dengan AI', 'error');
       }
@@ -96,15 +96,15 @@ export default function ArticleFormModal({
     <CrudModalDialog
       open={open}
       onClose={onClose}
-      title={editingId ? 'Edit Artikel Edukasi' : 'Tulis Artikel Edukasi Baru'}
+      title={editingId ? 'Edit Artikel Edukasi Pranikah' : 'Tulis Artikel Edukasi Baru'}
       onSubmit={onSubmit}
-      submitText={editingId ? 'Update' : 'Publikasikan Artikel'}
+      submitText={editingId ? 'Simpan Perubahan' : 'Publikasikan Artikel'}
       submitting={submitting}
       maxWidth='md'
     >
       {/* Cover Image Upload Section */}
       <div>
-        <label className='block text-xs font-bold text-slate-700 mb-1.5'>
+        <label className='block text-xs font-bold text-[#121c2a] mb-1.5'>
           Gambar Cover Artikel
         </label>
 
@@ -117,13 +117,13 @@ export default function ArticleFormModal({
         />
 
         {formData.imageUrl ? (
-          <div className='relative rounded-2xl overflow-hidden border border-emerald-100 bg-slate-50'>
+          <div className='relative rounded-2xl overflow-hidden border border-[#eff4ff] bg-[#f8f9ff]'>
             <img
               src={formData.imageUrl}
               alt='Cover Preview'
               className='w-full h-36 sm:h-48 object-cover block'
             />
-            <div className='absolute top-2 right-2 flex items-center gap-1.5 bg-slate-900/70 backdrop-blur-sm rounded-xl p-1 text-white'>
+            <div className='absolute top-2 right-2 flex items-center gap-1.5 bg-[#121c2a]/80 backdrop-blur-sm rounded-xl p-1 text-white'>
               <button
                 type='button'
                 className='text-xs px-2.5 py-1 rounded-lg hover:bg-white/20 font-medium transition-colors cursor-pointer'
@@ -143,20 +143,20 @@ export default function ArticleFormModal({
         ) : (
           <div
             onClick={() => fileInputRef.current?.click()}
-            className='p-6 text-center border-2 border-dashed border-emerald-200 rounded-2xl bg-emerald-50/40 hover:bg-emerald-50 hover:border-emerald-400 transition-all cursor-pointer'
+            className='p-6 text-center border-2 border-dashed border-[#ffd9de] rounded-2xl bg-[#f8f9ff] hover:bg-[#ffd9de]/20 transition-all cursor-pointer'
           >
-            <div className='w-11 h-11 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto mb-2'>
+            <div className='w-11 h-11 rounded-full bg-[#ffd9de] text-[#aa294d] flex items-center justify-center mx-auto mb-2'>
               <UploadCloud size={24} />
             </div>
-            <p className='text-sm font-bold text-slate-800'>Klik untuk upload gambar cover</p>
-            <p className='text-xs text-slate-400 mt-0.5'>
+            <p className='text-sm font-bold text-[#121c2a]'>Klik untuk upload cover artikel</p>
+            <p className='text-xs text-[#8b7074] mt-0.5'>
               Format didukung: PNG, JPG, WebP (Maksimal 3MB)
             </p>
           </div>
         )}
 
         <div className='relative mt-2.5'>
-          <span className='absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-400'>
+          <span className='absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-[#8b7074]'>
             <ImageIcon size={16} />
           </span>
           <input
@@ -164,23 +164,23 @@ export default function ArticleFormModal({
             placeholder='Atau tempelkan tautan URL gambar cover di sini...'
             value={formData.imageUrl}
             onChange={e => updateFormData({ imageUrl: e.target.value })}
-            className='w-full pl-10 pr-3.5 py-2 rounded-xl border border-slate-200 bg-white text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all'
+            className='w-full pl-10 pr-3.5 py-2 rounded-xl border border-[#dee9fc] bg-white text-xs text-[#121c2a] focus:outline-none focus:ring-2 focus:ring-[#ffd9de] focus:border-[#aa294d] transition-all'
           />
         </div>
       </div>
 
       {/* AI Assistant Generator Banner */}
-      <div className='p-4 rounded-2xl border border-emerald-200 bg-emerald-50/70 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3'>
+      <div className='p-4 rounded-2xl border border-[#ffd9de]/80 bg-linear-to-r from-white via-[#eff4ff] to-[#ffd9de]/30 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 shadow-xs'>
         <div className='flex items-center gap-3'>
-          <div className='w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0'>
+          <div className='w-9 h-9 rounded-xl bg-[#ffd9de]/60 text-[#aa294d] flex items-center justify-center shrink-0 border border-[#ffd9de]'>
             <Sparkles size={18} />
           </div>
           <div>
-            <div className='font-bold text-slate-900 text-xs sm:text-sm'>
-              Asisten Penulis Medis Pranikah AI
+            <div className='font-bold text-[#121c2a] text-xs sm:text-sm'>
+              Asisten Penulis Medis Pranikah PRELUNA AI
             </div>
-            <div className='text-[11px] text-slate-500'>
-              Buat judul, ringkasan, dan materi edukasi otomatis dengan Gemini AI
+            <div className='text-[11px] text-[#574144]'>
+              Susun materi edukasi, ringkasan, dan rujukan klinis TT secara instan
             </div>
           </div>
         </div>
@@ -189,7 +189,7 @@ export default function ArticleFormModal({
           type='button'
           disabled={isGeneratingAi}
           onClick={handleGenerateAiArticle}
-          className='inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 text-white font-bold text-xs hover:bg-emerald-700 shadow-sm transition-all cursor-pointer disabled:opacity-50 shrink-0'
+          className='inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-[#aa294d] text-white font-bold text-xs hover:bg-[#cb4364] shadow-md shadow-[#aa294d]/20 transition-all cursor-pointer disabled:opacity-50 shrink-0'
         >
           <Sparkles size={14} />
           <span>{isGeneratingAi ? 'Menulis Artikel...' : 'Tulis dengan AI ✨'}</span>
@@ -197,20 +197,21 @@ export default function ArticleFormModal({
       </div>
 
       <div>
-        <label className='block text-xs font-bold text-slate-700 mb-1'>
-          Judul Artikel <span className='text-emerald-600'>*</span>
+        <label className='block text-xs font-bold text-[#121c2a] mb-1'>
+          Judul Artikel <span className='text-[#aa294d]'>*</span>
         </label>
         <input
           type='text'
+          placeholder='Contoh: Pentingnya Vaksin TT Bagi Calon Pengantin'
           value={formData.title}
           onChange={e => updateFormData({ title: e.target.value })}
-          className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all'
+          className='w-full px-3.5 py-2.5 rounded-xl border border-[#dee9fc] bg-white text-sm text-[#121c2a] focus:outline-none focus:ring-2 focus:ring-[#ffd9de] focus:border-[#aa294d] transition-all'
         />
       </div>
 
       <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
         <div>
-          <label className='block text-xs font-bold text-slate-700 mb-1'>Kategori</label>
+          <label className='block text-xs font-bold text-[#121c2a] mb-1'>Kategori Edukasi</label>
           <select
             value={formData.category}
             onChange={e =>
@@ -218,7 +219,7 @@ export default function ArticleFormModal({
                 category: e.target.value as ArticleFormData['category'],
               })
             }
-            className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all'
+            className='w-full px-3.5 py-2.5 rounded-xl border border-[#dee9fc] bg-white text-sm text-[#121c2a] focus:outline-none focus:ring-2 focus:ring-[#ffd9de] focus:border-[#aa294d] transition-all cursor-pointer'
           >
             {ARTICLE_CATEGORIES.filter(c => c !== 'Semua').map(cat => (
               <option key={cat} value={cat}>
@@ -228,32 +229,31 @@ export default function ArticleFormModal({
           </select>
         </div>
         <div>
-          <label className='block text-xs font-bold text-slate-700 mb-1'>
+          <label className='block text-xs font-bold text-[#121c2a] mb-1'>
             Penulis / Petugas Faskes & KUA
           </label>
           <input
             type='text'
             value={formData.author}
             onChange={e => updateFormData({ author: e.target.value })}
-            className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all'
+            className='w-full px-3.5 py-2.5 rounded-xl border border-[#dee9fc] bg-white text-sm text-[#121c2a] focus:outline-none focus:ring-2 focus:ring-[#ffd9de] focus:border-[#aa294d] transition-all'
           />
         </div>
       </div>
 
       <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
         <div>
-          <label className='block text-xs font-bold text-slate-700 mb-1'>
-            Waktu Baca (misal: 3 min read)
-          </label>
+          <label className='block text-xs font-bold text-[#121c2a] mb-1'>Estimasi Waktu Baca</label>
           <input
             type='text'
+            placeholder='3 min read'
             value={formData.readTime}
             onChange={e => updateFormData({ readTime: e.target.value })}
-            className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all'
+            className='w-full px-3.5 py-2.5 rounded-xl border border-[#dee9fc] bg-white text-sm text-[#121c2a] focus:outline-none focus:ring-2 focus:ring-[#ffd9de] focus:border-[#aa294d] transition-all'
           />
         </div>
         <div>
-          <label className='block text-xs font-bold text-slate-700 mb-1'>Status Publikasi</label>
+          <label className='block text-xs font-bold text-[#121c2a] mb-1'>Status Publikasi</label>
           <select
             value={formData.status}
             onChange={e =>
@@ -261,7 +261,7 @@ export default function ArticleFormModal({
                 status: e.target.value as ArticleFormData['status'],
               })
             }
-            className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all'
+            className='w-full px-3.5 py-2.5 rounded-xl border border-[#dee9fc] bg-white text-sm text-[#121c2a] focus:outline-none focus:ring-2 focus:ring-[#ffd9de] focus:border-[#aa294d] transition-all cursor-pointer'
           >
             <option value='Terbit'>Terbit Langsung</option>
             <option value='Draf'>Simpan Sebagai Draf</option>
@@ -270,20 +270,20 @@ export default function ArticleFormModal({
       </div>
 
       <div>
-        <label className='block text-xs font-bold text-slate-700 mb-1'>
+        <label className='block text-xs font-bold text-[#121c2a] mb-1'>
           Ringkasan Singkat (Summary)
         </label>
         <textarea
           rows={2}
-          placeholder='Ringkasan 1-2 kalimat untuk kartu artikel...'
+          placeholder='Ringkasan 1-2 kalimat untuk preview kartu edukasi...'
           value={formData.summary}
           onChange={e => updateFormData({ summary: e.target.value })}
-          className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all resize-none'
+          className='w-full px-3.5 py-2.5 rounded-xl border border-[#dee9fc] bg-white text-sm text-[#121c2a] focus:outline-none focus:ring-2 focus:ring-[#ffd9de] focus:border-[#aa294d] transition-all resize-none'
         />
       </div>
 
       <div className='pt-1'>
-        <label className='block text-xs font-bold text-slate-700 mb-1.5'>
+        <label className='block text-xs font-bold text-[#121c2a] mb-1.5'>
           Isi Konten Artikel (Markdown Format)
         </label>
         <MarkdownEditor

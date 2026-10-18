@@ -36,7 +36,7 @@ export function ScreenHeader({
           <button
             type='button'
             onClick={handleBack}
-            className='w-9 h-9 rounded-xl bg-white border border-rose-100 flex items-center justify-center text-slate-600 hover:text-[#e11d48] hover:bg-rose-50 shadow-xs transition-colors cursor-pointer'
+            className='w-9 h-9 rounded-xl bg-white border border-[#e6eeff] flex items-center justify-center text-[#121c2a] hover:text-[#aa294d] hover:bg-[#ffd9de]/40 shadow-xs transition-colors cursor-pointer'
             aria-label='Kembali'
           >
             <ArrowLeft size={18} />

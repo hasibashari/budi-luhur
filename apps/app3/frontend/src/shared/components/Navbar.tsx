@@ -52,7 +52,7 @@ export default function Navbar() {
     >
       <div className='container mx-auto px-4 sm:px-6 max-w-7xl flex items-center justify-between'>
         <Link to='/' className='flex items-center gap-2.5 group'>
-          <div className='bg-gradient-to-tr from-[#059669] to-[#10b981] text-white p-2 rounded-xl group-hover:scale-105 transition-transform shadow-md shadow-emerald-700/20'>
+          <div className='bg-gradient-to-tr from-[#aa294d] to-[#cb4364] text-white p-2 rounded-xl group-hover:scale-105 transition-transform shadow-md shadow-rose-950/20'>
             <ShieldCheck size={22} className='text-white' />
           </div>
           <span className='text-xl font-extrabold text-[#0f172a] tracking-tight flex items-center gap-1.5'>
@@ -64,25 +64,25 @@ export default function Navbar() {
         <nav className='hidden lg:flex items-center gap-6 xl:gap-8'>
           <a
             href='/#benefits'
-            className='text-sm font-medium text-[#475569] hover:text-[#059669] transition-colors'
+            className='text-sm font-medium text-[#475569] hover:text-[#aa294d] transition-colors'
           >
             Manfaat Imunisasi TT
           </a>
           <a
             href='/#schedule'
-            className='text-sm font-medium text-[#475569] hover:text-[#059669] transition-colors'
+            className='text-sm font-medium text-[#475569] hover:text-[#aa294d] transition-colors'
           >
             Jadwal 5 Dosis Kemenkes
           </a>
           <a
             href='/#screening'
-            className='text-sm font-medium text-[#475569] hover:text-[#059669] transition-colors'
+            className='text-sm font-medium text-[#475569] hover:text-[#aa294d] transition-colors'
           >
             Skrining Pranikah
           </a>
           <a
             href='/#faq'
-            className='text-sm font-medium text-[#475569] hover:text-[#059669] transition-colors'
+            className='text-sm font-medium text-[#475569] hover:text-[#aa294d] transition-colors'
           >
             Tanya Jawab
           </a>
@@ -96,21 +96,21 @@ export default function Navbar() {
                 onClick={() => setIsProfileMenuOpen(prev => !prev)}
                 aria-expanded={isProfileMenuOpen}
                 aria-haspopup='true'
-                className='flex items-center gap-2 bg-white/90 hover:bg-white border border-slate-200/80 hover:border-emerald-200 rounded-full py-1.5 pl-1.5 pr-3 shadow-xs hover:shadow-sm transition-all cursor-pointer group'
+                className='flex items-center gap-2 bg-white/90 hover:bg-white border border-slate-200/80 hover:border-[#ffd9de] rounded-full py-1.5 pl-1.5 pr-3 shadow-xs hover:shadow-sm transition-all cursor-pointer group'
               >
                 <Avatar
                   src={user.avatarUrl}
                   name={user.name}
                   size='sm'
-                  ringClassName='ring-1.5 ring-[#059669]'
+                  ringClassName='ring-1.5 ring-[#aa294d]'
                 />
                 <div className='flex items-center gap-1.5 text-left'>
-                  <span className='text-xs font-bold text-slate-800 leading-none truncate max-w-28 group-hover:text-[#059669] transition-colors'>
+                  <span className='text-xs font-bold text-slate-800 leading-none truncate max-w-28 group-hover:text-[#aa294d] transition-colors'>
                     {user.name.split(',')[0]}
                   </span>
                   <span
                     className={`text-[9px] font-extrabold px-1.5 py-0.5 rounded-full text-white ${
-                      user.role === 'admin' ? 'bg-[#059669]' : 'bg-[#d97706]'
+                      user.role === 'admin' ? 'bg-[#aa294d]' : 'bg-[#2a6950]'
                     }`}
                   >
                     {roleLabel}
@@ -120,22 +120,22 @@ export default function Navbar() {
                   size={14}
                   className={cn(
                     'text-slate-400 group-hover:text-slate-600 transition-transform duration-200 ml-0.5',
-                    isProfileMenuOpen && 'rotate-180 text-[#059669]',
+                    isProfileMenuOpen && 'rotate-180 text-[#aa294d]',
                   )}
                 />
               </button>
 
               {/* Profile Dropdown Menu */}
               {isProfileMenuOpen && (
-                <div className='absolute right-0 top-full mt-2 w-56 rounded-2xl bg-white border border-emerald-100 shadow-xl shadow-emerald-950/10 py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150'>
+                <div className='absolute right-0 top-full mt-2 w-56 rounded-2xl bg-white border border-[#ffd9de] shadow-xl shadow-rose-950/10 py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150'>
                   {/* Menu Links */}
                   <div className='p-1 flex flex-col gap-0.5'>
                     <Link
                       to={dashboardHref}
                       onClick={() => setIsProfileMenuOpen(false)}
-                      className='flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-slate-700 hover:text-[#059669] hover:bg-emerald-50/70 rounded-xl transition-colors'
+                      className='flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-slate-700 hover:text-[#aa294d] hover:bg-[#fff0f2] rounded-xl transition-colors'
                     >
-                      <LayoutDashboard size={15} className='text-[#059669]' />
+                      <LayoutDashboard size={15} className='text-[#aa294d]' />
                       <span>Ke Dashboard</span>
                     </Link>
 
@@ -156,8 +156,8 @@ export default function Navbar() {
             </div>
           ) : (
             <Link
-              to='/splash'
-              className='bg-gradient-to-r from-[#059669] to-[#10b981] hover:from-[#047857] hover:to-[#059669] text-white px-5 py-2.25 rounded-full text-sm font-bold transition-all shadow-md shadow-emerald-700/20 flex items-center gap-1.5 hover:scale-105 active:scale-95'
+              to='/'
+              className='bg-gradient-to-r from-[#aa294d] to-[#cb4364] hover:from-[#8c0f39] hover:to-[#aa294d] text-white px-5 py-2.25 rounded-full text-sm font-bold transition-all shadow-md shadow-rose-950/20 flex items-center gap-1.5 hover:scale-105 active:scale-95'
             >
               <Sparkles size={16} />
               <span>Buka Aplikasi</span>
@@ -177,46 +177,46 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div className='absolute top-full left-0 right-0 bg-white border-b border-emerald-100 shadow-xl py-4 px-6 flex flex-col gap-4 lg:hidden animate-fade-in'>
+        <div className='absolute top-full left-0 right-0 bg-white border-b border-[#ffd9de] shadow-xl py-4 px-6 flex flex-col gap-4 lg:hidden animate-fade-in'>
           <a
             href='/#benefits'
             onClick={() => setIsMobileMenuOpen(false)}
-            className='text-base font-medium text-slate-700 py-2 border-b border-slate-100'
+            className='text-base font-medium text-slate-700 py-2 border-b border-slate-100 hover:text-[#aa294d]'
           >
             Manfaat Imunisasi TT
           </a>
           <a
             href='/#schedule'
             onClick={() => setIsMobileMenuOpen(false)}
-            className='text-base font-medium text-slate-700 py-2 border-b border-slate-100'
+            className='text-base font-medium text-slate-700 py-2 border-b border-slate-100 hover:text-[#aa294d]'
           >
             Jadwal 5 Dosis Kemenkes
           </a>
           <a
             href='/#screening'
             onClick={() => setIsMobileMenuOpen(false)}
-            className='text-base font-medium text-slate-700 py-2 border-b border-slate-100'
+            className='text-base font-medium text-slate-700 py-2 border-b border-slate-100 hover:text-[#aa294d]'
           >
             Skrining Pranikah
           </a>
           <a
             href='/#faq'
             onClick={() => setIsMobileMenuOpen(false)}
-            className='text-base font-medium text-slate-700 py-2 border-b border-slate-100'
+            className='text-base font-medium text-slate-700 py-2 border-b border-slate-100 hover:text-[#aa294d]'
           >
             Tanya Jawab
           </a>
 
           <div className='pt-2 flex flex-col gap-3'>
             {isAuthenticated && user ? (
-              <div className='flex flex-col gap-2 bg-emerald-50/50 p-3.5 rounded-2xl border border-emerald-100'>
+              <div className='flex flex-col gap-2 bg-[#fff0f2] p-3.5 rounded-2xl border border-[#ffd9de]'>
                 <div className='flex items-center justify-between'>
                   <div className='flex items-center gap-2'>
                     <Avatar
                       src={user.avatarUrl}
                       name={user.name}
                       size='sm'
-                      ringClassName='ring-1.5 ring-[#059669]'
+                      ringClassName='ring-1.5 ring-[#aa294d]'
                     />
                     <div>
                       <div className='text-sm font-bold text-slate-800'>{user.name}</div>
@@ -225,7 +225,7 @@ export default function Navbar() {
                   </div>
                   <span
                     className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full text-white ${
-                      user.role === 'admin' ? 'bg-[#059669]' : 'bg-[#d97706]'
+                      user.role === 'admin' ? 'bg-[#aa294d]' : 'bg-[#2a6950]'
                     }`}
                   >
                     {roleLabel}
@@ -234,7 +234,7 @@ export default function Navbar() {
                 <Link
                   to={dashboardHref}
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className='bg-[#059669] text-white text-center py-2.5 rounded-full font-semibold text-sm flex items-center justify-center gap-2 mt-1 shadow-sm'
+                  className='bg-[#aa294d] hover:bg-[#8c0f39] text-white text-center py-2.5 rounded-full font-semibold text-sm flex items-center justify-center gap-2 mt-1 shadow-sm'
                 >
                   <LayoutDashboard size={16} />
                   <span>Buka Dashboard ({roleLabel})</span>
@@ -252,9 +252,9 @@ export default function Navbar() {
               </div>
             ) : (
               <Link
-                to='/splash'
+                to='/'
                 onClick={() => setIsMobileMenuOpen(false)}
-                className='bg-gradient-to-r from-[#059669] to-[#10b981] text-white text-center py-3 rounded-full font-bold shadow-md shadow-emerald-700/20 flex items-center justify-center gap-2'
+                className='bg-gradient-to-r from-[#aa294d] to-[#cb4364] text-white text-center py-3 rounded-full font-bold shadow-md shadow-rose-950/20 flex items-center justify-center gap-2'
               >
                 <Sparkles size={16} />
                 <span>Buka Aplikasi Sekarang</span>

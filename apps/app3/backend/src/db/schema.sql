@@ -56,6 +56,10 @@ CREATE TABLE user_profiles (
     level_title VARCHAR(100) NOT NULL DEFAULT 'Pemula Sehat',
     status VARCHAR(50) NOT NULL DEFAULT 'Aktif' CHECK(status IN ('Aktif', 'Nonaktif')),
     notes TEXT,
+    wedding_date DATE DEFAULT NULL,
+    tt_status VARCHAR(50) DEFAULT 'TT1' CHECK(tt_status IN ('TT0', 'TT1', 'TT2', 'TT3', 'TT4', 'TT5')),
+    kua_status VARCHAR(50) DEFAULT 'Menunggu Skrining' CHECK(kua_status IN ('Terverifikasi', 'Menunggu Skrining', 'Belum Lengkap')),
+    partner_name VARCHAR(255) DEFAULT NULL,
     last_active_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -187,7 +191,7 @@ CREATE TABLE buddy_cheers (
 CREATE TABLE articles (
     id VARCHAR(255) PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
-    category VARCHAR(100) NOT NULL CHECK(category IN ('Anemia', 'TTD', 'Nutrisi', 'Gaya Hidup', 'Mitos & Fakta', 'Mitos', 'Anemia & TTD', 'Nutrisi & Gizi', 'Kesehatan Remaja', 'Tips Menstruasi')),
+    category VARCHAR(100) NOT NULL,
     summary TEXT NOT NULL,
     lead_paragraph TEXT,
     image_url TEXT NOT NULL,
