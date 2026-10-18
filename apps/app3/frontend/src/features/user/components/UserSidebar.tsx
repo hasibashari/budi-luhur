@@ -1,15 +1,12 @@
-import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
   Home,
   Clock,
-  CalendarCheck,
   BookOpen,
   Bot,
   User,
   LogOut,
   ShieldCheck,
-  Sparkles,
 } from 'lucide-react';
 import { Avatar } from '@/src/shared/components/ui/Avatar';
 import { useAuth } from '@/src/features/auth';
@@ -17,8 +14,8 @@ import { useAuth } from '@/src/features/auth';
 export const USER_NAV_ITEMS = [
   { name: 'Beranda', href: '/user/dashboard', icon: Home },
   { name: 'Edukasi Pranikah', href: '/user/education', icon: BookOpen },
-  { name: 'Status & Riwayat TT', href: '/user/imunisasi', icon: ShieldCheck },
-  { name: 'Jadwal & Pengingat', href: '/user/schedule', icon: Clock },
+  { name: 'Status & Riwayat TT', href: '/user/imunisasi?tab=riwayat', icon: ShieldCheck },
+  { name: 'Jadwal & Pengingat', href: '/user/imunisasi?tab=jadwal', icon: Clock },
   { name: 'Konsultasi Luna AI', href: '/user/consultation', icon: Bot },
   { name: 'Profil Calon Pengantin', href: '/user/profile', icon: User },
 ];
@@ -26,9 +23,12 @@ export const USER_NAV_ITEMS = [
 export default function UserSidebar() {
   const location = useLocation();
   const pathname = location.pathname;
+  const currentTab = new URLSearchParams(location.search).get('tab');
   const { user, logout } = useAuth();
   const userName = user?.name || 'Calon Pengantin';
   const avatarUrl = user?.avatarUrl || '';
+
+  const isImunisasi = pathname === '/user/imunisasi' || pathname === '/user/history' || pathname === '/user/schedule';
 
   return (
     <aside className='w-64 h-screen sticky top-0 bg-white border-r border-[#e6eeff] flex flex-col justify-between z-40 select-none shadow-xs overflow-hidden'>
@@ -58,9 +58,17 @@ export default function UserSidebar() {
       <nav className='flex-1 flex flex-col gap-1 px-4 py-2 overflow-y-auto overscroll-contain'>
         {USER_NAV_ITEMS.map(item => {
           const Icon = item.icon;
-          const isActive =
-            pathname === item.href ||
-            (item.href !== '/user/dashboard' && pathname?.startsWith(item.href));
+          
+          let isActive = false;
+          if (item.href === '/user/imunisasi?tab=riwayat') {
+            isActive = isImunisasi && (currentTab === 'riwayat' || !currentTab);
+          } else if (item.href === '/user/imunisasi?tab=jadwal') {
+            isActive = isImunisasi && currentTab === 'jadwal';
+          } else {
+            isActive =
+              pathname === item.href ||
+              (item.href !== '/user/dashboard' && pathname?.startsWith(item.href));
+          }
 
           return (
             <Link
@@ -72,7 +80,10 @@ export default function UserSidebar() {
                   : 'text-[#64748b] hover:text-[#aa294d] hover:bg-[#ffd9de]/30'
               }`}
             >
-              <Icon size={18} className={isActive ? 'text-white shrink-0' : 'text-[#64748b] shrink-0'} />
+              <Icon
+                size={18}
+                className={isActive ? 'text-white shrink-0' : 'text-[#64748b] shrink-0'}
+              />
               <span className='truncate'>{item.name}</span>
             </Link>
           );
