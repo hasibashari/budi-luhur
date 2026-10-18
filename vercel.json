@@ -3,11 +3,39 @@
   "services": {
     "portal": {
       "root": "frontend",
-      "framework": "vite"
+      "framework": "vite",
+      "rewrites": [
+        {
+          "source": "/(.*)",
+          "destination": "/index.html"
+        }
+      ]
     },
     "femory-frontend": {
       "root": "apps/app1/frontend",
-      "framework": "vite"
+      "framework": "vite",
+      "rewrites": [
+        {
+          "source": "/app1/assets/(.*)",
+          "destination": "/assets/$1"
+        },
+        {
+          "source": "/app1/(.*\\.[a-zA-Z0-9]+)",
+          "destination": "/$1"
+        },
+        {
+          "source": "/app1",
+          "destination": "/index.html"
+        },
+        {
+          "source": "/app1/(.*)",
+          "destination": "/index.html"
+        },
+        {
+          "source": "/(.*)",
+          "destination": "/index.html"
+        }
+      ]
     },
     "femory-backend": {
       "root": "apps/app1/backend",
@@ -16,7 +44,29 @@
     },
     "pilluna-frontend": {
       "root": "apps/app2/frontend",
-      "framework": "vite"
+      "framework": "vite",
+      "rewrites": [
+        {
+          "source": "/app2/assets/(.*)",
+          "destination": "/assets/$1"
+        },
+        {
+          "source": "/app2/(.*\\.[a-zA-Z0-9]+)",
+          "destination": "/$1"
+        },
+        {
+          "source": "/app2",
+          "destination": "/index.html"
+        },
+        {
+          "source": "/app2/(.*)",
+          "destination": "/index.html"
+        },
+        {
+          "source": "/(.*)",
+          "destination": "/index.html"
+        }
+      ]
     },
     "pilluna-backend": {
       "root": "apps/app2/backend",
@@ -25,7 +75,29 @@
     },
     "preluna-frontend": {
       "root": "apps/app3/frontend",
-      "framework": "vite"
+      "framework": "vite",
+      "rewrites": [
+        {
+          "source": "/app3/assets/(.*)",
+          "destination": "/assets/$1"
+        },
+        {
+          "source": "/app3/(.*\\.[a-zA-Z0-9]+)",
+          "destination": "/$1"
+        },
+        {
+          "source": "/app3",
+          "destination": "/index.html"
+        },
+        {
+          "source": "/app3/(.*)",
+          "destination": "/index.html"
+        },
+        {
+          "source": "/(.*)",
+          "destination": "/index.html"
+        }
+      ]
     },
     "preluna-backend": {
       "root": "apps/app3/backend",
@@ -39,7 +111,13 @@
     },
     "template-frontend": {
       "root": "apps/template-frontend",
-      "framework": "vite"
+      "framework": "vite",
+      "rewrites": [
+        {
+          "source": "/(.*)",
+          "destination": "/index.html"
+        }
+      ]
     }
   },
   "rewrites": [
@@ -65,94 +143,45 @@
       }
     },
     {
-      "source": "/app1/assets/(.*)",
+      "source": "/app1/(.*)",
       "destination": {
-        "service": "femory-frontend",
-        "path": "/assets/$1"
-      }
-    },
-    {
-      "source": "/app1/(.*\\.[a-zA-Z0-9]+)",
-      "destination": {
-        "service": "femory-frontend",
-        "path": "/$1"
+        "service": "femory-frontend"
       }
     },
     {
       "source": "/app1",
       "destination": {
-        "service": "femory-frontend",
-        "path": "/index.html"
-      }
-    },
-    {
-      "source": "/app1/(.*)",
-      "destination": {
-        "service": "femory-frontend",
-        "path": "/index.html"
-      }
-    },
-    {
-      "source": "/app2/assets/(.*)",
-      "destination": {
-        "service": "pilluna-frontend",
-        "path": "/assets/$1"
-      }
-    },
-    {
-      "source": "/app2/(.*\\.[a-zA-Z0-9]+)",
-      "destination": {
-        "service": "pilluna-frontend",
-        "path": "/$1"
-      }
-    },
-    {
-      "source": "/app2",
-      "destination": {
-        "service": "pilluna-frontend",
-        "path": "/index.html"
+        "service": "femory-frontend"
       }
     },
     {
       "source": "/app2/(.*)",
       "destination": {
-        "service": "pilluna-frontend",
-        "path": "/index.html"
+        "service": "pilluna-frontend"
       }
     },
     {
-      "source": "/app3/assets/(.*)",
+      "source": "/app2",
       "destination": {
-        "service": "preluna-frontend",
-        "path": "/assets/$1"
-      }
-    },
-    {
-      "source": "/app3/(.*\\.[a-zA-Z0-9]+)",
-      "destination": {
-        "service": "preluna-frontend",
-        "path": "/$1"
-      }
-    },
-    {
-      "source": "/app3",
-      "destination": {
-        "service": "preluna-frontend",
-        "path": "/index.html"
+        "service": "pilluna-frontend"
       }
     },
     {
       "source": "/app3/(.*)",
       "destination": {
-        "service": "preluna-frontend",
-        "path": "/index.html"
+        "service": "preluna-frontend"
+      }
+    },
+    {
+      "source": "/app3",
+      "destination": {
+        "service": "preluna-frontend"
       }
     },
     {
       "source": "/(.*)",
       "destination": {
-        "service": "portal",
-        "path": "/index.html"
+        "service": "portal"
       }
     }
   ],
