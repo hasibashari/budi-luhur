@@ -14,14 +14,25 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Health Check
-app.get(['/', '/health', '/api/v1/health'], (_req: Request, res: Response) => {
-  res.json({
-    status: 'ok',
-    timestamp: new Date().toISOString(),
-    service: 'Pilluna Backend API',
-  });
+// Prefix-stripping middleware for Vercel service rewrites
+app.use((req: Request, _res: Response, next: NextFunction) => {
+  if (req.url.startsWith('/api/app2')) {
+    req.url = req.url.slice('/api/app2'.length) || '/';
+  }
+  next();
 });
+
+// Health Check
+app.get(
+  ['/', '/health', '/api/v1/health', '/api/app2/api/v1/health', '/api/app2/health'],
+  (_req: Request, res: Response) => {
+    res.json({
+      status: 'ok',
+      timestamp: new Date().toISOString(),
+      service: 'Pilluna Backend API',
+    });
+  },
+);
 
 // Domain Routes
 import { authRoutes } from './modules/auth/auth.routes.js';

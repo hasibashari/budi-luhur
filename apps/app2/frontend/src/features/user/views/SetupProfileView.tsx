@@ -155,7 +155,11 @@ export function SetupProfileView() {
           {errorMessage && (
             <div className='mb-3.5 p-3 sm:p-3.5 rounded-2xl bg-[#FEF2F2] border border-[#FECACA] text-[#DC2626] text-xs sm:text-sm font-semibold flex items-center gap-2 animate-fade-in'>
               <AlertCircle size={16} className='text-[#DC2626] shrink-0' />
-              <span>{errorMessage}</span>
+              <span>
+                {typeof errorMessage === 'string'
+                  ? errorMessage
+                  : (errorMessage as any)?.message || JSON.stringify(errorMessage)}
+              </span>
             </div>
           )}
         </div>

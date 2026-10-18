@@ -1,4 +1,4 @@
-import apiClient from '@/src/shared/api/client';
+import apiClient, { extractErrorMessage } from '@/src/shared/api/client';
 import {
   ConsumptionLog,
   ConsumptionStats,
@@ -115,6 +115,6 @@ export async function recordConsumptionForDateAction(
     });
     return { success: true, ...response.data };
   } catch (err: any) {
-    return { success: false, error: err.response?.data?.error || err.message };
+    return { success: false, error: extractErrorMessage(err) };
   }
 }

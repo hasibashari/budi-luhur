@@ -14,8 +14,16 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Prefix-stripping middleware for Vercel service rewrites
+app.use((req: Request, _res: Response, next: NextFunction) => {
+  if (req.url.startsWith('/api/app1')) {
+    req.url = req.url.slice('/api/app1'.length) || '/';
+  }
+  next();
+});
+
 // Health Check
-app.get(['/', '/health', '/api/v1/health'], (_req: Request, res: Response) => {
+app.get(['/', '/health', '/api/v1/health', '/api/app1/api/v1/health', '/api/app1/health'], (_req: Request, res: Response) => {
   res.json({
     status: 'ok',
     timestamp: new Date().toISOString(),

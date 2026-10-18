@@ -1,4 +1,4 @@
-import apiClient from '@/src/shared/api/client';
+import apiClient, { extractErrorMessage } from '@/src/shared/api/client';
 import {
   AdminStats,
   ManagedUser,
@@ -57,7 +57,7 @@ export async function createUserAction(data: {
     const res = await apiClient.post<{ success: boolean; user: ManagedUser }>('/admin/users', data);
     return { success: true, user: res.data.user };
   } catch (err: any) {
-    return { success: false, error: err.response?.data?.error || err.message };
+    return { success: false, error: extractErrorMessage(err) };
   }
 }
 
@@ -69,7 +69,7 @@ export async function updateUserAction(
     const res = await apiClient.put(`/admin/users/${userId}`, data);
     return { success: true, ...res.data };
   } catch (err: any) {
-    return { success: false, error: err.response?.data?.error || err.message };
+    return { success: false, error: extractErrorMessage(err) };
   }
 }
 
@@ -80,7 +80,7 @@ export async function deleteUserAction(
     const res = await apiClient.delete(`/admin/users/${userId}`);
     return { success: true, ...res.data };
   } catch (err: any) {
-    return { success: false, error: err.response?.data?.error || err.message };
+    return { success: false, error: extractErrorMessage(err) };
   }
 }
 
@@ -93,7 +93,7 @@ export async function sendUserReminderAction(
     const res = await apiClient.post('/admin/reminders/send', { userId, message, channel });
     return { success: true, ...res.data };
   } catch (err: any) {
-    return { success: false, error: err.response?.data?.error || err.message };
+    return { success: false, error: extractErrorMessage(err) };
   }
 }
 
@@ -123,7 +123,7 @@ export async function updateAdminProfileAction(
     const res = await apiClient.put('/admin/profile', payload);
     return { success: true, ...res.data };
   } catch (err: any) {
-    return { success: false, error: err.response?.data?.error || err.message };
+    return { success: false, error: extractErrorMessage(err) };
   }
 }
 
@@ -168,7 +168,7 @@ export async function createScheduleAction(data: {
     );
     return { success: true, schedule: res.data.schedule };
   } catch (err: any) {
-    return { success: false, error: err.response?.data?.error || err.message };
+    return { success: false, error: extractErrorMessage(err) };
   }
 }
 
@@ -180,7 +180,7 @@ export async function updateScheduleAction(
     const res = await apiClient.put(`/admin/schedules/${scheduleId}`, data);
     return { success: true, ...res.data };
   } catch (err: any) {
-    return { success: false, error: err.response?.data?.error || err.message };
+    return { success: false, error: extractErrorMessage(err) };
   }
 }
 
@@ -191,7 +191,7 @@ export async function deleteScheduleAction(
     const res = await apiClient.delete(`/admin/schedules/${scheduleId}`);
     return { success: true, ...res.data };
   } catch (err: any) {
-    return { success: false, error: err.response?.data?.error || err.message };
+    return { success: false, error: extractErrorMessage(err) };
   }
 }
 
@@ -222,7 +222,7 @@ export async function createAdminArticleAction(data: {
     );
     return { success: true, article: res.data.article };
   } catch (err: any) {
-    return { success: false, error: err.response?.data?.error || err.message };
+    return { success: false, error: extractErrorMessage(err) };
   }
 }
 
@@ -234,7 +234,7 @@ export async function updateAdminArticleAction(
     const res = await apiClient.put(`/admin/articles/${articleId}`, data);
     return { success: true, ...res.data };
   } catch (err: any) {
-    return { success: false, error: err.response?.data?.error || err.message };
+    return { success: false, error: extractErrorMessage(err) };
   }
 }
 
@@ -245,7 +245,7 @@ export async function deleteAdminArticleAction(
     const res = await apiClient.delete(`/admin/articles/${articleId}`);
     return { success: true, ...res.data };
   } catch (err: any) {
-    return { success: false, error: err.response?.data?.error || err.message };
+    return { success: false, error: extractErrorMessage(err) };
   }
 }
 

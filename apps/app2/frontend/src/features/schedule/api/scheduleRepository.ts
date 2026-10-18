@@ -1,4 +1,4 @@
-import apiClient from '@/src/shared/api/client';
+import apiClient, { extractErrorMessage } from '@/src/shared/api/client';
 import { AdminNudge } from '../types';
 
 export async function getUserScheduleAction(_userId?: string) {
@@ -27,7 +27,7 @@ export async function updateUserScheduleSettingsAction(
     const response = await apiClient.put(`/schedules/${scheduleId}`, data);
     return { success: true, data: response.data };
   } catch (err: any) {
-    return { success: false, error: err.response?.data?.error || err.message };
+    return { success: false, error: extractErrorMessage(err) };
   }
 }
 
@@ -45,6 +45,6 @@ export async function dismissNudgeAction(nudgeId: string): Promise<{ success: bo
     const response = await apiClient.post(`/schedules/nudges/${nudgeId}/dismiss`);
     return { success: true, ...response.data };
   } catch (err: any) {
-    return { success: false, error: err.response?.data?.error || err.message };
+    return { success: false, error: extractErrorMessage(err) };
   }
 }

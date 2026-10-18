@@ -1,4 +1,4 @@
-import apiClient from '@/src/shared/api/client';
+import apiClient, { extractErrorMessage } from '@/src/shared/api/client';
 import { UserProfile, UserScheduleData, UserDashboardData, StreakResult } from '../types';
 
 export type { UserProfile, UserScheduleData, UserDashboardData, StreakResult };
@@ -21,7 +21,7 @@ export async function updateUserProfileAction(
     const response = await apiClient.put('/users/profile', data);
     return { success: true, data: response.data };
   } catch (err: any) {
-    return { success: false, error: err.response?.data?.error || err.message };
+    return { success: false, error: extractErrorMessage(err) };
   }
 }
 
@@ -33,7 +33,7 @@ export async function saveUserInitialSetupAction(
     const response = await apiClient.post('/users/setup', data);
     return { success: true, ...response.data };
   } catch (err: any) {
-    return { success: false, error: err.response?.data?.error || err.message };
+    return { success: false, error: extractErrorMessage(err) };
   }
 }
 
@@ -58,7 +58,7 @@ export async function recordUserConsumptionAction(
       ...response.data,
     };
   } catch (err: any) {
-    return { success: false, streakCount: 0, error: err.response?.data?.error || err.message };
+    return { success: false, streakCount: 0, error: extractErrorMessage(err) };
   }
 }
 
@@ -79,7 +79,7 @@ export async function createUserScheduleAction(
     const response = await apiClient.post('/schedules', data);
     return { success: true, ...response.data };
   } catch (err: any) {
-    return { success: false, error: err.response?.data?.error || err.message };
+    return { success: false, error: extractErrorMessage(err) };
   }
 }
 
@@ -91,7 +91,7 @@ export async function updateUserScheduleSettingsAction(
     const response = await apiClient.put(`/schedules/${scheduleId}`, data);
     return { success: true, data: response.data };
   } catch (err: any) {
-    return { success: false, error: err.response?.data?.error || err.message };
+    return { success: false, error: extractErrorMessage(err) };
   }
 }
 
