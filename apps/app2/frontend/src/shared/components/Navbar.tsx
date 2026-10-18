@@ -1,6 +1,15 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { Menu, X, Heart, LogOut, LayoutDashboard, Sparkles, ChevronDown, ArrowLeft } from 'lucide-react';
+import {
+  Menu,
+  X,
+  Heart,
+  LogOut,
+  LayoutDashboard,
+  Sparkles,
+  ChevronDown,
+  ArrowLeft,
+} from 'lucide-react';
 import { Avatar } from './ui/Avatar';
 import { cn } from '../utils/cn';
 import { useAuth } from '@/features/auth';
@@ -89,7 +98,7 @@ export default function Navbar() {
             href='/#ingredients'
             className='text-sm font-medium text-[#4A5E78] hover:text-[#E94383] transition-colors'
           >
-            Panduan SADARI
+            SADARI
           </a>
           <a
             href='/#faq'
@@ -215,7 +224,7 @@ export default function Navbar() {
             onClick={() => setIsMobileMenuOpen(false)}
             className='text-base font-medium text-slate-700 py-2 border-b border-slate-100'
           >
-            Panduan SADARI
+            SADARI
           </a>
           <a
             href='/#faq'

@@ -20,7 +20,7 @@ export const USER_NAV_ITEMS = [
   { name: 'Pengingat', href: '/user/schedule', icon: Clock },
   { name: 'Monitoring', href: '/user/history', icon: CalendarDays },
   { name: 'Edukasi', href: '/user/education', icon: BookOpen },
-  { name: 'Panduan SADARI', href: '/user/sadari', icon: Ribbon },
+  { name: 'SADARI', href: '/user/sadari', icon: Ribbon },
   { name: 'Konsultasi AI', href: '/user/consultation', icon: Bot },
   { name: 'Profil & Akun', href: '/user/profile', icon: User },
 ];
