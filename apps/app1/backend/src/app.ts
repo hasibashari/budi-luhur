@@ -31,13 +31,25 @@ app.use((req: Request, _res: Response, next: NextFunction) => {
 });
 
 // Health Check
-app.get(['/', '/health', '/api/v1/health', '/api/app1/api/v1/health', '/api/app1/health'], (_req: Request, res: Response) => {
-  res.json({
-    status: 'ok',
-    timestamp: new Date().toISOString(),
-    service: 'FEMORY Backend API',
-  });
-});
+app.get(
+  [
+    '/',
+    '/health',
+    '/api',
+    '/api/health',
+    '/api/v1/health',
+    '/v1/health',
+    '/api/app1/api/v1/health',
+    '/api/app1/health',
+  ],
+  (_req: Request, res: Response) => {
+    res.json({
+      status: 'ok',
+      timestamp: new Date().toISOString(),
+      service: 'FEMORY Backend API',
+    });
+  },
+);
 
 // Domain Routes
 import { authRoutes } from './modules/auth/auth.routes.js';
@@ -49,14 +61,14 @@ import { articleRoutes } from './modules/articles/article.routes.js';
 import { consultationRoutes } from './modules/consultation/consultation.routes.js';
 import { adminRoutes } from './modules/admin/admin.routes.js';
 
-app.use('/api/v1/auth', authRoutes);
-app.use('/api/v1/users', userRoutes);
-app.use('/api/v1/schedules', scheduleRoutes);
-app.use('/api/v1/consumption', consumptionRoutes);
-app.use('/api/v1/buddy', buddyRoutes);
-app.use('/api/v1/articles', articleRoutes);
-app.use('/api/v1/consultation', consultationRoutes);
-app.use('/api/v1/admin', adminRoutes);
+app.use(['/api/v1/auth', '/v1/auth'], authRoutes);
+app.use(['/api/v1/users', '/v1/users'], userRoutes);
+app.use(['/api/v1/schedules', '/v1/schedules'], scheduleRoutes);
+app.use(['/api/v1/consumption', '/v1/consumption'], consumptionRoutes);
+app.use(['/api/v1/buddy', '/v1/buddy'], buddyRoutes);
+app.use(['/api/v1/articles', '/v1/articles'], articleRoutes);
+app.use(['/api/v1/consultation', '/v1/consultation'], consultationRoutes);
+app.use(['/api/v1/admin', '/v1/admin'], adminRoutes);
 
 // Global Error Handler
 app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {

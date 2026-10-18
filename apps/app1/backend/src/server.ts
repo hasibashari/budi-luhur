@@ -1,13 +1,11 @@
 import { app } from './app.js';
 import { config } from './config/env.js';
 
-const PORT = config.port;
+const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : config.port;
 
-if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
-  app.listen(PORT, () => {
-    console.log(`🚀 FEMORY Backend running on http://localhost:${PORT}`);
-    console.log(`📡 Health check available at http://localhost:${PORT}/api/v1/health`);
-  });
-}
+app.listen(PORT, () => {
+  console.log(`🚀 FEMORY Backend running on http://localhost:${PORT}`);
+  console.log(`📡 Health check available at http://localhost:${PORT}/api/v1/health`);
+});
 
 export default app;
