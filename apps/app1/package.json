@@ -3,8 +3,18 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
   "scripts": {
-    "build": "npm --prefix frontend run build"
+    "build": "npm run build --workspace=frontend",
+    "dev": "npm run dev --workspace=frontend",
+    "dev:backend": "npm run dev --workspace=backend",
+    "dev:frontend": "npm run dev --workspace=frontend",
+    "backend:build": "npm run build --workspace=backend",
+    "backend:db:init": "npm run db:init --workspace=backend",
+    "backend:db:seed": "npm run db:seed --workspace=backend"
   },
   "dependencies": {
     "bcryptjs": "^3.0.2",
