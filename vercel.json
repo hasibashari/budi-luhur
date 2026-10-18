@@ -46,61 +46,113 @@
     {
       "source": "/api/app1/(.*)",
       "destination": {
-        "service": "femory-backend"
+        "service": "femory-backend",
+        "path": "/$1"
       }
     },
     {
       "source": "/api/app2/(.*)",
       "destination": {
-        "service": "pilluna-backend"
+        "service": "pilluna-backend",
+        "path": "/$1"
       }
     },
     {
       "source": "/api/app3/(.*)",
       "destination": {
-        "service": "preluna-backend"
+        "service": "preluna-backend",
+        "path": "/$1"
+      }
+    },
+    {
+      "source": "/app1/assets/(.*)",
+      "destination": {
+        "service": "femory-frontend",
+        "path": "/assets/$1"
+      }
+    },
+    {
+      "source": "/app1/(.*\\.[a-zA-Z0-9]+)",
+      "destination": {
+        "service": "femory-frontend",
+        "path": "/$1"
       }
     },
     {
       "source": "/app1",
       "destination": {
-        "service": "femory-frontend"
+        "service": "femory-frontend",
+        "path": "/index.html"
       }
     },
     {
       "source": "/app1/(.*)",
       "destination": {
-        "service": "femory-frontend"
+        "service": "femory-frontend",
+        "path": "/index.html"
+      }
+    },
+    {
+      "source": "/app2/assets/(.*)",
+      "destination": {
+        "service": "pilluna-frontend",
+        "path": "/assets/$1"
+      }
+    },
+    {
+      "source": "/app2/(.*\\.[a-zA-Z0-9]+)",
+      "destination": {
+        "service": "pilluna-frontend",
+        "path": "/$1"
       }
     },
     {
       "source": "/app2",
       "destination": {
-        "service": "pilluna-frontend"
+        "service": "pilluna-frontend",
+        "path": "/index.html"
       }
     },
     {
       "source": "/app2/(.*)",
       "destination": {
-        "service": "pilluna-frontend"
+        "service": "pilluna-frontend",
+        "path": "/index.html"
+      }
+    },
+    {
+      "source": "/app3/assets/(.*)",
+      "destination": {
+        "service": "preluna-frontend",
+        "path": "/assets/$1"
+      }
+    },
+    {
+      "source": "/app3/(.*\\.[a-zA-Z0-9]+)",
+      "destination": {
+        "service": "preluna-frontend",
+        "path": "/$1"
       }
     },
     {
       "source": "/app3",
       "destination": {
-        "service": "preluna-frontend"
+        "service": "preluna-frontend",
+        "path": "/index.html"
       }
     },
     {
       "source": "/app3/(.*)",
       "destination": {
-        "service": "preluna-frontend"
+        "service": "preluna-frontend",
+        "path": "/index.html"
       }
     },
     {
       "source": "/(.*)",
       "destination": {
-        "service": "portal"
+        "service": "portal",
+        "path": "/index.html"
       }
     }
   ],
