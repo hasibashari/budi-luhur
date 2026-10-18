@@ -3,34 +3,41 @@
   "services": {
     "portal": {
       "root": "frontend",
-      "framework": "vite"
+      "framework": "vite",
+      "routePrefix": "/"
     },
     "femory-frontend": {
       "root": "apps/app1/frontend",
-      "framework": "vite"
+      "framework": "vite",
+      "routePrefix": "/app1"
     },
     "femory-backend": {
       "root": "apps/app1/backend",
       "framework": "express",
-      "entrypoint": "src/server.ts"
+      "entrypoint": "src/server.ts",
+      "routePrefix": "/api/app1"
     },
     "pilluna-frontend": {
       "root": "apps/app2/frontend",
-      "framework": "vite"
+      "framework": "vite",
+      "routePrefix": "/app2"
     },
     "pilluna-backend": {
       "root": "apps/app2/backend",
       "framework": "express",
-      "entrypoint": "src/server.ts"
+      "entrypoint": "src/server.ts",
+      "routePrefix": "/api/app2"
     },
     "preluna-frontend": {
       "root": "apps/app3/frontend",
-      "framework": "vite"
+      "framework": "vite",
+      "routePrefix": "/app3"
     },
     "preluna-backend": {
       "root": "apps/app3/backend",
       "framework": "express",
-      "entrypoint": "src/server.ts"
+      "entrypoint": "src/server.ts",
+      "routePrefix": "/api/app3"
     },
     "template-backend": {
       "root": "apps/template-backend",
@@ -46,106 +53,55 @@
     {
       "source": "/api/app1/(.*)",
       "destination": {
-        "service": "femory-backend",
-        "path": "/$1"
+        "service": "femory-backend"
       }
     },
     {
       "source": "/api/app2/(.*)",
       "destination": {
-        "service": "pilluna-backend",
-        "path": "/$1"
+        "service": "pilluna-backend"
       }
     },
     {
       "source": "/api/app3/(.*)",
       "destination": {
-        "service": "preluna-backend",
-        "path": "/$1"
-      }
-    },
-    {
-      "source": "/app1/assets/(.*)",
-      "destination": {
-        "service": "femory-frontend",
-        "path": "/assets/$1"
-      }
-    },
-    {
-      "source": "/app1/(.*\\.[a-zA-Z0-9]+)",
-      "destination": {
-        "service": "femory-frontend",
-        "path": "/$1"
+        "service": "preluna-backend"
       }
     },
     {
       "source": "/app1",
       "destination": {
-        "service": "femory-frontend",
-        "path": "/index.html"
+        "service": "femory-frontend"
       }
     },
     {
       "source": "/app1/(.*)",
       "destination": {
-        "service": "femory-frontend",
-        "path": "/index.html"
-      }
-    },
-    {
-      "source": "/app2/assets/(.*)",
-      "destination": {
-        "service": "pilluna-frontend",
-        "path": "/assets/$1"
-      }
-    },
-    {
-      "source": "/app2/(.*\\.[a-zA-Z0-9]+)",
-      "destination": {
-        "service": "pilluna-frontend",
-        "path": "/$1"
+        "service": "femory-frontend"
       }
     },
     {
       "source": "/app2",
       "destination": {
-        "service": "pilluna-frontend",
-        "path": "/index.html"
+        "service": "pilluna-frontend"
       }
     },
     {
       "source": "/app2/(.*)",
       "destination": {
-        "service": "pilluna-frontend",
-        "path": "/index.html"
-      }
-    },
-    {
-      "source": "/app3/assets/(.*)",
-      "destination": {
-        "service": "preluna-frontend",
-        "path": "/assets/$1"
-      }
-    },
-    {
-      "source": "/app3/(.*\\.[a-zA-Z0-9]+)",
-      "destination": {
-        "service": "preluna-frontend",
-        "path": "/$1"
+        "service": "pilluna-frontend"
       }
     },
     {
       "source": "/app3",
       "destination": {
-        "service": "preluna-frontend",
-        "path": "/index.html"
+        "service": "preluna-frontend"
       }
     },
     {
       "source": "/app3/(.*)",
       "destination": {
-        "service": "preluna-frontend",
-        "path": "/index.html"
+        "service": "preluna-frontend"
       }
     },
     {
