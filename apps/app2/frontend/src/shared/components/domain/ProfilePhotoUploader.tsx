@@ -198,7 +198,11 @@ export function ProfilePhotoUploader({
             {errorMessage && (
               <div className='mb-4 p-3 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-semibold flex items-center gap-2'>
                 <AlertCircle size={15} className='text-rose-600 shrink-0' />
-                <span>{errorMessage}</span>
+                <span>
+                  {typeof errorMessage === 'string'
+                    ? errorMessage
+                    : (errorMessage as any)?.message || JSON.stringify(errorMessage)}
+                </span>
               </div>
             )}
 
@@ -268,7 +272,13 @@ export function ProfilePhotoUploader({
                   shape='rounded'
                   disabled={isProcessing || !hasChanged}
                   onClick={handleSave}
-                  icon={isProcessing ? <Loader2 size={14} className='animate-spin' /> : <Check size={14} />}
+                  icon={
+                    isProcessing ? (
+                      <Loader2 size={14} className='animate-spin' />
+                    ) : (
+                      <Check size={14} />
+                    )
+                  }
                   className='text-xs py-2 px-4 shadow-md'
                 >
                   {isProcessing ? 'Mengupdate...' : 'Update Foto'}

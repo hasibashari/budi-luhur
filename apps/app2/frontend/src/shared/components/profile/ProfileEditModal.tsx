@@ -86,7 +86,11 @@ export function ProfileEditModal({
             {errorMessage && (
               <div className='p-3 rounded-2xl bg-red-50 border border-red-200 text-red-800 text-xs font-semibold flex items-center gap-2'>
                 <AlertCircle size={15} className='text-red-600 shrink-0' />
-                <span>{errorMessage}</span>
+                <span>
+                  {typeof errorMessage === 'string'
+                    ? errorMessage
+                    : (errorMessage as any)?.message || JSON.stringify(errorMessage)}
+                </span>
               </div>
             )}
             {children}

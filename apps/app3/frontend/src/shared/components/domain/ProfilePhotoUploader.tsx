@@ -198,7 +198,11 @@ export function ProfilePhotoUploader({
             {errorMessage && (
               <div className='mb-4 p-3 rounded-2xl bg-amber-50 border border-amber-200 text-amber-800 text-xs font-semibold flex items-center gap-2'>
                 <AlertCircle size={15} className='text-amber-600 shrink-0' />
-                <span>{errorMessage}</span>
+                <span>
+                  {typeof errorMessage === 'string'
+                    ? errorMessage
+                    : (errorMessage as any)?.message || JSON.stringify(errorMessage)}
+                </span>
               </div>
             )}
 

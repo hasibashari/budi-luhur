@@ -43,7 +43,12 @@ apiClient.interceptors.response.use(
 export function extractErrorMessage(err: any, fallback = 'Terjadi kesalahan sistem.'): string {
   if (!err) return fallback;
   const data = err.response?.data;
-  if (typeof data === 'string' && data.trim()) return data;
+  if (typeof data === 'string' && data.trim()) {
+    if (data.toLowerCase().startsWith('<!doctype') || data.toLowerCase().startsWith('<html')) {
+      return 'Koneksi ke server API belum terhubung. Pastikan backend sudah aktif dan VITE_API_BASE_URL sudah disetel.';
+    }
+    return data;
+  }
   if (typeof data?.error === 'string' && data.error.trim()) return data.error;
   if (typeof data?.error?.message === 'string' && data.error.message.trim()) return data.error.message;
   if (typeof data?.message === 'string' && data.message.trim()) return data.message;
