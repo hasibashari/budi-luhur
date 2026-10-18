@@ -36,10 +36,15 @@ export function VaccineCardModal({
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fade-in">
-      <div className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-stone-200 overflow-hidden flex flex-col max-h-[92vh]">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-950/60 backdrop-blur-xs animate-fade-in">
+      <div className="relative w-full max-w-lg bg-white rounded-t-[28px] sm:rounded-3xl shadow-2xl border border-stone-200 overflow-hidden flex flex-col max-h-[90dvh] sm:max-h-[92vh]">
+        {/* Mobile Pull Drag Indicator Bar */}
+        <div className="sm:hidden w-full pt-2.5 pb-1 flex justify-center bg-gradient-to-r from-[#aa294d] to-[#cb4364]">
+          <div className="w-12 h-1.5 rounded-full bg-white/40" />
+        </div>
+
         {/* Header */}
-        <div className="px-5 py-4 bg-gradient-to-r from-[#aa294d] to-[#cb4364] text-white flex items-center justify-between">
+        <div className="px-5 py-3.5 sm:py-4 bg-gradient-to-r from-[#aa294d] to-[#cb4364] text-white flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center shadow-xs">
               <ShieldCheck size={20} className="text-white" />
@@ -56,7 +61,8 @@ export function VaccineCardModal({
           <button
             type="button"
             onClick={onClose}
-            className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors cursor-pointer"
+            className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors cursor-pointer active:scale-90"
+            aria-label="Tutup Kartu Vaksin"
           >
             <X size={18} />
           </button>
@@ -159,23 +165,23 @@ export function VaccineCardModal({
         </div>
 
         {/* Footer Actions */}
-        <div className="px-5 py-3.5 bg-stone-50 border-t border-stone-200 flex items-center justify-end gap-2.5">
+        <div className="px-5 pt-3.5 pb-[calc(1.25rem+env(safe-area-inset-bottom,0px))] sm:pb-3.5 bg-stone-50 border-t border-stone-200 flex flex-col-reverse sm:flex-row sm:items-center justify-end gap-2.5">
           <Button
             variant="outline"
-            size="sm"
+            size="md"
             shape="pill"
             onClick={onClose}
-            className="text-xs"
+            className="w-full sm:w-auto min-h-[44px] text-xs font-semibold cursor-pointer active:scale-95"
           >
             Tutup
           </Button>
           <Button
             variant="primary"
-            size="sm"
+            size="md"
             shape="pill"
-            icon={<Printer size={14} />}
+            icon={<Printer size={16} />}
             onClick={handlePrint}
-            className="bg-[#aa294d] hover:bg-[#cb4364] text-white font-bold text-xs shadow-xs"
+            className="w-full sm:w-auto min-h-[44px] bg-[#aa294d] hover:bg-[#cb4364] text-white font-bold text-xs shadow-xs cursor-pointer active:scale-95"
           >
             Cetak / Simpan PDF
           </Button>

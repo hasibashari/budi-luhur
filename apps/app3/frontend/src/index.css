@@ -102,20 +102,51 @@
   --foreground: #121c2a;
 }
 
+html {
+  -webkit-tap-highlight-color: transparent;
+  scroll-behavior: smooth;
+}
+
 body {
   background-color: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
+  overscroll-behavior-y: none;
+  touch-action: manipulation;
 }
 
-/* Safe area utilities for mobile devices */
+/* Safe area utilities for modern mobile devices */
 .pb-safe {
-  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 0.5rem);
+  padding-bottom: max(0.75rem, env(safe-area-inset-bottom, 0px));
 }
 
 .pt-safe {
-  padding-top: env(safe-area-inset-top, 0px);
+  padding-top: max(0.5rem, env(safe-area-inset-top, 0px));
+}
+
+/* Dynamic Viewport Utilities */
+.min-h-dvh {
+  min-height: 100dvh;
+}
+
+.h-dvh {
+  height: 100dvh;
+}
+
+/* Hide scrollbar for clean horizontal swipeable rails */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Mobile Touch Target Minimum Standard (44px) */
+.touch-target-44 {
+  min-width: 44px;
+  min-height: 44px;
 }
 
 /* Custom delicate scrollbar */

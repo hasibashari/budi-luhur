@@ -17,29 +17,25 @@ export default function UserLayout({ children }: UserLayoutProps) {
   const avatarUrl = user?.avatarUrl || 'https://api.dicebear.com/7.x/avataaars/svg?seed=PRELUNA';
 
   if (pathname === '/user/setup') {
-    return (
-      <AuthGuard requiredRole='user'>
-        {children || <Outlet />}
-      </AuthGuard>
-    );
+    return <AuthGuard requiredRole='user'>{children || <Outlet />}</AuthGuard>;
   }
 
   return (
     <AuthGuard requiredRole='user'>
-      <div className='min-h-screen bg-[#f8f9ff] flex flex-col md:flex-row selection:bg-[#ffd9de] selection:text-[#400014]'>
+      <div className='min-h-[100dvh] md:h-screen md:overflow-hidden bg-[#f8f9ff] flex flex-col md:flex-row selection:bg-[#ffd9de] selection:text-[#400014]'>
         {/* Mobile Top Header (< md) */}
-        <div className='block md:hidden'>
+        <div className='block md:hidden shrink-0'>
           <MobileTopBar userName={displayName} avatarUrl={avatarUrl} />
         </div>
 
         {/* Desktop / Tablet Left Sidebar (>= md) */}
-        <div className='hidden md:block shrink-0'>
+        <div className='hidden md:flex shrink-0 h-screen sticky top-0'>
           <UserSidebar />
         </div>
 
-        {/* Main Content Area */}
-        <main className='flex-1 min-w-0 w-full max-w-full md:max-w-7xl mx-auto px-4 py-4 pb-24 md:p-8 md:pb-12 min-h-screen box-border'>
-          {children || <Outlet />}
+        {/* Main Content Area with its own independent scroll */}
+        <main className='flex-1 min-w-0 w-full overflow-y-auto px-4 py-4 pb-[calc(5.75rem+env(safe-area-inset-bottom,0px))] md:p-8 md:pb-12 box-border'>
+          <div className='max-w-7xl mx-auto w-full'>{children || <Outlet />}</div>
         </main>
 
         {/* Fixed Mobile Bottom Navigation (< md) */}

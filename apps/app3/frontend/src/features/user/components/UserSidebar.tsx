@@ -31,54 +31,56 @@ export default function UserSidebar() {
   const avatarUrl = user?.avatarUrl || '';
 
   return (
-    <aside className='w-64 h-screen sticky top-0 bg-white border-r border-[#e6eeff] flex flex-col justify-between p-4 z-40 select-none shadow-xs'>
-      {/* Brand & Logo Header */}
-      <div>
+    <aside className='w-64 h-screen sticky top-0 bg-white border-r border-[#e6eeff] flex flex-col justify-between z-40 select-none shadow-xs overflow-hidden'>
+      {/* Brand & Logo Header - Pinned at top */}
+      <div className='p-4 pb-2 shrink-0'>
         <Link
           to='/user/dashboard'
-          className='flex items-center gap-3 px-2 py-3 rounded-2xl hover:bg-[#ffd9de]/20 transition-colors mb-4'
+          className='flex items-center gap-3 px-2 py-3 rounded-2xl hover:bg-[#ffd9de]/20 transition-colors'
         >
-          <div className='w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#aa294d] to-[#cb4364] text-white flex items-center justify-center shadow-md shadow-rose-950/20'>
+          <div className='w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#aa294d] to-[#cb4364] text-white flex items-center justify-center shadow-md shadow-rose-950/20 shrink-0'>
             <ShieldCheck size={22} className='text-white' />
           </div>
-          <div>
+          <div className='min-w-0'>
             <div className='flex items-center gap-1'>
-              <span className='text-base font-extrabold text-[#121c2a] tracking-tight'>
+              <span className='text-base font-extrabold text-[#121c2a] tracking-tight truncate'>
                 PRELUNA
               </span>
             </div>
-            <span className='text-[11px] font-semibold text-[#aa294d]'>Kesehatan Pranikah & TT</span>
+            <span className='text-[11px] font-semibold text-[#aa294d] truncate block'>
+              Kesehatan Pranikah & TT
+            </span>
           </div>
         </Link>
-
-        {/* Navigation List */}
-        <nav className='flex flex-col gap-1'>
-          {USER_NAV_ITEMS.map(item => {
-            const Icon = item.icon;
-            const isActive =
-              pathname === item.href ||
-              (item.href !== '/user/dashboard' && pathname?.startsWith(item.href));
-
-            return (
-              <Link
-                key={item.href}
-                to={item.href}
-                className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all duration-150 ${
-                  isActive
-                    ? 'bg-[#aa294d] text-white shadow-sm shadow-rose-950/15'
-                    : 'text-[#64748b] hover:text-[#aa294d] hover:bg-[#ffd9de]/30'
-                }`}
-              >
-                <Icon size={18} className={isActive ? 'text-white' : 'text-[#64748b]'} />
-                <span>{item.name}</span>
-              </Link>
-            );
-          })}
-        </nav>
       </div>
 
-      {/* Footer Area: User Card & Sign Out */}
-      <div className='pt-4 border-t border-[#e6eeff] flex flex-col gap-2.5'>
+      {/* Navigation List - Independent Scroll Area */}
+      <nav className='flex-1 flex flex-col gap-1 px-4 py-2 overflow-y-auto overscroll-contain'>
+        {USER_NAV_ITEMS.map(item => {
+          const Icon = item.icon;
+          const isActive =
+            pathname === item.href ||
+            (item.href !== '/user/dashboard' && pathname?.startsWith(item.href));
+
+          return (
+            <Link
+              key={item.href}
+              to={item.href}
+              className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all duration-150 ${
+                isActive
+                  ? 'bg-[#aa294d] text-white shadow-sm shadow-rose-950/15'
+                  : 'text-[#64748b] hover:text-[#aa294d] hover:bg-[#ffd9de]/30'
+              }`}
+            >
+              <Icon size={18} className={isActive ? 'text-white shrink-0' : 'text-[#64748b] shrink-0'} />
+              <span className='truncate'>{item.name}</span>
+            </Link>
+          );
+        })}
+      </nav>
+
+      {/* Footer Area: User Card & Sign Out - Pinned at bottom */}
+      <div className='p-4 border-t border-[#e6eeff] flex flex-col gap-2.5 shrink-0 bg-white'>
         {/* User Badge */}
         <Link
           to='/user/profile'
@@ -103,7 +105,7 @@ export default function UserSidebar() {
         <button
           type='button'
           onClick={() => logout()}
-          className='flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-[#ba1a1a] hover:bg-[#ffdad6]/40 rounded-xl transition-colors cursor-pointer'
+          className='flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-[#ba1a1a] hover:bg-[#ffdad6]/40 rounded-xl transition-colors cursor-pointer min-h-[38px]'
         >
           <LogOut size={16} />
           <span>Keluar dari Akun</span>

@@ -109,12 +109,13 @@ export function LoginForm({ hideHeader = false }: LoginFormProps) {
             </div>
             <input
               type='email'
+              inputMode='email'
               placeholder='calonpengantin@email.com'
               value={email}
               onChange={e => setEmail(e.target.value)}
               required
               autoComplete='email'
-              className='w-full bg-white text-sm text-[#121c2a] rounded-full border border-slate-200 pl-13 pr-4 py-3 outline-none focus:border-[#aa294d] focus:ring-1 focus:ring-[#aa294d] transition-colors shadow-2xs'
+              className='w-full min-h-[48px] bg-white text-base sm:text-sm text-[#121c2a] rounded-full border border-slate-200 pl-13 pr-4 py-3 outline-none focus:border-[#aa294d] focus:ring-1 focus:ring-[#aa294d] transition-colors shadow-2xs'
             />
           </div>
         </div>
@@ -132,19 +133,35 @@ export function LoginForm({ hideHeader = false }: LoginFormProps) {
               onChange={e => setPassword(e.target.value)}
               required
               autoComplete='current-password'
-              className='w-full bg-white text-sm text-[#121c2a] rounded-full border border-slate-200 pl-13 pr-11 py-3 outline-none focus:border-[#aa294d] focus:ring-1 focus:ring-[#aa294d] transition-colors shadow-2xs'
+              className='w-full min-h-[48px] bg-white text-base sm:text-sm text-[#121c2a] rounded-full border border-slate-200 pl-13 pr-11 py-3 outline-none focus:border-[#aa294d] focus:ring-1 focus:ring-[#aa294d] transition-colors shadow-2xs'
             />
             <button
               type='button'
               onClick={() => setShowPassword(!showPassword)}
-              className='absolute right-3.5 text-slate-400 hover:text-slate-600 cursor-pointer p-1'
+              className='absolute right-2.5 min-w-[40px] min-h-[40px] flex items-center justify-center text-slate-400 hover:text-slate-600 cursor-pointer p-1 active:scale-90'
+              aria-label={showPassword ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'}
             >
               {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
             </button>
           </div>
         </div>
 
-        <div className='flex items-center justify-between flex-wrap gap-2 mt-2 pt-1'>
+        <div className='flex flex-col sm:flex-row-reverse sm:items-center sm:justify-between gap-3 mt-3 pt-1'>
+          <button
+            type='submit'
+            disabled={loading}
+            className='w-full sm:w-auto px-8 min-h-[48px] py-3 bg-[#aa294d] hover:bg-[#8c0f39] text-white rounded-full text-sm sm:text-base font-bold shadow-md shadow-rose-950/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50'
+          >
+            {loading ? (
+              <span>Masuk...</span>
+            ) : (
+              <>
+                <span>Masuk Sekarang</span>
+                <ArrowRight size={16} />
+              </>
+            )}
+          </button>
+
           <Link
             to='#'
             onClick={e => {
@@ -153,25 +170,10 @@ export function LoginForm({ hideHeader = false }: LoginFormProps) {
                 'Silakan hubungi administrator fasilitas kesehatan atau KUA untuk mereset kata sandi Anda.',
               );
             }}
-            className='text-xs text-[#574144] hover:text-[#aa294d] font-medium transition-colors'
+            className='text-xs text-[#574144] hover:text-[#aa294d] font-medium transition-colors text-center sm:text-left py-2'
           >
             Lupa kata sandi?
           </Link>
-
-          <button
-            type='submit'
-            disabled={loading}
-            className='px-7 py-3 bg-[#aa294d] hover:bg-[#8c0f39] text-white rounded-full text-sm font-bold shadow-md shadow-rose-950/20 active:scale-[0.98] transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50'
-          >
-            {loading ? (
-              <span>Masuk...</span>
-            ) : (
-              <>
-                <span>Masuk</span>
-                <ArrowRight size={15} />
-              </>
-            )}
-          </button>
         </div>
       </form>
     </div>

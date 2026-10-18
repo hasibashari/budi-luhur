@@ -68,10 +68,15 @@ export function InputRiwayatTTModal({
   };
 
   return (
-    <div className='fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fade-in'>
-      <div className='relative w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-stone-200 overflow-hidden flex flex-col max-h-[92vh]'>
+    <div className='fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-950/60 backdrop-blur-xs animate-fade-in'>
+      <div className='relative w-full max-w-lg bg-white rounded-t-[28px] sm:rounded-3xl shadow-2xl border border-stone-200 overflow-hidden flex flex-col max-h-[90dvh] sm:max-h-[92vh]'>
+        {/* Mobile Pull Drag Indicator Bar */}
+        <div className="sm:hidden w-full pt-2.5 pb-1 flex justify-center bg-gradient-to-r from-[#aa294d] to-[#cb4364]">
+          <div className="w-12 h-1.5 rounded-full bg-white/40" />
+        </div>
+
         {/* Modal Header */}
-        <div className='px-5 py-4 bg-gradient-to-r from-[#aa294d] to-[#cb4364] text-white flex items-center justify-between'>
+        <div className='px-5 py-3.5 sm:py-4 bg-gradient-to-r from-[#aa294d] to-[#cb4364] text-white flex items-center justify-between'>
           <div className='flex items-center gap-2.5'>
             <div className='w-9 h-9 rounded-full bg-white/20 flex items-center justify-center shadow-xs'>
               <span className='material-symbols-outlined text-[22px]'>health_and_safety</span>
@@ -86,7 +91,8 @@ export function InputRiwayatTTModal({
           <button
             type='button'
             onClick={onClose}
-            className='w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors cursor-pointer'
+            className='w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors cursor-pointer active:scale-90'
+            aria-label='Tutup Modal Pencatatan'
           >
             <X size={18} />
           </button>
@@ -322,11 +328,11 @@ export function InputRiwayatTTModal({
           </div>
 
           {/* Submit Action */}
-          <div className='pt-2'>
+          <div className='pt-2 pb-[calc(1.25rem+env(safe-area-inset-bottom,0px))] sm:pb-2'>
             <button
               type='submit'
               disabled={isSubmitting}
-              className='w-full h-12 rounded-full bg-[#aa294d] text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-[0_4px_14px_0_rgba(170,41,77,0.3)] hover:bg-[#cb4364] active:scale-[0.98] transition-all cursor-pointer disabled:opacity-50'
+              className='w-full h-12 min-h-[48px] rounded-full bg-[#aa294d] text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-[0_4px_14px_0_rgba(170,41,77,0.3)] hover:bg-[#cb4364] active:scale-[0.98] transition-all cursor-pointer disabled:opacity-50'
             >
               <span className='material-symbols-outlined text-[18px]'>save</span>
               <span>{isSubmitting ? 'Menyimpan...' : 'Simpan Riwayat Imunisasi'}</span>

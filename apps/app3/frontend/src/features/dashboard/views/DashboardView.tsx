@@ -20,6 +20,7 @@ import { QuickAction } from '@/src/shared/components/domain/QuickAction';
 import { StreakProgressCard } from '@/src/shared/components/domain/StreakProgressCard';
 import { ImmunityStatusBanner } from '../components/ImmunityStatusBanner';
 import { WeddingCountdownWidget } from '../components/WeddingCountdownWidget';
+import { VaccineCardModal } from '../components/VaccineCardModal';
 import { Card } from '@/src/shared/components/ui/Card';
 import { Button } from '@/src/shared/components/ui/Button';
 import { useAuth } from '@/src/features/auth/context/AuthContext';
@@ -43,6 +44,7 @@ export default function DashboardView() {
   const [dashboardData, setDashboardData] = useState<UserDashboardData | null>(null);
   const [activeNudge, setActiveNudge] = useState<AdminNudge | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isVaccineCardOpen, setIsVaccineCardOpen] = useState(false);
 
   const userId = authUser?.id || 'usr_1';
 
@@ -163,17 +165,27 @@ export default function DashboardView() {
   if (loading && !dashboardData) {
     return (
       <div className='flex items-center justify-center min-h-[50vh] w-full'>
-        <div className='animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-emerald-600' />
+        <div className='animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#aa294d]' />
       </div>
     );
   }
 
   return (
     <div className='flex flex-col gap-4 sm:gap-6 w-full'>
+      {/* Vaccine Card Modal */}
+      <VaccineCardModal
+        isOpen={isVaccineCardOpen}
+        onClose={() => setIsVaccineCardOpen(false)}
+        userName={currentUser.name}
+        faskesName={currentUser.schoolOrOrg || 'Puskesmas Domisili Catin'}
+        partnerName={partnerName}
+        currentTTLevel={ttLevel}
+      />
+
       {/* Mobile Top Stats Bar (< md) */}
       <div className='flex md:hidden items-center justify-between gap-2 p-3 bg-white rounded-2xl border border-stone-200 shadow-2xs'>
         <div className='flex items-center gap-2'>
-          <div className='w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-700'>
+          <div className='w-8 h-8 rounded-full bg-[#aff1d0]/50 flex items-center justify-center text-[#2a6950]'>
             <ShieldCheck size={18} />
           </div>
           <div>
@@ -185,13 +197,13 @@ export default function DashboardView() {
         <div className='h-7 w-px bg-stone-200' />
 
         <div className='flex items-center gap-2'>
-          <div className='w-8 h-8 rounded-full bg-teal-50 flex items-center justify-center text-teal-700'>
+          <div className='w-8 h-8 rounded-full bg-[#ffd9de]/60 flex items-center justify-center text-[#aa294d]'>
             <Activity size={18} />
           </div>
           <div>
             <span className='text-[10px] text-slate-500 block leading-tight'>Kadar Hb Lab</span>
             <span
-              className={`text-xs font-bold ${currentUser.hbLevel ? 'text-emerald-700' : 'text-slate-500'}`}
+              className={`text-xs font-bold ${currentUser.hbLevel ? 'text-[#2a6950]' : 'text-slate-500'}`}
             >
               {currentUser.hbLevel ? `${currentUser.hbLevel} g/dL` : 'Belum Cek'}
             </span>
@@ -210,7 +222,7 @@ export default function DashboardView() {
       <div className='hidden md:flex items-center justify-between pb-3 border-b border-stone-200'>
         <div>
           <div className='flex items-center gap-2 mb-1'>
-            <span className='text-xs font-bold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200'>
+            <span className='text-xs font-bold text-[#8c0f39] bg-[#ffd9de] px-2.5 py-0.5 rounded-full border border-[#aa294d]/20'>
               Calon Pengantin Terdaftar
             </span>
             <span className='text-xs text-slate-500'>
@@ -221,13 +233,14 @@ export default function DashboardView() {
             Selamat Datang, {currentUser.name}!
           </h1>
           <p className='text-xs sm:text-sm text-slate-600 mt-0.5'>
-            Persiapkan kesehatan reproduksi prima dan lengkapi imunisasi Tetanus Toxoid menjelang hari bahagia.
+            Persiapkan kesehatan reproduksi prima dan lengkapi imunisasi Tetanus Toxoid menjelang
+            hari bahagia.
           </p>
         </div>
 
         <div className='flex items-center gap-3'>
           <div className='flex items-center gap-2 bg-white px-3.5 py-1.5 rounded-full border border-stone-200 shadow-2xs'>
-            <Building2 size={16} className='text-emerald-700' />
+            <Building2 size={16} className='text-[#2a6950]' />
             <span className='text-xs font-semibold text-slate-800 truncate max-w-[180px]'>
               {currentUser.schoolOrOrg || 'Puskesmas / KUA'}
             </span>
@@ -235,10 +248,10 @@ export default function DashboardView() {
           <div className='flex items-center gap-2 bg-white px-3.5 py-1.5 rounded-full border border-stone-200 shadow-2xs'>
             <Activity
               size={16}
-              className={currentUser.hbLevel ? 'text-emerald-600' : 'text-slate-400'}
+              className={currentUser.hbLevel ? 'text-[#2a6950]' : 'text-slate-400'}
             />
             <span
-              className={`text-xs font-bold ${currentUser.hbLevel ? 'text-emerald-700' : 'text-slate-500'}`}
+              className={`text-xs font-bold ${currentUser.hbLevel ? 'text-[#2a6950]' : 'text-slate-500'}`}
             >
               {currentUser.hbLevel ? `Hb ${currentUser.hbLevel} g/dL` : 'Belum Ada Data Hb'}
             </span>
@@ -249,7 +262,7 @@ export default function DashboardView() {
       {/* Realtime Admin / Nakes Reminder Nudge Banner */}
       {activeNudge && (
         <section aria-label='Pengingat Langsung dari Petugas Faskes'>
-          <div className='p-4 sm:p-5 rounded-3xl bg-linear-to-r from-emerald-800 via-emerald-700 to-teal-800 text-white shadow-xl shadow-emerald-950/15 border border-emerald-500/30 animate-fade-in'>
+          <div className='p-4 sm:p-5 rounded-3xl bg-linear-to-r from-[#aa294d] via-[#cb4364] to-[#2a6950] text-white shadow-xl shadow-rose-950/15 border border-rose-300/30 animate-fade-in'>
             <div className='flex items-start justify-between gap-3'>
               <div className='flex items-start gap-3.5'>
                 <div className='w-11 h-11 rounded-2xl bg-white/20 backdrop-blur-xs flex items-center justify-center shrink-0 text-white mt-0.5 shadow-inner'>
@@ -260,7 +273,7 @@ export default function DashboardView() {
                     <span className='text-[10px] sm:text-xs font-bold uppercase tracking-wider bg-white/25 px-2.5 py-0.5 rounded-full'>
                       Pesan Nakes Faskes • {activeNudge.senderName}
                     </span>
-                    <span className='text-[11px] text-emerald-200'>{activeNudge.sentAt}</span>
+                    <span className='text-[11px] text-rose-100'>{activeNudge.sentAt}</span>
                   </div>
                   <h3 className='text-sm sm:text-base font-bold mt-1 text-white leading-snug'>
                     {activeNudge.message}
@@ -271,7 +284,7 @@ export default function DashboardView() {
               <button
                 type='button'
                 onClick={handleDismissNudge}
-                className='text-emerald-200 hover:text-white p-1.5 rounded-xl hover:bg-white/10 transition-colors cursor-pointer shrink-0'
+                className='text-rose-100 hover:text-white p-1.5 rounded-xl hover:bg-white/10 transition-colors cursor-pointer shrink-0'
                 title='Tutup Pengingat'
               >
                 <X size={18} />
@@ -284,7 +297,7 @@ export default function DashboardView() {
                 size='sm'
                 shape='pill'
                 icon={<CheckCircle2 size={14} />}
-                className='bg-white text-emerald-800 hover:bg-emerald-50 font-bold shadow-xs text-xs'
+                className='bg-white text-[#aa294d] hover:bg-rose-50 font-bold shadow-xs text-xs'
                 onClick={handleTakeFromNudge}
               >
                 Konfirmasi Kunjungan
@@ -292,7 +305,7 @@ export default function DashboardView() {
               <button
                 type='button'
                 onClick={handleDismissNudge}
-                className='text-xs font-semibold text-emerald-100 hover:text-white px-3 py-1.5 rounded-full hover:bg-white/10 transition-colors cursor-pointer'
+                className='text-xs font-semibold text-rose-100 hover:text-white px-3 py-1.5 rounded-full hover:bg-white/10 transition-colors cursor-pointer'
               >
                 Sudah Mengerti
               </button>
@@ -305,8 +318,13 @@ export default function DashboardView() {
       <section aria-label='Status Imunisasi TT 5 Dosis'>
         <ImmunityStatusBanner
           currentDoseLevel={ttLevel}
-          nextAppointmentDate={dashboardData?.activeSchedule ? `${dashboardData.activeSchedule.dayOfWeek}, ${dashboardData.activeSchedule.time}` : undefined}
+          nextAppointmentDate={
+            dashboardData?.activeSchedule
+              ? `${dashboardData.activeSchedule.dayOfWeek}, ${dashboardData.activeSchedule.time}`
+              : undefined
+          }
           partnerName={partnerName}
+          onDownloadCard={() => setIsVaccineCardOpen(true)}
         />
       </section>
 
@@ -327,7 +345,8 @@ export default function DashboardView() {
                       Jadwal Kunjungan Faskes Belum Dikonfigurasi
                     </h4>
                     <p className='text-[11px] sm:text-xs text-amber-800 mt-0.5 leading-relaxed'>
-                      Tentukan hari dan jam kunjungan ke Puskesmas agar PRELUNA dapat mengingatkan jadwal imunisasi TT tepat waktu.
+                      Tentukan hari dan jam kunjungan ke Puskesmas agar PRELUNA dapat mengingatkan
+                      jadwal imunisasi TT tepat waktu.
                     </p>
                   </div>
                 </div>
@@ -421,30 +440,37 @@ export default function DashboardView() {
           </section>
 
           {/* 3. Clinical Guidelines / Education Highlight */}
-          <Card padding='md' className='bg-linear-to-br from-emerald-50/50 to-teal-50/30 border-emerald-100'>
+          <Card
+            padding='md'
+            className='bg-linear-to-br from-[#aff1d0]/25 to-[#eff4ff] border-[#aff1d0]/40'
+          >
             <div className='flex items-center gap-2.5 mb-2'>
-              <div className='w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-xs'>
+              <div className='w-8 h-8 rounded-xl bg-[#2a6950] text-white flex items-center justify-center shrink-0 shadow-xs'>
                 <Award size={18} />
               </div>
               <div>
                 <h4 className='text-xs font-bold text-slate-900'>Standar Skrining Catin</h4>
-                <span className='text-[11px] font-semibold text-emerald-800'>Pedoman Kemenkes RI</span>
+                <span className='text-[11px] font-semibold text-[#2a6950]'>
+                  Pedoman Kemenkes RI
+                </span>
               </div>
             </div>
             <p className='text-xs text-slate-700 leading-relaxed'>
-              Pemeriksaan pranikah meliputi skrining TT (5 dosis), cek Hb (mencegah anemia ibu hamil), status gizi (LILA min. 23.5 cm), dan skrining calon ayah untuk generasi bebas stunting.
+              Pemeriksaan pranikah meliputi skrining TT (5 dosis), cek Hb (mencegah anemia ibu
+              hamil), status gizi (LILA min. 23.5 cm), dan skrining calon ayah untuk generasi bebas
+              stunting.
             </p>
-            <div className='mt-3 pt-2.5 border-t border-emerald-200/60 flex items-center justify-between'>
+            <div className='mt-3 pt-2.5 border-t border-[#aff1d0]/50 flex items-center justify-between'>
               <Link
                 to='/user/education'
-                className='text-[11px] font-bold text-emerald-700 hover:underline inline-flex items-center gap-1'
+                className='text-[11px] font-bold text-[#2a6950] hover:underline inline-flex items-center gap-1'
               >
                 <BookOpen size={12} />
                 <span>Pelajari Buku Saku Catin</span>
               </Link>
               <Link
                 to='/user/consultation'
-                className='text-[11px] font-bold text-teal-700 hover:underline'
+                className='text-[11px] font-bold text-[#aa294d] hover:underline'
               >
                 Tanya Luna AI
               </Link>
@@ -456,7 +482,7 @@ export default function DashboardView() {
       {/* Footer Trust Badge */}
       <footer className='pt-2 pb-4 text-center'>
         <div className='inline-flex items-center gap-1.5 text-[11px] text-slate-400'>
-          <ShieldCheck size={14} className='text-emerald-600' />
+          <ShieldCheck size={14} className='text-[#2a6950]' />
           <span>Program Imunisasi Tetanus Toxoid Pranikah • PRELUNA Kemenkes RI</span>
         </div>
       </footer>

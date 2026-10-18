@@ -109,8 +109,8 @@ export function AppRoutes() {
       >
         <Route index element={<Navigate to='/user/dashboard' replace />} />
         <Route path='dashboard' element={<DashboardView />} />
-        <Route path='schedule' element={<ScheduleView />} />
-        <Route path='history' element={<HistoryView />} />
+        <Route path='schedule' element={<Navigate to='/user/imunisasi?tab=jadwal' replace />} />
+        <Route path='history' element={<Navigate to='/user/imunisasi?tab=riwayat' replace />} />
         <Route path='imunisasi' element={<HistoryView />} />
         <Route path='buddy' element={<Navigate to='/user/dashboard' replace />} />
         <Route path='education' element={<EducationView />} />

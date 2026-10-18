@@ -125,12 +125,12 @@ export function SetupProfileView() {
   };
 
   return (
-    <div className='flex-1 min-h-[100dvh] w-full bg-gradient-to-b from-[#fafaf9] via-[#fff5f6] to-[#fafaf9] flex flex-col justify-center items-center p-3.5 sm:p-6 md:p-8 pb-6 sm:pb-8 box-border relative overflow-x-hidden'>
+    <div className='flex-1 min-h-[100dvh] w-full bg-gradient-to-b from-[#fafaf9] via-[#fff5f6] to-[#fafaf9] flex flex-col justify-center items-center px-3.5 sm:px-6 md:px-8 pt-[calc(1.5rem+env(safe-area-inset-top,0px))] pb-[calc(2rem+env(safe-area-inset-bottom,0px))] box-border relative overflow-x-hidden'>
       {/* Decorative desktop ambient shapes */}
       <div className='hidden md:block absolute top-12 left-12 w-72 h-72 bg-[#ffd9de]/50 rounded-full blur-3xl pointer-events-none' />
       <div className='hidden md:block absolute bottom-12 right-12 w-80 h-80 bg-[#aff1d0]/25 rounded-full blur-3xl pointer-events-none' />
 
-      <div className='w-full max-w-xl min-h-[560px] bg-white rounded-3xl border border-[#ffd9de] shadow-xl shadow-rose-950/5 p-5 sm:p-8 relative z-10 flex flex-col justify-between my-auto'>
+      <div className='w-full max-w-xl min-h-[560px] bg-white rounded-3xl border border-[#ffd9de] shadow-xl shadow-rose-950/5 p-4 sm:p-8 relative z-10 flex flex-col justify-between my-auto'>
         {/* Top Header & Progress */}
         <div>
           <div className='mb-4 sm:mb-5'>
@@ -196,8 +196,8 @@ export function SetupProfileView() {
                   Puskesmas Rujukan / KUA / Domisili <span className='text-[#aa294d]'>*</span>
                 </label>
                 <div className='relative flex items-center'>
-                  <div className='absolute left-3.5 w-7 sm:w-8 h-7 sm:h-8 rounded-full bg-[#ffd9de]/50 flex items-center justify-center text-[#aa294d]'>
-                    <Building2 size={15} />
+                  <div className='absolute left-3.5 w-8 h-8 rounded-full bg-[#ffd9de]/50 flex items-center justify-center text-[#aa294d]'>
+                    <Building2 size={16} />
                   </div>
                   <input
                     type='text'
@@ -205,7 +205,7 @@ export function SetupProfileView() {
                     value={schoolOrOrg}
                     onChange={e => setSchoolOrOrg(e.target.value)}
                     required
-                    className='w-full bg-white text-xs sm:text-sm text-[#121c2a] rounded-full border border-stone-200 pl-12 sm:pl-13 pr-4 py-2.5 sm:py-3 outline-none focus:border-[#aa294d] focus:ring-2 focus:ring-[#aa294d]/10 transition-colors shadow-2xs'
+                    className='w-full min-h-[48px] bg-white text-base sm:text-sm text-[#121c2a] rounded-full border border-stone-200 pl-13 pr-4 py-2.5 sm:py-3 outline-none focus:border-[#aa294d] focus:ring-2 focus:ring-[#aa294d]/10 transition-colors shadow-2xs'
                   />
                 </div>
               </div>
@@ -217,14 +217,14 @@ export function SetupProfileView() {
                     Tanggal Lahir
                   </label>
                   <div className='relative flex items-center'>
-                    <div className='absolute left-3 w-6 sm:w-7 h-6 sm:h-7 rounded-full bg-[#ffd9de]/50 flex items-center justify-center text-[#aa294d]'>
-                      <Calendar size={13} />
+                    <div className='absolute left-3.5 w-7 h-7 rounded-full bg-[#ffd9de]/50 flex items-center justify-center text-[#aa294d]'>
+                      <Calendar size={14} />
                     </div>
                     <input
                       type='date'
                       value={dateOfBirth}
                       onChange={e => setDateOfBirth(e.target.value)}
-                      className='w-full min-w-0 bg-white text-xs sm:text-sm text-[#121c2a] rounded-full border border-stone-200 pl-10 sm:pl-11 pr-2.5 sm:pr-3 py-2.5 sm:py-3 outline-none focus:border-[#aa294d] focus:ring-2 focus:ring-[#aa294d]/10 transition-colors shadow-2xs'
+                      className='w-full min-h-[48px] min-w-0 bg-white text-base sm:text-sm text-[#121c2a] rounded-full border border-stone-200 pl-12 pr-3 py-2.5 outline-none focus:border-[#aa294d] focus:ring-2 focus:ring-[#aa294d]/10 transition-colors shadow-2xs'
                     />
                   </div>
                 </div>
@@ -234,13 +234,13 @@ export function SetupProfileView() {
                     Golongan Darah
                   </label>
                   <div className='relative flex items-center'>
-                    <div className='absolute left-3 w-6 sm:w-7 h-6 sm:h-7 rounded-full bg-[#ffd9de]/50 flex items-center justify-center text-[#aa294d]'>
-                      <Droplets size={13} />
+                    <div className='absolute left-3.5 w-7 h-7 rounded-full bg-[#ffd9de]/50 flex items-center justify-center text-[#aa294d]'>
+                      <Droplets size={14} />
                     </div>
                     <select
                       value={bloodType}
                       onChange={e => setBloodType(e.target.value)}
-                      className='w-full min-w-0 bg-white text-xs sm:text-sm text-[#121c2a] rounded-full border border-stone-200 pl-10 sm:pl-11 pr-3 py-2.5 sm:py-3 outline-none focus:border-[#aa294d] focus:ring-2 focus:ring-[#aa294d]/10 transition-colors shadow-2xs cursor-pointer'
+                      className='w-full min-h-[48px] min-w-0 bg-white text-base sm:text-sm text-[#121c2a] rounded-full border border-stone-200 pl-12 pr-3 py-2.5 outline-none focus:border-[#aa294d] focus:ring-2 focus:ring-[#aa294d]/10 transition-colors shadow-2xs cursor-pointer'
                     >
                       <option value=''>Pilih Golongan Darah</option>
                       <option value='A'>A</option>
@@ -261,10 +261,11 @@ export function SetupProfileView() {
                   </label>
                   <input
                     type='number'
+                    inputMode='numeric'
                     placeholder='160'
                     value={height}
                     onChange={e => setHeight(e.target.value)}
-                    className='w-full bg-white text-xs sm:text-sm text-[#121c2a] rounded-full border border-stone-200 px-2 sm:px-3 py-2.5 sm:py-3 outline-none focus:border-[#aa294d] focus:ring-2 focus:ring-[#aa294d]/10 transition-colors shadow-2xs text-center'
+                    className='w-full min-h-[46px] bg-white text-base sm:text-sm text-[#121c2a] rounded-full border border-stone-200 px-2 sm:px-3 py-2 outline-none focus:border-[#aa294d] focus:ring-2 focus:ring-[#aa294d]/10 transition-colors shadow-2xs text-center'
                   />
                 </div>
 
@@ -274,10 +275,11 @@ export function SetupProfileView() {
                   </label>
                   <input
                     type='number'
+                    inputMode='numeric'
                     placeholder='50'
                     value={weight}
                     onChange={e => setWeight(e.target.value)}
-                    className='w-full bg-white text-xs sm:text-sm text-[#121c2a] rounded-full border border-stone-200 px-2 sm:px-3 py-2.5 sm:py-3 outline-none focus:border-[#aa294d] focus:ring-2 focus:ring-[#aa294d]/10 transition-colors shadow-2xs text-center'
+                    className='w-full min-h-[46px] bg-white text-base sm:text-sm text-[#121c2a] rounded-full border border-stone-200 px-2 sm:px-3 py-2 outline-none focus:border-[#aa294d] focus:ring-2 focus:ring-[#aa294d]/10 transition-colors shadow-2xs text-center'
                   />
                 </div>
 
@@ -287,11 +289,12 @@ export function SetupProfileView() {
                   </label>
                   <input
                     type='number'
+                    inputMode='decimal'
                     step='0.1'
                     placeholder='12.5'
                     value={hbLevel}
                     onChange={e => setHbLevel(e.target.value)}
-                    className='w-full bg-white text-xs sm:text-sm text-[#121c2a] rounded-full border border-stone-200 px-2 sm:px-3 py-2.5 sm:py-3 outline-none focus:border-[#aa294d] focus:ring-2 focus:ring-[#aa294d]/10 transition-colors shadow-2xs text-center'
+                    className='w-full min-h-[46px] bg-white text-base sm:text-sm text-[#121c2a] rounded-full border border-stone-200 px-2 sm:px-3 py-2 outline-none focus:border-[#aa294d] focus:ring-2 focus:ring-[#aa294d]/10 transition-colors shadow-2xs text-center'
                   />
                 </div>
               </div>
@@ -313,7 +316,7 @@ export function SetupProfileView() {
                 size='md'
                 shape='pill'
                 icon={<ArrowRight size={16} />}
-                className='w-full sm:w-auto px-8 py-3 font-bold shadow-md shadow-rose-950/20 text-xs sm:text-sm flex items-center justify-center gap-2 bg-[#aa294d] hover:bg-[#8c0f39] text-white cursor-pointer'
+                className='w-full sm:w-auto px-8 min-h-[48px] py-3.5 font-bold shadow-md shadow-rose-950/20 text-xs sm:text-sm flex items-center justify-center gap-2 bg-[#aa294d] hover:bg-[#8c0f39] text-white cursor-pointer active:scale-[0.98]'
               >
                 Lanjut ke Rencana Pranikah
               </Button>
@@ -335,15 +338,15 @@ export function SetupProfileView() {
                     Nama Calon Pasangan
                   </label>
                   <div className='relative flex items-center'>
-                    <div className='absolute left-3 w-6 sm:w-7 h-6 sm:h-7 rounded-full bg-[#ffd9de]/50 flex items-center justify-center text-[#aa294d]'>
-                      <Heart size={13} />
+                    <div className='absolute left-3.5 w-7 h-7 rounded-full bg-[#ffd9de]/50 flex items-center justify-center text-[#aa294d]'>
+                      <Heart size={14} />
                     </div>
                     <input
                       type='text'
                       placeholder='Nama lengkap pasangan'
                       value={partnerName}
                       onChange={e => setPartnerName(e.target.value)}
-                      className='w-full bg-white text-xs sm:text-sm text-[#121c2a] rounded-full border border-stone-200 pl-10 sm:pl-11 pr-3 py-2.5 sm:py-3 outline-none focus:border-[#aa294d] focus:ring-2 focus:ring-[#aa294d]/10 transition-colors shadow-2xs'
+                      className='w-full min-h-[48px] bg-white text-base sm:text-sm text-[#121c2a] rounded-full border border-stone-200 pl-12 pr-3 py-2.5 outline-none focus:border-[#aa294d] focus:ring-2 focus:ring-[#aa294d]/10 transition-colors shadow-2xs'
                     />
                   </div>
                 </div>
@@ -353,14 +356,14 @@ export function SetupProfileView() {
                     Rencana Akad Nikah (Hari H)
                   </label>
                   <div className='relative flex items-center'>
-                    <div className='absolute left-3 w-6 sm:w-7 h-6 sm:h-7 rounded-full bg-[#ffd9de]/50 flex items-center justify-center text-[#aa294d]'>
-                      <Calendar size={13} />
+                    <div className='absolute left-3.5 w-7 h-7 rounded-full bg-[#ffd9de]/50 flex items-center justify-center text-[#aa294d]'>
+                      <Calendar size={14} />
                     </div>
                     <input
                       type='date'
                       value={weddingDate}
                       onChange={e => setWeddingDate(e.target.value)}
-                      className='w-full bg-white text-xs sm:text-sm text-[#121c2a] rounded-full border border-stone-200 pl-10 sm:pl-11 pr-3 py-2.5 sm:py-3 outline-none focus:border-[#aa294d] focus:ring-2 focus:ring-[#aa294d]/10 transition-colors shadow-2xs'
+                      className='w-full min-h-[48px] bg-white text-base sm:text-sm text-[#121c2a] rounded-full border border-stone-200 pl-12 pr-3 py-2.5 outline-none focus:border-[#aa294d] focus:ring-2 focus:ring-[#aa294d]/10 transition-colors shadow-2xs'
                     />
                   </div>
                 </div>
@@ -377,7 +380,7 @@ export function SetupProfileView() {
                       key={preset.code}
                       type='button'
                       onClick={() => setLastTTStatus(preset.code)}
-                      className={`py-2 px-1 rounded-xl border text-center transition-all cursor-pointer ${
+                      className={`min-h-[44px] py-2 px-1 rounded-xl border text-center transition-all cursor-pointer active:scale-95 ${
                         lastTTStatus === preset.code
                           ? 'bg-[#ffd9de]/60 border-[#aa294d] text-[#8c0f39] font-bold shadow-2xs ring-1 ring-[#aa294d]'
                           : 'bg-white border-stone-200 text-[#574144] hover:bg-stone-50 font-medium'
@@ -403,7 +406,7 @@ export function SetupProfileView() {
                       key={opt.day}
                       type='button'
                       onClick={() => setSelectedDay(opt.day)}
-                      className={`py-2 px-1 rounded-xl border text-center transition-all cursor-pointer relative ${
+                      className={`min-h-[44px] py-2 px-1 rounded-xl border text-center transition-all cursor-pointer active:scale-95 relative ${
                         selectedDay === opt.day
                           ? 'bg-[#ffd9de]/60 border-[#aa294d] text-[#8c0f39] font-bold shadow-2xs ring-1 ring-[#aa294d]'
                           : 'bg-white border-stone-200 text-[#574144] hover:bg-stone-50 font-medium'
@@ -431,7 +434,7 @@ export function SetupProfileView() {
                       key={preset.time}
                       type='button'
                       onClick={() => setSelectedTime(preset.time)}
-                      className={`py-2 px-2 rounded-xl border text-center transition-all cursor-pointer ${
+                      className={`min-h-[44px] py-2 px-2 rounded-xl border text-center transition-all cursor-pointer active:scale-95 ${
                         selectedTime === preset.time
                           ? 'bg-[#ffd9de]/60 border-[#aa294d] text-[#8c0f39] font-bold shadow-2xs ring-1 ring-[#aa294d]'
                           : 'bg-white border-stone-200 text-[#574144] hover:bg-stone-50'
@@ -445,25 +448,28 @@ export function SetupProfileView() {
                   ))}
                 </div>
 
-                <div className='flex items-center justify-between gap-2 bg-[#fff0f2]/60 px-3.5 py-2 rounded-xl border border-[#ffd9de]'>
+                <div className='flex items-center justify-between gap-2 bg-[#fff0f2]/60 px-3.5 py-2.5 rounded-xl border border-[#ffd9de]'>
                   <div className='flex items-center gap-2 text-xs text-[#574144] font-medium'>
-                    <Clock size={14} className='text-[#aa294d]' />
+                    <Clock size={15} className='text-[#aa294d]' />
                     <span>Jam kustom:</span>
                   </div>
                   <input
                     type='time'
                     value={selectedTime}
                     onChange={e => setSelectedTime(e.target.value)}
-                    className='bg-white px-2.5 py-1 rounded-lg border border-stone-200 text-xs font-bold text-[#121c2a] outline-none focus:border-[#aa294d]'
+                    className='bg-white min-h-[36px] px-2.5 py-1 rounded-lg border border-stone-200 text-xs font-bold text-[#121c2a] outline-none focus:border-[#aa294d]'
                   />
                 </div>
               </div>
 
-              {/* Notification Toggle */}
-              <div className='p-3 rounded-2xl bg-[#fff0f2] border border-[#ffd9de] flex items-center justify-between'>
+              {/* Notification Toggle (Card-Clickable) */}
+              <div
+                onClick={() => setRemind15Min(!remind15Min)}
+                className='p-3.5 rounded-2xl bg-[#fff0f2] border border-[#ffd9de] flex items-center justify-between cursor-pointer active:scale-[0.99] transition-transform select-none'
+              >
                 <div className='flex items-center gap-2.5'>
-                  <div className='w-7 sm:w-8 h-7 sm:h-8 rounded-full bg-white flex items-center justify-center text-[#aa294d] shadow-2xs shrink-0'>
-                    <Bell size={14} />
+                  <div className='w-8 h-8 rounded-full bg-white flex items-center justify-center text-[#aa294d] shadow-2xs shrink-0'>
+                    <Bell size={15} />
                   </div>
                   <div>
                     <span className='block text-xs font-bold text-[#121c2a] leading-tight'>
@@ -477,20 +483,23 @@ export function SetupProfileView() {
                 <input
                   type='checkbox'
                   checked={remind15Min}
-                  onChange={e => setRemind15Min(e.target.checked)}
-                  className='w-4.5 h-4.5 accent-[#aa294d] rounded cursor-pointer shrink-0 ml-2'
+                  onChange={e => {
+                    e.stopPropagation();
+                    setRemind15Min(e.target.checked);
+                  }}
+                  className='w-5 h-5 accent-[#aa294d] rounded cursor-pointer shrink-0 ml-2'
                 />
               </div>
             </div>
 
             {/* Step 2 Bottom Action Row */}
-            <div className='pt-5 sm:pt-6 mt-4 sm:mt-6 border-t border-stone-100 flex items-center justify-between gap-3'>
+            <div className='pt-5 sm:pt-6 mt-4 sm:mt-6 border-t border-stone-100 flex flex-col-reverse sm:flex-row items-center justify-between gap-2.5 sm:gap-3'>
               <button
                 type='button'
                 onClick={() => setStep(1)}
-                className='flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-4 sm:px-5 py-3 rounded-full border border-stone-200 bg-white hover:bg-stone-50 text-[#574144] text-xs sm:text-sm font-bold transition-all shadow-2xs cursor-pointer'
+                className='w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-6 min-h-[48px] py-3 rounded-full border border-stone-200 bg-white hover:bg-stone-50 text-[#574144] text-xs sm:text-sm font-bold transition-all shadow-2xs cursor-pointer active:scale-95'
               >
-                <ArrowLeft size={15} />
+                <ArrowLeft size={16} />
                 <span>Kembali</span>
               </button>
 
@@ -501,9 +510,9 @@ export function SetupProfileView() {
                 shape='pill'
                 disabled={isSaving}
                 icon={
-                  isSaving ? <Loader2 size={15} className='animate-spin' /> : <Check size={15} />
+                  isSaving ? <Loader2 size={16} className='animate-spin' /> : <Check size={16} />
                 }
-                className='flex-1 sm:flex-initial px-6 sm:px-8 py-3 font-bold shadow-md shadow-rose-950/20 text-xs sm:text-sm whitespace-nowrap flex items-center justify-center gap-2 bg-[#aa294d] hover:bg-[#8c0f39] text-white cursor-pointer'
+                className='w-full sm:w-auto px-8 min-h-[48px] py-3.5 font-bold shadow-md shadow-rose-950/20 text-xs sm:text-sm whitespace-nowrap flex items-center justify-center gap-2 bg-[#aa294d] hover:bg-[#8c0f39] text-white cursor-pointer active:scale-[0.98]'
               >
                 {isSaving ? 'Menyimpan...' : 'Simpan & Masuk Beranda'}
               </Button>

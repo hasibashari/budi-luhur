@@ -7,12 +7,12 @@ export interface AuthCardLayoutProps {
 
 export function AuthCardLayout({ children }: AuthCardLayoutProps) {
   return (
-    <div className='min-h-screen w-full flex bg-white relative overflow-hidden'>
-      {/* Top Left Home Navigation */}
-      <div className='absolute top-4 sm:top-6 left-4 sm:left-8 z-20 flex items-center gap-2'>
+    <div className='min-h-[100dvh] w-full flex bg-white relative overflow-hidden'>
+      {/* Top Left Home Navigation - Notch-Safe */}
+      <div className='absolute top-[calc(0.75rem+env(safe-area-inset-top,0px))] sm:top-6 left-3.5 sm:left-8 z-20 flex items-center gap-2'>
         <a
           href={import.meta.env.VITE_PORTAL_URL || 'http://localhost:5170'}
-          className='inline-flex items-center gap-1.5 text-xs font-semibold text-[#64748b] hover:text-[#8c0f39] transition-all bg-slate-50 hover:bg-white px-3.5 py-1.5 rounded-full border border-slate-200 shadow-2xs hover:border-[#ffd9de]'
+          className='inline-flex items-center gap-1.5 text-xs font-semibold text-[#64748b] hover:text-[#8c0f39] transition-all bg-slate-50 hover:bg-white min-h-[40px] px-3.5 py-1.5 rounded-full border border-slate-200 shadow-2xs hover:border-[#ffd9de] active:scale-95'
         >
           <ArrowLeft size={14} />
           <span>Kembali ke Portal</span>
@@ -20,14 +20,14 @@ export function AuthCardLayout({ children }: AuthCardLayoutProps) {
       </div>
 
       {/* SISI KIRI: Form Area */}
-      <div className='w-full md:w-[52%] lg:w-1/2 min-h-screen flex flex-col justify-center items-center px-6 sm:px-10 lg:px-16 py-16 relative z-10 box-border'>
+      <div className='w-full md:w-[52%] lg:w-1/2 min-h-[100dvh] flex flex-col justify-center items-center px-4 sm:px-10 lg:px-16 pt-[calc(4rem+env(safe-area-inset-top,0px))] pb-[calc(2rem+env(safe-area-inset-bottom,0px))] md:py-16 relative z-10 box-border'>
         <div className='w-full max-w-md my-auto'>
           {children}
 
           {/* Minimalist Trust & Privacy Footer */}
-          <div className='flex items-center justify-center gap-1.5 mt-8 text-center text-[#64748b]'>
+          <div className='flex items-center justify-center gap-1.5 mt-6 sm:mt-8 text-center text-[#64748b]'>
             <ShieldCheck size={16} className='text-[#2a6950] shrink-0' />
-            <span className='text-xs font-medium'>
+            <span className='text-[11px] sm:text-xs font-medium'>
               Privasi rekam imunisasi terproteksi standar Kementerian Kesehatan RI
             </span>
           </div>
@@ -35,7 +35,7 @@ export function AuthCardLayout({ children }: AuthCardLayoutProps) {
       </div>
 
       {/* SISI KANAN: Visual Showcase Banner (Desktop & Tablet >= md) */}
-      <div className='hidden md:flex md:w-[48%] lg:w-1/2 min-h-screen relative bg-gradient-to-b from-[#fafaf9] via-[#fff5f6] to-[#fafaf9] overflow-hidden flex-col justify-center items-center p-8 lg:p-12'>
+      <div className='hidden md:flex md:w-[48%] lg:w-1/2 min-h-[100dvh] relative bg-gradient-to-b from-[#fafaf9] via-[#fff5f6] to-[#fafaf9] overflow-hidden flex-col justify-center items-center p-8 lg:p-12'>
         {/* Layered Organic Background Shapes in PRELUNA Ruby and Sage */}
         <div className='absolute top-1/2 right-[-15%] -translate-y-1/2 w-[130%] h-[130%] rounded-full bg-[radial-gradient(circle,rgba(170,41,77,0.08)_0%,rgba(42,105,80,0.05)_50%,transparent_75%)] pointer-events-none' />
         <div className='absolute top-[20%] right-[-10%] w-[550px] h-[550px] rounded-full border border-[#ffd9de]/60 pointer-events-none' />

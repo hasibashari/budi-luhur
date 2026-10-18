@@ -129,11 +129,11 @@ export default function ArticleDetailView({
 
   return (
     <div className='flex flex-col w-full max-w-3xl mx-auto pb-12 sm:pb-16'>
-      {/* Toast Feedback */}
+      {/* Toast Feedback - Mobile Thumb-Zone Friendly */}
       {toastMessage && (
-        <div className='fixed top-20 right-4 z-50 bg-[#121c2a] text-white px-4 py-2.5 rounded-2xl shadow-xl flex items-center gap-2 text-xs font-semibold animate-fade-in border border-white/10'>
-          <CheckCircle2 size={16} className='text-[#aff1d0]' />
-          <span>{toastMessage}</span>
+        <div className='fixed bottom-[calc(5.5rem+env(safe-area-inset-bottom,0px))] sm:bottom-auto sm:top-20 left-4 right-4 sm:left-auto sm:right-6 z-50 max-w-sm mx-auto sm:mx-0 bg-[#121c2a] text-white px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-2.5 text-xs font-semibold animate-fade-in border border-white/10'>
+          <CheckCircle2 size={16} className='text-[#aff1d0] shrink-0' />
+          <span className='flex-1'>{toastMessage}</span>
         </div>
       )}
 
@@ -143,7 +143,7 @@ export default function ArticleDetailView({
           type='button'
           onClick={() => navigate(backHref)}
           aria-label='Kembali'
-          className='w-10 h-10 rounded-full flex items-center justify-center bg-[#eff4ff] text-[#121c2a] hover:bg-[#dee9fc] transition-colors cursor-pointer'
+          className='w-11 h-11 rounded-full flex items-center justify-center bg-[#eff4ff] text-[#121c2a] hover:bg-[#dee9fc] active:scale-90 transition-all cursor-pointer'
         >
           <ArrowLeft size={18} />
         </button>
@@ -153,12 +153,12 @@ export default function ArticleDetailView({
           <p className='text-[11px] text-[#574144]'>Pedoman Resmi Kemenkes RI</p>
         </div>
 
-        <div className='flex items-center gap-1.5'>
+        <div className='flex items-center gap-2'>
           <button
             type='button'
             onClick={handleShare}
             aria-label='Bagikan'
-            className='w-10 h-10 rounded-full flex items-center justify-center bg-[#eff4ff] text-[#574144] hover:text-[#aa294d] hover:bg-[#ffd9de]/50 transition-colors cursor-pointer'
+            className='w-11 h-11 rounded-full flex items-center justify-center bg-[#eff4ff] text-[#574144] hover:text-[#aa294d] hover:bg-[#ffd9de]/50 active:scale-90 transition-all cursor-pointer'
           >
             <Share2 size={18} />
           </button>
@@ -166,7 +166,7 @@ export default function ArticleDetailView({
             type='button'
             onClick={handleBookmarkToggle}
             aria-label='Simpan'
-            className='w-10 h-10 rounded-full flex items-center justify-center bg-[#eff4ff] text-[#574144] hover:text-[#aa294d] hover:bg-[#ffd9de]/50 transition-colors cursor-pointer'
+            className='w-11 h-11 rounded-full flex items-center justify-center bg-[#eff4ff] text-[#574144] hover:text-[#aa294d] hover:bg-[#ffd9de]/50 active:scale-90 transition-all cursor-pointer'
           >
             {bookmarked ? (
               <BookmarkCheck size={18} className='text-[#aa294d]' />

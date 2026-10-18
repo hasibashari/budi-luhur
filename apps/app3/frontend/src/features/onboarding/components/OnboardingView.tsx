@@ -116,12 +116,12 @@ export function OnboardingView() {
                 type='button'
                 onClick={handlePrev}
                 aria-label='Kembali ke slide sebelumnya'
-                className='w-8 h-8 rounded-full bg-[#ffd9de]/60 hover:bg-[#ffd9de] text-[#8c0f39] flex items-center justify-center transition-all active:scale-95 cursor-pointer shadow-2xs'
+                className='min-w-[44px] min-h-[44px] w-11 h-11 rounded-full bg-[#ffd9de]/60 hover:bg-[#ffd9de] text-[#8c0f39] flex items-center justify-center transition-all active:scale-90 cursor-pointer shadow-2xs'
               >
-                <ArrowLeft size={16} />
+                <ArrowLeft size={18} />
               </button>
             ) : (
-              <div className='w-8 h-8' />
+              <div className='w-11 h-11' />
             )}
           </div>
 
@@ -134,17 +134,17 @@ export function OnboardingView() {
           </div>
 
           {/* Skip Button */}
-          <div className='w-12 flex items-center justify-end'>
+          <div className='min-w-[44px] flex items-center justify-end'>
             {!isLast ? (
               <button
                 type='button'
                 onClick={() => handleFinish('/auth/login')}
-                className='text-xs sm:text-sm font-semibold text-[#64748b] hover:text-[#8c0f39] px-2.5 py-1 transition-colors cursor-pointer rounded-full hover:bg-[#ffd9de]/40'
+                className='min-h-[44px] text-xs sm:text-sm font-semibold text-[#64748b] hover:text-[#8c0f39] px-3 py-2 transition-colors cursor-pointer rounded-full hover:bg-[#ffd9de]/40 active:scale-95 flex items-center justify-center'
               >
                 Lewati
               </button>
             ) : (
-              <div className='w-8 h-8' />
+              <div className='w-11 h-11' />
             )}
           </div>
         </div>
@@ -186,30 +186,34 @@ export function OnboardingView() {
         </div>
 
         {/* Bottom Area: Progress Dots & Action Buttons */}
-        <div className='shrink-0 w-full flex flex-col gap-3.5 sm:gap-4 pb-safe pb-4 sm:pb-2 pt-2'>
-          {/* Pagination Interactive Dots */}
-          <div className='flex items-center justify-center gap-2'>
+        <div className='shrink-0 w-full flex flex-col gap-3.5 sm:gap-4 pb-safe pb-3 sm:pb-2 pt-2'>
+          {/* Pagination Interactive Dots with expanded tap target */}
+          <div className='flex items-center justify-center gap-1.5'>
             {ONBOARDING_SLIDES.map((_, idx) => (
               <button
                 key={idx}
                 type='button'
                 onClick={() => setCurrentSlide(idx)}
-                className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
-                  idx === currentSlide
-                    ? 'w-8 bg-[#aa294d] shadow-xs'
-                    : 'w-2.5 bg-[#ffd9de] hover:bg-[#ffb3c0]'
-                }`}
+                className='p-2 flex items-center justify-center cursor-pointer'
                 aria-label={`Ke slide ${idx + 1}`}
-              />
+              >
+                <span
+                  className={`block h-2 rounded-full transition-all duration-300 ${
+                    idx === currentSlide
+                      ? 'w-8 bg-[#aa294d] shadow-xs'
+                      : 'w-2.5 bg-[#ffd9de] hover:bg-[#ffb3c0]'
+                  }`}
+                />
+              </button>
             ))}
           </div>
 
-          {/* Action Button(s) */}
+          {/* Action Button(s) - 48px minimum height */}
           {!isLast ? (
             <button
               type='button'
               onClick={handleNext}
-              className='w-full py-3.5 px-6 rounded-full bg-[#aa294d] hover:bg-[#8c0f39] text-white text-sm sm:text-base font-bold shadow-lg shadow-rose-950/20 hover:shadow-xl active:scale-[0.98] transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer'
+              className='w-full min-h-[48px] py-3.5 px-6 rounded-full bg-[#aa294d] hover:bg-[#8c0f39] text-white text-sm sm:text-base font-bold shadow-lg shadow-rose-950/20 hover:shadow-xl active:scale-[0.98] transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer'
             >
               <span>Lanjutkan</span>
               <ArrowRight size={18} />
@@ -219,7 +223,7 @@ export function OnboardingView() {
               <button
                 type='button'
                 onClick={() => handleFinish('/auth/register')}
-                className='w-full py-3.5 px-6 rounded-full bg-[#aa294d] hover:bg-[#8c0f39] text-white text-sm sm:text-base font-bold shadow-lg shadow-rose-950/20 hover:shadow-xl active:scale-[0.98] transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer'
+                className='w-full min-h-[48px] py-3.5 px-6 rounded-full bg-[#aa294d] hover:bg-[#8c0f39] text-white text-sm sm:text-base font-bold shadow-lg shadow-rose-950/20 hover:shadow-xl active:scale-[0.98] transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer'
               >
                 <span>Mulai Sekarang (Daftar)</span>
                 <Check size={18} />
@@ -228,7 +232,7 @@ export function OnboardingView() {
               <button
                 type='button'
                 onClick={() => handleFinish('/auth/login')}
-                className='w-full py-2 text-center text-xs sm:text-sm text-[#574144] hover:text-[#aa294d] transition-colors flex items-center justify-center gap-1.5 cursor-pointer'
+                className='w-full min-h-[44px] py-2 text-center text-xs sm:text-sm text-[#574144] hover:text-[#aa294d] transition-colors flex items-center justify-center gap-1.5 cursor-pointer active:scale-95'
               >
                 <span>Sudah punya akun?</span>
                 <span className='font-bold text-[#aa294d] underline underline-offset-4 decoration-[#ffd9de]'>

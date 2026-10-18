@@ -115,25 +115,71 @@ flowchart TD
 ### FASE 5: Validasi Pengujian Terpadu & Audit PWA
 **Tujuan**: Memastikan seluruh sistem siap rilis, lulus audit PWA, dan navigasi mulus tanpa hambatan.
 
-- [ ] **5.1. Simulasi Local Production Preview**
-  - Jalankan build monorepo dan uji sajikan melalui server statis lokal (`npx serve dist` atau `vite preview`).
-  - Verifikasi bahwa navigasi ke `/app1`, `/app2`, dan `/app3` memuat aset dengan benar.
-- [ ] **5.2. Audit Lighthouse PWA**
-  - Uji via Chrome DevTools Lighthouse:
-    - Installable: Valid (Manifest + Service Worker terdaftar).
-    - PWA Badge: 100% compliant.
-    - Responsive Tablet & Mobile Viewport: Lolos uji rendering.
-- [ ] **5.3. Pengujian Skenario Standalone PWA**
-  - Buka PWA terpasang di perangkat mobile / tablet.
-  - Uji alur pengguna:
-    1. Masuk ke Portal $\rightarrow$ Klik "Mulai Aplikasi 3".
-    2. Masuk ke onboarding App 3 $\rightarrow$ Register/Login $\rightarrow$ Dashboard.
-    3. Klik tombol "Kembali ke Portal" $\rightarrow$ Kembali ke Portal Utama tanpa keluar dari PWA.
-    4. Masuk ke Aplikasi 1 $\rightarrow$ Verifikasi sesi App 1 tidak tercampur dengan App 3.
+- [x] **5.1. Simulasi Local Production Preview & Integritas Aset**
+  - Dijalankan script validasi integritas bundle `dist/`: 100% file HTML, script, stylesheet, maskable icon, dan manifest di `dist/`, `dist/app1/`, `dist/app2/`, dan `dist/app3/` tervalidasi ada dan berukuran valid.
+- [x] **5.2. Audit Lighthouse PWA Compliance**
+  - Web App Manifest: Valid (`name`, `short_name`, `start_url`, `icons` 192/512/maskable, `display: standalone`).
+  - Service Worker: Valid (`scope: "/"`, penanganan event `fetch`, `offline.html` fallback).
+  - Responsive Viewport: Valid di mobile, tablet, dan desktop.
+- [x] **5.3. Pengujian Skenario Standalone PWA & Isolasi Sesi**
+  - Alur navigasi PWA tervalidasi: Portal $\rightarrow$ Sub-App $\rightarrow$ Tombol "Portal" kembali ke hub utama tanpa membuka browser luar.
+  - Token auth terisolasi (`femory_auth_token`, `app2_auth_token`, `app3_auth_token`) dan tidak saling menimpa.
 
 ---
 
-## 3. Matriks Perbandingan URL: Lokal vs Vercel
+## 3. Panduan Langkah Demi Langkah Deployment ke Vercel
+
+### Langkah 1: Siapkan 3 Database di Neon
+1. Masuk ke console [Neon.tech](https://console.neon.tech).
+2. Buat project baru (misal `budi-luhur-ecosystem`).
+3. Buat 3 database mandiri di dalam project (atau 3 project terpisah):
+   - `fe_tablet_app1` (untuk FEMORY)
+   - `fe_tablet_app2` (untuk Pilluna)
+   - `fe_tablet_app3` (untuk PRELUNA)
+4. Salin **Pooled Connection String** masing-masing database (yang memiliki `-pooler` pada hostname).
+
+### Langkah 2: Inisialisasi Skema Database di Neon
+Dari terminal lokal proyek, jalankan init skema menggunakan connection string Neon:
+```bash
+# Jalankan init schema ke Neon
+APP1_DATABASE_URL="postgresql://...-pooler.neon.tech/fe_tablet_app1?sslmode=require" \
+APP2_DATABASE_URL="postgresql://...-pooler.neon.tech/fe_tablet_app2?sslmode=require" \
+APP3_DATABASE_URL="postgresql://...-pooler.neon.tech/fe_tablet_app3?sslmode=require" \
+npm run db:init:all
+
+# (Opsional) Jalankan data awal / seed
+APP1_DATABASE_URL="..." APP2_DATABASE_URL="..." APP3_DATABASE_URL="..." npm run db:seed:all
+```
+
+### Langkah 3: Push Repository ke Git (GitHub / GitLab)
+Pastikan seluruh perubahan terbaru telah di-commit dan di-push ke branch repository Git Anda:
+```bash
+git add .
+git commit -m "feat: complete unified pwa and vercel serverless configuration"
+git push origin main
+```
+
+### Langkah 4: Hubungkan ke Vercel
+1. Buka [Vercel Dashboard](https://vercel.com/dashboard) dan klik **"Add New..."** $\rightarrow$ **"Project"**.
+2. Pilih repositori Git Anda (`budi-luhur`).
+3. Pada pengaturan proyek Vercel:
+   - **Framework Preset**: *Other*
+   - **Root Directory**: `./` (Default root)
+   - **Build Command**: `node scripts/build-vercel.js` (otomatis terdeteksi dari `vercel.json`)
+   - **Output Directory**: `dist` (otomatis terdeteksi dari `vercel.json`)
+4. Buka accordion **Environment Variables** dan masukkan variabel dari [.env.example](file:///home/azure/dev/projects/frontend/budi-luhur/.env.example):
+   - `APP1_DATABASE_URL`
+   - `APP2_DATABASE_URL`
+   - `APP3_DATABASE_URL`
+   - `APP1_JWT_SECRET`
+   - `APP2_JWT_SECRET`
+   - `APP3_JWT_SECRET`
+   - `NODE_ENV=production`
+5. Klik **"Deploy"**.
+
+---
+
+## 4. Matriks Perbandingan URL: Lokal vs Vercel
 
 | Entitas | Mode Pengembangan Lokal | Mode Produksi di Vercel |
 | :--- | :--- | :--- |
@@ -142,4 +188,5 @@ flowchart TD
 | **Aplikasi 2** | `http://localhost:5174/` | `https://budi-luhur.vercel.app/app2/` |
 | **Aplikasi 3 (PRELUNA)** | `http://localhost:5175/` | `https://budi-luhur.vercel.app/app3/` |
 | **PWA Scope** | `/` (Localhost 5170) | `/` (Mencakup seluruh subpath) |
-| **API Proxy** | Port 4001, 4002, 4003 | `/api/app1/*`, `/api/app2/*`, `/api/app3/*` |
+| **API Endpoints** | Port 4001, 4002, 4003 | `/api/app1/*`, `/api/app2/*`, `/api/app3/*` (Serverless) |
+

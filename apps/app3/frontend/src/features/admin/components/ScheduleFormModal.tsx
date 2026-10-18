@@ -80,7 +80,7 @@ export default function ScheduleFormModal({
               patientId: e.target.value,
             })
           }
-          className='w-full px-3.5 py-2.5 rounded-xl border border-[#dee9fc] bg-white text-sm text-[#121c2a] focus:outline-none focus:ring-2 focus:ring-[#ffd9de] focus:border-[#aa294d] transition-all cursor-pointer'
+          className='w-full px-3.5 py-2.5 rounded-xl border border-[#dee9fc] bg-white text-base sm:text-sm text-[#121c2a] focus:outline-none focus:ring-2 focus:ring-[#ffd9de] focus:border-[#aa294d] transition-all cursor-pointer'
         >
           {users.map(u => (
             <option key={u.id} value={u.id}>
@@ -98,7 +98,7 @@ export default function ScheduleFormModal({
         <select
           value={formData.category}
           onChange={e => handleCategoryChange(e.target.value as ScheduleCategory)}
-          className='w-full px-3.5 py-2.5 rounded-xl border border-[#dee9fc] bg-white text-sm text-[#121c2a] focus:outline-none focus:ring-2 focus:ring-[#ffd9de] focus:border-[#aa294d] transition-all cursor-pointer'
+          className='w-full px-3.5 py-2.5 rounded-xl border border-[#dee9fc] bg-white text-base sm:text-sm text-[#121c2a] focus:outline-none focus:ring-2 focus:ring-[#ffd9de] focus:border-[#aa294d] transition-all cursor-pointer'
         >
           {SCHEDULE_CATEGORIES.map(cat => (
             <option key={cat.value} value={cat.value}>
@@ -122,7 +122,7 @@ export default function ScheduleFormModal({
                   key={dose.label}
                   type='button'
                   onClick={() => handleSelectTtPreset(dose.name, dose.dosage)}
-                  className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                  className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer min-h-[36px] ${
                     isSelected
                       ? 'bg-[#aa294d] text-white shadow-2xs'
                       : 'bg-white border border-[#dee9fc] text-[#574144] hover:bg-[#eff4ff] hover:text-[#aa294d]'
@@ -146,7 +146,7 @@ export default function ScheduleFormModal({
           placeholder='Contoh: Vaksin Tetanus Toxoid (TT Catin) / Skrining Darah'
           value={formData.medicationName}
           onChange={e => onUpdateFormData({ medicationName: e.target.value })}
-          className='w-full px-3.5 py-2.5 rounded-xl border border-[#dee9fc] bg-white text-sm text-[#121c2a] focus:outline-none focus:ring-2 focus:ring-[#ffd9de] focus:border-[#aa294d] transition-all'
+          className='w-full px-3.5 py-2.5 rounded-xl border border-[#dee9fc] bg-white text-base sm:text-sm text-[#121c2a] focus:outline-none focus:ring-2 focus:ring-[#ffd9de] focus:border-[#aa294d] transition-all'
         />
       </div>
 
@@ -158,7 +158,7 @@ export default function ScheduleFormModal({
             placeholder='Contoh: 0.5 mL (Intramuskular)'
             value={formData.dosage}
             onChange={e => onUpdateFormData({ dosage: e.target.value })}
-            className='w-full px-3.5 py-2.5 rounded-xl border border-[#dee9fc] bg-white text-sm text-[#121c2a] focus:outline-none focus:ring-2 focus:ring-[#ffd9de] focus:border-[#aa294d] transition-all'
+            className='w-full px-3.5 py-2.5 rounded-xl border border-[#dee9fc] bg-white text-base sm:text-sm text-[#121c2a] focus:outline-none focus:ring-2 focus:ring-[#ffd9de] focus:border-[#aa294d] transition-all'
           />
         </div>
         <div>
@@ -170,7 +170,7 @@ export default function ScheduleFormModal({
                 frequency: e.target.value as ScheduleFrequency,
               })
             }
-            className='w-full px-3.5 py-2.5 rounded-xl border border-[#dee9fc] bg-white text-sm text-[#121c2a] focus:outline-none focus:ring-2 focus:ring-[#ffd9de] focus:border-[#aa294d] transition-all cursor-pointer'
+            className='w-full px-3.5 py-2.5 rounded-xl border border-[#dee9fc] bg-white text-base sm:text-sm text-[#121c2a] focus:outline-none focus:ring-2 focus:ring-[#ffd9de] focus:border-[#aa294d] transition-all cursor-pointer'
           >
             {FREQUENCY_OPTIONS.map(opt => (
               <option key={opt.value} value={opt.value}>
@@ -190,7 +190,7 @@ export default function ScheduleFormModal({
             <select
               value={formData.dayOfWeek || 'Sabtu'}
               onChange={e => onUpdateFormData({ dayOfWeek: e.target.value })}
-              className='w-full px-3.5 py-2.5 rounded-xl border border-[#dee9fc] bg-white text-sm text-[#121c2a] focus:outline-none focus:ring-2 focus:ring-[#ffd9de] focus:border-[#aa294d] transition-all cursor-pointer'
+              className='w-full px-3.5 py-2.5 rounded-xl border border-[#dee9fc] bg-white text-base sm:text-sm text-[#121c2a] focus:outline-none focus:ring-2 focus:ring-[#ffd9de] focus:border-[#aa294d] transition-all cursor-pointer'
             >
               {DAYS_OF_WEEK.map(day => (
                 <option key={day} value={day}>
@@ -205,10 +205,11 @@ export default function ScheduleFormModal({
             </label>
             <input
               type='text'
+              inputMode='numeric'
               placeholder='09:00'
               value={formData.timeSlot}
               onChange={e => onUpdateFormData({ timeSlot: e.target.value })}
-              className='w-full px-3.5 py-2.5 rounded-xl border border-[#dee9fc] bg-white text-sm text-[#121c2a] focus:outline-none focus:ring-2 focus:ring-[#ffd9de] focus:border-[#aa294d] transition-all'
+              className='w-full px-3.5 py-2.5 rounded-xl border border-[#dee9fc] bg-white text-base sm:text-sm text-[#121c2a] focus:outline-none focus:ring-2 focus:ring-[#ffd9de] focus:border-[#aa294d] transition-all'
             />
           </div>
         </div>
@@ -219,10 +220,11 @@ export default function ScheduleFormModal({
           </label>
           <input
             type='text'
+            inputMode='numeric'
             placeholder='20:00'
             value={formData.timeSlot}
             onChange={e => onUpdateFormData({ timeSlot: e.target.value })}
-            className='w-full px-3.5 py-2.5 rounded-xl border border-[#dee9fc] bg-white text-sm text-[#121c2a] focus:outline-none focus:ring-2 focus:ring-[#ffd9de] focus:border-[#aa294d] transition-all'
+            className='w-full px-3.5 py-2.5 rounded-xl border border-[#dee9fc] bg-white text-base sm:text-sm text-[#121c2a] focus:outline-none focus:ring-2 focus:ring-[#ffd9de] focus:border-[#aa294d] transition-all'
           />
           <p className='text-[11px] text-[#8b7074] mt-1'>
             * Jadwal harian berlaku setiap hari pada jam pengingat di atas.
@@ -239,7 +241,7 @@ export default function ScheduleFormModal({
           placeholder='Bawa KTP, buku KIA/sertifikat vaksinasi, dan kenakan pakaian longgar di area lengan.'
           value={formData.instructions}
           onChange={e => onUpdateFormData({ instructions: e.target.value })}
-          className='w-full px-3.5 py-2.5 rounded-xl border border-[#dee9fc] bg-white text-sm text-[#121c2a] focus:outline-none focus:ring-2 focus:ring-[#ffd9de] focus:border-[#aa294d] transition-all resize-none'
+          className='w-full px-3.5 py-2.5 rounded-xl border border-[#dee9fc] bg-white text-base sm:text-sm text-[#121c2a] focus:outline-none focus:ring-2 focus:ring-[#ffd9de] focus:border-[#aa294d] transition-all resize-none'
         />
       </div>
     </CrudModalDialog>

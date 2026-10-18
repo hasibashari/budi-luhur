@@ -118,14 +118,17 @@ function SendReminderModalContent({
       {/* Modal Dialog Content */}
       <div
         ref={modalRef}
-        className='relative z-10 w-full max-w-lg bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl border border-[#eff4ff] flex flex-col max-h-[92vh] sm:max-h-[90vh] overflow-hidden animate-scale-up'
+        className='relative z-10 w-full max-w-lg bg-white rounded-t-[28px] sm:rounded-3xl shadow-2xl border border-[#eff4ff] flex flex-col max-h-[92vh] sm:max-h-[90vh] overflow-hidden animate-scale-up'
         role='dialog'
         aria-modal='true'
       >
+        {/* Mobile Drag Indicator Bar */}
+        <div className='w-12 h-1.5 bg-[#dee9fc] rounded-full mx-auto mt-2.5 sm:hidden shrink-0' />
+
         {/* Header */}
         <div className='p-5 sm:p-6 border-b border-[#eff4ff] flex items-center justify-between'>
           <div className='flex items-center gap-3'>
-            <div className='w-10 h-10 rounded-2xl bg-[#ffd9de]/60 border border-[#ffd9de] flex items-center justify-center text-[#aa294d]'>
+            <div className='w-10 h-10 rounded-2xl bg-[#ffd9de]/60 border border-[#ffd9de] flex items-center justify-center text-[#aa294d] shrink-0'>
               <BellRing size={20} />
             </div>
             <div>
@@ -139,14 +142,14 @@ function SendReminderModalContent({
           </div>
           <button
             onClick={onClose}
-            className='p-1.5 rounded-full text-[#8b7074] hover:text-[#121c2a] hover:bg-[#eff4ff] transition-colors cursor-pointer'
+            className='p-2 rounded-full text-[#8b7074] hover:text-[#121c2a] hover:bg-[#eff4ff] transition-colors cursor-pointer min-h-[40px] min-w-[40px] flex items-center justify-center'
           >
             <X size={18} />
           </button>
         </div>
 
         {/* Body Content */}
-        <div className='p-5 sm:p-6 space-y-5 overflow-y-auto flex-1'>
+        <div className='p-5 sm:p-6 space-y-5 overflow-y-auto flex-1 overscroll-contain'>
           {/* Channel Selector */}
           <div>
             <label className='block text-xs font-bold uppercase tracking-wider text-[#574144] mb-2'>
@@ -156,7 +159,7 @@ function SendReminderModalContent({
               <button
                 type='button'
                 onClick={() => setChannel('whatsapp')}
-                className={`p-3 rounded-2xl border flex items-center gap-3 transition-all cursor-pointer ${
+                className={`p-3 rounded-2xl border flex items-center gap-3 transition-all cursor-pointer min-h-[48px] ${
                   channel === 'whatsapp'
                     ? 'border-[#aa294d] bg-[#ffd9de]/30 text-[#400014] ring-2 ring-[#ffd9de]'
                     : 'border-[#eff4ff] hover:border-[#dee9fc] text-[#574144] bg-white'
@@ -180,7 +183,7 @@ function SendReminderModalContent({
               <button
                 type='button'
                 onClick={() => setChannel('app')}
-                className={`p-3 rounded-2xl border flex items-center gap-3 transition-all cursor-pointer ${
+                className={`p-3 rounded-2xl border flex items-center gap-3 transition-all cursor-pointer min-h-[48px] ${
                   channel === 'app'
                     ? 'border-[#aa294d] bg-[#ffd9de]/30 text-[#400014] ring-2 ring-[#ffd9de]'
                     : 'border-[#eff4ff] hover:border-[#dee9fc] text-[#574144] bg-white'
@@ -211,7 +214,7 @@ function SendReminderModalContent({
                 type='button'
                 onClick={handleGenerateAiMessage}
                 disabled={isGeneratingAi}
-                className='inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#ffd9de]/60 border border-[#ffd9de] text-[11px] font-bold text-[#8c0f39] hover:bg-[#ffd9de] transition-all cursor-pointer disabled:opacity-50'
+                className='inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#ffd9de]/60 border border-[#ffd9de] text-[11px] font-bold text-[#8c0f39] hover:bg-[#ffd9de] transition-all cursor-pointer disabled:opacity-50 min-h-[32px]'
               >
                 <Sparkles size={12} className='text-[#aa294d]' />
                 <span>{isGeneratingAi ? 'AI Menulis...' : 'Generate Teks AI'}</span>
@@ -227,7 +230,7 @@ function SendReminderModalContent({
                   key={t.id}
                   type='button'
                   onClick={() => handleTemplateChange(t.id)}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                  className={`px-3 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer min-h-[36px] ${
                     selectedTemplate === t.id
                       ? 'bg-[#aa294d] text-white shadow-xs'
                       : 'bg-[#eff4ff] text-[#574144] hover:bg-[#dee9fc]'
@@ -248,7 +251,7 @@ function SendReminderModalContent({
               rows={4}
               value={message}
               onChange={e => setMessage(e.target.value)}
-              className='w-full p-3.5 rounded-2xl border border-[#dee9fc] focus:border-[#aa294d] focus:ring-2 focus:ring-[#ffd9de] text-xs sm:text-sm text-[#121c2a] leading-relaxed outline-none transition-all resize-none'
+              className='w-full p-3.5 rounded-2xl border border-[#dee9fc] focus:border-[#aa294d] focus:ring-2 focus:ring-[#ffd9de] text-base sm:text-sm text-[#121c2a] leading-relaxed outline-none transition-all resize-none'
               placeholder='Ketik pesan pengingat di sini...'
             />
             <p className='text-[11px] text-[#8b7074] mt-1.5'>
@@ -258,18 +261,18 @@ function SendReminderModalContent({
         </div>
 
         {/* Footer Actions */}
-        <div className='p-4 sm:p-5 border-t border-[#eff4ff] flex flex-col-reverse sm:flex-row items-center justify-end gap-2.5 bg-[#f8f9ff]'>
+        <div className='p-4 sm:p-5 border-t border-[#eff4ff] flex flex-col-reverse sm:flex-row items-center justify-end gap-2.5 bg-[#f8f9ff] pb-[calc(1rem+env(safe-area-inset-bottom,0px))] sm:pb-5'>
           <button
             type='button'
             onClick={onClose}
-            className='w-full sm:w-auto px-5 py-2.5 rounded-xl border border-[#dee9fc] bg-white text-[#574144] font-semibold text-sm hover:bg-[#eff4ff] transition-colors cursor-pointer'
+            className='w-full sm:w-auto px-5 py-2.5 rounded-xl border border-[#dee9fc] bg-white text-[#574144] font-semibold text-sm hover:bg-[#eff4ff] transition-colors cursor-pointer min-h-[44px]'
           >
             Batal
           </button>
           <button
             type='button'
             onClick={handleSend}
-            className='w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl text-white font-bold text-sm shadow-md transition-all cursor-pointer bg-[#aa294d] hover:bg-[#cb4364] shadow-[#aa294d]/20'
+            className='w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl text-white font-bold text-sm shadow-md transition-all cursor-pointer bg-[#aa294d] hover:bg-[#cb4364] shadow-[#aa294d]/20 min-h-[44px]'
           >
             {channel === 'whatsapp' ? <MessageSquare size={16} /> : <Send size={16} />}
             <span>

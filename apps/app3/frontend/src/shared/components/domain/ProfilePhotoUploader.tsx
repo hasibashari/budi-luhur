@@ -268,7 +268,13 @@ export function ProfilePhotoUploader({
                   shape='rounded'
                   disabled={isProcessing || !hasChanged}
                   onClick={handleSave}
-                  icon={isProcessing ? <Loader2 size={14} className='animate-spin' /> : <Check size={14} />}
+                  icon={
+                    isProcessing ? (
+                      <Loader2 size={14} className='animate-spin' />
+                    ) : (
+                      <Check size={14} />
+                    )
+                  }
                   className='text-xs py-2 px-4 shadow-md'
                 >
                   {isProcessing ? 'Mengupdate...' : 'Update Foto'}

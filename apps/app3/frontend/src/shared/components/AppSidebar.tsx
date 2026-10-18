@@ -52,9 +52,9 @@ export default function AppSidebar({
   }, [mobileOpen]);
 
   const sidebarInner = (
-    <div className='flex flex-col h-full bg-white px-4 py-5'>
-      {/* Header Section */}
-      <div className='flex items-center justify-between pb-4 mb-4 border-b border-[#eff4ff]'>
+    <div className='flex flex-col h-full bg-white px-4 py-5 overflow-hidden'>
+      {/* Header Section - Pinned at top */}
+      <div className='flex items-center justify-between pb-4 mb-4 border-b border-[#eff4ff] shrink-0'>
         <Link
           to={brandHref}
           onClick={onMobileClose}
@@ -94,8 +94,8 @@ export default function AppSidebar({
         )}
       </div>
 
-      {/* Navigation List */}
-      <nav className='flex-1 flex flex-col gap-1.5 overflow-y-auto'>
+      {/* Navigation List - Independent Scroll */}
+      <nav className='flex-1 flex flex-col gap-1.5 overflow-y-auto overscroll-contain pr-1'>
         {navItems.map(item => {
           const isActive =
             pathname === item.href ||
@@ -122,8 +122,10 @@ export default function AppSidebar({
         })}
       </nav>
 
-      {/* Footer Action */}
-      {footerAction && <div className='pt-3 mt-3 border-t border-[#eff4ff]'>{footerAction}</div>}
+      {/* Footer Action - Pinned at bottom */}
+      {footerAction && (
+        <div className='pt-3 mt-3 border-t border-[#eff4ff] shrink-0'>{footerAction}</div>
+      )}
     </div>
   );
 
@@ -145,7 +147,7 @@ export default function AppSidebar({
       {/* Desktop Sticky Permanent Sidebar */}
       <aside
         style={{ width: drawerWidth }}
-        className='hidden md:flex flex-col sticky top-0 h-screen z-30 bg-white border-r border-[#eff4ff] shadow-2xs shrink-0 select-none'
+        className='hidden md:flex flex-col sticky top-0 h-screen z-30 bg-white border-r border-[#eff4ff] shadow-2xs shrink-0 select-none overflow-hidden'
       >
         {sidebarInner}
       </aside>

@@ -188,11 +188,11 @@ export default function DashboardView() {
 
   return (
     <div className="flex flex-col gap-5 sm:gap-6 w-full max-w-5xl mx-auto pb-10">
-      {/* Toast Feedback */}
+      {/* Toast Feedback - Mobile Thumb-Zone Friendly */}
       {toastMessage && (
-        <div className="fixed top-20 right-4 z-50 bg-[#121c2a] text-white px-4 py-2.5 rounded-2xl shadow-xl flex items-center gap-2 text-xs font-semibold animate-fade-in border border-white/10">
-          <CheckCircle2 size={16} className="text-[#aff1d0]" />
-          <span>{toastMessage}</span>
+        <div className="fixed bottom-[calc(5.5rem+env(safe-area-inset-bottom,0px))] sm:bottom-auto sm:top-20 left-4 right-4 sm:left-auto sm:right-6 z-50 max-w-sm mx-auto sm:mx-0 bg-[#121c2a] text-white px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-2.5 text-xs font-semibold animate-fade-in border border-white/10">
+          <CheckCircle2 size={16} className="text-[#aff1d0] shrink-0" />
+          <span className="flex-1">{toastMessage}</span>
         </div>
       )}
 
@@ -365,7 +365,7 @@ export default function DashboardView() {
               </div>
               <Link
                 to="/user/consultation"
-                className="w-10 h-10 rounded-full bg-white shadow-xs flex items-center justify-center text-[#aa294d] hover:bg-[#ffd9de] transition-colors shrink-0"
+                className="w-11 h-11 rounded-full bg-white shadow-xs flex items-center justify-center text-[#aa294d] hover:bg-[#ffd9de] transition-colors shrink-0 active:scale-90 cursor-pointer"
                 title="Mulai Konsultasi"
               >
                 <MessageSquare size={18} />
@@ -429,10 +429,10 @@ export default function DashboardView() {
                       {articleSummary}
                     </p>
 
-                    <div className="pt-2 flex items-center justify-between">
+                    <div className="pt-2 flex items-center justify-between gap-3">
                       <Link
                         to={`/user/education/${activeArticleId}`}
-                        className="inline-flex items-center justify-center px-4 py-2 rounded-full bg-[#aa294d] text-white text-xs font-bold shadow-[0_4px_12px_rgba(170,41,77,0.25)] hover:bg-[#cb4364] transition-all active:scale-95"
+                        className="inline-flex items-center justify-center px-5 py-2.5 min-h-[44px] rounded-full bg-[#aa294d] text-white text-xs font-bold shadow-[0_4px_12px_rgba(170,41,77,0.25)] hover:bg-[#cb4364] transition-all active:scale-95"
                       >
                         Baca Selengkapnya
                       </Link>
@@ -446,8 +446,9 @@ export default function DashboardView() {
                               : 'Artikel dihapus dari simpanan.'
                           );
                         }}
-                        className="w-9 h-9 rounded-full flex items-center justify-center text-[#574144] hover:text-[#aa294d] hover:bg-[#ffd9de]/30 transition-colors cursor-pointer"
+                        className="w-11 h-11 rounded-full flex items-center justify-center text-[#574144] hover:text-[#aa294d] hover:bg-[#ffd9de]/30 transition-colors cursor-pointer active:scale-90 shrink-0"
                         title="Simpan Artikel"
+                        aria-label="Simpan Artikel"
                       >
                         {isBookmarked ? (
                           <BookmarkCheck size={20} className="text-[#aa294d]" />

@@ -205,7 +205,7 @@ export default function ArticleFormModal({
           placeholder='Contoh: Pentingnya Vaksin TT Bagi Calon Pengantin'
           value={formData.title}
           onChange={e => updateFormData({ title: e.target.value })}
-          className='w-full px-3.5 py-2.5 rounded-xl border border-[#dee9fc] bg-white text-sm text-[#121c2a] focus:outline-none focus:ring-2 focus:ring-[#ffd9de] focus:border-[#aa294d] transition-all'
+          className='w-full px-3.5 py-2.5 rounded-xl border border-[#dee9fc] bg-white text-base sm:text-sm text-[#121c2a] focus:outline-none focus:ring-2 focus:ring-[#ffd9de] focus:border-[#aa294d] transition-all'
         />
       </div>
 
@@ -219,7 +219,7 @@ export default function ArticleFormModal({
                 category: e.target.value as ArticleFormData['category'],
               })
             }
-            className='w-full px-3.5 py-2.5 rounded-xl border border-[#dee9fc] bg-white text-sm text-[#121c2a] focus:outline-none focus:ring-2 focus:ring-[#ffd9de] focus:border-[#aa294d] transition-all cursor-pointer'
+            className='w-full px-3.5 py-2.5 rounded-xl border border-[#dee9fc] bg-white text-base sm:text-sm text-[#121c2a] focus:outline-none focus:ring-2 focus:ring-[#ffd9de] focus:border-[#aa294d] transition-all cursor-pointer'
           >
             {ARTICLE_CATEGORIES.filter(c => c !== 'Semua').map(cat => (
               <option key={cat} value={cat}>
@@ -236,7 +236,7 @@ export default function ArticleFormModal({
             type='text'
             value={formData.author}
             onChange={e => updateFormData({ author: e.target.value })}
-            className='w-full px-3.5 py-2.5 rounded-xl border border-[#dee9fc] bg-white text-sm text-[#121c2a] focus:outline-none focus:ring-2 focus:ring-[#ffd9de] focus:border-[#aa294d] transition-all'
+            className='w-full px-3.5 py-2.5 rounded-xl border border-[#dee9fc] bg-white text-base sm:text-sm text-[#121c2a] focus:outline-none focus:ring-2 focus:ring-[#ffd9de] focus:border-[#aa294d] transition-all'
           />
         </div>
       </div>
@@ -249,7 +249,7 @@ export default function ArticleFormModal({
             placeholder='3 min read'
             value={formData.readTime}
             onChange={e => updateFormData({ readTime: e.target.value })}
-            className='w-full px-3.5 py-2.5 rounded-xl border border-[#dee9fc] bg-white text-sm text-[#121c2a] focus:outline-none focus:ring-2 focus:ring-[#ffd9de] focus:border-[#aa294d] transition-all'
+            className='w-full px-3.5 py-2.5 rounded-xl border border-[#dee9fc] bg-white text-base sm:text-sm text-[#121c2a] focus:outline-none focus:ring-2 focus:ring-[#ffd9de] focus:border-[#aa294d] transition-all'
           />
         </div>
         <div>
@@ -261,7 +261,7 @@ export default function ArticleFormModal({
                 status: e.target.value as ArticleFormData['status'],
               })
             }
-            className='w-full px-3.5 py-2.5 rounded-xl border border-[#dee9fc] bg-white text-sm text-[#121c2a] focus:outline-none focus:ring-2 focus:ring-[#ffd9de] focus:border-[#aa294d] transition-all cursor-pointer'
+            className='w-full px-3.5 py-2.5 rounded-xl border border-[#dee9fc] bg-white text-base sm:text-sm text-[#121c2a] focus:outline-none focus:ring-2 focus:ring-[#ffd9de] focus:border-[#aa294d] transition-all cursor-pointer'
           >
             <option value='Terbit'>Terbit Langsung</option>
             <option value='Draf'>Simpan Sebagai Draf</option>
@@ -278,7 +278,7 @@ export default function ArticleFormModal({
           placeholder='Ringkasan 1-2 kalimat untuk preview kartu edukasi...'
           value={formData.summary}
           onChange={e => updateFormData({ summary: e.target.value })}
-          className='w-full px-3.5 py-2.5 rounded-xl border border-[#dee9fc] bg-white text-sm text-[#121c2a] focus:outline-none focus:ring-2 focus:ring-[#ffd9de] focus:border-[#aa294d] transition-all resize-none'
+          className='w-full px-3.5 py-2.5 rounded-xl border border-[#dee9fc] bg-white text-base sm:text-sm text-[#121c2a] focus:outline-none focus:ring-2 focus:ring-[#ffd9de] focus:border-[#aa294d] transition-all resize-none'
         />
       </div>
 

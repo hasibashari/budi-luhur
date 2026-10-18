@@ -13,9 +13,9 @@ export default function AdminLayout() {
 
   return (
     <AuthGuard requiredRole='admin'>
-      <div className='flex flex-col min-h-screen bg-[#f8f9ff] selection:bg-[#ffd9de] selection:text-[#400014]'>
+      <div className='flex flex-col min-h-[100dvh] md:h-screen md:overflow-hidden bg-[#f8f9ff] selection:bg-[#ffd9de] selection:text-[#400014]'>
         {/* Mobile Top App Bar (< md) */}
-        <div className='block md:hidden'>
+        <div className='block md:hidden shrink-0'>
           <MobileTopBar
             brandTitle='PRELUNA'
             brandSubtitle='Portal Faskes & KUA'
@@ -25,9 +25,9 @@ export default function AdminLayout() {
         </div>
 
         {/* Main Workspace Layout (Desktop Sidebar on md+ & Content) */}
-        <div className='flex flex-col md:flex-row flex-1 min-h-screen'>
+        <div className='flex flex-col md:flex-row flex-1 md:overflow-hidden min-h-0'>
           <AdminSidebar />
-          <main className='flex-1 min-w-0 w-full p-4 sm:p-6 md:p-8 pb-28 md:pb-12 min-h-screen box-border'>
+          <main className='flex-1 min-w-0 w-full overflow-y-auto p-4 sm:p-6 md:p-8 pb-[calc(6rem+env(safe-area-inset-bottom,0px))] md:pb-12 box-border'>
             <div className='max-w-7xl w-full mx-auto'>
               <Outlet />
             </div>

@@ -58,9 +58,9 @@ export function WeddingCountdownWidget({
         <span
           className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full border ${
             isUrgent
-              ? 'bg-rose-50 border-rose-200 text-rose-700'
+              ? 'bg-[#ffd9de] border-[#aa294d]/30 text-[#8c0f39]'
               : isSafe
-                ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
+                ? 'bg-[#aff1d0] border-[#2a6950]/30 text-[#0a5139]'
                 : 'bg-amber-50 border-amber-200 text-amber-800'
           }`}
         >
@@ -88,7 +88,7 @@ export function WeddingCountdownWidget({
 
         <div className='flex-1 pl-2'>
           <div className='flex items-center gap-1.5 text-xs text-slate-800 font-semibold'>
-            <Calendar size={13} className='text-emerald-600' />
+            <Calendar size={13} className='text-[#2a6950]' />
             <span className='truncate'>{formattedDate}</span>
           </div>
           <span className='text-[10px] text-slate-500 block mt-0.5'>
@@ -101,14 +101,14 @@ export function WeddingCountdownWidget({
       <div
         className={`p-3 rounded-2xl border text-xs flex items-start gap-2.5 ${
           isUrgent
-            ? 'bg-rose-50/80 border-rose-200 text-rose-900'
-            : 'bg-emerald-50/70 border-emerald-200/80 text-emerald-950'
+            ? 'bg-[#ffd9de]/60 border-[#aa294d]/30 text-[#8c0f39]'
+            : 'bg-[#aff1d0]/35 border-[#2a6950]/30 text-[#0a5139]'
         }`}
       >
         {isUrgent ? (
-          <AlertTriangle size={16} className='text-rose-600 shrink-0 mt-0.5' />
+          <AlertTriangle size={16} className='text-[#aa294d] shrink-0 mt-0.5' />
         ) : (
-          <ShieldCheck size={16} className='text-emerald-700 shrink-0 mt-0.5' />
+          <ShieldCheck size={16} className='text-[#2a6950] shrink-0 mt-0.5' />
         )}
         <div className='flex-1 text-[11px] leading-relaxed'>
           {isUrgent ? (
@@ -131,7 +131,7 @@ export function WeddingCountdownWidget({
         </div>
         <Link
           to='/user/schedule'
-          className='inline-flex items-center gap-1 font-bold text-emerald-700 hover:text-emerald-800'
+          className='inline-flex items-center gap-1 font-bold text-[#2a6950] hover:text-[#0a5139] active:scale-95 transition-transform'
         >
           <span>Atur Janji Suntik</span>
           <ArrowRight size={13} />

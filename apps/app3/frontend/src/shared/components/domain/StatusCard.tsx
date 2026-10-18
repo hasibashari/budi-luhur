@@ -75,12 +75,12 @@ export function StatusCard({
             Konfirmasi kunjungan imunisasi TT atau konsumsi suplemen multivitamin pranikah hari ini.
           </p>
 
-          <div className='flex items-center gap-2'>
+          <div className='flex items-center gap-2.5'>
             <Button
               variant='primary'
               size='sm'
               shape='pill'
-              className='flex-1 text-xs sm:text-sm py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold'
+              className='flex-1 text-xs sm:text-sm min-h-[44px] py-2 bg-[#2a6950] hover:bg-[#1f503d] text-white font-bold cursor-pointer active:scale-95'
               icon={<CheckCircle2 size={16} />}
               onClick={handleSetRecorded}
             >
@@ -91,7 +91,7 @@ export function StatusCard({
               variant='outline'
               size='sm'
               shape='pill'
-              className='text-xs sm:text-sm py-2 px-3.5 text-stone-600 border-stone-200 hover:bg-stone-50'
+              className='text-xs sm:text-sm min-h-[44px] py-2 px-4 text-stone-600 border-stone-200 hover:bg-stone-50 cursor-pointer active:scale-95'
               icon={<XCircle size={16} />}
               onClick={handleSetMissed}
             >
@@ -102,14 +102,14 @@ export function StatusCard({
       )}
 
       {status === 'recorded' && (
-        <div className='bg-emerald-50 border border-emerald-200 rounded-2xl p-3 mt-1 flex items-center justify-between'>
+        <div className='bg-[#aff1d0]/30 border border-[#2a6950]/20 rounded-2xl p-3.5 mt-1 flex items-center justify-between'>
           <div className='flex items-center gap-2.5'>
-            <div className='w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-xs'>
+            <div className='w-9 h-9 rounded-xl bg-[#2a6950] text-white flex items-center justify-center shrink-0 shadow-xs'>
               <Sparkles size={16} />
             </div>
             <div>
-              <p className='text-xs sm:text-sm font-bold text-emerald-950'>Bagus! Terverifikasi</p>
-              <p className='text-[11px] text-emerald-800 flex items-center gap-1'>
+              <p className='text-xs sm:text-sm font-bold text-[#0a5139]'>Bagus! Terverifikasi</p>
+              <p className='text-[11px] text-[#2a6950] flex items-center gap-1'>
                 <Clock size={11} />
                 <span>Tercatat pada {recordedTime || '08:15 WIB'}</span>
               </p>
@@ -119,7 +119,7 @@ export function StatusCard({
           <button
             type='button'
             onClick={handleReset}
-            className='text-[11px] text-emerald-700 hover:underline font-semibold px-2 py-1 cursor-pointer'
+            className='text-xs text-[#2a6950] hover:underline font-bold px-2.5 py-1.5 cursor-pointer active:scale-90'
           >
             Ubah
           </button>

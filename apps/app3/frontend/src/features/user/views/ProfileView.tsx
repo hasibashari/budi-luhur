@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import {
   ShieldCheck,
   Heart,
@@ -17,10 +17,12 @@ import {
   AlertTriangle,
   Loader2,
   ChevronRight,
+  BellRing,
 } from 'lucide-react';
 import { Button } from '@/src/shared/components/ui/Button';
 import { useAuth } from '@/src/features/auth/context/AuthContext';
 import { VaccineCardModal } from '@/src/features/dashboard/components/VaccineCardModal';
+import { ReminderSettingsModal, ReminderSettingsData } from '../components/ReminderSettingsModal';
 import { getUserDashboardDataAction, updateUserProfileAction } from '../api/userRepository';
 
 interface UserProfileState {
@@ -52,10 +54,12 @@ export default function ProfileView() {
     notes: null,
   });
 
+  const [searchParams] = useSearchParams();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isCertificateModalOpen, setIsCertificateModalOpen] = useState(false);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const [isAboutModalOpen, setIsAboutModalOpen] = useState(false);
+  const [isReminderModalOpen, setIsReminderModalOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   // Edit fields
@@ -72,6 +76,20 @@ export default function ProfileView() {
   const showToast = (msg: string) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 3000);
+  };
+
+  useEffect(() => {
+    if (searchParams.get('section') === 'reminder') {
+      setIsReminderModalOpen(true);
+    }
+  }, [searchParams]);
+
+  const handleSaveReminderSettings = (settings: ReminderSettingsData) => {
+    showToast(
+      settings.isEnabled
+        ? 'Pengaturan pengingat otomatis berhasil disimpan!'
+        : 'Pengingat otomatis dinonaktifkan.',
+    );
   };
 
   useEffect(() => {
@@ -142,11 +160,11 @@ export default function ProfileView() {
 
   return (
     <div className="flex flex-col gap-5 sm:gap-6 w-full max-w-xl mx-auto pb-16">
-      {/* Toast Feedback */}
+      {/* Toast Feedback - Mobile Thumb-Zone Friendly */}
       {toastMessage && (
-        <div className="fixed top-20 right-4 z-50 bg-[#121c2a] text-white px-4 py-2.5 rounded-2xl shadow-xl flex items-center gap-2 text-xs font-semibold animate-fade-in border border-white/10">
-          <CheckCircle2 size={16} className="text-[#aff1d0]" />
-          <span>{toastMessage}</span>
+        <div className="fixed bottom-[calc(5.5rem+env(safe-area-inset-bottom,0px))] sm:bottom-auto sm:top-20 left-4 right-4 sm:left-auto sm:right-6 z-50 max-w-sm mx-auto sm:mx-0 bg-[#121c2a] text-white px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-2.5 text-xs font-semibold animate-fade-in border border-white/10">
+          <CheckCircle2 size={16} className="text-[#aff1d0] shrink-0" />
+          <span className="flex-1">{toastMessage}</span>
         </div>
       )}
 
@@ -166,7 +184,7 @@ export default function ProfileView() {
           type="button"
           onClick={() => navigate('/user/dashboard')}
           aria-label="Kembali ke Beranda"
-          className="w-10 h-10 rounded-full bg-[#eff4ff] text-[#574144] flex items-center justify-center hover:bg-[#dee9fc] transition-all active:scale-95 shadow-2xs cursor-pointer"
+          className="w-11 h-11 rounded-full bg-[#eff4ff] text-[#574144] flex items-center justify-center hover:bg-[#dee9fc] active:scale-90 transition-all shadow-2xs cursor-pointer"
         >
           <ArrowLeft size={18} />
         </button>
@@ -181,7 +199,7 @@ export default function ProfileView() {
           type="button"
           onClick={() => setIsEditModalOpen(true)}
           aria-label="Edit Profil"
-          className="w-10 h-10 rounded-full bg-[#eff4ff] text-[#aa294d] flex items-center justify-center hover:bg-[#ffd9de]/50 transition-all active:scale-95 shadow-2xs cursor-pointer"
+          className="w-11 h-11 rounded-full bg-[#eff4ff] text-[#aa294d] flex items-center justify-center hover:bg-[#ffd9de]/50 active:scale-90 transition-all shadow-2xs cursor-pointer"
         >
           <Edit3 size={18} />
         </button>
@@ -351,6 +369,29 @@ export default function ProfileView() {
           <ChevronRight size={18} className="text-[#8b7074] shrink-0 ml-2 group-hover:text-[#aa294d] transition-colors" />
         </Link>
 
+        {/* Item: Pengingat & Notifikasi Jadwal */}
+        <div
+          role="button"
+          tabIndex={0}
+          onClick={() => setIsReminderModalOpen(true)}
+          className="group w-full bg-white hover:bg-[#eff4ff]/60 transition-colors rounded-2xl p-4 flex items-center justify-between shadow-xs border border-[#eff4ff] cursor-pointer"
+        >
+          <div className="flex items-center gap-3.5 min-w-0">
+            <div className="w-11 h-11 rounded-full bg-[#ffd9de]/80 text-[#aa294d] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+              <BellRing size={20} />
+            </div>
+            <div className="min-w-0">
+              <p className="text-xs sm:text-sm font-bold text-[#121c2a] group-hover:text-[#aa294d] transition-colors truncate">
+                Pengingat & Notifikasi Jadwal
+              </p>
+              <p className="text-[11px] text-[#574144] truncate">
+                Atur pengingat otomatis WhatsApp & notifikasi ponsel
+              </p>
+            </div>
+          </div>
+          <ChevronRight size={18} className="text-[#8b7074] shrink-0 ml-2 group-hover:text-[#aa294d] transition-colors" />
+        </div>
+
         {/* Item 4: Pengaturan Akun & Keamanan */}
         <div
           role="button"
@@ -438,8 +479,13 @@ export default function ProfileView() {
 
       {/* Edit Profile Modal */}
       {isEditModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/50 backdrop-blur-xs animate-fade-in">
-          <div className="relative w-full max-w-md bg-white rounded-3xl p-5 sm:p-6 shadow-2xl border border-stone-200">
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-950/60 backdrop-blur-xs animate-fade-in">
+          <div className="relative w-full max-w-md bg-white rounded-t-[28px] sm:rounded-3xl p-5 sm:p-6 shadow-2xl border border-stone-200 overflow-hidden flex flex-col max-h-[90dvh] sm:max-h-[92vh]">
+            {/* Mobile Drag Indicator Handle */}
+            <div className="sm:hidden w-full pt-1 pb-2 flex justify-center">
+              <div className="w-12 h-1.5 rounded-full bg-stone-300" />
+            </div>
+
             <div className="flex items-center justify-between pb-3 border-b border-stone-100 mb-4">
               <h3 className="text-sm sm:text-base font-bold text-[#121c2a]">
                 Ubah Data Calon Pengantin
@@ -447,20 +493,21 @@ export default function ProfileView() {
               <button
                 type="button"
                 onClick={() => setIsEditModalOpen(false)}
-                className="w-8 h-8 rounded-full bg-stone-100 flex items-center justify-center text-slate-500 hover:text-slate-800"
+                className="w-9 h-9 rounded-full bg-stone-100 flex items-center justify-center text-slate-500 hover:text-slate-800 active:scale-90 transition-all cursor-pointer"
+                aria-label="Tutup Modal Edit"
               >
                 <X size={16} />
               </button>
             </div>
 
-            <form onSubmit={handleSaveProfile} className="flex flex-col gap-3.5">
+            <form onSubmit={handleSaveProfile} className="flex flex-col gap-3.5 overflow-y-auto">
               <div>
                 <label className="text-xs font-bold text-slate-800 mb-1 block">Nama Lengkap</label>
                 <input
                   type="text"
                   value={editName}
                   onChange={(e) => setEditName(e.target.value)}
-                  className="w-full h-11 px-3.5 rounded-xl bg-stone-50 border border-stone-200 text-xs sm:text-sm font-semibold focus:outline-none focus:border-[#aa294d]"
+                  className="w-full h-11 px-3.5 rounded-xl bg-stone-50 border border-stone-200 text-base sm:text-sm font-semibold focus:outline-none focus:border-[#aa294d]"
                   required
                 />
               </div>
@@ -471,7 +518,7 @@ export default function ProfileView() {
                   type="text"
                   value={editFaskes}
                   onChange={(e) => setEditFaskes(e.target.value)}
-                  className="w-full h-11 px-3.5 rounded-xl bg-stone-50 border border-stone-200 text-xs sm:text-sm font-semibold focus:outline-none focus:border-[#aa294d]"
+                  className="w-full h-11 px-3.5 rounded-xl bg-stone-50 border border-stone-200 text-base sm:text-sm font-semibold focus:outline-none focus:border-[#aa294d]"
                   required
                 />
               </div>
@@ -480,20 +527,21 @@ export default function ProfileView() {
                 <label className="text-xs font-bold text-slate-800 mb-1 block">Nomor WhatsApp</label>
                 <input
                   type="tel"
+                  inputMode="tel"
                   value={editPhone}
                   onChange={(e) => setEditPhone(e.target.value)}
-                  className="w-full h-11 px-3.5 rounded-xl bg-stone-50 border border-stone-200 text-xs sm:text-sm font-semibold focus:outline-none focus:border-[#aa294d]"
+                  className="w-full h-11 px-3.5 rounded-xl bg-stone-50 border border-stone-200 text-base sm:text-sm font-semibold focus:outline-none focus:border-[#aa294d]"
                   required
                 />
               </div>
 
-              <div className="flex items-center gap-2 pt-3 border-t border-stone-100">
+              <div className="flex items-center gap-2.5 pt-3 pb-[calc(1.25rem+env(safe-area-inset-bottom,0px))] sm:pb-0 border-t border-stone-100">
                 <Button
                   type="button"
                   variant="outline"
-                  size="sm"
+                  size="md"
                   shape="pill"
-                  className="flex-1"
+                  className="flex-1 min-h-[44px] text-xs font-semibold active:scale-95 cursor-pointer"
                   onClick={() => setIsEditModalOpen(false)}
                 >
                   Batal
@@ -501,10 +549,10 @@ export default function ProfileView() {
                 <Button
                   type="submit"
                   variant="primary"
-                  size="sm"
+                  size="md"
                   shape="pill"
                   disabled={isSaving}
-                  className="flex-1 bg-[#aa294d] hover:bg-[#cb4364] text-white font-bold"
+                  className="flex-1 min-h-[44px] bg-[#aa294d] hover:bg-[#cb4364] text-white font-bold text-xs active:scale-95 cursor-pointer"
                 >
                   {isSaving ? 'Menyimpan...' : 'Simpan Data'}
                 </Button>
@@ -516,8 +564,13 @@ export default function ProfileView() {
 
       {/* Logout Confirmation Modal */}
       {isLogoutModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/50 backdrop-blur-xs animate-fade-in">
-          <div className="relative w-full max-w-sm bg-white rounded-3xl p-5 sm:p-6 shadow-2xl border border-stone-200 text-center">
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-950/60 backdrop-blur-xs animate-fade-in">
+          <div className="relative w-full max-w-sm bg-white rounded-t-[28px] sm:rounded-3xl p-5 sm:p-6 shadow-2xl border border-stone-200 text-center pb-[calc(1.5rem+env(safe-area-inset-bottom,0px))] sm:pb-6">
+            {/* Mobile Drag Indicator Handle */}
+            <div className="sm:hidden w-full pt-1 pb-3 flex justify-center">
+              <div className="w-12 h-1.5 rounded-full bg-stone-300" />
+            </div>
+
             <div className="w-12 h-12 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center mx-auto mb-3">
               <LogOut size={22} />
             </div>
@@ -525,21 +578,21 @@ export default function ProfileView() {
             <p className="text-xs text-slate-600 mt-1 mb-5">
               Anda perlu masuk kembali untuk mengakses kartu vaksin dan jadwal kunjungan Faskes.
             </p>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2.5">
               <Button
                 variant="outline"
-                size="sm"
+                size="md"
                 shape="pill"
-                className="flex-1"
+                className="flex-1 min-h-[44px] text-xs font-semibold active:scale-95 cursor-pointer"
                 onClick={() => setIsLogoutModalOpen(false)}
               >
                 Batal
               </Button>
               <Button
                 variant="primary"
-                size="sm"
+                size="md"
                 shape="pill"
-                className="flex-1 bg-rose-600 hover:bg-rose-700 text-white font-bold"
+                className="flex-1 min-h-[44px] bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs active:scale-95 cursor-pointer"
                 onClick={handleLogout}
               >
                 Ya, Keluar
@@ -551,14 +604,20 @@ export default function ProfileView() {
 
       {/* About App Modal */}
       {isAboutModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/50 backdrop-blur-xs animate-fade-in">
-          <div className="relative w-full max-w-md bg-white rounded-3xl p-5 sm:p-6 shadow-2xl border border-stone-200 text-left">
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-950/60 backdrop-blur-xs animate-fade-in">
+          <div className="relative w-full max-w-md bg-white rounded-t-[28px] sm:rounded-3xl p-5 sm:p-6 shadow-2xl border border-stone-200 text-left pb-[calc(1.5rem+env(safe-area-inset-bottom,0px))] sm:pb-6">
+            {/* Mobile Drag Indicator Handle */}
+            <div className="sm:hidden w-full pt-1 pb-3 flex justify-center">
+              <div className="w-12 h-1.5 rounded-full bg-stone-300" />
+            </div>
+
             <div className="flex items-center justify-between pb-3 border-b border-stone-100 mb-3">
               <h3 className="text-base font-bold text-slate-900">Tentang PRELUNA</h3>
               <button
                 type="button"
                 onClick={() => setIsAboutModalOpen(false)}
-                className="w-8 h-8 rounded-full bg-stone-100 flex items-center justify-center text-slate-500 hover:text-slate-800"
+                className="w-9 h-9 rounded-full bg-stone-100 flex items-center justify-center text-slate-500 hover:text-slate-800 active:scale-90 transition-all cursor-pointer"
+                aria-label="Tutup Modal Tentang"
               >
                 <X size={16} />
               </button>
@@ -573,9 +632,9 @@ export default function ProfileView() {
             </div>
             <Button
               variant="primary"
-              size="sm"
+              size="md"
               shape="pill"
-              className="w-full bg-[#aa294d] text-white font-bold"
+              className="w-full min-h-[44px] bg-[#aa294d] hover:bg-[#cb4364] text-white font-bold text-xs active:scale-95 cursor-pointer"
               onClick={() => setIsAboutModalOpen(false)}
             >
               Tutup
@@ -583,6 +642,13 @@ export default function ProfileView() {
           </div>
         </div>
       )}
+
+      {/* Reminder Settings Bottom Sheet Modal */}
+      <ReminderSettingsModal
+        isOpen={isReminderModalOpen}
+        onClose={() => setIsReminderModalOpen(false)}
+        onSave={handleSaveReminderSettings}
+      />
     </div>
   );
 }

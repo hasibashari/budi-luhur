@@ -109,14 +109,14 @@ export function PWAInstallBanner({
   const getPositionClasses = () => {
     switch (position) {
       case 'bottom-left':
-        return 'bottom-5 left-4 sm:bottom-7 sm:left-7 right-4 sm:right-auto';
+        return 'bottom-[calc(4.75rem+env(safe-area-inset-bottom,0px))] left-4 sm:bottom-7 sm:left-7 right-4 sm:right-auto';
       case 'top-right':
         return 'top-5 right-4 sm:top-7 sm:right-7 left-4 sm:left-auto';
       case 'bottom-center':
-        return 'bottom-5 left-4 right-4 sm:left-1/2 sm:-translate-x-1/2 sm:right-auto';
+        return 'bottom-[calc(4.75rem+env(safe-area-inset-bottom,0px))] left-4 right-4 sm:left-1/2 sm:-translate-x-1/2 sm:right-auto';
       case 'bottom-right':
       default:
-        return 'bottom-5 right-4 sm:bottom-7 sm:right-7 left-4 sm:left-auto';
+        return 'bottom-[calc(4.75rem+env(safe-area-inset-bottom,0px))] right-4 sm:bottom-7 sm:right-7 left-4 sm:left-auto';
     }
   };
 
@@ -126,7 +126,7 @@ export function PWAInstallBanner({
         visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'
       }`}
     >
-      <div className='relative overflow-hidden p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-emerald-700 via-emerald-800 to-teal-900 text-white shadow-2xl border border-white/20 backdrop-blur-lg'>
+      <div className='relative overflow-hidden p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-[#aa294d] via-[#b83358] to-[#8c0f39] text-white shadow-2xl border border-white/20 backdrop-blur-lg'>
         {/* Subtle background ambient shine */}
         <div className='absolute -top-8 -right-8 w-28 h-28 rounded-full bg-white/10 pointer-events-none blur-xl' />
 
@@ -147,7 +147,7 @@ export function PWAInstallBanner({
                 </span>
               </div>
 
-              <p className='text-xs text-emerald-100 line-clamp-2 leading-relaxed'>
+              <p className='text-xs text-rose-100 line-clamp-2 leading-relaxed'>
                 Akses cepat jadwal imunisasi TT, e-sertifikat & konsultasi langsung dari layar utama.
               </p>
             </div>
@@ -157,7 +157,7 @@ export function PWAInstallBanner({
           <button
             onClick={handleDismiss}
             aria-label='Tutup notifikasi instalasi'
-            className='p-1 -mr-1 -mt-1 rounded-full text-white/80 hover:text-white hover:bg-white/20 transition-colors cursor-pointer'
+            className='p-1.5 -mr-1 -mt-1 rounded-full text-white/80 hover:text-white hover:bg-white/20 transition-colors cursor-pointer min-w-[36px] min-h-[36px] flex items-center justify-center active:scale-90'
           >
             <X size={16} />
           </button>
@@ -167,7 +167,7 @@ export function PWAInstallBanner({
         <div className='flex items-center justify-end gap-2 mt-4 pt-3 border-t border-white/20 relative z-10'>
           <button
             onClick={handleDismiss}
-            className='px-3 py-1.5 rounded-lg text-xs font-semibold text-white/85 hover:text-white hover:bg-white/10 transition-colors cursor-pointer'
+            className='px-3 py-1.5 rounded-lg text-xs font-semibold text-white/85 hover:text-white hover:bg-white/10 transition-colors cursor-pointer min-h-[36px]'
           >
             Nanti Saja
           </button>
@@ -176,9 +176,9 @@ export function PWAInstallBanner({
             <button
               disabled={installing}
               onClick={handleInstallClick}
-              className='inline-flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-xs font-bold bg-white text-emerald-800 hover:bg-emerald-50 shadow-md transition-all cursor-pointer disabled:opacity-50'
+              className='inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-white text-[#aa294d] hover:bg-rose-50 shadow-md transition-all cursor-pointer disabled:opacity-50 min-h-[36px] active:scale-95'
             >
-              <Download size={13} />
+              <Download size={14} />
               <span>{installing ? 'Memasang...' : 'Pasang Sekarang'}</span>
             </button>
           )}

@@ -51,7 +51,9 @@ export function ToastFeedback({
   const style = severityStyles[severity] || severityStyles.success;
 
   return (
-    <div className='fixed bottom-5 right-5 z-50 max-w-sm w-full animate-fade-in pointer-events-auto'>
+    <div
+      className='fixed z-[80] bottom-[calc(5rem+env(safe-area-inset-bottom,0px))] inset-x-4 mx-auto max-w-sm sm:bottom-6 sm:right-6 sm:left-auto sm:mx-0 animate-fade-in pointer-events-auto'
+    >
       <div
         className={`flex items-start gap-3 p-3.5 rounded-2xl border shadow-xl backdrop-blur-sm ${style.bg}`}
       >

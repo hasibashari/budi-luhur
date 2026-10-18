@@ -50,7 +50,7 @@ export default function UserFormModal({
           placeholder='Contoh: Siti Aisyah / Ahmad Fauzi'
           value={formData.name}
           onChange={e => onUpdateFormData({ name: e.target.value })}
-          className='w-full px-3.5 py-2.5 rounded-xl border border-[#dee9fc] bg-white text-sm text-[#121c2a] focus:outline-none focus:ring-2 focus:ring-[#ffd9de] focus:border-[#aa294d] transition-all'
+          className='w-full px-3.5 py-2.5 rounded-xl border border-[#dee9fc] bg-white text-base sm:text-sm text-[#121c2a] focus:outline-none focus:ring-2 focus:ring-[#ffd9de] focus:border-[#aa294d] transition-all'
         />
       </div>
 
@@ -59,10 +59,11 @@ export default function UserFormModal({
           <label className='block text-xs font-bold text-[#121c2a] mb-1'>Usia (Tahun)</label>
           <input
             type='number'
+            inputMode='numeric'
             placeholder='Contoh: 24'
             value={formData.age}
             onChange={e => onUpdateFormData({ age: e.target.value })}
-            className='w-full px-3.5 py-2.5 rounded-xl border border-[#dee9fc] bg-white text-sm text-[#121c2a] focus:outline-none focus:ring-2 focus:ring-[#ffd9de] focus:border-[#aa294d] transition-all'
+            className='w-full px-3.5 py-2.5 rounded-xl border border-[#dee9fc] bg-white text-base sm:text-sm text-[#121c2a] focus:outline-none focus:ring-2 focus:ring-[#ffd9de] focus:border-[#aa294d] transition-all'
           />
         </div>
         <div>
@@ -70,7 +71,7 @@ export default function UserFormModal({
           <select
             value={formData.gender}
             onChange={e => onUpdateFormData({ gender: e.target.value as UserGender })}
-            className='w-full px-3.5 py-2.5 rounded-xl border border-[#dee9fc] bg-white text-sm text-[#121c2a] focus:outline-none focus:ring-2 focus:ring-[#ffd9de] focus:border-[#aa294d] transition-all'
+            className='w-full px-3.5 py-2.5 rounded-xl border border-[#dee9fc] bg-white text-base sm:text-sm text-[#121c2a] focus:outline-none focus:ring-2 focus:ring-[#ffd9de] focus:border-[#aa294d] transition-all'
           >
             {GENDER_OPTIONS.map(opt => (
               <option key={opt.value} value={opt.value}>
@@ -88,20 +89,22 @@ export default function UserFormModal({
           </label>
           <input
             type='text'
+            inputMode='tel'
             placeholder='0812-xxxx-xxxx'
             value={formData.phone}
             onChange={e => onUpdateFormData({ phone: e.target.value })}
-            className='w-full px-3.5 py-2.5 rounded-xl border border-[#dee9fc] bg-white text-sm text-[#121c2a] focus:outline-none focus:ring-2 focus:ring-[#ffd9de] focus:border-[#aa294d] transition-all'
+            className='w-full px-3.5 py-2.5 rounded-xl border border-[#dee9fc] bg-white text-base sm:text-sm text-[#121c2a] focus:outline-none focus:ring-2 focus:ring-[#ffd9de] focus:border-[#aa294d] transition-all'
           />
         </div>
         <div>
           <label className='block text-xs font-bold text-[#121c2a] mb-1'>Alamat Email</label>
           <input
             type='email'
+            inputMode='email'
             placeholder='catin@example.com'
             value={formData.email}
             onChange={e => onUpdateFormData({ email: e.target.value })}
-            className='w-full px-3.5 py-2.5 rounded-xl border border-[#dee9fc] bg-white text-sm text-[#121c2a] focus:outline-none focus:ring-2 focus:ring-[#ffd9de] focus:border-[#aa294d] transition-all'
+            className='w-full px-3.5 py-2.5 rounded-xl border border-[#dee9fc] bg-white text-base sm:text-sm text-[#121c2a] focus:outline-none focus:ring-2 focus:ring-[#ffd9de] focus:border-[#aa294d] transition-all'
           />
         </div>
       </div>

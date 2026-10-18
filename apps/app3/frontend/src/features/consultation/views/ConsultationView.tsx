@@ -104,23 +104,23 @@ export default function ConsultationView() {
   };
 
   return (
-    <div className='flex flex-col gap-5 w-full pb-8 max-w-4xl mx-auto'>
+    <div className='flex flex-col gap-3.5 sm:gap-5 w-full pb-4 sm:pb-8 max-w-4xl mx-auto'>
       {/* Top Header Card */}
       <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-stone-200'>
         <div className='flex items-center gap-3'>
-          <div className='w-12 h-12 rounded-2xl bg-linear-to-tr from-emerald-700 to-teal-600 text-white flex items-center justify-center shrink-0 shadow-md shadow-emerald-950/15'>
-            <Bot size={26} />
+          <div className='w-11 sm:w-12 h-11 sm:h-12 rounded-2xl bg-gradient-to-tr from-[#aa294d] to-[#cb4364] text-white flex items-center justify-center shrink-0 shadow-md shadow-rose-950/20'>
+            <Bot size={24} className='sm:w-[26px] sm:h-[26px]' />
           </div>
           <div>
             <div className='flex items-center gap-2'>
-              <h2 className='text-lg sm:text-xl font-bold text-slate-900 tracking-tight'>
+              <h2 className='text-base sm:text-xl font-bold text-slate-900 tracking-tight'>
                 Luna — Konselor AI Pranikah
               </h2>
-              <span className='inline-flex items-center gap-1 text-[10px] font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200'>
+              <span className='inline-flex items-center gap-1 text-[10px] font-bold text-[#2a6950] bg-[#ecfdf5] px-2 py-0.5 rounded-full border border-[#aff1d0]'>
                 <Sparkles size={10} /> Online
               </span>
             </div>
-            <p className='text-xs text-slate-500 mt-0.5'>
+            <p className='text-xs text-slate-500 mt-0.5 line-clamp-1 sm:line-clamp-none'>
               Asisten Cerdas Imunisasi TT & Kesehatan Calon Pengantin (Standar Kemenkes RI)
             </p>
           </div>
@@ -129,7 +129,7 @@ export default function ConsultationView() {
         <button
           type='button'
           onClick={handleResetChat}
-          className='inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-stone-200 bg-white text-slate-600 hover:text-emerald-700 hover:border-emerald-200 text-xs font-semibold transition-all self-start sm:self-auto cursor-pointer shadow-2xs'
+          className='inline-flex items-center gap-1.5 min-h-[38px] px-3.5 py-1.5 rounded-full border border-stone-200 bg-white text-slate-600 hover:text-[#aa294d] hover:border-[#ffd9de] active:scale-95 text-xs font-semibold transition-all self-start sm:self-auto cursor-pointer shadow-2xs'
           title='Mulai Ulang Percakapan'
         >
           <RotateCcw size={13} />
@@ -137,43 +137,40 @@ export default function ConsultationView() {
         </button>
       </div>
 
-      {/* Recommended Topics / Quick Chips */}
+      {/* Recommended Topics / Horizontal Swipeable Chips */}
       <div>
-        <span className='text-xs font-bold text-slate-700 block mb-2'>
-          Topik Konsultasi Populer:
-        </span>
-        <div className='grid grid-cols-1 sm:grid-cols-2 gap-2'>
+        <div className='flex items-center justify-between mb-1.5'>
+          <span className='text-[11px] sm:text-xs font-bold text-slate-700 block'>
+            Topik Konsultasi Cepat:
+          </span>
+          <span className='text-[10px] text-slate-400 sm:hidden'>Geser &rarr;</span>
+        </div>
+        <div className='flex items-center gap-2 overflow-x-auto no-scrollbar pb-1 -mx-4 px-4 sm:mx-0 sm:px-0'>
           {CONSULTATION_TOPICS.map(topic => (
             <button
               key={topic.id}
               type='button'
               onClick={() => handleTopicClick(topic.prompt)}
-              className='p-2.5 rounded-2xl border border-stone-200 bg-white hover:bg-emerald-50/60 hover:border-emerald-300 text-left transition-all flex items-center justify-between group cursor-pointer shadow-2xs'
+              className='shrink-0 px-3.5 py-2 rounded-2xl border border-stone-200 bg-white hover:bg-[#fff0f2] hover:border-[#ffd9de] text-left transition-all flex items-center gap-2 cursor-pointer shadow-2xs active:scale-95 group'
             >
-              <div className='flex items-center gap-2.5 pr-2'>
-                <span className='text-base'>{topic.icon}</span>
-                <div>
-                  <span className='text-[10px] font-bold text-emerald-800 block uppercase tracking-wider'>
-                    {topic.category}
-                  </span>
-                  <span className='text-xs font-semibold text-slate-800 group-hover:text-emerald-800 leading-snug line-clamp-1'>
-                    {topic.title}
-                  </span>
-                </div>
+              <span className='text-base'>{topic.icon}</span>
+              <div className='min-w-0'>
+                <span className='text-[9px] font-bold text-[#aa294d] block uppercase tracking-wider'>
+                  {topic.category}
+                </span>
+                <span className='text-xs font-semibold text-slate-800 group-hover:text-[#aa294d] leading-tight whitespace-nowrap'>
+                  {topic.title}
+                </span>
               </div>
-              <ChevronRight
-                size={14}
-                className='text-slate-400 group-hover:text-emerald-700 group-hover:translate-x-0.5 transition-all shrink-0'
-              />
             </button>
           ))}
         </div>
       </div>
 
-      {/* Main Chat Box Container */}
-      <Card padding='none' className='flex flex-col h-[520px] sm:h-[580px] border-stone-200 shadow-sm overflow-hidden'>
+      {/* Main Chat Box Container - Dynamic Viewport Height */}
+      <Card padding='none' className='flex flex-col h-[calc(100dvh-280px)] sm:h-[580px] border border-[#ffd9de]/80 rounded-3xl shadow-sm overflow-hidden bg-white'>
         {/* Messages Scroll Area */}
-        <div className='flex-1 p-4 sm:p-5 overflow-y-auto space-y-4 bg-stone-50/40'>
+        <div className='flex-1 p-3.5 sm:p-5 overflow-y-auto space-y-3.5 sm:space-y-4 bg-stone-50/40'>
           {messages.map(msg => {
             const isUser = msg.sender === 'user';
             return (
@@ -185,8 +182,8 @@ export default function ConsultationView() {
                 <div
                   className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-xs font-bold shadow-2xs ${
                     isUser
-                      ? 'bg-emerald-700 text-white'
-                      : 'bg-white border border-stone-200 text-emerald-700'
+                      ? 'bg-[#aa294d] text-white'
+                      : 'bg-white border border-[#ffd9de] text-[#aa294d]'
                   }`}
                 >
                   {isUser ? <User size={15} /> : <Bot size={16} />}
@@ -194,10 +191,10 @@ export default function ConsultationView() {
 
                 {/* Message Bubble */}
                 <div
-                  className={`max-w-[85%] sm:max-w-[78%] rounded-3xl p-3.5 sm:p-4 text-xs sm:text-sm leading-relaxed shadow-2xs ${
+                  className={`max-w-[88%] sm:max-w-[78%] rounded-2xl sm:rounded-3xl p-3 sm:p-4 text-xs sm:text-sm leading-relaxed shadow-2xs ${
                     isUser
-                      ? 'bg-emerald-700 text-white rounded-tr-xs'
-                      : 'bg-white text-slate-800 border border-stone-200 rounded-tl-xs'
+                      ? 'bg-[#aa294d] text-white rounded-tr-xs'
+                      : 'bg-white text-slate-800 border border-[#ffd9de] rounded-tl-xs'
                   }`}
                 >
                   {isUser ? (
@@ -209,7 +206,7 @@ export default function ConsultationView() {
                   )}
                   <span
                     className={`block text-[10px] mt-1.5 text-right ${
-                      isUser ? 'text-emerald-200' : 'text-slate-400'
+                      isUser ? 'text-rose-200' : 'text-slate-400'
                     }`}
                   >
                     {msg.timestamp}
@@ -222,14 +219,14 @@ export default function ConsultationView() {
           {/* Typing Indicator */}
           {isTyping && (
             <div className='flex items-start gap-2.5 sm:gap-3'>
-              <div className='w-8 h-8 rounded-full bg-white border border-stone-200 text-emerald-700 flex items-center justify-center shrink-0 shadow-2xs'>
+              <div className='w-8 h-8 rounded-full bg-white border border-[#ffd9de] text-[#aa294d] flex items-center justify-center shrink-0 shadow-2xs'>
                 <Bot size={16} />
               </div>
-              <div className='bg-white border border-stone-200 rounded-2xl rounded-tl-xs p-3 shadow-2xs flex items-center gap-1.5 text-xs text-slate-500'>
-                <span className='w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse' />
-                <span className='w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse delay-150' />
-                <span className='w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse delay-300' />
-                <span className='ml-1 text-[11px] font-medium'>Luna sedang mengetik...</span>
+              <div className='bg-white border border-[#ffd9de] rounded-2xl rounded-tl-xs p-3 shadow-2xs flex items-center gap-1.5 text-xs text-slate-500'>
+                <span className='w-1.5 h-1.5 rounded-full bg-[#aa294d] animate-pulse' />
+                <span className='w-1.5 h-1.5 rounded-full bg-[#aa294d] animate-pulse delay-150' />
+                <span className='w-1.5 h-1.5 rounded-full bg-[#aa294d] animate-pulse delay-300' />
+                <span className='ml-1 text-[11px] font-medium text-slate-600'>Luna sedang mengetik...</span>
               </div>
             </div>
           )}
@@ -237,7 +234,7 @@ export default function ConsultationView() {
         </div>
 
         {/* Input Bar */}
-        <div className='p-3 sm:p-3.5 bg-white border-t border-stone-200'>
+        <div className='p-2.5 sm:p-3.5 bg-white border-t border-stone-200'>
           <form
             onSubmit={e => {
               e.preventDefault();
@@ -247,24 +244,24 @@ export default function ConsultationView() {
           >
             <input
               type='text'
-              placeholder='Ketik pertanyaan seputar imunisasi TT, jadwal faskes, atau persiapan catin...'
+              placeholder='Tanya jadwal suntik TT, persiapan lab catin, atau efek samping...'
               value={inputText}
               onChange={e => setInputText(e.target.value)}
               disabled={isTyping}
-              className='flex-1 bg-stone-50 text-slate-900 placeholder-slate-400 text-xs sm:text-sm rounded-full border border-stone-200 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/10 px-4 py-2.5 sm:py-3 outline-none transition-colors'
+              className='flex-1 min-h-[46px] bg-stone-50 text-slate-900 placeholder-slate-400 text-base sm:text-sm rounded-full border border-stone-200 focus:border-[#aa294d] focus:ring-2 focus:ring-[#aa294d]/10 px-4 py-2.5 outline-none transition-colors'
             />
             <button
               type='submit'
               disabled={!inputText.trim() || isTyping}
-              className='w-10 sm:w-11 h-10 sm:h-11 rounded-full bg-emerald-700 hover:bg-emerald-800 disabled:opacity-50 text-white flex items-center justify-center shrink-0 transition-all shadow-md shadow-emerald-950/20 cursor-pointer disabled:cursor-not-allowed'
+              className='min-w-[44px] min-h-[44px] w-11 h-11 rounded-full bg-[#aa294d] hover:bg-[#8c0f39] disabled:opacity-50 text-white flex items-center justify-center shrink-0 transition-all shadow-md shadow-rose-950/20 cursor-pointer disabled:cursor-not-allowed active:scale-95'
               aria-label='Kirim Pesan'
             >
               <Send size={16} className='ml-0.5' />
             </button>
           </form>
           <div className='mt-2 flex items-center justify-center gap-1 text-[10px] text-slate-400'>
-            <ShieldCheck size={11} className='text-emerald-600' />
-            <span>Luna memberikan edukasi resmi berpedoman pada Kemenkes RI. Bukan pengganti diagnosis dokter.</span>
+            <ShieldCheck size={12} className='text-[#2a6950]' />
+            <span>Luna berpedoman pada standar Kementerian Kesehatan RI. Bukan pengganti diagnosis dokter.</span>
           </div>
         </div>
       </Card>
