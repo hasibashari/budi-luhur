@@ -1,36 +1,108 @@
 {
-  "buildCommand": "node scripts/build-vercel.js",
-  "outputDirectory": "dist",
+  "$schema": "https://openapi.vercel.sh/vercel.json",
   "cleanUrls": true,
   "trailingSlash": true,
+  "services": {
+    "portal": {
+      "root": "frontend",
+      "framework": "vite"
+    },
+    "app1-frontend": {
+      "root": "apps/app1/frontend",
+      "framework": "vite"
+    },
+    "app1-backend": {
+      "root": "apps/app1/backend",
+      "framework": "express"
+    },
+    "app2-frontend": {
+      "root": "apps/app2/frontend",
+      "framework": "vite"
+    },
+    "app2-backend": {
+      "root": "apps/app2/backend",
+      "framework": "express"
+    },
+    "app3-frontend": {
+      "root": "apps/app3/frontend",
+      "framework": "vite"
+    },
+    "app3-backend": {
+      "root": "apps/app3/backend",
+      "framework": "express"
+    },
+    "template-backend": {
+      "root": "apps/template-backend",
+      "framework": "express"
+    },
+    "template-frontend": {
+      "root": "apps/template-frontend",
+      "framework": "vite"
+    }
+  },
   "rewrites": [
     {
-      "source": "/api/app1/:path*",
-      "destination": "/api/app1"
+      "source": "/api/app1/(.*)",
+      "destination": {
+        "service": "app1-backend",
+        "path": "/$1"
+      }
     },
     {
-      "source": "/api/app2/:path*",
-      "destination": "/api/app2"
+      "source": "/api/app2/(.*)",
+      "destination": {
+        "service": "app2-backend",
+        "path": "/$1"
+      }
     },
     {
-      "source": "/api/app3/:path*",
-      "destination": "/api/app3"
+      "source": "/api/app3/(.*)",
+      "destination": {
+        "service": "app3-backend",
+        "path": "/$1"
+      }
     },
     {
-      "source": "/app1/:path*",
-      "destination": "/app1/index.html"
+      "source": "/app1/(.*)",
+      "destination": {
+        "service": "app1-frontend"
+      }
     },
     {
-      "source": "/app2/:path*",
-      "destination": "/app2/index.html"
+      "source": "/app1",
+      "destination": {
+        "service": "app1-frontend"
+      }
     },
     {
-      "source": "/app3/:path*",
-      "destination": "/app3/index.html"
+      "source": "/app2/(.*)",
+      "destination": {
+        "service": "app2-frontend"
+      }
     },
     {
-      "source": "/:path*",
-      "destination": "/index.html"
+      "source": "/app2",
+      "destination": {
+        "service": "app2-frontend"
+      }
+    },
+    {
+      "source": "/app3/(.*)",
+      "destination": {
+        "service": "app3-frontend"
+      }
+    },
+    {
+      "source": "/app3",
+      "destination": {
+        "service": "app3-frontend"
+      }
+    },
+    {
+      "source": "/(.*)",
+      "destination": {
+        "service": "portal"
+      }
     }
   ],
   "headers": [

@@ -15,11 +15,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Health Check
-app.get('/api/v1/health', (_req: Request, res: Response) => {
+app.get(['/', '/health', '/api/v1/health'], (_req: Request, res: Response) => {
   res.json({
     status: 'ok',
     timestamp: new Date().toISOString(),
-    service: 'FEMORY Backend Template',
+    service: 'FEMORY Backend API',
   });
 });
 

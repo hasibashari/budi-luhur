@@ -1,6 +1,7 @@
 import React from 'react';
-import { ExternalLink, Phone, Mail, MapPin, Globe } from 'lucide-react';
+import { ExternalLink, Phone, Mail, MapPin, Globe, ArrowRight } from 'lucide-react';
 import { APPS } from '../config/apps';
+import { AppLogo } from './AppLogo';
 
 export const Footer: React.FC = () => {
   return (
@@ -118,20 +119,21 @@ export const Footer: React.FC = () => {
             <h4 className='text-xs sm:text-sm font-bold text-[#fdc800] uppercase tracking-wider mb-3 sm:mb-4 border-b border-white/20 pb-1.5 inline-block'>
               Ekosistem 3 Aplikasi
             </h4>
-            <ul className='space-y-2 text-xs sm:text-sm'>
+            <ul className='space-y-2.5 text-xs sm:text-sm'>
               {APPS.map(app => (
                 <li key={app.id}>
                   <a
                     href={app.loginUrl}
-                    target='_blank'
-                    rel='noopener noreferrer'
-                    className='inline-flex items-center justify-between w-full p-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-all border border-white/10 min-h-[44px]'
+                    className='inline-flex items-center justify-between w-full p-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-all border border-white/10 hover:border-white/30 min-h-[44px] group'
                   >
-                    <div className='text-left'>
-                      <span className='font-bold block text-xs'>{app.name}</span>
-                      <span className='text-[11px] text-sky-200'>{app.tagline}</span>
+                    <div className='flex items-center gap-2.5 text-left'>
+                      <AppLogo type={app.logoType} size={32} className='rounded-lg shrink-0' />
+                      <div>
+                        <span className='font-bold block text-xs group-hover:text-[#fdc800] transition-colors'>{app.name}</span>
+                        <span className='text-[11px] text-sky-200 line-clamp-1'>{app.shortTagline || app.tagline}</span>
+                      </div>
                     </div>
-                    <ExternalLink className='w-3.5 h-3.5 text-[#fdc800] shrink-0' />
+                    <ArrowRight className='w-3.5 h-3.5 text-[#fdc800] shrink-0 transition-transform group-hover:translate-x-1' />
                   </a>
                 </li>
               ))}

@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120" fill="none">
+  <defs>
+    <linearGradient id="femoryBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fb7185"/>
+      <stop offset="50%" stop-color="#e11d48"/>
+      <stop offset="100%" stop-color="#be123c"/>
+    </linearGradient>
+    <linearGradient id="femoryPill" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#fda4af"/>
+      <stop offset="50%" stop-color="#e11d48"/>
+      <stop offset="50.1%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#f1f5f9"/>
+    </linearGradient>
+    <filter id="femoryShadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#be123c" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+  
+  <!-- Outer Rounded Container -->
+  <rect width="120" height="120" rx="28" fill="url(#femoryBg)" filter="url(#femoryShadow)"/>
+  
+  <!-- Subtle Internal Highlight Ring -->
+  <rect x="2" y="2" width="116" height="116" rx="26" stroke="#ffffff" stroke-opacity="0.25" stroke-width="2"/>
+  
+  <!-- Blood Droplet / Heart Silhouette -->
+  <path d="M60 22 C60 22 92 56 92 78 C92 95 78 102 60 102 C42 102 28 95 28 78 C28 56 60 22 60 22 Z" fill="#ffffff" fill-opacity="0.22"/>
+  
+  <!-- Central Stylized Heart -->
+  <path d="M60 84 C60 84 38 68 38 48 C38 38 46 32 54 32 C58 32 60 35 60 35 C60 35 62 32 66 32 C74 32 82 38 82 48 C82 68 60 84 60 84 Z" fill="#ffffff"/>
+  
+  <!-- Micro Capsule Pill inside Heart -->
+  <g transform="translate(42, 54)">
+    <rect x="0" y="0" width="36" height="16" rx="8" fill="url(#femoryPill)" stroke="#be123c" stroke-width="1.2"/>
+    <line x1="18" y1="0" x2="18" y2="16" stroke="#e11d48" stroke-width="1.2"/>
+    <!-- Fe Text -->
+    <text x="5" y="11.5" fill="#ffffff" font-size="8.5" font-weight="900" font-family="system-ui, -apple-system, sans-serif">Fe</text>
+    <!-- Plus symbol -->
+    <path d="M26 5.5 V10.5 M23.5 8 H28.5" stroke="#e11d48" stroke-width="1.5" stroke-linecap="round"/>
+  </g>
+</svg>
