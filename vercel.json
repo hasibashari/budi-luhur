@@ -1,7 +1,5 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "cleanUrls": true,
-  "trailingSlash": true,
   "services": {
     "portal": {
       "root": "frontend",
@@ -81,14 +79,14 @@
       }
     },
     {
-      "source": "/app1/(.*)",
+      "source": "/app1",
       "destination": {
         "service": "femory-frontend",
         "path": "/index.html"
       }
     },
     {
-      "source": "/app1",
+      "source": "/app1/(.*)",
       "destination": {
         "service": "femory-frontend",
         "path": "/index.html"
@@ -109,14 +107,14 @@
       }
     },
     {
-      "source": "/app2/(.*)",
+      "source": "/app2",
       "destination": {
         "service": "pilluna-frontend",
         "path": "/index.html"
       }
     },
     {
-      "source": "/app2",
+      "source": "/app2/(.*)",
       "destination": {
         "service": "pilluna-frontend",
         "path": "/index.html"
@@ -137,14 +135,14 @@
       }
     },
     {
-      "source": "/app3/(.*)",
+      "source": "/app3",
       "destination": {
         "service": "preluna-frontend",
         "path": "/index.html"
       }
     },
     {
-      "source": "/app3",
+      "source": "/app3/(.*)",
       "destination": {
         "service": "preluna-frontend",
         "path": "/index.html"
