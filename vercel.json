@@ -7,27 +7,27 @@
       "root": "frontend",
       "framework": "vite"
     },
-    "app1-frontend": {
+    "femory-frontend": {
       "root": "apps/app1/frontend",
       "framework": "vite"
     },
-    "app1-backend": {
+    "femory-backend": {
       "root": "apps/app1/backend",
       "framework": "express"
     },
-    "app2-frontend": {
+    "pilluna-frontend": {
       "root": "apps/app2/frontend",
       "framework": "vite"
     },
-    "app2-backend": {
+    "pilluna-backend": {
       "root": "apps/app2/backend",
       "framework": "express"
     },
-    "app3-frontend": {
+    "preluna-frontend": {
       "root": "apps/app3/frontend",
       "framework": "vite"
     },
-    "app3-backend": {
+    "preluna-backend": {
       "root": "apps/app3/backend",
       "framework": "express"
     },
@@ -44,58 +44,58 @@
     {
       "source": "/api/app1/(.*)",
       "destination": {
-        "service": "app1-backend",
+        "service": "femory-backend",
         "path": "/$1"
       }
     },
     {
       "source": "/api/app2/(.*)",
       "destination": {
-        "service": "app2-backend",
+        "service": "pilluna-backend",
         "path": "/$1"
       }
     },
     {
       "source": "/api/app3/(.*)",
       "destination": {
-        "service": "app3-backend",
+        "service": "preluna-backend",
         "path": "/$1"
       }
     },
     {
       "source": "/app1/(.*)",
       "destination": {
-        "service": "app1-frontend"
+        "service": "femory-frontend"
       }
     },
     {
       "source": "/app1",
       "destination": {
-        "service": "app1-frontend"
+        "service": "femory-frontend"
       }
     },
     {
       "source": "/app2/(.*)",
       "destination": {
-        "service": "app2-frontend"
+        "service": "pilluna-frontend"
       }
     },
     {
       "source": "/app2",
       "destination": {
-        "service": "app2-frontend"
+        "service": "pilluna-frontend"
       }
     },
     {
       "source": "/app3/(.*)",
       "destination": {
-        "service": "app3-frontend"
+        "service": "preluna-frontend"
       }
     },
     {
       "source": "/app3",
       "destination": {
-        "service": "app3-frontend"
+        "service": "preluna-frontend"
       }
     },
     {
