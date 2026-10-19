@@ -8,21 +8,23 @@ import { Features } from './components/Features';
 import { FAQ } from './components/FAQ';
 import { Footer } from './components/Footer';
 import { PWAInstallPrompt } from './components/PWAInstallPrompt';
+import { BottomNavBar } from './components/BottomNavBar';
 
 export const App: React.FC = () => {
   return (
     <div className='min-h-screen flex flex-col bg-white text-[#444444]'>
       <Navbar />
-      <main className='flex-grow'>
+      <main className='flex-grow pb-24 lg:pb-0'>
         <Hero />
+        <AppSelectorSection />
         <InstitutionalProfileSection />
         <Benefits />
         <Features />
-        <AppSelectorSection />
         <FAQ />
       </main>
       <Footer />
       <PWAInstallPrompt />
+      <BottomNavBar />
     </div>
   );
 };
