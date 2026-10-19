@@ -1,8 +1,11 @@
 import axios from 'axios';
 
-export const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL ||
-  (import.meta.env.PROD ? '/api/v1' : 'http://localhost:4001/api/v1');
+const rawApiUrl = import.meta.env.VITE_API_BASE_URL;
+export const API_BASE_URL = import.meta.env.PROD
+  ? rawApiUrl && !rawApiUrl.includes('localhost') && !rawApiUrl.includes('127.0.0.1')
+    ? rawApiUrl
+    : '/api/v1'
+  : rawApiUrl || 'http://localhost:4001/api/v1';
 
 export const AUTH_STORAGE_KEY = import.meta.env.VITE_AUTH_STORAGE_KEY || 'femory_auth_token';
 

@@ -3,6 +3,7 @@
   "framework": "vite",
   "buildCommand": "npm run build",
   "outputDirectory": "frontend/dist",
+  "regions": ["sin1"],
   "rewrites": [
     {
       "source": "/api/app1/(.*)",
