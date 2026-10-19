@@ -15,99 +15,42 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate }) => {
     year: 'numeric',
   }).format(new Date());
 
-  // Data ilustrasi dan styling kartu untuk masing-masing dari 3 aplikasi mandiri
+  // Data informasi dan logo untuk masing-masing dari 3 aplikasi mandiri
   const appCardsConfig: Record<
     string,
     {
       subtitle: string;
-      bgColor: string;
-      circleColor: string;
       illustration: React.ReactNode;
     }
   > = {
     app1: {
       subtitle: 'Usia Remaja & Siswi',
-      bgColor: 'bg-[#F3E8FF]', // Ungu pastel muda
-      circleColor: 'bg-[#E9D5FF]',
       illustration: (
-        <svg viewBox='0 0 100 100' className='w-20 h-20 z-10' aria-hidden='true'>
-          {/* Siswi Remaja & Pencegahan Anemia */}
-          <circle cx='35' cy='38' r='10' fill='#FED7AA' />
-          <path d='M25 33 C25 23, 45 23, 45 43' fill='#1E293B' />
-          <path d='M22 85 C22 64, 48 64, 48 85 Z' fill='#9333EA' />
-          <circle cx='62' cy='32' r='11' fill='#FED7AA' />
-          <path d='M52 26 C52 18, 72 18, 72 26' fill='#1E293B' />
-          <path d='M46 85 C46 58, 78 58, 78 85 Z' fill='#A855F7' />
-          {/* Aksen Tablet Fe / Tambah Darah */}
-          <circle cx='68' cy='62' r='8' fill='#FDE047' />
-          <rect x='66.5' y='57' width='3' height='10' rx='1' fill='#9333EA' />
-          <rect x='63' y='60.5' width='10' height='3' rx='1' fill='#9333EA' />
-        </svg>
+        <img
+          src='/icons/femory.png'
+          alt='Logo FEMORY'
+          className='w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 object-contain drop-shadow-md transition-transform duration-200 group-hover:scale-108'
+        />
       ),
     },
     app2: {
       subtitle: 'Pil KB & Reproduksi',
-      bgColor: 'bg-[#FCE7F3]', // Pink pastel lembut
-      circleColor: 'bg-[#FBCFE8]',
       illustration: (
-        <svg viewBox='0 0 100 100' className='w-20 h-20 z-10' aria-hidden='true'>
-          {/* Ibu / Bidan & Edukasi Pil KB */}
-          <rect x='44' y='28' width='16' height='12' rx='2' fill='#334155' />
-          <circle cx='30' cy='36' r='8' fill='#FED7AA' />
-          <path d='M18 85 C18 60, 42 60, 42 85 Z' fill='#F472B6' />
-          <circle cx='70' cy='32' r='10' fill='#FED7AA' />
-          <path d='M55 85 C50 60, 85 55, 85 85 Z' fill='#EC4899' />
-          {/* Kartu / Blister Pil KB */}
-          <rect
-            x='34'
-            y='62'
-            width='16'
-            height='12'
-            rx='2'
-            fill='#FFFFFF'
-            stroke='#EC4899'
-            strokeWidth='1.5'
-          />
-          <circle cx='38' cy='68' r='2' fill='#EC4899' />
-          <circle cx='46' cy='68' r='2' fill='#EC4899' />
-        </svg>
+        <img
+          src='/images/apps/pilluna-logo.svg'
+          alt='Logo Pilluna'
+          className='w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 object-contain drop-shadow-md transition-transform duration-200 group-hover:scale-108'
+        />
       ),
     },
     app3: {
       subtitle: 'Pranikah & Imunisasi TT',
-      bgColor: 'bg-[#E0F2FE]', // Biru pastel lembut
-      circleColor: 'bg-[#BAE6FD]',
       illustration: (
-        <svg viewBox='0 0 100 100' className='w-20 h-20 z-10' aria-hidden='true'>
-          {/* Suntikan & Botol Vaksin TT */}
-          <g transform='rotate(-40 50 50)'>
-            <rect
-              x='44'
-              y='25'
-              width='12'
-              height='38'
-              rx='2'
-              fill='#E2E8F0'
-              stroke='#475569'
-              strokeWidth='2'
-            />
-            <rect x='44' y='38' width='12' height='16' fill='#38BDF8' />
-            <line x1='50' y1='10' x2='50' y2='25' stroke='#64748B' strokeWidth='2' />
-            <line x1='50' y1='63' x2='50' y2='76' stroke='#475569' strokeWidth='3' />
-            <line x1='42' y1='76' x2='58' y2='76' stroke='#475569' strokeWidth='3' />
-          </g>
-          <rect
-            x='20'
-            y='52'
-            width='14'
-            height='22'
-            rx='2'
-            fill='#38BDF8'
-            stroke='#0284C7'
-            strokeWidth='1.5'
-          />
-          <rect x='22' y='48' width='10' height='4' fill='#334155' />
-        </svg>
+        <img
+          src='/images/apps/preluna-logo.svg'
+          alt='Logo PRELUNA'
+          className='w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 object-contain drop-shadow-md transition-transform duration-200 group-hover:scale-108'
+        />
       ),
     },
   };
@@ -131,7 +74,9 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate }) => {
               />
             </div>
             <div>
-              <p className='text-xs text-gray-600 font-medium leading-none mb-1'>Selamat datang di,</p>
+              <p className='text-xs text-gray-600 font-medium leading-none mb-1'>
+                Selamat datang di,
+              </p>
               <h2 className='text-2xl font-extrabold text-gray-900 tracking-tight leading-tight'>
                 Aplikasi SORA
               </h2>
@@ -165,8 +110,6 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate }) => {
             {APPS.map((app: AppInfo) => {
               const cardCfg = appCardsConfig[app.id] || {
                 subtitle: app.shortTagline,
-                bgColor: 'bg-[#EDE9FE]',
-                circleColor: 'bg-[#DDD6FE]',
                 illustration: null,
               };
 
@@ -177,14 +120,8 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate }) => {
                   className='flex flex-col items-center group text-center focus:outline-hidden transition-transform duration-200 active:scale-95'
                   aria-label={`Buka aplikasi ${app.name} - ${app.tagline}`}
                 >
-                  {/* Kotak Ilustrasi Pastel Berlingkaran Aksen */}
-                  <div
-                    className={`w-full aspect-square rounded-2xl ${cardCfg.bgColor} relative overflow-hidden flex items-end justify-center mb-2 transition-all duration-200 group-hover:scale-105 group-hover:shadow-md shadow-2xs border border-white/40`}
-                  >
-                    {/* Lingkaran dekoratif di sudut dalam kartu */}
-                    <div
-                      className={`absolute -right-4 -top-4 w-16 h-16 rounded-full ${cardCfg.circleColor} opacity-70 pointer-events-none`}
-                    />
+                  {/* Langsung Logo Aplikasi */}
+                  <div className='w-full aspect-square flex items-center justify-center mb-2'>
                     {cardCfg.illustration}
                   </div>
 

@@ -65,7 +65,7 @@ export const PengaturanView: React.FC<PengaturanViewProps> = ({ onNavigate }) =>
           </div>
 
           <div className='p-3.5 rounded-xl bg-gray-50 border border-gray-200 space-y-1.5'>
-            <span className='font-bold text-gray-800 block'>Pilluna</span>
+            <span className='font-bold text-gray-800 block'>PILLUNA</span>
             <div className='flex items-center gap-1.5 text-gray-600'>
               <Database className='w-3.5 h-3.5 text-emerald-600' />
               <span>fe_tablet_app2</span>

@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120" fill="none">
+  <defs>
+    <linearGradient id="prelunaBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#cb4364"/>
+      <stop offset="50%" stop-color="#aa294d"/>
+      <stop offset="100%" stop-color="#70102b"/>
+    </linearGradient>
+    <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#ffe4e8"/>
+    </linearGradient>
+    <filter id="prelunaShadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#4c0519" flood-opacity="0.38"/>
+    </filter>
+  </defs>
+  
+  <!-- Outer Rounded Container -->
+  <rect width="120" height="120" rx="28" fill="url(#prelunaBg)" filter="url(#prelunaShadow)"/>
+  
+  <!-- Subtle Internal Highlight Ring -->
+  <rect x="2" y="2" width="116" height="116" rx="26" stroke="#ffffff" stroke-opacity="0.25" stroke-width="2"/>
+  
+  <!-- Protective Aura / Geometric Glow -->
+  <circle cx="60" cy="58" r="38" fill="#ffffff" fill-opacity="0.12"/>
+  
+  <!-- Main Medical Shield -->
+  <path d="M60 26 L88 38 V62 C88 80 75 94 60 98 C45 94 32 80 32 62 V38 L60 26 Z" fill="url(#shieldGrad)"/>
+  
+  <!-- Inner Shield Trim Line -->
+  <path d="M60 32 L82 42 V60 C82 74 72 86 60 89 C48 86 38 74 38 60 V42 L60 32 Z" fill="none" stroke="#aa294d" stroke-width="1.5" stroke-opacity="0.35"/>
+  
+  <!-- Red Cross / TT Shield Check Emblem -->
+  <g transform="translate(60, 58)">
+    <!-- Healthcare Cross -->
+    <rect x="-4.5" y="-17" width="9" height="34" rx="3.5" fill="#aa294d"/>
+    <rect x="-17" y="-4.5" width="34" height="9" rx="3.5" fill="#aa294d"/>
+    <!-- Syringe / TT Protection Accent Pip -->
+    <circle cx="0" cy="0" r="4" fill="#ffffff"/>
+    <circle cx="0" cy="0" r="2" fill="#aa294d"/>
+  </g>
+</svg>
