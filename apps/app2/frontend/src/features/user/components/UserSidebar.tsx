@@ -5,7 +5,6 @@ import {
   Clock,
   CalendarDays,
   BookOpen,
-  Bot,
   User,
   LogOut,
   Pill,
@@ -21,7 +20,6 @@ export const USER_NAV_ITEMS = [
   { name: 'Monitoring', href: '/user/history', icon: CalendarDays },
   { name: 'Edukasi', href: '/user/education', icon: BookOpen },
   { name: 'SADARI', href: '/user/sadari', icon: Ribbon },
-  { name: 'Konsultasi AI', href: '/user/consultation', icon: Bot },
   { name: 'Profil & Akun', href: '/user/profile', icon: User },
 ];
 

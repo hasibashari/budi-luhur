@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Ribbon,
@@ -9,11 +9,9 @@ import {
   Sparkles,
   ShieldAlert,
   ArrowRight,
-  HelpCircle,
   Clock,
   Layers,
   HeartHandshake,
-  BotMessageSquare,
 } from 'lucide-react';
 import { Card } from '@/src/shared/components/ui/Card';
 import { Button } from '@/src/shared/components/ui/Button';
@@ -406,11 +404,11 @@ export default function SadariView() {
           </div>
           <div className='flex items-center gap-2'>
             <Link
-              to='/user/consultation'
+              to='/user/education'
               className='inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-teal-600 text-white text-xs font-bold hover:bg-teal-700 transition-colors shadow-2xs'
             >
-              <BotMessageSquare size={13} />
-              <span>Tanya Luna AI Sekarang</span>
+              <span>Baca Panduan Edukasi</span>
+              <ArrowRight size={13} />
             </Link>
           </div>
         </div>

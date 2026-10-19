@@ -1,35 +1,5 @@
 import apiClient from '@/src/shared/api/client';
 
-export interface AskGeminiResult {
-  success: boolean;
-  answer: string;
-}
-
-export async function askGeminiConsultationAction(
-  prompt: string,
-  history?: any,
-  userContext?: any,
-): Promise<AskGeminiResult> {
-  try {
-    const response = await apiClient.post<{ answer: string }>('/consultation/ask', {
-      prompt,
-      history,
-      userContext,
-    });
-    return {
-      success: true,
-      answer: response.data.answer,
-    };
-  } catch (error: any) {
-    console.error('Gemini Consultation Error:', error);
-    return {
-      success: false,
-      answer:
-        'Halo Calon Pengantin! Saat ini layanan asisten kesehatan sedang sibuk. Pastikan Anda tetap menjaga jadwal imunisasi TT dan konsultasi pranikah di Puskesmas sesuai jadwal ya!',
-    };
-  }
-}
-
 export async function generateAiArticleDraftAction(
   topic: string,
   category: string,
@@ -48,7 +18,8 @@ export async function generateAiArticleDraftAction(
     const res = await apiClient.post<{ answer: string }>('/consultation/ask', { prompt });
     let title = topic;
     let summary = `Materi edukasi mengenai ${topic} untuk kesehatan pranikah dan persiapan kehamilan sehat.`;
-    let content = res.data?.answer || `## ${topic}\n\nEdukasi penting mengenai ${topic} bagi calon pengantin.`;
+    let content =
+      res.data?.answer || `## ${topic}\n\nEdukasi penting mengenai ${topic} bagi calon pengantin.`;
     let readTime = '3 min read';
 
     try {
@@ -111,5 +82,3 @@ export async function generateAiUserNudgeAction(params: {
 }
 
 export const generateAiPatientNudgeAction = generateAiUserNudgeAction;
-
-export default askGeminiConsultationAction;

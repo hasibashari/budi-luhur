@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Clock, CalendarDays, BookOpen, Ribbon, BotMessageSquare } from 'lucide-react';
+import { Clock, CalendarDays, BookOpen, Ribbon } from 'lucide-react';
 
 export interface QuickActionItem {
   id: string;
@@ -49,15 +49,6 @@ export const QUICK_ACTIONS: QuickActionItem[] = [
     iconBg: 'bg-teal-50/80 text-teal-700 border border-teal-200/60',
     iconColor: '#0F766E',
   },
-  {
-    id: 'consultation',
-    label: 'Tanya Luna',
-    sublabel: 'Asisten AI',
-    href: '/user/consultation',
-    icon: BotMessageSquare,
-    iconBg: 'bg-slate-100 text-slate-700 border border-slate-200',
-    iconColor: '#334155',
-  },
 ];
 
 export interface QuickActionProps {
@@ -76,7 +67,7 @@ export function QuickAction({ className = '' }: QuickActionProps) {
         </span>
       </div>
 
-      <div className='grid grid-cols-5 gap-1.5 sm:gap-2'>
+      <div className='grid grid-cols-4 gap-1.5 sm:gap-2'>
         {QUICK_ACTIONS.map(action => {
           const Icon = action.icon;
           return (

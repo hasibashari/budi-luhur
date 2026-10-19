@@ -3,7 +3,6 @@ import {
   Home,
   Clock,
   BookOpen,
-  Bot,
   User,
   LogOut,
   ShieldCheck,
@@ -16,7 +15,6 @@ export const USER_NAV_ITEMS = [
   { name: 'Edukasi Pranikah', href: '/user/education', icon: BookOpen },
   { name: 'Status & Riwayat TT', href: '/user/imunisasi?tab=riwayat', icon: ShieldCheck },
   { name: 'Jadwal & Pengingat', href: '/user/imunisasi?tab=jadwal', icon: Clock },
-  { name: 'Konsultasi Luna AI', href: '/user/consultation', icon: Bot },
   { name: 'Profil Calon Pengantin', href: '/user/profile', icon: User },
 ];
 

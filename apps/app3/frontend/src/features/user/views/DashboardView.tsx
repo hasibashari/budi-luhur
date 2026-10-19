@@ -7,8 +7,6 @@ import {
   CalendarClock,
   ArrowRight,
   Sparkles,
-  Bot,
-  MessageSquare,
   Bookmark,
   BookmarkCheck,
   ShieldCheck,
@@ -347,33 +345,7 @@ export default function DashboardView() {
             />
           </section>
 
-          {/* 3. Konsultasi Bidan / Faskes Banner Ringan (Stitch Screen 2) */}
-          <section aria-label="Konsultasi Bidan Puskesmas">
-            <div className="rounded-2xl bg-linear-to-r from-[#aff1d0]/40 via-[#eff4ff] to-[#ffd9de]/30 p-4 sm:p-4.5 flex items-center justify-between border border-[#aff1d0]/30 shadow-xs">
-              <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-full bg-white shadow-xs flex items-center justify-center text-[#2a6950] shrink-0">
-                  <Bot size={24} />
-                </div>
-                <div className="flex flex-col">
-                  <span className="text-xs sm:text-sm font-bold text-[#121c2a]">
-                    Tanya Bidan Puskesmas
-                  </span>
-                  <span className="text-[11px] sm:text-xs text-[#574144]">
-                    Layanan konsultasi TT & skrining pranikah
-                  </span>
-                </div>
-              </div>
-              <Link
-                to="/user/consultation"
-                className="w-11 h-11 rounded-full bg-white shadow-xs flex items-center justify-center text-[#aa294d] hover:bg-[#ffd9de] transition-colors shrink-0 active:scale-90 cursor-pointer"
-                title="Mulai Konsultasi"
-              >
-                <MessageSquare size={18} />
-              </Link>
-            </div>
-          </section>
-
-          {/* 4. Banner Informasi Catin Terpadu (Educational Article Highlight from Stitch Screen 2) */}
+          {/* 3. Banner Informasi Catin Terpadu (Educational Article Highlight from Stitch Screen 2) */}
           {(() => {
             const activeArticleId = featuredArticle?.id || 'art_tt_1';
             const articleTitle =
@@ -513,12 +485,6 @@ export default function DashboardView() {
               >
                 <BookOpen size={12} />
                 <span>Pelajari Buku Saku Catin</span>
-              </Link>
-              <Link
-                to="/user/consultation"
-                className="text-[11px] font-bold text-[#aa294d] hover:underline"
-              >
-                Tanya Luna AI
               </Link>
             </div>
           </Card>

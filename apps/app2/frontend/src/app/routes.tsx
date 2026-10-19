@@ -16,7 +16,6 @@ import {
 import { ScheduleView } from '@/src/features/schedule';
 import { HistoryView } from '@/src/features/consumption';
 import { EducationView, ArticleDetailView, SadariView } from '@/src/features/education';
-import { ConsultationView } from '@/src/features/consultation';
 
 // Admin Portal Views
 import {
@@ -96,7 +95,7 @@ export function AppRoutes() {
         <Route path='education' element={<EducationView />} />
         <Route path='sadari' element={<SadariView />} />
         <Route path='education/:id' element={<ArticleDetailView />} />
-        <Route path='consultation' element={<ConsultationView />} />
+        <Route path='consultation' element={<Navigate to='/user/dashboard' replace />} />
         <Route path='profile' element={<ProfileView />} />
       </Route>
 

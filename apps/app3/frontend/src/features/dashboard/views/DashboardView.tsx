@@ -468,12 +468,6 @@ export default function DashboardView() {
                 <BookOpen size={12} />
                 <span>Pelajari Buku Saku Catin</span>
               </Link>
-              <Link
-                to='/user/consultation'
-                className='text-[11px] font-bold text-[#aa294d] hover:underline'
-              >
-                Tanya Luna AI
-              </Link>
             </div>
           </Card>
         </div>
