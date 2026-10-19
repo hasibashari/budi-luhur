@@ -55,7 +55,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
       } catch {
         if (isMounted) {
-          setState((prev) => ({
+          setState(prev => ({
             ...prev,
             isInitializing: false,
             isLoading: false,
@@ -67,7 +67,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     initAppAuth();
 
     const handleUnauthorized = () => {
-      setState((prev) => ({
+      setState(prev => ({
         ...prev,
         user: null,
         isAuthenticated: false,
@@ -85,7 +85,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       localStorage.setItem(ONBOARDING_STORAGE_KEY, 'true');
     } catch {}
-    setState((prev) => ({
+    setState(prev => ({
       ...prev,
       hasCompletedOnboarding: true,
     }));
@@ -95,7 +95,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       localStorage.removeItem(ONBOARDING_STORAGE_KEY);
     } catch {}
-    setState((prev) => ({
+    setState(prev => ({
       ...prev,
       hasCompletedOnboarding: false,
     }));
@@ -107,7 +107,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user));
       localStorage.setItem(ONBOARDING_STORAGE_KEY, 'true');
     } catch {}
-    setState((prev) => ({
+    setState(prev => ({
       ...prev,
       user,
       isAuthenticated: true,
@@ -118,7 +118,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = useCallback(
     async (credentials: LoginCredentials) => {
-      setState((prev) => ({ ...prev, isLoading: true }));
+      setState(prev => ({ ...prev, isLoading: true }));
       try {
         const res = await apiClient.post('/auth/login', credentials);
         const { token, user, redirectTo, isProfileComplete } = res.data;
@@ -131,13 +131,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             isProfileComplete,
           };
         }
-        setState((prev) => ({ ...prev, isLoading: false }));
+        setState(prev => ({ ...prev, isLoading: false }));
         return {
           success: false,
           error: 'Gagal login. Periksa kembali email Anda.',
         };
       } catch (err: any) {
-        setState((prev) => ({ ...prev, isLoading: false }));
+        setState(prev => ({ ...prev, isLoading: false }));
         return {
           success: false,
           error: err.response?.data?.error || 'Gagal login. Periksa kembali email Anda.',
@@ -149,7 +149,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const quickLogin = useCallback(
     async (role: UserRole) => {
-      setState((prev) => ({ ...prev, isLoading: true }));
+      setState(prev => ({ ...prev, isLoading: true }));
       try {
         const res = await apiClient.post('/auth/quick-login', { role });
         const { token, user, redirectTo } = res.data;
@@ -157,10 +157,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           saveSession(token, user);
           return { success: true, redirectTo };
         }
-        setState((prev) => ({ ...prev, isLoading: false }));
+        setState(prev => ({ ...prev, isLoading: false }));
         return { success: false, redirectTo: '/auth/login' };
       } catch {
-        setState((prev) => ({ ...prev, isLoading: false }));
+        setState(prev => ({ ...prev, isLoading: false }));
         return { success: false, redirectTo: '/auth/login' };
       }
     },
@@ -168,13 +168,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   );
 
   const register = useCallback(async (data: RegisterCredentials) => {
-    setState((prev) => ({ ...prev, isLoading: true }));
+    setState(prev => ({ ...prev, isLoading: true }));
     try {
       const res = await apiClient.post('/auth/register', data);
-      setState((prev) => ({ ...prev, isLoading: false }));
+      setState(prev => ({ ...prev, isLoading: false }));
       return { success: true, message: res.data.message };
     } catch (err: any) {
-      setState((prev) => ({ ...prev, isLoading: false }));
+      setState(prev => ({ ...prev, isLoading: false }));
       return {
         success: false,
         error: err.response?.data?.error || 'Terjadi kesalahan sistem saat registrasi.',
@@ -187,17 +187,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       localStorage.removeItem(AUTH_STORAGE_KEY);
       localStorage.removeItem(USER_STORAGE_KEY);
     } catch {}
-    setState((prev) => ({
+    setState(prev => ({
       ...prev,
       user: null,
       isAuthenticated: false,
       isLoading: false,
     }));
-    window.location.href = '/auth/login';
+    const loginPath = `${import.meta.env.BASE_URL || '/'}auth/login`.replace(/\/+/g, '/');
+    window.location.href = loginPath;
   }, []);
 
   const updateUser = useCallback((updated: Partial<AuthUser>) => {
-    setState((prev) => {
+    setState(prev => {
       if (!prev.user) return prev;
       const newUser: AuthUser = { ...prev.user, ...updated };
       try {
@@ -214,21 +215,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (!state.user?.id) {
       return { success: false, error: 'Tidak ada sesi akun yang aktif.' };
     }
-    setState((prev) => ({ ...prev, isLoading: true }));
+    setState(prev => ({ ...prev, isLoading: true }));
     try {
       const res = await apiClient.delete('/auth/account');
       localStorage.removeItem(AUTH_STORAGE_KEY);
       localStorage.removeItem(USER_STORAGE_KEY);
-      setState((prev) => ({
+      setState(prev => ({
         ...prev,
         user: null,
         isAuthenticated: false,
         isLoading: false,
       }));
-      window.location.href = '/onboarding?deleted=true';
+      const onboardPath = `${import.meta.env.BASE_URL || '/'}onboarding?deleted=true`.replace(
+        /\/+/g,
+        '/',
+      );
+      window.location.href = onboardPath;
       return { success: true, message: res.data.message };
     } catch (err: any) {
-      setState((prev) => ({ ...prev, isLoading: false }));
+      setState(prev => ({ ...prev, isLoading: false }));
       return {
         success: false,
         error: err.response?.data?.error || 'Gagal menghapus akun.',

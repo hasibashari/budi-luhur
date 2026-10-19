@@ -11,6 +11,7 @@ import {
   Bell,
   AlertCircle,
   Loader2,
+  LogOut,
 } from 'lucide-react';
 import { useAuth } from '@/src/features/auth/context/AuthContext';
 import { saveUserInitialSetupAction } from '../api/userRepository';
@@ -34,7 +35,7 @@ const TIME_PRESETS = [
 
 export function SetupProfileView() {
   const navigate = useNavigate();
-  const { user: authUser, updateUser } = useAuth();
+  const { user: authUser, updateUser, logout } = useAuth();
 
   const [step, setStep] = useState<1 | 2>(1);
   const [isSaving, setIsSaving] = useState(false);
@@ -125,9 +126,20 @@ export function SetupProfileView() {
                 </span>
                 <span className='text-base'>🌸</span>
               </div>
-              <span className='text-[11px] sm:text-xs font-bold text-rose-600 bg-rose-50 px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full border border-rose-200'>
-                Langkah {step} dari 2
-              </span>
+              <div className='flex items-center gap-2'>
+                <button
+                  type='button'
+                  onClick={() => logout()}
+                  className='text-[11px] font-semibold text-slate-500 hover:text-rose-600 transition-colors inline-flex items-center gap-1 px-2.5 py-1 rounded-full hover:bg-slate-100 cursor-pointer'
+                  title='Keluar dari sesi ini dan kembali ke halaman masuk'
+                >
+                  <LogOut size={12} />
+                  <span>Ganti Akun</span>
+                </button>
+                <span className='text-[11px] sm:text-xs font-bold text-rose-600 bg-rose-50 px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full border border-rose-200'>
+                  Langkah {step} dari 2
+                </span>
+              </div>
             </div>
 
             {/* Progress Bar */}
@@ -286,14 +298,24 @@ export function SetupProfileView() {
             </div>
 
             {/* Step 1 Bottom Action Row */}
-            <div className='pt-5 sm:pt-6 mt-4 sm:mt-6 border-t border-rose-100/60 sm:border-transparent flex items-center justify-end'>
+            <div className='pt-5 sm:pt-6 mt-4 sm:mt-6 border-t border-rose-100/60 sm:border-transparent flex items-center justify-between gap-3'>
+              <button
+                type='button'
+                onClick={() => logout()}
+                className='flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-4 sm:px-5 py-3 rounded-full border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs sm:text-sm font-bold transition-all shadow-2xs cursor-pointer'
+                title='Keluar dari sesi dan kembali ke halaman masuk'
+              >
+                <LogOut size={15} className='text-slate-500' />
+                <span>Ganti Akun</span>
+              </button>
+
               <Button
                 type='submit'
                 variant='primary'
                 size='md'
                 shape='pill'
                 icon={<ArrowRight size={16} />}
-                className='w-full sm:w-auto px-8 py-3 font-bold shadow-md shadow-rose-500/20 text-xs sm:text-sm flex items-center justify-center gap-2'
+                className='flex-1 sm:flex-initial px-6 sm:px-8 py-3 font-bold shadow-md shadow-rose-500/20 text-xs sm:text-sm flex items-center justify-center gap-2'
               >
                 Lanjut ke Jadwal
               </Button>

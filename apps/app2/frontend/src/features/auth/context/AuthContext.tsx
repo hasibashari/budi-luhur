@@ -197,7 +197,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       isAuthenticated: false,
       isLoading: false,
     }));
-    window.location.href = '/auth/login';
+    const loginPath = `${import.meta.env.BASE_URL || '/'}auth/login`.replace(/\/+/g, '/');
+    window.location.href = loginPath;
   }, []);
 
   const updateUser = useCallback((updated: Partial<AuthUser>) => {
@@ -229,7 +230,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isAuthenticated: false,
         isLoading: false,
       }));
-      window.location.href = '/onboarding?deleted=true';
+      const onboardPath = `${import.meta.env.BASE_URL || '/'}onboarding?deleted=true`.replace(/\/+/g, '/');
+      window.location.href = onboardPath;
       return { success: true, message: res.data.message };
     } catch (err: any) {
       setState(prev => ({ ...prev, isLoading: false }));

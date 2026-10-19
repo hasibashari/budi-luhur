@@ -11,7 +11,7 @@ export function AuthCardLayout({ children }: AuthCardLayoutProps) {
       {/* Top Left Home Navigation - Notch-Safe */}
       <div className='absolute top-[calc(0.75rem+env(safe-area-inset-top,0px))] sm:top-6 left-3.5 sm:left-8 z-20 flex items-center gap-2'>
         <a
-          href={import.meta.env.VITE_PORTAL_URL || 'http://localhost:5170'}
+          href={import.meta.env.VITE_PORTAL_URL || '/'}
           className='inline-flex items-center gap-1.5 text-xs font-semibold text-[#64748b] hover:text-[#8c0f39] transition-all bg-slate-50 hover:bg-white min-h-[40px] px-3.5 py-1.5 rounded-full border border-slate-200 shadow-2xs hover:border-[#ffd9de] active:scale-95'
         >
           <ArrowLeft size={14} />

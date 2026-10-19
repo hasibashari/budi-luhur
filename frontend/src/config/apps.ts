@@ -37,15 +37,15 @@ const cleanUrl = (url?: string, fallback = ''): string => {
 
 const app1BaseUrl = cleanUrl(
   import.meta.env.VITE_APP_1_URL,
-  'https://budi-luhur-app1.vercel.app'
+  '/app1'
 );
 const app2BaseUrl = cleanUrl(
   import.meta.env.VITE_APP_2_URL,
-  'https://budi-luhur-app2.vercel.app'
+  '/app2'
 );
 const app3BaseUrl = cleanUrl(
   import.meta.env.VITE_APP_3_URL,
-  'https://budi-luhur-app3.vercel.app'
+  '/app3'
 );
 
 export const APPS: AppInfo[] = [

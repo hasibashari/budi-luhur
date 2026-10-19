@@ -11,7 +11,11 @@
   "theme_color": "#005EB8",
   "lang": "id",
   "dir": "ltr",
-  "categories": ["education", "medical", "health"],
+  "categories": [
+    "education",
+    "medical",
+    "health"
+  ],
   "icons": [
     {
       "src": "/icons/icon-192x192.png",
@@ -44,21 +48,48 @@
       "short_name": "Portal",
       "description": "Buka Beranda Portal Terpadu Kampus",
       "url": "/?source=pwa",
-      "icons": [{ "src": "/icons/icon-192x192.png", "sizes": "192x192" }]
+      "icons": [
+        {
+          "src": "/icons/icon-192x192.png",
+          "sizes": "192x192"
+        }
+      ]
     },
     {
       "name": "FEMORY (App 1)",
       "short_name": "FEMORY",
       "description": "Pencegahan Anemia Siswi SMP",
       "url": "/app1/",
-      "icons": [{ "src": "/icons/icon-192x192.png", "sizes": "192x192" }]
+      "icons": [
+        {
+          "src": "/icons/icon-192x192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Pilluna (App 2)",
+      "short_name": "Pilluna",
+      "description": "Pengingat Minum Pil KB & Edukasi Reproduksi",
+      "url": "/app2/",
+      "icons": [
+        {
+          "src": "/icons/icon-192x192.png",
+          "sizes": "192x192"
+        }
+      ]
     },
     {
       "name": "PRELUNA (App 3)",
       "short_name": "PRELUNA",
       "description": "Kesehatan Pranikah & Imunisasi TT",
       "url": "/app3/",
-      "icons": [{ "src": "/icons/icon-192x192.png", "sizes": "192x192" }]
+      "icons": [
+        {
+          "src": "/icons/icon-192x192.png",
+          "sizes": "192x192"
+        }
+      ]
     }
   ]
 }

@@ -9,8 +9,10 @@
 ## 1. Ringkasan Eksekutif & Konsep Utama
 
 ### Konsep PWA Terpusat (One PWA to Rule Them All)
+
 Pengguna hanya memasang (**install**) **1 aplikasi PWA dari Web Portal Utama** (`/`). Di dalam aplikasi PWA terpasang tersebut:
-1. **Portal Utama** bertindak sebagai *Home Launcher / Dashboard Hub*.
+
+1. **Portal Utama** bertindak sebagai _Home Launcher / Dashboard Hub_.
 2. **Aplikasi 1 (FEMORY)**, **Aplikasi 2**, dan **Aplikasi 3 (PRELUNA)** bertindak sebagai **Menu / Modul Internal**.
 3. Transisi antar-aplikasi terjadi di dalam **satu jendela aplikasi PWA yang sama** (tanpa membuka browser tab baru, tanpa URL bar safari/chrome yang muncul).
 4. Di setiap sub-aplikasi tersedia tombol **"Kembali ke Portal"** untuk kembali ke hub utama secara instan.
@@ -33,6 +35,7 @@ flowchart TD
 ---
 
 ### FASE 1: PWA Terpusat di Root Portal (`frontend/`)
+
 **Tujuan**: Menjadikan Root Portal Web sebagai satu-satunya entitas PWA yang dapat diinstal oleh user ke homescreen Android, iOS, maupun Desktop.
 
 - [x] **1.1. Konfigurasi Web App Manifest di Root (`frontend/public/manifest.webmanifest`)**
@@ -42,12 +45,12 @@ flowchart TD
   - Daftarkan icon resolusi tinggi (192x192, 512x512, maskable icon untuk Android adaptive icons).
 - [x] **1.2. Implementasi Service Worker Root (`frontend/public/sw.js`)**
   - Service worker beroperasi pada scope `/` agar dapat memantau dan meng-cache shell utama.
-  - Implementasikan strategi caching *Stale-While-Revalidate* untuk aset statis dan *Network-First* untuk data dinamis.
-  - Sediakan halaman offline fallback (*Offline Shell*) ramah pengguna (`frontend/public/offline.html`) jika perangkat kehilangan koneksi internet.
+  - Implementasikan strategi caching _Stale-While-Revalidate_ untuk aset statis dan _Network-First_ untuk data dinamis.
+  - Sediakan halaman offline fallback (_Offline Shell_) ramah pengguna (`frontend/public/offline.html`) jika perangkat kehilangan koneksi internet.
 - [x] **1.3. UI PWA Install Prompt & Smart Banner (`frontend/src/components/PWAInstallPrompt.tsx`)**
   - Tangkap event `beforeinstallprompt` dari browser.
-  - Tampilkan banner/tombol elegan: *"Pasang Aplikasi Kampus Budi Luhur di Layar Utama"*.
-  - Sediakan panduan khusus untuk pengguna iOS Safari (*"Ketuk Bagikan lalu Pilih Tambahkan ke Layar Utama"*).
+  - Tampilkan banner/tombol elegan: _"Pasang Aplikasi Kampus Budi Luhur di Layar Utama"_.
+  - Sediakan panduan khusus untuk pengguna iOS Safari (_"Ketuk Bagikan lalu Pilih Tambahkan ke Layar Utama"_).
 - [x] **1.4. Pembaruan Link Launcher di Portal (`frontend/src/config/apps.ts`)**
   - Ubah URL tujuan aplikasi agar mendukung mode path relatif produksi:
     - Mode Dev: `http://localhost:5173`, `http://localhost:5174`, `http://localhost:5175`.
@@ -56,6 +59,7 @@ flowchart TD
 ---
 
 ### FASE 2: Adaptasi Subpath Routing & Integrasi 3 Sub-Aplikasi (`apps/app1, app2, app3`)
+
 **Tujuan**: Memastikan ketiga aplikasi dapat berjalan mulus di subpath `/app1/`, `/app2/`, `/app3/` tanpa konflik PWA dan memiliki navigasi kembali ke Portal.
 
 - [x] **2.1. Konfigurasi Dynamic Base URL di Vite (`vite.config.ts`)**
@@ -72,12 +76,13 @@ flowchart TD
   - Hal ini krusial agar browser tidak bingung memiliki beberapa PWA manifest pada domain yang sama, sehingga Root PWA tetap memegang kontrol tunggal.
 - [x] **2.4. Penambahan Komponen Navigasi "Kembali ke Portal" di Sub-Aplikasi**
   - Tambahkan tombol di header/navbar dan mobile menu pada `app1`, `app2`, dan `app3`:
-    - Label: *"Portal"* (desktop pill) dan *"Kembali ke Portal Utama Budi Luhur"* (mobile menu).
+    - Label: _"Portal"_ (desktop pill) dan _"Kembali ke Portal Utama Budi Luhur"_ (mobile menu).
     - Aksi: Navigasi ke `/` (Root Portal) dengan transisi mulus dalam PWA standalone window.
 
 ---
 
 ### FASE 3: Konfigurasi Deployment Vercel & Build Monorepo
+
 **Tujuan**: Menggabungkan output build dari 4 proyek frontend ke dalam satu struktur distribusi yang siap dideploy ke Vercel dalam 1 project tunggal.
 
 - [x] **3.1. Pipeline Script Build Monorepo (`package.json` & `scripts/build-vercel.js`)**
@@ -92,6 +97,7 @@ flowchart TD
 ---
 
 ### FASE 4: Strategi Backend Express & Database Cloud untuk Vercel (Neon Serverless Postgres)
+
 **Tujuan**: Menyediakan integrasi backend Express Serverless di Vercel dan database cloud Neon PostgreSQL terisolasi.
 
 - [x] **4.1. Serverless Function Handlers (`api/app1.ts`, `api/app2.ts`, `api/app3.ts`)**
@@ -113,6 +119,7 @@ flowchart TD
 ---
 
 ### FASE 5: Validasi Pengujian Terpadu & Audit PWA
+
 **Tujuan**: Memastikan seluruh sistem siap rilis, lulus audit PWA, dan navigasi mulus tanpa hambatan.
 
 - [x] **5.1. Simulasi Local Production Preview & Integritas Aset**
@@ -130,6 +137,7 @@ flowchart TD
 ## 3. Panduan Langkah Demi Langkah Deployment ke Vercel
 
 ### Langkah 1: Siapkan 3 Database di Neon
+
 1. Masuk ke console [Neon.tech](https://console.neon.tech).
 2. Buat project baru (misal `budi-luhur-ecosystem`).
 3. Buat 3 database mandiri di dalam project (atau 3 project terpisah):
@@ -139,7 +147,9 @@ flowchart TD
 4. Salin **Pooled Connection String** masing-masing database (yang memiliki `-pooler` pada hostname).
 
 ### Langkah 2: Inisialisasi Skema Database di Neon
+
 Dari terminal lokal proyek, jalankan init skema menggunakan connection string Neon:
+
 ```bash
 # Jalankan init schema ke Neon
 APP1_DATABASE_URL="postgresql://...-pooler.neon.tech/fe_tablet_app1?sslmode=require" \
@@ -152,7 +162,9 @@ APP1_DATABASE_URL="..." APP2_DATABASE_URL="..." APP3_DATABASE_URL="..." npm run 
 ```
 
 ### Langkah 3: Push Repository ke Git (GitHub / GitLab)
+
 Pastikan seluruh perubahan terbaru telah di-commit dan di-push ke branch repository Git Anda:
+
 ```bash
 git add .
 git commit -m "feat: complete unified pwa and vercel serverless configuration"
@@ -160,10 +172,11 @@ git push origin main
 ```
 
 ### Langkah 4: Hubungkan ke Vercel
+
 1. Buka [Vercel Dashboard](https://vercel.com/dashboard) dan klik **"Add New..."** $\rightarrow$ **"Project"**.
 2. Pilih repositori Git Anda (`budi-luhur`).
 3. Pada pengaturan proyek Vercel:
-   - **Framework Preset**: *Other*
+   - **Framework Preset**: _Other_
    - **Root Directory**: `./` (Default root)
    - **Build Command**: `node scripts/build-vercel.js` (otomatis terdeteksi dari `vercel.json`)
    - **Output Directory**: `dist` (otomatis terdeteksi dari `vercel.json`)
@@ -181,12 +194,11 @@ git push origin main
 
 ## 4. Matriks Perbandingan URL: Lokal vs Vercel
 
-| Entitas | Mode Pengembangan Lokal | Mode Produksi di Vercel |
-| :--- | :--- | :--- |
-| **Portal Utama** | `http://localhost:5170/` | `https://budi-luhur.vercel.app/` |
-| **Aplikasi 1 (FEMORY)** | `http://localhost:5173/` | `https://budi-luhur.vercel.app/app1/` |
-| **Aplikasi 2** | `http://localhost:5174/` | `https://budi-luhur.vercel.app/app2/` |
-| **Aplikasi 3 (PRELUNA)** | `http://localhost:5175/` | `https://budi-luhur.vercel.app/app3/` |
-| **PWA Scope** | `/` (Localhost 5170) | `/` (Mencakup seluruh subpath) |
-| **API Endpoints** | Port 4001, 4002, 4003 | `/api/app1/*`, `/api/app2/*`, `/api/app3/*` (Serverless) |
-
+| Entitas                  | Mode Pengembangan Lokal  | Mode Produksi di Vercel                                  |
+| :----------------------- | :----------------------- | :------------------------------------------------------- |
+| **Portal Utama**         | `http://localhost:5170/` | `https://budi-luhur.vercel.app/`                         |
+| **Aplikasi 1 (FEMORY)**  | `http://localhost:5173/` | `https://budi-luhur.vercel.app/app1/`                    |
+| **Aplikasi 2**           | `http://localhost:5174/` | `https://budi-luhur.vercel.app/app2/`                    |
+| **Aplikasi 3 (PRELUNA)** | `http://localhost:5175/` | `https://budi-luhur.vercel.app/app3/`                    |
+| **PWA Scope**            | `/` (Localhost 5170)     | `/` (Mencakup seluruh subpath)                           |
+| **API Endpoints**        | Port 4001, 4002, 4003    | `/api/app1/*`, `/api/app2/*`, `/api/app3/*` (Serverless) |

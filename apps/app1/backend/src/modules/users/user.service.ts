@@ -21,7 +21,7 @@ export class UserService {
       [userId],
     );
 
-    const completedDates = res.rows.map(r => r.scheduled_date);
+    const completedDates = res.rows.map((r: { scheduled_date: string }) => r.scheduled_date);
     const streakResult = await calculateChronologicalStreak(completedDates, scheduleFrequency);
 
     // Sync streak_count in user_profiles
@@ -336,7 +336,15 @@ export class UserService {
 
   static async saveInitialSetup(userId: string, data: any) {
     await db.transaction(async client => {
-      // 1. Update user profile
+      // 1. Update user date_of_birth if provided (lives on users table)
+      if (data.dateOfBirth) {
+        await client.query(
+          `UPDATE users SET date_of_birth = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2`,
+          [data.dateOfBirth, userId],
+        );
+      }
+
+      // 2. Update user profile
       const hb = data.hbLevel ? Number(data.hbLevel) : null;
       let hbStatus = 'Normal';
       let riskLevel = 'Rendah';
@@ -351,21 +359,19 @@ export class UserService {
       await client.query(
         `UPDATE user_profiles
          SET school_or_org = $1,
-             date_of_birth = $2,
-             blood_type = $3,
-             height = $4,
-             weight = $5,
-             hb_level = $6,
-             hb_status = $7,
-             risk_level = $8,
+             blood_type = $2,
+             height = $3,
+             weight = $4,
+             hb_level = $5,
+             hb_status = $6,
+             risk_level = $7,
              last_active_at = CURRENT_TIMESTAMP
-         WHERE user_id = $9`,
+         WHERE user_id = $8`,
         [
           data.schoolOrOrg || null,
-          data.dateOfBirth || null,
           data.bloodType || null,
-          data.height || null,
-          data.weight || null,
+          data.height ? Number(data.height) : null,
+          data.weight ? Number(data.weight) : null,
           hb,
           hbStatus,
           riskLevel,

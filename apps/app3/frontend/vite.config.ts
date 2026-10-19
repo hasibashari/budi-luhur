@@ -5,7 +5,7 @@ import path from 'path';
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: process.env.VITE_BASE_PATH || '/',
+  base: process.env.VITE_BASE_PATH || '/app3/',
   plugins: [react(), tailwindcss()],
   cacheDir: path.resolve(__dirname, '.vite'),
   resolve: {
