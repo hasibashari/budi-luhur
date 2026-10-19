@@ -9,7 +9,9 @@
     "build": "tsc",
     "start": "node dist/server.js",
     "db:init": "tsx src/db/init.ts",
-    "db:seed": "tsx src/db/seed.ts"
+    "db:seed": "tsx src/db/seed.ts",
+    "test": "CI=true NODE_OPTIONS='--experimental-vm-modules' jest",
+    "test:coverage": "CI=true NODE_OPTIONS='--experimental-vm-modules' jest --coverage"
   },
   "dependencies": {
     "bcryptjs": "^3.0.2",

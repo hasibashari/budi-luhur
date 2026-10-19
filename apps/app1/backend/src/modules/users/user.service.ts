@@ -227,7 +227,11 @@ export class UserService {
       email: row.email,
       phone: row.phone || '',
       avatarUrl: row.avatar_url || '',
-      dateOfBirth: row.date_of_birth ? row.date_of_birth.toISOString().split('T')[0] : undefined,
+      dateOfBirth: row.date_of_birth
+        ? typeof row.date_of_birth === 'string'
+          ? row.date_of_birth.split('T')[0]
+          : new Date(row.date_of_birth).toISOString().split('T')[0]
+        : undefined,
       bloodType: row.blood_type || undefined,
       height: row.height !== null ? Number(row.height) : undefined,
       weight: row.weight !== null ? Number(row.weight) : undefined,
@@ -335,6 +339,10 @@ export class UserService {
   }
 
   static async saveInitialSetup(userId: string, data: any) {
+    if (!data.schoolOrOrg || !data.schoolOrOrg.trim()) {
+      return { success: false, error: 'Nama sekolah / institusi wajib diisi.' };
+    }
+
     await db.transaction(async client => {
       // 1. Update user date_of_birth if provided (lives on users table)
       if (data.dateOfBirth) {

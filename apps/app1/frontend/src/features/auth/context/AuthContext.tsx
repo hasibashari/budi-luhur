@@ -19,7 +19,16 @@ const initialAuthState: AuthState = {
   hasCompletedOnboarding: false,
 };
 
-const AuthContext = createContext<AuthContextValue | undefined>(undefined);
+export const AuthContext = createContext<AuthContextValue | undefined>(undefined);
+
+export const redirectToUrl = (url: string) => {
+  if (typeof window !== 'undefined' && window.location) {
+    if (typeof process !== 'undefined' && process.env?.NODE_ENV === 'test') {
+      return;
+    }
+    window.location.href = url;
+  }
+};
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<AuthState>(initialAuthState);
@@ -193,8 +202,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       isAuthenticated: false,
       isLoading: false,
     }));
-    const loginPath = `${import.meta.env.BASE_URL || '/'}auth/login`.replace(/\/+/g, '/');
-    window.location.href = loginPath;
+    const baseUrl =
+      typeof import.meta !== 'undefined' && (import.meta as any).env
+        ? (import.meta as any).env.BASE_URL || '/'
+        : '/';
+    const loginPath = `${baseUrl}auth/login`.replace(/\/+/g, '/');
+    redirectToUrl(loginPath);
   }, []);
 
   const updateUser = useCallback((updated: Partial<AuthUser>) => {
@@ -226,11 +239,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isAuthenticated: false,
         isLoading: false,
       }));
-      const onboardPath = `${import.meta.env.BASE_URL || '/'}onboarding?deleted=true`.replace(
-        /\/+/g,
-        '/',
-      );
-      window.location.href = onboardPath;
+      const baseUrl =
+        typeof import.meta !== 'undefined' && (import.meta as any).env
+          ? (import.meta as any).env.BASE_URL || '/'
+          : '/';
+      const onboardPath = `${baseUrl}onboarding?deleted=true`.replace(/\/+/g, '/');
+      redirectToUrl(onboardPath);
       return { success: true, message: res.data.message };
     } catch (err: any) {
       setState(prev => ({ ...prev, isLoading: false }));

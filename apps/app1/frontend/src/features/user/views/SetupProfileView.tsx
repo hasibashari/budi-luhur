@@ -127,15 +127,6 @@ export function SetupProfileView() {
                 <span className='text-base'>🌸</span>
               </div>
               <div className='flex items-center gap-2'>
-                <button
-                  type='button'
-                  onClick={() => logout()}
-                  className='text-[11px] font-semibold text-slate-500 hover:text-rose-600 transition-colors inline-flex items-center gap-1 px-2.5 py-1 rounded-full hover:bg-slate-100 cursor-pointer'
-                  title='Keluar dari sesi ini dan kembali ke halaman masuk'
-                >
-                  <LogOut size={12} />
-                  <span>Ganti Akun</span>
-                </button>
                 <span className='text-[11px] sm:text-xs font-bold text-rose-600 bg-rose-50 px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full border border-rose-200'>
                   Langkah {step} dari 2
                 </span>

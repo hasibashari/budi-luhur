@@ -86,11 +86,7 @@ export class ArticleService {
             ? JSON.parse(r.key_takeaways)
             : r.key_takeaways
           : undefined,
-        tags: r.tags
-          ? typeof r.tags === 'string'
-            ? JSON.parse(r.tags)
-            : r.tags
-          : undefined,
+        tags: r.tags ? (typeof r.tags === 'string' ? JSON.parse(r.tags) : r.tags) : undefined,
       };
     });
   }
@@ -158,10 +154,13 @@ export class ArticleService {
       imageCaption: row.image_caption || undefined,
       readTime: row.read_time,
       category: row.category,
-      publishedAt:
-        typeof row.published_at === 'string'
+      publishedAt: row.published_at
+        ? typeof row.published_at === 'string'
           ? row.published_at
-          : new Date(row.published_at).toISOString().split('T')[0],
+          : !isNaN(new Date(row.published_at).getTime())
+            ? new Date(row.published_at).toISOString().split('T')[0]
+            : new Date().toISOString().split('T')[0]
+        : new Date().toISOString().split('T')[0],
       author,
       sections,
       keyTakeaways: row.key_takeaways
@@ -169,11 +168,7 @@ export class ArticleService {
           ? JSON.parse(row.key_takeaways)
           : row.key_takeaways
         : undefined,
-      tags: row.tags
-        ? typeof row.tags === 'string'
-          ? JSON.parse(row.tags)
-          : row.tags
-        : undefined,
+      tags: row.tags ? (typeof row.tags === 'string' ? JSON.parse(row.tags) : row.tags) : undefined,
     };
   }
 
@@ -205,8 +200,8 @@ export class ArticleService {
         typeof r.published_at === 'string'
           ? r.published_at
           : r.published_at
-          ? new Date(r.published_at).toISOString().split('T')[0]
-          : '2026-09-01',
+            ? new Date(r.published_at).toISOString().split('T')[0]
+            : '2026-09-01',
       author: r.author_name
         ? {
             name: r.author_name,

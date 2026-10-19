@@ -126,20 +126,9 @@ export function SetupProfileView() {
                   Pilluna
                 </span>
               </div>
-              <div className='flex items-center gap-2'>
-                <button
-                  type='button'
-                  onClick={() => logout()}
-                  className='text-[11px] font-semibold text-slate-500 hover:text-rose-600 transition-colors inline-flex items-center gap-1 px-2.5 py-1 rounded-full hover:bg-slate-100 cursor-pointer'
-                  title='Keluar dari sesi ini dan kembali ke halaman masuk'
-                >
-                  <LogOut size={12} />
-                  <span>Ganti Akun</span>
-                </button>
-                <span className='text-[11px] sm:text-xs font-bold text-[#0D9488] bg-[#F0FDFA] px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full border border-[#CCFBF1]'>
-                  Langkah {step} dari 2
-                </span>
-              </div>
+              <span className='text-[11px] sm:text-xs font-bold text-[#0D9488] bg-[#F0FDFA] px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full border border-[#CCFBF1]'>
+                Langkah {step} dari 2
+              </span>
             </div>
 
             {/* Progress Bar */}

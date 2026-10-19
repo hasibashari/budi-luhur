@@ -7,12 +7,7 @@ import { SplashView } from '@/src/features/splash';
 import { OnboardingView } from '@/src/features/onboarding';
 
 // User Portal Views
-import {
-  UserLayout,
-  DashboardView,
-  SetupProfileView,
-  ProfileView,
-} from '@/src/features/user';
+import { UserLayout, DashboardView, SetupProfileView, ProfileView } from '@/src/features/user';
 import { ScheduleView } from '@/src/features/schedule';
 import { HistoryView } from '@/src/features/consumption';
 import { BuddyView } from '@/src/features/buddy';

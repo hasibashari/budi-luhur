@@ -108,7 +108,10 @@ export class AuthService {
         .compare(credentials.password, row.password_hash)
         .catch(() => false);
       if (!isMatch && credentials.password !== 'password123') {
-        // Allow demo fallback password
+        return {
+          success: false,
+          error: 'Kata sandi yang Anda masukkan salah. Silakan coba lagi.',
+        };
       }
     }
 

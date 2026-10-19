@@ -104,7 +104,8 @@ export function SetupProfileView() {
           frequency: 'weekly',
           tabletName: 'Imunisasi TT / Suplementasi Pranikah',
           dosage: '1 dosis / edukasi berkala',
-          instructions: 'Kunjungi Puskesmas/Faskes sesuai jadwal untuk imunisasi TT dan verifikasi surat keterangan sehat pranikah.',
+          instructions:
+            'Kunjungi Puskesmas/Faskes sesuai jadwal untuk imunisasi TT dan verifikasi surat keterangan sehat pranikah.',
         },
       });
 
@@ -148,15 +149,6 @@ export function SetupProfileView() {
                 </span>
               </div>
               <div className='flex items-center gap-2'>
-                <button
-                  type='button'
-                  onClick={() => logout()}
-                  className='text-[11px] font-semibold text-slate-500 hover:text-rose-700 transition-colors inline-flex items-center gap-1 px-2.5 py-1 rounded-full hover:bg-rose-50 cursor-pointer'
-                  title='Keluar dari sesi ini dan kembali ke halaman masuk'
-                >
-                  <LogOut size={12} />
-                  <span>Ganti Akun</span>
-                </button>
                 <span className='text-xs font-bold text-[#8c0f39] bg-[#ffd9de] px-3 py-1 rounded-full border border-[#ffb3c0]'>
                   Langkah {step} dari 2
                 </span>
@@ -319,7 +311,8 @@ export function SetupProfileView() {
               <div className='p-3 rounded-2xl bg-[#ecfdf5] border border-[#aff1d0] flex items-start gap-2.5'>
                 <Activity size={16} className='text-[#2a6950] shrink-0 mt-0.5' />
                 <p className='text-[11px] text-[#166534] leading-relaxed'>
-                  Pemeriksaan hemoglobin (Hb) dan status gizi sangat penting bagi calon ibu untuk mencegah anemia pranikah dan risiko stunting pada keturunan kelak.
+                  Pemeriksaan hemoglobin (Hb) dan status gizi sangat penting bagi calon ibu untuk
+                  mencegah anemia pranikah dan risiko stunting pada keturunan kelak.
                 </p>
               </div>
             </div>

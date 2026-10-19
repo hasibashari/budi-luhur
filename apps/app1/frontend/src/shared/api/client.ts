@@ -1,15 +1,20 @@
 import axios from 'axios';
 
-const rawApiUrl = import.meta.env.VITE_API_BASE_URL;
-export const API_BASE_URL = import.meta.env.PROD
+const env =
+  typeof import.meta !== 'undefined' && (import.meta as any).env
+    ? (import.meta as any).env
+    : (typeof process !== 'undefined' ? process.env : {}) || {};
+
+const rawApiUrl = env.VITE_API_BASE_URL;
+export const API_BASE_URL = env.PROD
   ? rawApiUrl && !rawApiUrl.includes('localhost') && !rawApiUrl.includes('127.0.0.1')
     ? rawApiUrl
     : '/app1/api/v1'
   : rawApiUrl || 'http://localhost:4001/api/v1';
 
-export const AUTH_STORAGE_KEY = import.meta.env.VITE_AUTH_STORAGE_KEY || 'femory_auth_token';
+export const AUTH_STORAGE_KEY = env.VITE_AUTH_STORAGE_KEY || 'femory_auth_token';
 
-export const USER_STORAGE_KEY = import.meta.env.VITE_USER_STORAGE_KEY || 'femory_auth_user';
+export const USER_STORAGE_KEY = env.VITE_USER_STORAGE_KEY || 'femory_auth_user';
 
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,

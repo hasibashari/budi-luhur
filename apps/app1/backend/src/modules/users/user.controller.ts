@@ -68,6 +68,10 @@ export class UserController {
       }
 
       const result = await UserService.saveInitialSetup(userId, req.body);
+      if (!result.success) {
+        res.status(400).json(result);
+        return;
+      }
       res.json(result);
     } catch (error: any) {
       console.error('UserController.saveInitialSetup error:', error);

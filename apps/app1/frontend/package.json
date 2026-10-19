@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "CI=true NODE_OPTIONS='--experimental-vm-modules' jest",
+    "test:coverage": "CI=true NODE_OPTIONS='--experimental-vm-modules' jest --coverage"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.0.9",
