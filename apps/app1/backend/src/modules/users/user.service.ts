@@ -307,6 +307,9 @@ export class UserService {
         } else if (hb >= 11.0 && hb < 12.0) {
           hbStatus = 'Anemia Ringan';
           riskLevel = 'Sedang';
+        } else if (hb > 15.5) {
+          hbStatus = 'Tinggi';
+          riskLevel = 'Sedang';
         }
         profileUpdates.push(`hb_status = $${idx++}`);
         profileParams.push(hbStatus);
@@ -361,6 +364,9 @@ export class UserService {
         riskLevel = 'Tinggi';
       } else if (hb && hb < 12.0) {
         hbStatus = 'Anemia Ringan';
+        riskLevel = 'Sedang';
+      } else if (hb && hb > 15.5) {
+        hbStatus = 'Tinggi';
         riskLevel = 'Sedang';
       }
 

@@ -33,7 +33,7 @@ interface GroupInfoModalProps {
 export default function GroupInfoModal({
   open,
   group,
-  members,
+  members = [],
   currentUserId,
   onClose,
   onAddMember,
@@ -52,8 +52,11 @@ export default function GroupInfoModal({
 
   if (!open) return null;
 
-  const currentMember = members.find(m => m.userId === currentUserId);
-  const isAdmin = group.isCreator || group.creatorId === currentUserId || currentMember?.role === 'admin';
+  const memberList: BuddyGroupMember[] =
+    Array.isArray(members) && members.length > 0 ? members : (group as any)?.members || [];
+  const currentMember = memberList.find((m: BuddyGroupMember) => m.userId === currentUserId);
+  const isAdmin =
+    group.isCreator || group.creatorId === currentUserId || currentMember?.role === 'admin';
 
   const handleCopyCode = () => {
     navigator.clipboard.writeText(group.groupCode);
@@ -104,8 +107,8 @@ export default function GroupInfoModal({
     }
   };
 
-  const completedCount = members.filter(m => m.statusThisWeek === 'recorded').length;
-  const totalCount = members.length;
+  const completedCount = memberList.filter(m => m.statusThisWeek === 'recorded').length;
+  const totalCount = memberList.length;
 
   return (
     <div className='fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/40 backdrop-blur-xs animate-fade-in'>
@@ -171,9 +174,7 @@ export default function GroupInfoModal({
               </div>
 
               {group.description && (
-                <p className='text-xs text-[#64748b] mt-0.5 leading-relaxed'>
-                  {group.description}
-                </p>
+                <p className='text-xs text-[#64748b] mt-0.5 leading-relaxed'>{group.description}</p>
               )}
             </div>
           </div>
@@ -215,7 +216,8 @@ export default function GroupInfoModal({
               </div>
               <div>
                 <div className='text-sm sm:text-base font-bold text-[#1e293b] leading-none'>
-                  {group.streakCount} <span className='text-[10px] font-normal text-[#64748b]'>Minggu</span>
+                  {group.streakCount}{' '}
+                  <span className='text-[10px] font-normal text-[#64748b]'>Minggu</span>
                 </div>
                 <span className='text-[10px] text-[#64748b]'>Streak Kompak</span>
               </div>
@@ -227,7 +229,10 @@ export default function GroupInfoModal({
               </div>
               <div>
                 <div className='text-sm sm:text-base font-bold text-emerald-800 leading-none'>
-                  {completedCount}/{totalCount} <span className='text-[10px] font-normal text-emerald-600'>({group.weeklyCompletionRate}%)</span>
+                  {completedCount}/{totalCount}{' '}
+                  <span className='text-[10px] font-normal text-emerald-600'>
+                    ({group.weeklyCompletionRate}%)
+                  </span>
                 </div>
                 <span className='text-[10px] text-[#64748b]'>Minum Pekan Ini</span>
               </div>
@@ -239,20 +244,17 @@ export default function GroupInfoModal({
             <div className='flex items-center justify-between mb-2'>
               <h5 className='text-xs font-bold text-[#1e293b] uppercase tracking-wider flex items-center gap-1.5'>
                 <ShieldCheck size={13} className='text-[#e11d48]' />
-                <span>Anggota ({members.length})</span>
+                <span>Anggota ({memberList.length})</span>
               </h5>
             </div>
 
             <div className='divide-y divide-slate-100 bg-white rounded-xl border border-slate-100 px-3 shadow-2xs'>
-              {members.map(member => {
+              {memberList.map(member => {
                 const isUser = member.userId === currentUserId;
                 const isRecorded = member.statusThisWeek === 'recorded';
 
                 return (
-                  <div
-                    key={member.id}
-                    className='py-2 flex items-center justify-between gap-2'
-                  >
+                  <div key={member.id} className='py-2 flex items-center justify-between gap-2'>
                     {/* Member Info */}
                     <div className='flex items-center gap-2.5 min-w-0'>
                       <div className='relative w-8 h-8 rounded-full overflow-hidden shrink-0 ring-1 ring-slate-200'>
@@ -434,13 +436,7 @@ export default function GroupInfoModal({
           )}
 
           {!showDeleteConfirm && !showLeaveConfirm && (
-            <Button
-              type='button'
-              variant='soft'
-              size='sm'
-              shape='pill'
-              onClick={onClose}
-            >
+            <Button type='button' variant='soft' size='sm' shape='pill' onClick={onClose}>
               Tutup
             </Button>
           )}

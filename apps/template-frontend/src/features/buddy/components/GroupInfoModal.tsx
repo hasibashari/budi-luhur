@@ -33,7 +33,7 @@ interface GroupInfoModalProps {
 export default function GroupInfoModal({
   open,
   group,
-  members,
+  members = [],
   currentUserId,
   onClose,
   onAddMember,
@@ -52,7 +52,9 @@ export default function GroupInfoModal({
 
   if (!open) return null;
 
-  const currentMember = members.find(m => m.userId === currentUserId);
+  const memberList: BuddyGroupMember[] =
+    Array.isArray(members) && members.length > 0 ? members : (group as any)?.members || [];
+  const currentMember = memberList.find((m: BuddyGroupMember) => m.userId === currentUserId);
   const isAdmin = group.isCreator || group.creatorId === currentUserId || currentMember?.role === 'admin';
 
   const handleCopyCode = () => {
@@ -104,8 +106,8 @@ export default function GroupInfoModal({
     }
   };
 
-  const completedCount = members.filter(m => m.statusThisWeek === 'recorded').length;
-  const totalCount = members.length;
+  const completedCount = memberList.filter((m: BuddyGroupMember) => m.statusThisWeek === 'recorded').length;
+  const totalCount = memberList.length;
 
   return (
     <div className='fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/40 backdrop-blur-xs animate-fade-in'>
@@ -239,12 +241,12 @@ export default function GroupInfoModal({
             <div className='flex items-center justify-between mb-2'>
               <h5 className='text-xs font-bold text-[#1e293b] uppercase tracking-wider flex items-center gap-1.5'>
                 <ShieldCheck size={13} className='text-[#e11d48]' />
-                <span>Anggota ({members.length})</span>
+                <span>Anggota ({memberList.length})</span>
               </h5>
             </div>
 
             <div className='divide-y divide-slate-100 bg-white rounded-xl border border-slate-100 px-3 shadow-2xs'>
-              {members.map(member => {
+              {memberList.map((member: BuddyGroupMember) => {
                 const isUser = member.userId === currentUserId;
                 const isRecorded = member.statusThisWeek === 'recorded';
 

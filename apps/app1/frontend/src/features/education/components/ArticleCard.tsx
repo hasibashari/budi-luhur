@@ -5,12 +5,13 @@ import { Clock, Tag, ArrowRight } from 'lucide-react';
 
 interface ArticleCardProps {
   article: Article;
+  hrefPrefix?: string;
 }
 
-export default function ArticleCard({ article }: ArticleCardProps) {
+export default function ArticleCard({ article, hrefPrefix = '/user/education' }: ArticleCardProps) {
   return (
     <Link
-      to={`/user/education/${article.id}`}
+      to={`${hrefPrefix}/${article.id}`}
       className='group flex flex-col h-full bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-xl hover:border-rose-300 hover:-translate-y-1.5 transition-all duration-300 cursor-pointer'
     >
       {/* Top Image Banner */}

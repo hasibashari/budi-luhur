@@ -144,12 +144,43 @@ export class ArticleService {
       };
     }
 
+    let content = '';
+    if (row.lead_paragraph) {
+      content += `${row.lead_paragraph}\n\n`;
+    }
+
+    if (sections && sections.length > 0) {
+      const sectionMarkdown = sections
+        .map(sec => {
+          let s = '';
+          if (sec.heading) s += `### ${sec.heading}\n\n`;
+          if (sec.subheading) s += `#### ${sec.subheading}\n\n`;
+          if (sec.paragraphs && sec.paragraphs.length > 0) {
+            s += sec.paragraphs.join('\n\n') + '\n\n';
+          }
+          if (sec.callout?.text) {
+            s += `> **💡 ${sec.callout.title || 'Tips Sehat'}:** ${sec.callout.text}\n\n`;
+          }
+          if (sec.bulletPoints && sec.bulletPoints.length > 0) {
+            s += sec.bulletPoints.map(b => `- ${b}`).join('\n') + '\n\n';
+          }
+          return s;
+        })
+        .join('\n');
+
+      content += sectionMarkdown;
+    }
+
+    if (!content.trim()) {
+      content = row.summary || '';
+    }
+
     return {
       id: row.id,
       title: row.title,
       summary: row.summary,
       leadParagraph: row.lead_paragraph || undefined,
-      content: row.lead_paragraph || row.summary,
+      content: content.trim(),
       imageUrl: row.image_url,
       imageCaption: row.image_caption || undefined,
       readTime: row.read_time,

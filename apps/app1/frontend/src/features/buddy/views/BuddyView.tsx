@@ -592,7 +592,7 @@ export default function BuddyView() {
         <GroupInfoModal
           open={isInfoModalOpen}
           group={chatDetail.group}
-          members={chatDetail.members}
+          members={chatDetail.members || (chatDetail.group as any)?.members || []}
           currentUserId={userId}
           onClose={() => setIsInfoModalOpen(false)}
           onAddMember={handleAddMember}

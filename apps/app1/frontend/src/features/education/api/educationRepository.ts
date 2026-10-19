@@ -11,13 +11,30 @@ export async function getArticlesAction(category?: string): Promise<Article[]> {
 export async function getArticleDetailAction(
   id: string,
   _userId?: string,
-): Promise<{ article: Article; relatedArticles: Article[] } | null> {
+): Promise<{ article: Article; relatedArticles: Article[]; isBookmarked?: boolean } | null> {
   try {
-    const response = await apiClient.get<{ article: Article; relatedArticles: Article[] }>(
-      `/articles/${id}`,
-    );
-    return response.data;
-  } catch {
+    const response = await apiClient.get<any>(`/articles/${id}`);
+    const data = response.data;
+    if (!data) return null;
+
+    // Handle nested format { article: {...}, relatedArticles: [...] }
+    if (data.article) {
+      return {
+        article: data.article,
+        relatedArticles: Array.isArray(data.relatedArticles) ? data.relatedArticles : [],
+        isBookmarked: Boolean(data.isBookmarked ?? data.article.isBookmarked),
+      };
+    }
+
+    // Handle flat format { ...article, relatedArticles: [...] }
+    const { relatedArticles, isBookmarked, ...articleObj } = data;
+    return {
+      article: articleObj as Article,
+      relatedArticles: Array.isArray(relatedArticles) ? relatedArticles : [],
+      isBookmarked: Boolean(isBookmarked),
+    };
+  } catch (err) {
+    console.error('getArticleDetailAction error:', err);
     return null;
   }
 }

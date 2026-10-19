@@ -1,12 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Article } from '../types';
-import {
-  getArticleByIdAction,
-  getRelatedArticlesAction,
-  toggleArticleBookmarkAction,
-  isArticleBookmarkedAction,
-} from '../api/educationRepository';
+import { getArticleDetailAction, toggleArticleBookmarkAction } from '../api/educationRepository';
 import { useAuth } from '@/src/features/auth/context/AuthContext';
 import ArticleCard from '../components/ArticleCard';
 import { MarkdownRenderer } from '@/src/shared/components/markdown';
@@ -55,18 +50,14 @@ export default function ArticleDetailView({
     let isMounted = true;
     const fetchData = async () => {
       setLoading(true);
-      const data = await getArticleByIdAction(articleId);
+      const detail = await getArticleDetailAction(articleId, userId);
       if (isMounted) {
-        setArticle(data);
-        if (data) {
-          const [related, bookmarkStatus] = await Promise.all([
-            getRelatedArticlesAction(data.id, 3),
-            isArticleBookmarkedAction(userId, data.id),
-          ]);
-          if (isMounted) {
-            setRelatedArticles(related);
-            setBookmarked(bookmarkStatus);
-          }
+        if (detail) {
+          setArticle(detail.article);
+          setRelatedArticles(detail.relatedArticles);
+          setBookmarked(detail.isBookmarked ?? false);
+        } else {
+          setArticle(null);
         }
         setLoading(false);
       }
@@ -153,7 +144,9 @@ export default function ArticleDetailView({
             className='inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full bg-rose-600 text-white font-semibold hover:bg-rose-700 shadow-md shadow-rose-200 transition-all cursor-pointer'
           >
             <ArrowLeft size={18} />
-            <span>Kembali ke Edukasi</span>
+            <span>
+              {backHref.includes('admin') ? 'Kembali ke Manajemen Artikel' : 'Kembali ke Edukasi'}
+            </span>
           </button>
         </div>
       </div>
@@ -169,7 +162,9 @@ export default function ArticleDetailView({
           className='inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-slate-600 font-semibold hover:bg-rose-50 hover:text-rose-600 transition-colors text-sm'
         >
           <ArrowLeft size={18} />
-          <span>Kembali ke Edukasi</span>
+          <span>
+            {backHref.includes('admin') ? 'Kembali ke Manajemen Artikel' : 'Kembali ke Edukasi'}
+          </span>
         </Link>
 
         <div className='flex items-center gap-2'>
@@ -248,11 +243,7 @@ export default function ArticleDetailView({
       {/* Featured Cover Image */}
       {article.imageUrl && (
         <div className='relative w-full h-[240px] sm:h-[400px] rounded-3xl overflow-hidden mb-8 shadow-md'>
-          <img
-            src={article.imageUrl}
-            alt={article.title}
-            className='w-full h-full object-cover'
-          />
+          <img src={article.imageUrl} alt={article.title} className='w-full h-full object-cover' />
         </div>
       )}
 
@@ -311,7 +302,11 @@ export default function ArticleDetailView({
           <h2 className='text-xl font-extrabold text-slate-900 mb-6'>Artikel Terkait Lainnya</h2>
           <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6'>
             {relatedArticles.map(rel => (
-              <ArticleCard key={rel.id} article={rel} />
+              <ArticleCard
+                key={rel.id}
+                article={rel}
+                hrefPrefix={backHref.includes('admin') ? '/admin/articles' : '/user/education'}
+              />
             ))}
           </div>
         </div>

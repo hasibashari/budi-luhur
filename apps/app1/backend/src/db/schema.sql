@@ -47,7 +47,7 @@ CREATE TABLE user_profiles (
     friend_code VARCHAR(50) NOT NULL UNIQUE,
     school_or_org VARCHAR(255) DEFAULT NULL,
     hb_level DOUBLE PRECISION DEFAULT NULL,
-    hb_status VARCHAR(50) DEFAULT 'Normal' CHECK(hb_status IN ('Normal', 'Anemia Ringan', 'Anemia Sedang', 'Anemia Berat')),
+    hb_status VARCHAR(50) DEFAULT 'Normal' CHECK(hb_status IN ('Normal', 'Anemia Ringan', 'Anemia Sedang', 'Anemia Berat', 'Tinggi')),
     risk_level VARCHAR(50) DEFAULT 'Rendah' CHECK(risk_level IN ('Tinggi', 'Sedang', 'Rendah')),
     height DOUBLE PRECISION DEFAULT NULL,
     weight DOUBLE PRECISION DEFAULT NULL,

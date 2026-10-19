@@ -148,6 +148,7 @@ export class BuddyService {
         members,
         avatarUrl: group.avatar_url || undefined,
       },
+      members,
       messages,
       myRole: members.find((m: any) => m.userId === userId)?.role || 'member',
     };

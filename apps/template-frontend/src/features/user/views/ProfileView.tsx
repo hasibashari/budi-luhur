@@ -35,6 +35,66 @@ interface UserProfileState {
   riskLevel?: string | null;
 }
 
+export function getHbStatusInfo(hb?: number | null) {
+  if (hb === undefined || hb === null || Number.isNaN(hb) || hb <= 0) {
+    return {
+      text: 'Belum Tes',
+      color: 'bg-slate-100 text-slate-600',
+      iconBgColor: 'bg-slate-100',
+      iconColor: 'text-slate-600',
+      subtitle: 'Isi hasil tes lab di profil',
+    };
+  }
+
+  if (hb < 8.0) {
+    return {
+      text: 'Anemia Berat',
+      color: 'bg-rose-100 text-rose-700',
+      iconBgColor: 'bg-rose-100',
+      iconColor: 'text-rose-600',
+      subtitle: 'Kadar Hb sangat rendah (< 8.0 g/dL)',
+    };
+  }
+
+  if (hb < 11.0) {
+    return {
+      text: 'Anemia Sedang',
+      color: 'bg-rose-100 text-rose-700',
+      iconBgColor: 'bg-rose-100',
+      iconColor: 'text-rose-600',
+      subtitle: 'Kadar Hb rendah (8.0 – 10.9 g/dL)',
+    };
+  }
+
+  if (hb < 12.0) {
+    return {
+      text: 'Anemia Ringan',
+      color: 'bg-amber-100 text-amber-700',
+      iconBgColor: 'bg-amber-100',
+      iconColor: 'text-amber-600',
+      subtitle: 'Mendekati normal (11.0 – 11.9 g/dL)',
+    };
+  }
+
+  if (hb > 15.5) {
+    return {
+      text: 'Tinggi',
+      color: 'bg-orange-100 text-orange-700',
+      iconBgColor: 'bg-orange-100',
+      iconColor: 'text-orange-600',
+      subtitle: 'Di atas batas normal (> 15.5 g/dL)',
+    };
+  }
+
+  return {
+    text: 'Normal',
+    color: 'bg-emerald-100 text-emerald-700',
+    iconBgColor: 'bg-emerald-100',
+    iconColor: 'text-emerald-600',
+    subtitle: 'Standar normal optimal (12.0 – 15.5 g/dL)',
+  };
+}
+
 export default function ProfileView() {
   const navigate = useNavigate();
   const { user: authUser, logout, updateUser, deleteAccount } = useAuth();
@@ -174,12 +234,20 @@ export default function ProfileView() {
       });
 
       if (res.success) {
+        let calculatedRisk = userProfile.riskLevel;
+        if (parsedHb !== undefined) {
+          if (parsedHb < 11.0) calculatedRisk = 'Tinggi';
+          else if (parsedHb < 12.0 || parsedHb > 15.5) calculatedRisk = 'Sedang';
+          else calculatedRisk = 'Rendah';
+        }
+
         setUserProfile(prev => ({
           ...prev,
           name: editName,
           schoolOrOrg: editSchool || null,
           phone: editPhone,
           hbLevel: parsedHb || null,
+          riskLevel: calculatedRisk || prev.riskLevel,
         }));
         updateUser({ name: editName, phone: editPhone, schoolOrOrg: editSchool });
         setIsEditProfileModalOpen(false);
@@ -219,20 +287,12 @@ export default function ProfileView() {
       id: 'hb',
       label: 'Kadar Hemoglobin (Hb)',
       value: userProfile.hbLevel ? `${userProfile.hbLevel} g/dL` : 'Belum Diisi',
-      subtitle: userProfile.hbLevel ? 'Standar normal ≥ 12.0 g/dL' : 'Isi hasil tes lab di profil',
+      subtitle: getHbStatusInfo(userProfile.hbLevel).subtitle,
       icon: Activity,
-      iconBgColor: 'bg-emerald-100',
-      iconColor: 'text-emerald-600',
-      badgeText: userProfile.hbLevel
-        ? userProfile.hbLevel >= 12
-          ? 'Normal'
-          : 'Anemia'
-        : 'Belum Tes',
-      badgeColor: userProfile.hbLevel
-        ? userProfile.hbLevel >= 12
-          ? 'bg-emerald-100 text-emerald-700'
-          : 'bg-rose-100 text-rose-700'
-        : 'bg-slate-100 text-slate-600',
+      iconBgColor: getHbStatusInfo(userProfile.hbLevel).iconBgColor,
+      iconColor: getHbStatusInfo(userProfile.hbLevel).iconColor,
+      badgeText: getHbStatusInfo(userProfile.hbLevel).text,
+      badgeColor: getHbStatusInfo(userProfile.hbLevel).color,
     },
     {
       id: 'risk',
@@ -240,13 +300,30 @@ export default function ProfileView() {
       value: userProfile.riskLevel || 'Rendah',
       subtitle: 'Berdasarkan evaluasi UKS',
       icon: HeartPulse,
-      iconBgColor: 'bg-rose-100',
-      iconColor: 'text-rose-600',
-      badgeText: userProfile.riskLevel === 'Tinggi' ? 'Perhatian' : 'Aman',
+      iconBgColor:
+        userProfile.riskLevel === 'Tinggi'
+          ? 'bg-rose-100'
+          : userProfile.riskLevel === 'Sedang'
+            ? 'bg-amber-100'
+            : 'bg-emerald-100',
+      iconColor:
+        userProfile.riskLevel === 'Tinggi'
+          ? 'text-rose-600'
+          : userProfile.riskLevel === 'Sedang'
+            ? 'text-amber-600'
+            : 'text-emerald-600',
+      badgeText:
+        userProfile.riskLevel === 'Tinggi'
+          ? 'Perhatian'
+          : userProfile.riskLevel === 'Sedang'
+            ? 'Waspada'
+            : 'Aman',
       badgeColor:
         userProfile.riskLevel === 'Tinggi'
           ? 'bg-rose-100 text-rose-700'
-          : 'bg-emerald-100 text-emerald-700',
+          : userProfile.riskLevel === 'Sedang'
+            ? 'bg-amber-100 text-amber-700'
+            : 'bg-emerald-100 text-emerald-700',
     },
   ];
 
@@ -376,11 +453,16 @@ export default function ProfileView() {
             <input
               type='number'
               step='0.1'
+              min='0'
+              max='25'
               value={editHb}
               onChange={e => setEditHb(e.target.value)}
               placeholder='Contoh: 12.4'
               className='w-full px-3.5 py-2.5 rounded-xl border border-rose-200 bg-slate-50 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:bg-white'
             />
+            <p className='mt-1 text-[11px] text-slate-500'>
+              Standar normal remaja putri: 12.0 – 15.5 g/dL
+            </p>
           </div>
         </div>
       </ProfileEditModal>
