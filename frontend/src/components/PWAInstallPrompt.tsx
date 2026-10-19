@@ -125,7 +125,7 @@ export const PWAInstallPrompt: React.FC = () => {
 
           {/* Description */}
           <p className='text-xs text-slate-600 leading-relaxed'>
-            Akses cepat ke 3 aplikasi kesehatan mandiri (FEMORY, Pilluna, PRELUNA) melalui Aplikasi SORA langsung dari layar utama perangkat Anda.
+            Akses cepat ke 3 aplikasi kesehatan mandiri (FEMORY, PILLUNA, PRELUNA) melalui Aplikasi SORA langsung dari layar utama perangkat Anda.
           </p>
 
           {/* Action Button */}

@@ -89,7 +89,7 @@ export const APPS: AppInfo[] = [
   },
   {
     id: 'app2',
-    name: 'Pilluna',
+    name: 'PILLUNA',
     tagline: 'Sahabat Setia Minum Pil KB & Edukasi Reproduksi',
     shortTagline: 'Sahabat Setia Minum Pil KB',
     description: 'Aplikasi PWA cerdas untuk pengingat jadwal minum pil harian, asisten konsultasi edukasi reproduksi, dan pemantauan kesehatan wanita terpadu.',

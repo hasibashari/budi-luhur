@@ -13,7 +13,7 @@ export const PanduanView: React.FC<PanduanViewProps> = ({ onNavigate }) => {
   const faqs = [
     {
       q: 'Mengapa terdapat 3 portal aplikasi mandiri pada ekosistem ini?',
-      a: 'Ketiga aplikasi beroperasi secara otonom untuk kelompok studi dan sasaran layanan yang berbeda: FEMORY (siswi/remaja), Pilluna (wanita akseptor KB), dan PRELUNA (calon pengantin), dengan basis data dan sesi peramban terisolasi penuh.',
+      a: 'Ketiga aplikasi beroperasi secara otonom untuk kelompok studi dan sasaran layanan yang berbeda: FEMORY (siswi/remaja), PILLUNA (wanita akseptor KB), dan PRELUNA (calon pengantin), dengan basis data dan sesi peramban terisolasi penuh.',
     },
     {
       q: 'Bagaimana cara mengakses setiap aplikasi?',

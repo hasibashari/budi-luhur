@@ -37,8 +37,8 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate }) => {
       subtitle: 'Pil KB & Reproduksi',
       illustration: (
         <img
-          src='/images/apps/pilluna-logo.svg'
-          alt='Logo Pilluna'
+          src='/icons/pilluna.png'
+          alt='Logo PILLUNA'
           className='w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 object-contain drop-shadow-md transition-transform duration-200 group-hover:scale-108'
         />
       ),
@@ -47,7 +47,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate }) => {
       subtitle: 'Pranikah & Imunisasi TT',
       illustration: (
         <img
-          src='/images/apps/preluna-logo.svg'
+          src='/icons/preluna.png'
           alt='Logo PRELUNA'
           className='w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 object-contain drop-shadow-md transition-transform duration-200 group-hover:scale-108'
         />
