@@ -9,6 +9,14 @@
   ],
   "rewrites": [
     {
+      "source": "/app2/api/(.*)",
+      "destination": "/api/index"
+    },
+    {
+      "source": "/app2/api",
+      "destination": "/api/index"
+    },
+    {
       "source": "/api/app2/(.*)",
       "destination": "/api/index"
     },

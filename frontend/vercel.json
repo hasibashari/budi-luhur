@@ -26,6 +26,18 @@
       "destination": "https://budi-luhur-app3.vercel.app/:path*"
     },
     {
+      "source": "/api/app1/:path*",
+      "destination": "https://budi-luhur-app1.vercel.app/api/:path*"
+    },
+    {
+      "source": "/api/app2/:path*",
+      "destination": "https://budi-luhur-app2.vercel.app/api/:path*"
+    },
+    {
+      "source": "/api/app3/:path*",
+      "destination": "https://budi-luhur-app3.vercel.app/api/:path*"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }

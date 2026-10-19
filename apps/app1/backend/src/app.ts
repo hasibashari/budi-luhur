@@ -20,6 +20,9 @@ app.use(express.urlencoded({ extended: true }));
 
 // Prefix-stripping middleware for Vercel serverless rewrites
 app.use((req: Request, _res: Response, next: NextFunction) => {
+  if (req.url.startsWith('/app1')) {
+    req.url = req.url.slice('/app1'.length) || '/';
+  }
   if (req.url.startsWith('/api/app1')) {
     req.url = req.url.slice('/api/app1'.length) || '/';
   }

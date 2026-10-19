@@ -7,6 +7,14 @@
   "regions": ["sin1"],
   "rewrites": [
     {
+      "source": "/app1/api/(.*)",
+      "destination": "/api/index"
+    },
+    {
+      "source": "/app1/api",
+      "destination": "/api/index"
+    },
+    {
       "source": "/api/app1/(.*)",
       "destination": "/api/index"
     },

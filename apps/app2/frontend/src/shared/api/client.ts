@@ -5,7 +5,7 @@ export const API_BASE_URL =
   import.meta.env.PROD
     ? (rawApiUrl && !rawApiUrl.includes('localhost') && !rawApiUrl.includes('127.0.0.1')
         ? rawApiUrl
-        : '/api/v1')
+        : '/app2/api/v1')
     : (rawApiUrl || 'http://localhost:4002/api/v1');
 
 export const AUTH_STORAGE_KEY = import.meta.env.VITE_AUTH_STORAGE_KEY || 'app2_auth_token';

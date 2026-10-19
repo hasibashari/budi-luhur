@@ -4,8 +4,18 @@
   "installCommand": "npm install --include=dev",
   "buildCommand": "npm run build",
   "outputDirectory": "frontend/dist",
-  "regions": ["sin1"],
+  "regions": [
+    "sin1"
+  ],
   "rewrites": [
+    {
+      "source": "/app3/api/(.*)",
+      "destination": "/api/index"
+    },
+    {
+      "source": "/app3/api",
+      "destination": "/api/index"
+    },
     {
       "source": "/api/app3/(.*)",
       "destination": "/api/index"
