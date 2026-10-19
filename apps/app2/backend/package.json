@@ -1,7 +1,7 @@
 {
-  "name": "femory-backend-app2",
+  "name": "pilluna-backend-app2",
   "version": "1.0.0",
-  "description": "Modular Express.js Backend for FEMORY Ecosystem",
+  "description": "Modular Express.js Backend for Pilluna Ecosystem",
   "type": "module",
   "main": "src/server.ts",
   "scripts": {

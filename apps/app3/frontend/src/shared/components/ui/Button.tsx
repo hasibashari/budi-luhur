@@ -5,6 +5,7 @@ import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  children?: React.ReactNode;
   variant?: 'primary' | 'outline' | 'soft' | 'ghost' | 'success' | 'danger';
   size?: 'sm' | 'md' | 'lg';
   shape?: 'pill' | 'rounded';

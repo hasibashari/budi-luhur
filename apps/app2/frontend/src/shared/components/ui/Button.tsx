@@ -5,6 +5,7 @@ import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  children?: React.ReactNode;
   variant?: 'primary' | 'secondary' | 'outline' | 'soft' | 'ghost' | 'success' | 'danger';
   size?: 'sm' | 'md' | 'lg';
   shape?: 'pill' | 'rounded';
@@ -42,8 +43,7 @@ export function Button({
   const variantStyles = {
     primary:
       'bg-[#0D9488] text-white hover:bg-[#0F766E] shadow-xs shadow-teal-700/20 hover:shadow-sm hover:shadow-teal-700/25',
-    secondary:
-      'bg-[#F97316] text-white hover:bg-[#EA580C] shadow-xs shadow-orange-500/20',
+    secondary: 'bg-[#F97316] text-white hover:bg-[#EA580C] shadow-xs shadow-orange-500/20',
     outline:
       'bg-transparent border border-[#E2E8F0] text-[#0D9488] hover:bg-[#F0FDFA] hover:border-[#0D9488]',
     soft: 'bg-[#F0FDFA] text-[#0D9488] border border-[#CCFBF1] hover:bg-[#CCFBF1]',
