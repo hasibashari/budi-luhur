@@ -95,22 +95,22 @@ export const PWAInstallPrompt: React.FC = () => {
           {/* Header Row */}
           <div className='flex items-start justify-between gap-3'>
             <div className='flex items-center gap-3'>
-              <div className='w-12 h-12 rounded-xl bg-blue-50 border border-blue-100 p-1 flex items-center justify-center shrink-0 shadow-xs'>
+              <div className='w-12 h-12 rounded-xl bg-teal-50 border border-teal-100 p-1 flex items-center justify-center shrink-0 shadow-xs'>
                 <img
-                  src='/icons/icon-192x192.png'
-                  alt='Logo Budi Luhur'
+                  src='/icons/sora.png'
+                  alt='Logo Aplikasi SORA'
                   className='w-10 h-10 object-contain rounded-lg'
                 />
               </div>
               <div>
                 <div className='flex items-center gap-1.5'>
-                  <span className='px-2 py-0.5 rounded-full bg-blue-100 text-[#005EB8] text-[10px] font-bold tracking-wide uppercase'>
+                  <span className='px-2 py-0.5 rounded-full bg-teal-100 text-[#149690] text-[10px] font-bold tracking-wide uppercase'>
                     PWA Ekosistem
                   </span>
                   <span className='text-xs text-slate-500 font-medium'>STIKes Budi Luhur</span>
                 </div>
                 <h4 className='text-sm sm:text-base font-bold text-slate-900 leading-snug'>
-                  Pasang Aplikasi di Layar Utama
+                  Pasang Aplikasi SORA di Layar Utama
                 </h4>
               </div>
             </div>
@@ -125,7 +125,7 @@ export const PWAInstallPrompt: React.FC = () => {
 
           {/* Description */}
           <p className='text-xs text-slate-600 leading-relaxed'>
-            Akses satu pintu ke seluruh layanan kampus dan 3 aplikasi kesehatan mandiri (FEMORY, Kelompok Studi, PRELUNA) langsung dari homescreen Anda.
+            Akses cepat ke 3 aplikasi kesehatan mandiri (FEMORY, Pilluna, PRELUNA) melalui Aplikasi SORA langsung dari layar utama perangkat Anda.
           </p>
 
           {/* Action Button */}

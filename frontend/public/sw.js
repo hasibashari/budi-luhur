@@ -6,12 +6,8 @@ const PRECACHE_ASSETS = [
   '/',
   OFFLINE_URL,
   '/manifest.webmanifest',
-  '/icons/icon-192x192.png',
-  '/icons/icon-512x512.png',
-  '/icons/icon-maskable-192x192.png',
-  '/icons/icon-maskable-512x512.png',
-  '/icons/apple-touch-icon.png',
-  '/images/stikes-logo.png',
+  '/icons/sora.png',
+  '/images/sora.png',
 ];
 
 // ============================================================

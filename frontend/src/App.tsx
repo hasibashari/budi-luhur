@@ -1,30 +1,39 @@
-import React from 'react';
-import { Navbar } from './components/Navbar';
-import { Hero } from './components/Hero';
-import { AppSelectorSection } from './components/AppSelectorSection';
-import { InstitutionalProfileSection } from './components/InstitutionalProfileSection';
-import { Benefits } from './components/Benefits';
-import { Features } from './components/Features';
-import { FAQ } from './components/FAQ';
-import { Footer } from './components/Footer';
+import React, { useState } from 'react';
+import { Sidebar, type NavMenuId } from './components/Sidebar';
+import { BottomNav } from './components/BottomNav';
+import { HomeView } from './views/HomeView';
+import { PanduanView } from './views/PanduanView';
+import { PengaturanView } from './views/PengaturanView';
 import { PWAInstallPrompt } from './components/PWAInstallPrompt';
-import { BottomNavBar } from './components/BottomNavBar';
 
 export const App: React.FC = () => {
+  const [activeMenu, setActiveMenu] = useState<NavMenuId>('beranda');
+
   return (
-    <div className='min-h-screen flex flex-col bg-white text-[#444444]'>
-      <Navbar />
-      <main className='flex-grow pb-24 lg:pb-0'>
-        <Hero />
-        <AppSelectorSection />
-        <InstitutionalProfileSection />
-        <Benefits />
-        <Features />
-        <FAQ />
+    <div className='min-h-screen bg-gray-50 flex flex-col md:flex-row font-sans text-gray-800 antialiased'>
+      {/* =========================================================
+          1. SIDEBAR DESKTOP (Tampil di layar Desktop/Tablet >= md)
+         ========================================================= */}
+      <Sidebar activeMenu={activeMenu} onSelectMenu={setActiveMenu} />
+
+      {/* =========================================================
+          2. KONTEN UTAMA (Beranda, Panduan, Pengaturan)
+         ========================================================= */}
+      <main className='flex-1 md:ml-64 pb-24 md:pb-10 bg-white min-h-screen'>
+        {activeMenu === 'beranda' && <HomeView onNavigate={setActiveMenu} />}
+        {activeMenu === 'panduan' && <PanduanView onNavigate={setActiveMenu} />}
+        {activeMenu === 'pengaturan' && <PengaturanView onNavigate={setActiveMenu} />}
       </main>
-      <Footer />
+
+      {/* =========================================================
+          3. BOTTOM NAVIGATION BAR (Tampil di layar Mobile < md)
+         ========================================================= */}
+      <BottomNav activeMenu={activeMenu} onSelectMenu={setActiveMenu} />
+
+      {/* =========================================================
+          4. PWA INSTALL BANNER
+         ========================================================= */}
       <PWAInstallPrompt />
-      <BottomNavBar />
     </div>
   );
 };

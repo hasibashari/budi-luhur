@@ -1,14 +1,14 @@
 {
   "id": "/",
-  "name": "STIKes Budi Luhur Cimahi — Portal Terpadu",
-  "short_name": "Budi Luhur",
-  "description": "Portal Resmi & Ekosistem Digital STIKes Budi Luhur Cimahi. Akses terpadu aplikasi kesehatan FEMORY, Kelompok Studi, dan PRELUNA.",
+  "name": "Aplikasi SORA — STIKes Budi Luhur Cimahi",
+  "short_name": "SORA",
+  "description": "Portal Ekosistem Kesehatan Aplikasi SORA STIKes Budi Luhur Cimahi. Akses terpadu 3 aplikasi kesehatan mandiri FEMORY, Pilluna, dan PRELUNA.",
   "start_url": "/?source=pwa",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait-primary",
   "background_color": "#ffffff",
-  "theme_color": "#005EB8",
+  "theme_color": "#149690",
   "lang": "id",
   "dir": "ltr",
   "categories": [
@@ -18,25 +18,25 @@
   ],
   "icons": [
     {
-      "src": "/icons/icon-192x192.png",
+      "src": "/icons/sora.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/icons/icon-512x512.png",
+      "src": "/icons/sora.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/icons/icon-maskable-192x192.png",
+      "src": "/icons/sora.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "/icons/icon-maskable-512x512.png",
+      "src": "/icons/sora.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
@@ -46,11 +46,11 @@
     {
       "name": "Portal Utama",
       "short_name": "Portal",
-      "description": "Buka Beranda Portal Terpadu Kampus",
+      "description": "Buka Beranda Aplikasi SORA",
       "url": "/?source=pwa",
       "icons": [
         {
-          "src": "/icons/icon-192x192.png",
+          "src": "/icons/sora.png",
           "sizes": "192x192"
         }
       ]
@@ -62,7 +62,7 @@
       "url": "/app1/",
       "icons": [
         {
-          "src": "/icons/icon-192x192.png",
+          "src": "/icons/sora.png",
           "sizes": "192x192"
         }
       ]
@@ -74,7 +74,7 @@
       "url": "/app2/",
       "icons": [
         {
-          "src": "/icons/icon-192x192.png",
+          "src": "/icons/sora.png",
           "sizes": "192x192"
         }
       ]
@@ -86,7 +86,7 @@
       "url": "/app3/",
       "icons": [
         {
-          "src": "/icons/icon-192x192.png",
+          "src": "/icons/sora.png",
           "sizes": "192x192"
         }
       ]
