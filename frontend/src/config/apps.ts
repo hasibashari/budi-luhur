@@ -31,10 +31,22 @@ export interface AppInfo {
   }[];
 }
 
-const isProd = import.meta.env.PROD;
-const app1BaseUrl = import.meta.env.VITE_APP_1_URL || (isProd ? '/app1' : 'http://localhost:5173');
-const app2BaseUrl = import.meta.env.VITE_APP_2_URL || (isProd ? '/app2' : 'http://localhost:5174');
-const app3BaseUrl = import.meta.env.VITE_APP_3_URL || (isProd ? '/app3' : 'http://localhost:5175');
+const cleanUrl = (url?: string, fallback = ''): string => {
+  return (url || fallback).trim().replace(/\/+$/, '');
+};
+
+const app1BaseUrl = cleanUrl(
+  import.meta.env.VITE_APP_1_URL,
+  'https://budi-luhur-app1.vercel.app'
+);
+const app2BaseUrl = cleanUrl(
+  import.meta.env.VITE_APP_2_URL,
+  'https://budi-luhur-app2.vercel.app'
+);
+const app3BaseUrl = cleanUrl(
+  import.meta.env.VITE_APP_3_URL,
+  'https://budi-luhur-app3.vercel.app'
+);
 
 export const APPS: AppInfo[] = [
   {
