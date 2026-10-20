@@ -1,4 +1,4 @@
-import db, { pool } from '../config/database.js';
+import db, { getDatabasePool } from '../config/database.js';
 
 async function migrate() {
   await db.query(`
@@ -14,11 +14,11 @@ async function migrate() {
 
 migrate()
   .then(async () => {
-    await pool.end();
+    await getDatabasePool().end();
     process.exit(0);
   })
   .catch(async error => {
     console.error('❌ Failed to migrate reminder settings columns:', error);
-    await pool.end();
+    await getDatabasePool().end();
     process.exit(1);
   });
