@@ -6,6 +6,7 @@ import {
   getNotificationPermission,
   requestNotificationPermission,
   showSystemNotification,
+  subscribeToPush,
   SystemNotificationOptions,
 } from '../utils/notifications'
 
@@ -54,6 +55,7 @@ export function useNotificationPermission() {
     try {
       const result = await requestNotificationPermission()
       if (result === 'granted') {
+        await subscribeToPush()
         if (sendWelcome) {
           await showSystemNotification('Pengingat MediCore Aktif! 🔔', {
             body: 'Anda akan menerima notifikasi suara dan getar saat jadwal minum obat tiba.',

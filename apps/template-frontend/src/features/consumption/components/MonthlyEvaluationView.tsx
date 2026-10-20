@@ -30,6 +30,16 @@ function buildTrend(logs: ConsumptionLog[]) {
   }));
 }
 
+function getMetrics(stats: ConsumptionStats | null, logs: ConsumptionLog[]) {
+  const completedFromLogs = logs.filter(log => log.status === 'ON_TIME' || log.status === 'LATE').length;
+  return {
+    totalCompleted: stats?.totalCompleted ?? completedFromLogs,
+    adherenceRate:
+      stats?.adherenceRate ??
+      (logs.length > 0 ? Math.round((completedFromLogs / logs.length) * 100) : 0),
+  };
+}
+
 export function MonthlyEvaluationView({
   stats,
   streakCount,
@@ -39,10 +49,11 @@ export function MonthlyEvaluationView({
   logs,
 }: MonthlyEvaluationViewProps) {
   const trend = useMemo(() => buildTrend(logs), [logs]);
+  const metrics = useMemo(() => getMetrics(stats, logs), [logs, stats]);
   return (
     <div className='flex flex-col gap-6 animate-fade-in'>
       {/* Monthly Bar Chart Component */}
-      <ConsumptionChart data={trend} totalCount={stats?.totalCompleted || 0} compliancePercent={stats?.adherenceRate || 0} />
+      <ConsumptionChart data={trend} totalCount={metrics.totalCompleted} compliancePercent={metrics.adherenceRate} />
 
       {/* 4-Grid Responsive Milestone Metrics */}
       <div className='grid grid-cols-2 md:grid-cols-4 gap-3.5'>
@@ -64,7 +75,7 @@ export function MonthlyEvaluationView({
             Total Tablet Diminum
           </span>
           <span className='text-sm sm:text-base font-extrabold text-[#1e293b]'>
-            {stats?.totalCompleted || 0} Tablet
+            {metrics.totalCompleted} Tablet
           </span>
         </Card>
 

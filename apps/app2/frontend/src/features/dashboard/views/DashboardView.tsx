@@ -388,7 +388,6 @@ export default function DashboardView() {
             <ActiveBlisterStripWidget
               streakCount={currentUser.streakCount}
               todayStatus={dashboardData?.todayStatus || 'pending'}
-              consecutiveDates={currentUser.consecutiveDates}
             />
           </section>
 

@@ -62,6 +62,7 @@ import { buddyRoutes } from './modules/buddy/buddy.routes.js';
 import { articleRoutes } from './modules/articles/article.routes.js';
 import { consultationRoutes } from './modules/consultation/consultation.routes.js';
 import { adminRoutes } from './modules/admin/admin.routes.js';
+import { notificationRoutes } from './modules/notifications/notification.routes.js';
 
 app.use(['/api/v1/auth', '/v1/auth'], authRoutes);
 app.use(['/api/v1/users', '/v1/users'], userRoutes);
@@ -71,6 +72,7 @@ app.use(['/api/v1/buddy', '/v1/buddy'], buddyRoutes);
 app.use(['/api/v1/articles', '/v1/articles'], articleRoutes);
 app.use(['/api/v1/consultation', '/v1/consultation'], consultationRoutes);
 app.use(['/api/v1/admin', '/v1/admin'], adminRoutes);
+app.use(['/api/v1/notifications', '/v1/notifications'], notificationRoutes);
 
 // Global Error Handler
 app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {

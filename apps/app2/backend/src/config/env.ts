@@ -18,6 +18,9 @@ export const config = {
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || '7d',
   geminiApiKey: process.env.GEMINI_API_KEY || process.env.GEMINI_API || '',
   nodeEnv: process.env.NODE_ENV || 'development',
+  vapidSubject: process.env.VAPID_SUBJECT || '',
+  vapidPublicKey: process.env.VAPID_PUBLIC_KEY || '',
+  vapidPrivateKey: process.env.VAPID_PRIVATE_KEY || '',
 };
 
 if (!config.databaseUrl) {

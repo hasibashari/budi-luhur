@@ -5,6 +5,7 @@
 
 -- Clean up any legacy tables to ensure fresh relational constraints
 DROP TABLE IF EXISTS admin_nudges CASCADE;
+DROP TABLE IF EXISTS push_subscriptions CASCADE;
 DROP TABLE IF EXISTS user_bookmarks CASCADE;
 DROP TABLE IF EXISTS article_sections CASCADE;
 DROP TABLE IF EXISTS articles CASCADE;
@@ -250,6 +251,15 @@ CREATE TABLE admin_nudges (
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE push_subscriptions (
+    id SERIAL PRIMARY KEY,
+    user_id VARCHAR(255) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    endpoint TEXT NOT NULL UNIQUE,
+    subscription JSONB NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
 -- ============================================================
 -- PERFORMANCE INDEXES
 -- ============================================================
@@ -270,3 +280,4 @@ CREATE INDEX idx_articles_category ON articles(category, status);
 CREATE INDEX idx_article_sections_order ON article_sections(article_id, order_index);
 CREATE INDEX idx_bookmarks_user ON user_bookmarks(user_id);
 CREATE INDEX idx_nudges_user_unread ON admin_nudges(user_id, status);
+CREATE INDEX idx_push_subscriptions_user ON push_subscriptions(user_id);

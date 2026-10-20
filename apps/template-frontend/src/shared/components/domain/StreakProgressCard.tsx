@@ -1,13 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Flame, Sparkles, CheckCircle2, ArrowRight, Calendar } from 'lucide-react';
+import { Flame, Sparkles, ArrowRight } from 'lucide-react';
 import { Card } from '../ui/Card';
 
 export interface StreakProgressCardProps {
   streakCount: number;
   streakUnit?: 'Hari' | 'Minggu';
-  consecutiveDates?: string[];
-  todayStatus?: 'recorded' | 'missed' | 'pending';
   className?: string;
   showDetailsLink?: boolean;
 }
@@ -15,8 +13,6 @@ export interface StreakProgressCardProps {
 export function StreakProgressCard({
   streakCount,
   streakUnit = 'Minggu',
-  consecutiveDates = [],
-  todayStatus = 'pending',
   className = '',
   showDetailsLink = true,
 }: StreakProgressCardProps) {
@@ -41,21 +37,6 @@ export function StreakProgressCard({
   };
 
   const currentLevel = getCurrentMilestone(streakCount);
-
-  // Helper format short date (e.g. 2026-09-26 -> 26 Sep)
-  const formatShortDate = (dateStr: string) => {
-    try {
-      const parts = dateStr.split('-');
-      if (parts.length === 3) {
-        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agt', 'Sep', 'Okt', 'Nov', 'Des'];
-        const mIndex = parseInt(parts[1], 10) - 1;
-        return `${parts[2]} ${months[mIndex] || ''}`;
-      }
-      return dateStr;
-    } catch {
-      return dateStr;
-    }
-  };
 
   return (
     <Card padding='md' className={`relative overflow-hidden ${className}`}>
@@ -136,39 +117,6 @@ export function StreakProgressCard({
         </div>
       </div>
 
-      {/* Consecutive Active Dates Chain (Visual Day Capsules) */}
-      {consecutiveDates.length > 0 ? (
-        <div className='mt-3 pt-3 border-t border-rose-100/80'>
-          <span className='text-[11px] font-bold text-[#475569] flex items-center gap-1.5 mb-2'>
-            <Calendar size={13} className='text-[#e11d48]' />
-            <span>Rangkaian Tanggal Konsisten ({consecutiveDates.length} Aktivitas):</span>
-          </span>
-
-          <div className='flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar'>
-            {consecutiveDates.slice(0, 7).map((d, index) => (
-              <div
-                key={d}
-                className='inline-flex items-center gap-1 text-[10px] font-extrabold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/80 shrink-0 shadow-2xs'
-                title={`Aktivitas ke-${consecutiveDates.length - index}: ${d}`}
-              >
-                <CheckCircle2 size={11} className='text-emerald-600' />
-                <span>{formatShortDate(d)}</span>
-              </div>
-            ))}
-            {consecutiveDates.length > 7 && (
-              <span className='text-[10px] font-bold text-slate-400 shrink-0 px-1'>
-                +{consecutiveDates.length - 7} lainnya
-              </span>
-            )}
-          </div>
-        </div>
-      ) : (
-        <div className='mt-2.5 pt-2.5 border-t border-slate-100 text-center'>
-          <p className='text-[11px] text-slate-500'>
-            Belum ada rangkaian streak aktif. {todayStatus === 'pending' ? 'Catat konsumsi TTD hari ini untuk memulai!' : 'Pertahankan jadwal berikutnya!'}
-          </p>
-        </div>
-      )}
     </Card>
   );
 }

@@ -90,7 +90,6 @@ export default function HistoryView() {
 
   const streakCount = dashboardData?.user.streakCount || 0;
   const streakUnit = dashboardData?.user.streakUnit || 'Minggu';
-  const consecutiveDates = dashboardData?.user.consecutiveDates || [];
 
   return (
     <div className='flex flex-col gap-5 sm:gap-6 w-full pb-8'>
@@ -118,8 +117,6 @@ export default function HistoryView() {
       <StreakProgressCard
         streakCount={streakCount}
         streakUnit={streakUnit}
-        consecutiveDates={consecutiveDates}
-        todayStatus={dashboardData?.todayStatus || 'pending'}
         showDetailsLink={false}
       />
 

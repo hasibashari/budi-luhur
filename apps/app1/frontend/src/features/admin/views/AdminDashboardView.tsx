@@ -91,7 +91,7 @@ export default function AdminDashboardView() {
 
   const handleSendSuccess = async (channel: 'app' | 'whatsapp', messageSent: string) => {
     if (reminderData.userId) {
-      await sendUserReminderAction(reminderData.userId, messageSent);
+      await sendUserReminderAction(reminderData.userId, messageSent, channel);
       publishRealtimeEvent('NUDGE_SENT', { userId: reminderData.userId, patientId: reminderData.userId });
     }
     const channelName = channel === 'whatsapp' ? 'WhatsApp' : 'Notifikasi App';

@@ -33,10 +33,21 @@ function buildTrend(logs: ConsumptionLog[]) {
 
 export function MonthlyEvaluationView({ stats, logs }: MonthlyEvaluationViewProps) {
   const trend = useMemo(() => buildTrend(logs), [logs]);
+  const metrics = useMemo(() => {
+    const completedFromLogs = logs.filter(log => log.status === 'ON_TIME' || log.status === 'LATE').length;
+    const scheduledFromLogs = logs.length;
+    return {
+      totalCompleted: stats?.totalCompleted ?? completedFromLogs,
+      adherenceRate:
+        stats?.adherenceRate ??
+        (scheduledFromLogs > 0 ? Math.round((completedFromLogs / scheduledFromLogs) * 100) : 0),
+    };
+  }, [logs, stats]);
+
   return (
     <div className='flex flex-col gap-6 animate-fade-in'>
       {/* Monthly Bar Chart Component */}
-      <ConsumptionChart data={trend} totalCount={stats?.totalCompleted || 0} compliancePercent={stats?.adherenceRate || 0} />
+      <ConsumptionChart data={trend} totalCount={metrics.totalCompleted} compliancePercent={metrics.adherenceRate} />
     </div>
   );
 }

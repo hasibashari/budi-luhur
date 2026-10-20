@@ -1,4 +1,4 @@
-// STIKes Budi Luhur Portal PWA Service Worker v1
+// STIKes Budi Luhur unified PWA Service Worker v2
 const CACHE_NAME = 'budi-luhur-portal-v1';
 const OFFLINE_URL = '/offline.html';
 
@@ -38,6 +38,41 @@ self.addEventListener('activate', (event) => {
     })
   );
   self.clients.claim();
+});
+
+self.addEventListener('push', (event) => {
+  let payload = {};
+  try {
+    payload = event.data ? event.data.json() : {};
+  } catch {
+    payload = { body: event.data?.text() || '' };
+  }
+
+  event.waitUntil(
+    self.registration.showNotification(payload.title || 'Notifikasi SORA', {
+      body: payload.body || 'Anda memiliki pengingat baru.',
+      icon: '/icons/sora.png',
+      badge: '/icons/sora.png',
+      vibrate: [200, 100, 200],
+      data: { url: payload.url || '/' },
+    }),
+  );
+});
+
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  const targetUrl = new URL(event.notification.data?.url || '/', self.location.origin).href;
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(windowClients => {
+      for (const client of windowClients) {
+        if ('focus' in client) {
+          client.navigate(targetUrl);
+          return client.focus();
+        }
+      }
+      return clients.openWindow(targetUrl);
+    }),
+  );
 });
 
 // ============================================================

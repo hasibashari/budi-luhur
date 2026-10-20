@@ -246,7 +246,7 @@ export default function UserManagementView() {
 
   const handleSendReminderSuccess = async (_channel: 'app' | 'whatsapp', messageSent: string) => {
     if (reminderData.userId) {
-      await sendUserReminderAction(reminderData.userId, messageSent);
+      await sendUserReminderAction(reminderData.userId, messageSent, _channel);
       publishRealtimeEvent('NUDGE_SENT', {
         userId: reminderData.userId,
         patientId: reminderData.userId,

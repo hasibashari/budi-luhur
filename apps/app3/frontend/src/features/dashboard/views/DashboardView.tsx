@@ -375,8 +375,6 @@ export default function DashboardView() {
             <StreakProgressCard
               streakCount={currentUser.streakCount}
               streakUnit={streakUnit}
-              consecutiveDates={currentUser.consecutiveDates}
-              todayStatus={dashboardData?.todayStatus || 'pending'}
             />
           </section>
 

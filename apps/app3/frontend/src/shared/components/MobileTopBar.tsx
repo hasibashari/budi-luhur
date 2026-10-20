@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Bell, ShieldCheck, Menu } from 'lucide-react';
 import { Avatar } from './ui/Avatar';
+import useNotificationPermission from '../hooks/useNotificationPermission';
 
 export interface MobileTopBarProps {
   onOpenSidebar?: () => void;
@@ -24,6 +25,8 @@ export default function MobileTopBar({
   userName = 'Calon Pengantin',
   avatarUrl,
 }: MobileTopBarProps) {
+  const { request, isGranted, isDenied } = useNotificationPermission();
+
   return (
     <header
       className='sticky top-0 z-40 w-full bg-[#ffffff]/92 backdrop-blur-xl border-b border-[#e6eeff] shadow-[0_1px_8px_rgba(170,41,77,0.04)] select-none'
@@ -74,14 +77,16 @@ export default function MobileTopBar({
         ) : (
           <div className='flex items-center gap-1.5 shrink-0'>
             {/* Notification Bell (44px touch target) */}
-            <Link
-              to={brandHref}
+            <button
+              type='button'
+              onClick={() => request()}
               className='min-w-[44px] min-h-[44px] w-11 h-11 rounded-full bg-[#f8f9ff] border border-[#e6eeff] flex items-center justify-center text-[#475569] hover:text-[#aa294d] hover:bg-[#ffd9de]/50 active:scale-95 transition-all relative'
-              aria-label='Notifikasi'
+              aria-label={isGranted ? 'Notifikasi aktif' : 'Aktifkan notifikasi'}
+              title={isDenied ? 'Notifikasi diblokir. Izinkan dari pengaturan browser.' : undefined}
             >
               <Bell size={18} />
-              <span className='absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-[#aa294d] ring-2 ring-white' />
-            </Link>
+              <span className={`absolute top-2.5 right-2.5 w-2 h-2 rounded-full ring-2 ring-white ${isGranted ? 'bg-emerald-500' : 'bg-[#aa294d]'}`} />
+            </button>
 
             {/* Profile Avatar (44px touch target) */}
             <Link

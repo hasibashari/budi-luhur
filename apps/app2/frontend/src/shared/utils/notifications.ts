@@ -1,10 +1,39 @@
 /**
  * MediCore Web Notification & PWA Push Utilities
  */
+import apiClient from '../api/client'
 
 export interface SystemNotificationOptions extends NotificationOptions {
   url?: string
   vibrate?: number[]
+}
+
+function getServiceWorkerPath() {
+  return '/sw.js'
+}
+
+function urlBase64ToUint8Array(value: string) {
+  const padding = '='.repeat((4 - (value.length % 4)) % 4)
+  const base64 = (value + padding).replace(/-/g, '+').replace(/_/g, '/')
+  return Uint8Array.from(atob(base64), char => char.charCodeAt(0))
+}
+
+export async function subscribeToPush(): Promise<boolean> {
+  if (!('serviceWorker' in navigator) || !isNotificationSupported() || Notification.permission !== 'granted') return false
+  try {
+    const registrations = await navigator.serviceWorker.getRegistrations()
+    await Promise.all(registrations.filter(registration => /\/app2\/sw\.js$/.test(registration.active?.scriptURL || '')).map(registration => registration.unregister()))
+    const registration = await navigator.serviceWorker.register(getServiceWorkerPath(), { scope: '/' })
+    const { data } = await apiClient.get<{ publicKey: string | null }>('/notifications/public-key')
+    if (!data.publicKey) return false
+    const existing = await registration.pushManager.getSubscription()
+    const subscription = existing || await registration.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: urlBase64ToUint8Array(data.publicKey) })
+    await apiClient.post('/notifications/subscribe', subscription.toJSON())
+    return true
+  } catch (error) {
+    console.error('Failed to register push subscription:', error)
+    return false
+  }
 }
 
 /**

@@ -26,7 +26,7 @@ export default function AdminProfileView() {
   // Profile State
   const [profileData, setProfileData] = useState({
     name: user?.name || 'dr. Sarah Jenkins, Sp.GK',
-    email: user?.email || 'admin@medicore.com',
+    email: user?.email || 'admin@femory.id',
     phone: user?.phone || '+62 811-2233-4455',
     title: user?.schoolOrOrg || 'Fasilitator Kesehatan UKS',
     department: 'Manajemen Program TTD & Anemia Remaja',

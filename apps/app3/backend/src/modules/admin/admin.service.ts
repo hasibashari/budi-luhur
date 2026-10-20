@@ -1,4 +1,5 @@
 import db from '../../config/database.js';
+import { NotificationService } from '../notifications/notification.service.js';
 
 const ALLOWED_ARTICLE_CATEGORIES = new Set(['Imunisasi TT', 'Catin']);
 
@@ -443,7 +444,10 @@ export class AdminService {
       [nudgeId, userId, msg, channel],
     );
 
-    return { success: true, nudgeId };
+    const push = channel === 'app'
+      ? await NotificationService.sendToUser(userId, { title: 'Pengingat Imunisasi TT', body: msg, url: '/app3/user/dashboard' })
+      : { sent: 0, configured: true };
+    return { success: true, nudgeId, pushSent: push.sent > 0, pushConfigured: push.configured };
   }
 
   static async getAdminArticles(): Promise<HealthArticle[]> {

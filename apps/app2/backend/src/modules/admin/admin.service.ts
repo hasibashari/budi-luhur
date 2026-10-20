@@ -1,4 +1,5 @@
 import db from '../../config/database.js';
+import { NotificationService } from '../notifications/notification.service.js';
 
 export interface AdminStats {
   totalUsers: number;
@@ -316,7 +317,10 @@ export class AdminService {
       [nudgeId, userId, msg, channel],
     );
 
-    return { success: true, nudgeId };
+    const push = channel === 'app'
+      ? await NotificationService.sendToUser(userId, { title: 'Pengingat Minum Pil KB', body: msg, url: '/app2/user/dashboard' })
+      : { sent: 0, configured: true };
+    return { success: true, nudgeId, pushSent: push.sent > 0, pushConfigured: push.configured };
   }
 
   static async getAdminArticles(): Promise<HealthArticle[]> {

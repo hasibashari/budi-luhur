@@ -1,5 +1,6 @@
 import db from '../../config/database.js';
 import { calculateGroupChronologicalStreak } from '../../utils/groupStreakCalculator.js';
+import { NotificationService } from '../notifications/notification.service.js';
 
 export class BuddyService {
   static async calculateAndSyncGroupStreak(groupId: string): Promise<number> {
@@ -243,6 +244,24 @@ export class BuddyService {
     );
 
     await db.query(`UPDATE buddy_groups SET updated_at = CURRENT_TIMESTAMP WHERE id = $1`, [groupId]);
+
+    const [groupRes, membersRes] = await Promise.all([
+      db.query<{ name: string }>(`SELECT name FROM buddy_groups WHERE id = $1`, [groupId]),
+      db.query<{ user_id: string }>(
+        `SELECT user_id FROM buddy_group_members WHERE group_id = $1 AND user_id <> $2`,
+        [groupId, userId],
+      ),
+    ]);
+    const groupName = groupRes.rows[0]?.name || 'Kelompok Sahabat';
+    await Promise.all(
+      membersRes.rows.map(member =>
+        NotificationService.sendToUser(member.user_id, {
+          title: `Pesan baru di ${groupName}`,
+          body: textContent,
+          url: '/app1/user/buddy',
+        }),
+      ),
+    );
 
     return { success: true, messageId: msgId };
   }
