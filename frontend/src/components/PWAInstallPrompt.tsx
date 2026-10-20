@@ -125,7 +125,8 @@ export const PWAInstallPrompt: React.FC = () => {
 
           {/* Description */}
           <p className='text-xs text-slate-600 leading-relaxed'>
-            Akses cepat ke 3 aplikasi kesehatan mandiri (FEMORY, PILLUNA, PRELUNA) melalui Aplikasi SORA langsung dari layar utama perangkat Anda.
+            Akses cepat ke 3 aplikasi kesehatan mandiri (FEMORY, PILLUNA, PRELUNA) melalui Aplikasi
+            SORA langsung dari layar utama perangkat Anda.
           </p>
 
           {/* Action Button */}
@@ -184,7 +185,9 @@ export const PWAInstallPrompt: React.FC = () => {
                   2
                 </div>
                 <div>
-                  Ketuk tombol <strong>Bagikan (Share)</strong> <Share2 className='inline w-4 h-4 text-[#005EB8] mx-1' /> di bar navigasi Safari (bawah atau atas).
+                  Ketuk tombol <strong>Bagikan (Share)</strong>{' '}
+                  <Share2 className='inline w-4 h-4 text-[#005EB8] mx-1' /> di bar navigasi Safari
+                  (bawah atau atas).
                 </div>
               </li>
               <li className='flex items-start gap-3'>
@@ -192,7 +195,9 @@ export const PWAInstallPrompt: React.FC = () => {
                   3
                 </div>
                 <div>
-                  Gulir ke bawah dan pilih <strong>"Tambahkan ke Layar Utama" (Add to Home Screen)</strong> <PlusSquare className='inline w-4 h-4 text-[#005EB8] mx-1' />.
+                  Gulir ke bawah dan pilih{' '}
+                  <strong>"Tambahkan ke Layar Utama" (Add to Home Screen)</strong>{' '}
+                  <PlusSquare className='inline w-4 h-4 text-[#005EB8] mx-1' />.
                 </div>
               </li>
               <li className='flex items-start gap-3'>

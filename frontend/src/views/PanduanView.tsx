@@ -39,7 +39,8 @@ export const PanduanView: React.FC<PanduanViewProps> = ({ onNavigate }) => {
         </div>
         <h2 className='text-2xl font-bold text-gray-900'>Panduan Layanan Aplikasi SORA</h2>
         <p className='text-sm text-gray-600 mt-1 leading-relaxed'>
-          Informasi panduan operasional 3 aplikasi mandiri dalam ekosistem SORA STIKes Budi Luhur Cimahi.
+          Informasi panduan operasional 3 aplikasi mandiri dalam ekosistem SORA STIKes Budi Luhur
+          Cimahi.
         </p>
       </div>
 
