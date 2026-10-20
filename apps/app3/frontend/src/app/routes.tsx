@@ -1,4 +1,3 @@
-import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthGuard } from '@/src/features/auth/components/AuthGuard';
 import { GuestGuard } from '@/src/features/auth/components/GuestGuard';
@@ -6,12 +5,7 @@ import { LoginView, RegisterView, useAuth } from '@/src/features/auth';
 import { OnboardingView, OnboardingScreenView } from '@/src/features/onboarding';
 
 // User Portal Views
-import {
-  UserLayout,
-  DashboardView,
-  SetupProfileView,
-  ProfileView,
-} from '@/src/features/user';
+import { UserLayout, DashboardView, SetupProfileView, ProfileView } from '@/src/features/user';
 import { ScheduleView } from '@/src/features/schedule';
 import { HistoryView } from '@/src/features/consumption';
 import { EducationView, ArticleDetailView } from '@/src/features/education';
@@ -108,7 +102,7 @@ export function AppRoutes() {
       >
         <Route index element={<Navigate to='/user/dashboard' replace />} />
         <Route path='dashboard' element={<DashboardView />} />
-        <Route path='schedule' element={<Navigate to='/user/imunisasi?tab=jadwal' replace />} />
+        <Route path='schedule' element={<ScheduleView />} />
         <Route path='history' element={<Navigate to='/user/imunisasi?tab=riwayat' replace />} />
         <Route path='imunisasi' element={<HistoryView />} />
         <Route path='buddy' element={<Navigate to='/user/dashboard' replace />} />

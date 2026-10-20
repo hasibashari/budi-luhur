@@ -15,7 +15,7 @@ import {
 export interface ReminderSettingsModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave?: (settings: ReminderSettingsData) => void;
+  onSave?: (settings: ReminderSettingsData) => void | Promise<void>;
   defaultSettings?: Partial<ReminderSettingsData>;
 }
 
@@ -57,12 +57,12 @@ export function ReminderSettingsModal({
 
   if (!isOpen) return null;
 
-  const handleSave = () => {
+  const handleSave = async () => {
     setIsSaving(true);
-    setTimeout(() => {
+    try {
       setIsSaving(false);
       if (onSave) {
-        onSave({
+        await onSave({
           isEnabled,
           timing,
           channelPush,
@@ -71,7 +71,9 @@ export function ReminderSettingsModal({
         });
       }
       onClose();
-    }, 300);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (

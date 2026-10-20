@@ -95,9 +95,8 @@ export function QuickAction({
           </div>
         </Link>
 
-        {/* 3. Jadwal TT (Next) */}
         <Link
-          to='/user/imunisasi?tab=jadwal'
+          to='/user/schedule'
           className='flex flex-col justify-between p-3.5 sm:p-4 rounded-2xl bg-white border border-[#eff4ff] shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-md transition-all active:scale-[0.98] group'
         >
           <div className='flex flex-col gap-2.5'>

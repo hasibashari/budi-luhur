@@ -1,12 +1,9 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Calendar as CalendarIcon,
-  ShieldCheck,
-  Bell,
-  BellRing,
   ArrowLeft,
   Share2,
   Heart,
@@ -15,21 +12,16 @@ import {
   MapPin,
   ExternalLink,
   CheckCircle2,
-  Check,
-  Sparkles,
-  Info,
   CalendarClock,
-  MessageSquare,
-  Mail,
+  BellRing,
+  ShieldCheck,
+  Info,
   Building2,
 } from 'lucide-react';
-import { Card } from '@/src/shared/components/ui/Card';
-import { Button } from '@/src/shared/components/ui/Button';
 import { useAuth } from '@/src/features/auth/context/AuthContext';
 import { TTIntervalGuideCard } from '../components/TTIntervalGuideCard';
 import {
   getUserScheduleAction,
-  updateUserScheduleSettingsAction,
   UserScheduleData,
 } from '@/src/features/user/api/userRepository';
 
@@ -38,15 +30,7 @@ export default function ScheduleView() {
   const { user } = useAuth();
   const [schedule, setSchedule] = useState<UserScheduleData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'jadwal' | 'pengingat'>('jadwal');
   const [toastMessage, setToastMessage] = useState<string | null>(null);
-
-  // Screen 8 (Pengingat) interactive states
-  const [isMasterEnabled, setIsMasterEnabled] = useState(true);
-  const [selectedTiming, setSelectedTiming] = useState('3_days');
-  const [channelPush, setChannelPush] = useState(true);
-  const [channelWhatsapp, setChannelWhatsapp] = useState(true);
-  const [channelEmail, setChannelEmail] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -55,9 +39,6 @@ export default function ScheduleView() {
         const data = await getUserScheduleAction(user?.id);
         if (isMounted) {
           setSchedule(data);
-          if (data) {
-            setIsMasterEnabled(data.isEnabled);
-          }
           setLoading(false);
         }
       } catch (err) {
@@ -74,29 +55,6 @@ export default function ScheduleView() {
   const showToast = (msg: string) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 3000);
-  };
-
-  const handleToggleMaster = async () => {
-    const nextState = !isMasterEnabled;
-    setIsMasterEnabled(nextState);
-    showToast(
-      nextState ? 'Pengingat otomatis jadwal TT diaktifkan!' : 'Pengingat otomatis dinonaktifkan.',
-    );
-
-    if (schedule) {
-      await updateUserScheduleSettingsAction(schedule.id, {
-        isEnabled: nextState,
-      });
-    }
-  };
-
-  const handleSaveReminderSettings = async () => {
-    showToast('Pengaturan pengingat TT berhasil diperbarui!');
-    if (schedule) {
-      await updateUserScheduleSettingsAction(schedule.id, {
-        isEnabled: isMasterEnabled,
-      });
-    }
   };
 
   if (loading && !schedule) {
@@ -157,39 +115,8 @@ export default function ScheduleView() {
         </button>
       </div>
 
-      {/* Tabs: Jadwal Berikutnya (Screen 7) vs Pengingat Notifikasi (Screen 8) */}
-      <div className='flex items-center p-1 bg-white rounded-2xl border border-stone-200 shadow-2xs max-w-sm mx-auto w-full'>
-        <button
-          type='button'
-          onClick={() => setActiveTab('jadwal')}
-          className={`flex-1 min-h-[44px] py-2.5 px-3 text-xs font-bold rounded-xl transition-all cursor-pointer active:scale-95 flex items-center justify-center gap-1.5 ${
-            activeTab === 'jadwal'
-              ? 'bg-[#aa294d] text-white shadow-xs'
-              : 'text-[#574144] hover:text-[#aa294d]'
-          }`}
-        >
-          <CalendarIcon size={14} />
-          <span>Jadwal TT4</span>
-        </button>
-        <button
-          type='button'
-          onClick={() => setActiveTab('pengingat')}
-          className={`flex-1 min-h-[44px] py-2.5 px-3 text-xs font-bold rounded-xl transition-all cursor-pointer active:scale-95 flex items-center justify-center gap-1.5 ${
-            activeTab === 'pengingat'
-              ? 'bg-[#aa294d] text-white shadow-xs'
-              : 'text-[#574144] hover:text-[#aa294d]'
-          }`}
-        >
-          <BellRing size={14} />
-          <span>Pengingat Otomatis</span>
-        </button>
-      </div>
-
-      {activeTab === 'jadwal' ? (
-        /* TAB 1: SCREEN 7 (Jadwal Imunisasi Berikutnya) */
-        <div className='grid grid-cols-1 md:grid-cols-12 gap-5 sm:gap-6 items-start animate-fade-in'>
-          {/* Main Column (md:col-span-7) */}
-          <div className='md:col-span-7 flex flex-col gap-5'>
+      <div className='flex flex-col gap-5 sm:gap-6 animate-fade-in'>
+          <div className='flex flex-col gap-5'>
             {/* Warm Introductory Greeting for Calon Pengantin (Stitch Screen 7) */}
             <div className='flex items-center justify-between'>
               <div className='flex flex-col'>
@@ -363,10 +290,7 @@ export default function ScheduleView() {
             <div className='flex flex-col gap-2.5 pt-1'>
               <button
                 type='button'
-                onClick={() => {
-                  setActiveTab('pengingat');
-                  showToast('Buka pengaturan pengingat jadwal TT');
-                }}
+                onClick={() => navigate('/user/profile?section=reminder')}
                 className='w-full h-12 bg-[#aa294d] text-white rounded-full font-bold text-xs sm:text-sm shadow-[0_4px_16px_rgba(170,41,77,0.32)] hover:bg-[#cb4364] active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer'
               >
                 <BellRing size={18} />
@@ -384,256 +308,10 @@ export default function ScheduleView() {
             </div>
           </div>
 
-          {/* Right Column (md:col-span-5) */}
-          <div className='md:col-span-5 flex flex-col gap-5'>
+          <div className='flex flex-col gap-5'>
             <TTIntervalGuideCard />
           </div>
         </div>
-      ) : (
-        /* TAB 2: SCREEN 8 (Pengingat Imunisasi) */
-        <div className='flex flex-col gap-5 max-w-xl mx-auto w-full animate-fade-in'>
-          {/* Hero Illustration & Delight Intro (Stitch Screen 8) */}
-          <div className='flex flex-col items-center text-center mt-2 mb-2'>
-            <div className='relative w-24 h-24 flex items-center justify-center mb-3'>
-              {/* Ambient Glow */}
-              <div className='absolute inset-0 rounded-full bg-[#ffd9de]/60 animate-pulse' />
-              <div className='absolute w-20 h-20 rounded-full bg-white shadow-md flex items-center justify-center'>
-                <div className='relative flex items-center justify-center text-[#aa294d]'>
-                  <BellRing size={40} className='animate-bounce' />
-                </div>
-              </div>
-            </div>
-            <h2 className='text-base sm:text-lg font-bold text-[#121c2a]'>
-              Pengingat Imunisasi TT
-            </h2>
-            <p className='text-xs text-[#574144] px-4 max-w-sm mt-1 leading-relaxed'>
-              Aktifkan pengingat otomatis agar kamu dan pasangan tidak melewatkan jadwal suntik
-              dosis TT berikutnya.
-            </p>
-          </div>
-
-          {/* Master Notification Toggle Card (Stitch Screen 8) */}
-          <div className='bg-white rounded-2xl p-4 sm:p-5 shadow-[0_4px_20px_-4px_rgba(217,78,111,0.08)] border border-[#eff4ff] transition-all'>
-            <div className='flex items-center justify-between gap-3'>
-              <div className='flex items-start gap-3 min-w-0'>
-                <div className='w-10 h-10 rounded-full bg-[#ffd9de] flex items-center justify-center text-[#aa294d] shrink-0 mt-0.5'>
-                  <Bell size={20} />
-                </div>
-                <div className='flex flex-col min-w-0'>
-                  <span className='text-xs sm:text-sm font-bold text-[#121c2a] leading-tight truncate'>
-                    Pengingat Otomatis Jadwal TT
-                  </span>
-                  <span className='text-[11px] text-[#574144] mt-0.5'>
-                    Kirim notifikasi ke aplikasi & WhatsApp
-                  </span>
-                </div>
-              </div>
-
-              {/* Modern Switch Toggle */}
-              <button
-                type='button'
-                role='switch'
-                aria-checked={isMasterEnabled}
-                onClick={handleToggleMaster}
-                className={`w-13 w-[52px] h-[30px] rounded-full p-0.5 transition-colors duration-200 ease-in-out shrink-0 cursor-pointer shadow-inner relative ${
-                  isMasterEnabled ? 'bg-[#aa294d]' : 'bg-stone-300'
-                }`}
-              >
-                <span
-                  className={`block w-[26px] h-[26px] rounded-full bg-white shadow-md transform transition-transform duration-200 ease-in-out ${
-                    isMasterEnabled ? 'translate-x-[22px]' : 'translate-x-0'
-                  }`}
-                />
-              </button>
-            </div>
-          </div>
-
-          {/* Reminder Timing Selector (Radios) (Stitch Screen 8) */}
-          <div
-            className={`flex flex-col gap-3 transition-opacity duration-300 ${isMasterEnabled ? 'opacity-100' : 'opacity-40 pointer-events-none'}`}
-          >
-            <div className='flex items-center justify-between px-1'>
-              <span className='text-xs sm:text-sm font-bold text-[#121c2a]'>
-                Pilih Waktu Notifikasi
-              </span>
-              <span className='text-[10px] text-[#0a5139] bg-[#aff1d0] px-2.5 py-0.5 rounded-full font-bold'>
-                Tepat Waktu
-              </span>
-            </div>
-
-            <div className='flex flex-col gap-2.5'>
-              {[
-                {
-                  id: '1_week',
-                  title: '1 Minggu sebelum jadwal',
-                  desc: 'Cocok untuk mengatur cuti dan persiapan faskes',
-                },
-                {
-                  id: '3_days',
-                  title: '3 Hari sebelum jadwal',
-                  desc: 'Waktu ideal konfirmasi ketersediaan vaksin di Puskesmas',
-                  badge: 'Rekomendasi',
-                },
-                {
-                  id: '1_day',
-                  title: '1 Hari sebelum jadwal',
-                  desc: 'Pengingat H-1 menjelang kunjungan faskes',
-                },
-                {
-                  id: 'day_of',
-                  title: 'Tepat pada hari jadwal (08:00 WIB)',
-                  desc: 'Peringatan pagi hari untuk sarapan dan bawa buku KIA',
-                },
-              ].map(item => (
-                <label
-                  key={item.id}
-                  onClick={() => setSelectedTiming(item.id)}
-                  className={`flex items-start gap-3 p-3.5 rounded-2xl border transition-all cursor-pointer ${
-                    selectedTiming === item.id
-                      ? 'bg-[#ffd9de]/20 border-[#aa294d] shadow-xs'
-                      : 'bg-white border-[#eff4ff] hover:bg-[#eff4ff]/50'
-                  }`}
-                >
-                  <input
-                    type='radio'
-                    name='reminder_timing'
-                    value={item.id}
-                    checked={selectedTiming === item.id}
-                    onChange={() => setSelectedTiming(item.id)}
-                    className='sr-only'
-                  />
-                  <div
-                    className={`w-5 h-5 rounded-full mt-0.5 flex items-center justify-center shrink-0 border ${
-                      selectedTiming === item.id
-                        ? 'bg-[#aa294d] border-[#aa294d]'
-                        : 'border-stone-300 bg-stone-100'
-                    }`}
-                  >
-                    {selectedTiming === item.id && (
-                      <div className='w-2 h-2 rounded-full bg-white' />
-                    )}
-                  </div>
-                  <div className='flex flex-col flex-1 min-w-0'>
-                    <div className='flex items-center justify-between gap-2'>
-                      <span className='text-xs sm:text-sm font-bold text-[#121c2a]'>
-                        {item.title}
-                      </span>
-                      {item.badge && (
-                        <span className='text-[10px] font-bold bg-[#ffd9de] text-[#8c0f39] px-2 py-0.5 rounded-full shrink-0'>
-                          {item.badge}
-                        </span>
-                      )}
-                    </div>
-                    <span className='text-[11px] text-[#574144] mt-0.5'>{item.desc}</span>
-                  </div>
-                </label>
-              ))}
-            </div>
-          </div>
-
-          {/* Delivery Channels (Checkboxes) (Stitch Screen 8) */}
-          <div
-            className={`flex flex-col gap-2.5 transition-opacity duration-300 ${isMasterEnabled ? 'opacity-100' : 'opacity-40 pointer-events-none'}`}
-          >
-            <div className='px-1'>
-              <span className='text-xs sm:text-sm font-bold text-[#121c2a]'>Saluran Pengingat</span>
-              <p className='text-[11px] text-[#574144] mt-0.5'>
-                Notifikasi akan dikirimkan otomatis melalui opsi berikut
-              </p>
-            </div>
-
-            <div className='bg-white rounded-2xl p-2 border border-[#eff4ff] shadow-xs flex flex-col gap-1'>
-              {/* Checkbox 1: In-App Push */}
-              <label className='flex items-center justify-between p-3 rounded-xl hover:bg-[#eff4ff]/60 transition-colors cursor-pointer'>
-                <div className='flex items-center gap-3'>
-                  <div className='w-9 h-9 rounded-full bg-[#ffd9de]/50 flex items-center justify-center text-[#aa294d] shrink-0'>
-                    <Bell size={18} />
-                  </div>
-                  <div className='flex flex-col'>
-                    <span className='text-xs font-bold text-[#121c2a]'>
-                      Notifikasi Push Aplikasi
-                    </span>
-                    <span className='text-[11px] text-[#574144]'>
-                      Langsung muncul di layar ponselmu
-                    </span>
-                  </div>
-                </div>
-                <input
-                  type='checkbox'
-                  checked={channelPush}
-                  onChange={e => setChannelPush(e.target.checked)}
-                  className='w-5 h-5 accent-[#aa294d] rounded cursor-pointer'
-                />
-              </label>
-
-              {/* Checkbox 2: WhatsApp */}
-              <label className='flex items-center justify-between p-3 rounded-xl hover:bg-[#eff4ff]/60 transition-colors cursor-pointer'>
-                <div className='flex items-center gap-3'>
-                  <div className='w-9 h-9 rounded-full bg-[#aff1d0] flex items-center justify-center text-[#2a6950] shrink-0'>
-                    <MessageSquare size={18} />
-                  </div>
-                  <div className='flex flex-col'>
-                    <span className='text-xs font-bold text-[#121c2a]'>
-                      Pesan WhatsApp Pengingat Resmi
-                    </span>
-                    <span className='text-[11px] text-[#574144]'>
-                      Format interaktif terhubung ke hotline Puskesmas
-                    </span>
-                  </div>
-                </div>
-                <input
-                  type='checkbox'
-                  checked={channelWhatsapp}
-                  onChange={e => setChannelWhatsapp(e.target.checked)}
-                  className='w-5 h-5 accent-[#aa294d] rounded cursor-pointer'
-                />
-              </label>
-
-              {/* Checkbox 3: Email */}
-              <label className='flex items-center justify-between p-3 rounded-xl hover:bg-[#eff4ff]/60 transition-colors cursor-pointer'>
-                <div className='flex items-center gap-3'>
-                  <div className='w-9 h-9 rounded-full bg-[#eff4ff] flex items-center justify-center text-[#574144] shrink-0'>
-                    <Mail size={18} />
-                  </div>
-                  <div className='flex flex-col'>
-                    <span className='text-xs font-bold text-[#121c2a]'>Email Pengingat</span>
-                    <span className='text-[11px] text-[#574144]'>
-                      Salinan dokumen jadwal & checklist Catin
-                    </span>
-                  </div>
-                </div>
-                <input
-                  type='checkbox'
-                  checked={channelEmail}
-                  onChange={e => setChannelEmail(e.target.checked)}
-                  className='w-5 h-5 accent-[#aa294d] rounded cursor-pointer'
-                />
-              </label>
-            </div>
-          </div>
-
-          {/* Warm Reassurance Note (Stitch Screen 8) */}
-          <div className='flex items-start gap-3 p-3.5 bg-[#eff4ff] rounded-2xl border border-[#d9e3f6]/60'>
-            <ShieldCheck size={20} className='text-[#2a6950] shrink-0 mt-0.5' />
-            <p className='text-[11px] text-[#0a5139] leading-relaxed'>
-              Pengingat terjadwal tersinkronisasi otomatis dengan standar buku petunjuk imunisasi
-              Kemenkes RI untuk Calon Pengantin.
-            </p>
-          </div>
-
-          {/* Sticky CTA (Stitch Screen 8) */}
-          <div className='pt-2'>
-            <button
-              type='button'
-              onClick={handleSaveReminderSettings}
-              className='w-full h-12 bg-[#aa294d] text-white rounded-full font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-[0_4px_16px_rgba(170,41,77,0.32)] hover:bg-[#cb4364] active:scale-[0.98] transition-all cursor-pointer'
-            >
-              <Check size={18} />
-              <span>Simpan Pengaturan Pengingat</span>
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

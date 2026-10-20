@@ -1,5 +1,11 @@
 import db from '../../config/database.js';
 
+const ALLOWED_ARTICLE_CATEGORIES = new Set(['Imunisasi TT', 'Catin']);
+
+function normalizeArticleCategory(category: string): string {
+  return category === 'Kesehatan Pranikah' ? 'Catin' : category;
+}
+
 export interface AdminStats {
   totalUsers: number;
   activeSchedules: number;
@@ -442,7 +448,9 @@ export class AdminService {
 
   static async getAdminArticles(): Promise<HealthArticle[]> {
     const res = await db.query<any>(
-      `SELECT * FROM articles ORDER BY published_at DESC, created_at DESC`,
+      `SELECT * FROM articles
+       WHERE category IN ('Imunisasi TT', 'Catin', 'Kesehatan Pranikah')
+       ORDER BY published_at DESC, created_at DESC`,
     );
     const rows = res.rows;
     if (rows.length === 0) return [];
@@ -483,7 +491,7 @@ export class AdminService {
       return {
         id: r.id,
         title: r.title,
-        category: r.category,
+        category: r.category === 'Kesehatan Pranikah' ? 'Catin' : r.category,
         author: r.author_name || 'dr. Sarah Jenkins',
         publishDate: publishDateStr,
         status: r.status as HealthArticle['status'],
@@ -506,6 +514,11 @@ export class AdminService {
     imageUrl?: string;
     content?: string;
   }) {
+    const category = normalizeArticleCategory(data.category);
+    if (!ALLOWED_ARTICLE_CATEGORIES.has(category)) {
+      throw new Error('Kategori artikel harus Imunisasi TT atau Catin.');
+    }
+
     const newId = `art_${Date.now().toString().slice(-4)}`;
     const today = new Date().toISOString().split('T')[0];
     const finalImageUrl =
@@ -526,7 +539,7 @@ export class AdminService {
           finalContent,
           finalImageUrl,
           readTime,
-          data.category,
+          category,
           data.status || 'Terbit',
           today,
           data.author || 'Tim Ahli Gizi UKS',
@@ -549,7 +562,7 @@ export class AdminService {
     return {
       id: newId,
       title: data.title,
-      category: data.category,
+      category,
       author: data.author || 'Tim Ahli Gizi UKS',
       publishDate: today,
       status: (data.status || 'Terbit') as HealthArticle['status'],
@@ -562,6 +575,12 @@ export class AdminService {
   }
 
   static async updateAdminArticle(articleId: string, data: any) {
+    const category =
+      data.category !== undefined ? normalizeArticleCategory(data.category) : undefined;
+    if (category !== undefined && !ALLOWED_ARTICLE_CATEGORIES.has(category)) {
+      throw new Error('Kategori artikel harus Imunisasi TT atau Catin.');
+    }
+
     await db.transaction(async (client) => {
       await client.query(
         `UPDATE articles
@@ -578,7 +597,7 @@ export class AdminService {
          WHERE id = $9`,
         [
           data.title ?? null,
-          data.category ?? null,
+          category ?? null,
           data.summary ?? null,
           data.readTime ?? null,
           data.status ?? null,

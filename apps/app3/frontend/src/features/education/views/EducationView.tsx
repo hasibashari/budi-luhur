@@ -13,6 +13,10 @@ import {
 } from 'lucide-react';
 import { getArticlesAction } from '../api/educationRepository';
 import { Article } from '../types';
+import {
+  isAllowedArticleCategory,
+  normalizeArticleCategory,
+} from '../constants/education.constants';
 
 export default function EducationView() {
   const navigate = useNavigate();
@@ -26,7 +30,7 @@ export default function EducationView() {
     {
       id: 'art_1',
       title: 'Kesehatan Pranikah & Skrining Dasar',
-      category: 'Pemeriksaan Lab',
+      category: 'Catin',
       badge: 'Wajib Catin',
       badgeColor: 'bg-[#ffd9de] text-[#8c0f39]',
       readTime: '4 mnt',
@@ -38,7 +42,7 @@ export default function EducationView() {
     {
       id: 'art_2',
       title: 'Imunisasi Tetanus Toxoid (TT)',
-      category: 'Vaksin TT',
+      category: 'Imunisasi TT',
       badge: 'Imunisasi',
       badgeColor: 'bg-[#aff1d0] text-[#0a5139]',
       readTime: '6 mnt',
@@ -50,7 +54,7 @@ export default function EducationView() {
     {
       id: 'art_3',
       title: 'Mencegah Tetanus Maternal & Neonatal',
-      category: 'Kesehatan Reproduksi',
+      category: 'Imunisasi TT',
       badge: 'Pencegahan',
       badgeColor: 'bg-[#ffd9dd] text-[#8f0737]',
       readTime: '5 mnt',
@@ -62,7 +66,7 @@ export default function EducationView() {
     {
       id: 'art_4',
       title: 'Gaya Hidup & Nutrisi Sehat Catin',
-      category: 'Gizi Catin',
+      category: 'Catin',
       badge: 'Pola Hidup',
       badgeColor: 'bg-[#aff1d0] text-[#0a5139]',
       readTime: '3 mnt',
@@ -74,7 +78,7 @@ export default function EducationView() {
     {
       id: 'art_5',
       title: 'Kesehatan Mental & Harmoni Pasangan',
-      category: 'Kesehatan Reproduksi',
+      category: 'Catin',
       badge: 'Wellness',
       badgeColor: 'bg-[#dee9fc] text-[#121c2a]',
       readTime: '5 mnt',
@@ -93,7 +97,7 @@ export default function EducationView() {
         if (isMounted) {
           if (data && data.length > 0) {
             // merge with authentic stitch articles if needed
-            setArticles(data);
+            setArticles(data.filter(article => isAllowedArticleCategory(article.category)));
           } else {
             setArticles(defaultPrelunaArticles as any);
           }
@@ -113,26 +117,15 @@ export default function EducationView() {
     };
   }, []);
 
-  const categories = [
-    'Semua',
-    'Imunisasi TT',
-    'Gizi Catin',
-    'Kesehatan Reproduksi',
-    'Pemeriksaan Lab',
-    'Mitos & Fakta',
-  ];
+  const categories = ['Semua', 'Imunisasi TT', 'Catin'];
 
   const filteredArticles = useMemo(() => {
     const list = articles.length > 0 ? articles : defaultPrelunaArticles;
     return list.filter(art => {
-      const catLower = (art.category || '').toLowerCase();
-      const selLower = selectedCategory.toLowerCase();
+      const category = normalizeArticleCategory(art.category);
       const matchCategory =
         selectedCategory === 'Semua' ||
-        catLower.includes(selLower) ||
-        selLower.includes(catLower) ||
-        (selectedCategory === 'Imunisasi TT' &&
-          (catLower.includes('tt') || catLower.includes('vaksin')));
+        category === selectedCategory;
       const matchSearch =
         searchQuery === '' ||
         art.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -203,13 +196,7 @@ export default function EducationView() {
                   : 'bg-white border border-[#eff4ff] text-[#574144] hover:bg-[#eff4ff]'
               }`}
             >
-              <span>
-                {cat === 'Kesehatan Reproduksi'
-                  ? 'Reproduksi'
-                  : cat === 'Pemeriksaan Lab'
-                    ? 'Lab & Tes'
-                    : cat}
-              </span>
+              <span>{cat}</span>
               {cat === 'Semua' && (
                 <span
                   className={`text-[10px] px-1.5 py-0.2 rounded-full ${isActive ? 'bg-white/20' : 'bg-[#eff4ff]'}`}

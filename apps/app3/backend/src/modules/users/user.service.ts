@@ -66,9 +66,14 @@ export class UserService {
         time_slot: string;
         is_enabled: boolean;
         remind_15min_before: boolean;
+        reminder_timing: string;
+        channel_push: boolean;
+        channel_whatsapp: boolean;
+        channel_email: boolean;
         instructions: string | null;
       }>(
-        `SELECT id, tablet_name, dosage, frequency, day_of_week, time_slot, is_enabled, remind_15min_before, instructions
+        `SELECT id, tablet_name, dosage, frequency, day_of_week, time_slot, is_enabled, remind_15min_before,
+                reminder_timing, channel_push, channel_whatsapp, channel_email, instructions
          FROM reminder_schedules
          WHERE user_id = $1 AND status = 'Aktif'
          ORDER BY created_at DESC LIMIT 1`,
@@ -135,6 +140,10 @@ export class UserService {
         time: timeSlot,
         isEnabled: sch.is_enabled,
         remind15MinBefore: sch.remind_15min_before,
+        reminderTiming: sch.reminder_timing,
+        channelPush: sch.channel_push,
+        channelWhatsapp: sch.channel_whatsapp,
+        channelEmail: sch.channel_email,
         instructions:
           sch.instructions ||
           'Minum 1 tablet seminggu sekali setelah makan malam atau sebelum tidur.',

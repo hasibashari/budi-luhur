@@ -21,11 +21,7 @@ import { ARTICLE_CATEGORIES } from '@/src/features/education/constants/education
 
 const ARTICLE_CATEGORY_COLORS: Record<string, { bg: string; text: string; border: string }> = {
   'Imunisasi TT': { bg: '#ffd9de', text: '#8c0f39', border: '#ffd9de' },
-  'Kesehatan Pranikah': { bg: '#eff4ff', text: '#1d4ed8', border: '#dee9fc' },
-  'Nutrisi & Anemia': { bg: '#fef3c7', text: '#b45309', border: '#fde68a' },
-  'Persiapan Kehamilan': { bg: '#aff1d0', text: '#0a5139', border: '#6ee7b7' },
-  'Mitos & Fakta TT': { bg: '#fce7f3', text: '#9d174d', border: '#fbcfe8' },
-  'Skrining Laboratorium': { bg: '#e0e7ff', text: '#4338ca', border: '#c7d2fe' },
+  Catin: { bg: '#eff4ff', text: '#1d4ed8', border: '#dee9fc' },
   default: { bg: '#f8f9ff', text: '#574144', border: '#dee9fc' },
 };
 

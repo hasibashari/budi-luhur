@@ -36,9 +36,9 @@ export interface TTLevelInfo {
 export const TT_DOSAGE_LEVELS: Record<string, TTLevelInfo> = {
   TT1: {
     level: 'TT1',
-    name: 'Dosis Pertama (Skrining Awal)',
-    interval: 'Saat kontak pertama kali / skrining pranikah',
-    protectionDuration: 'Langkah awal pembentukan antibodi (Belum ada masa proteksi)',
+    name: 'Dosis Pertama',
+    interval: 'Pemberian awal imunisasi',
+    protectionDuration: 'Tahap awal pembentukan kekebalan',
     badgeColor: 'bg-amber-50 text-amber-800 border-amber-200',
     textColor: 'text-amber-700',
     description: 'Menstimulasi sistem imun tubuh untuk mulai memproduksi antibodi terhadap bakteri Clostridium tetani.',
@@ -46,9 +46,9 @@ export const TT_DOSAGE_LEVELS: Record<string, TTLevelInfo> = {
   },
   TT2: {
     level: 'TT2',
-    name: 'Dosis Kedua (Perlindungan 3 Tahun)',
+    name: 'Dosis Kedua',
     interval: 'Minimal 4 minggu setelah TT1',
-    protectionDuration: '3 Tahun Perlindungan',
+    protectionDuration: 'Perlindungan selama 3 tahun',
     badgeColor: 'bg-emerald-50 text-emerald-800 border-emerald-200',
     textColor: 'text-emerald-700',
     description: 'Memberikan proteksi dasar terhadap infeksi tetanus maternal dan tetanus neonatorum pada persalinan.',
@@ -56,9 +56,9 @@ export const TT_DOSAGE_LEVELS: Record<string, TTLevelInfo> = {
   },
   TT3: {
     level: 'TT3',
-    name: 'Dosis Ketiga (Perlindungan 5 Tahun)',
+    name: 'Dosis Ketiga',
     interval: 'Minimal 6 bulan setelah TT2',
-    protectionDuration: '5 Tahun Perlindungan',
+    protectionDuration: 'Perlindungan selama 5 tahun',
     badgeColor: 'bg-teal-50 text-teal-800 border-teal-200',
     textColor: 'text-teal-700',
     description: 'Memperkuat daya tahan tubuh dan memperpanjang masa kekebalan hingga 5 tahun penuh.',
@@ -66,9 +66,9 @@ export const TT_DOSAGE_LEVELS: Record<string, TTLevelInfo> = {
   },
   TT4: {
     level: 'TT4',
-    name: 'Dosis Keempat (Perlindungan 10 Tahun)',
+    name: 'Dosis Keempat',
     interval: 'Minimal 1 tahun setelah TT3',
-    protectionDuration: '10 Tahun Perlindungan',
+    protectionDuration: 'Perlindungan selama 10 tahun',
     badgeColor: 'bg-indigo-50 text-indigo-800 border-indigo-200',
     textColor: 'text-indigo-700',
     description: 'Memberikan perlindungan jangka panjang hingga 10 tahun bagi ibu dan kehamilan berikutnya.',
@@ -76,13 +76,13 @@ export const TT_DOSAGE_LEVELS: Record<string, TTLevelInfo> = {
   },
   TT5: {
     level: 'TT5',
-    name: 'Dosis Kelima (Perlindungan Seumur Hidup)',
+    name: 'Dosis Kelima',
     interval: 'Minimal 1 tahun setelah TT4',
-    protectionDuration: 'Seumur Hidup / >25 Tahun (Status T Lengkap)',
+    protectionDuration: 'Perlindungan lebih dari 25 tahun',
     badgeColor: 'bg-emerald-100 text-emerald-900 border-emerald-300',
     textColor: 'text-emerald-800',
     description: 'Mencapai status T5 Lengkap dengan kekebalan seumur hidup terhadap infeksi tetanus.',
-    kemenkesRecommendation: 'Tingkat perlindungan tertinggi resmi Kementerian Kesehatan RI.',
+    kemenkesRecommendation: 'Mencapai perlindungan lebih dari 25 tahun sesuai standar Kementerian Kesehatan RI.',
   },
 };
 

@@ -316,6 +316,15 @@ export default function DashboardView() {
         </section>
       )}
 
+      {/* Status Kunjungan Hari Ini ditampilkan paling atas agar mudah ditemukan */}
+      <section aria-label="Status Kunjungan Hari Ini">
+        <StatusCard
+          initialStatus={dashboardData?.todayStatus || 'pending'}
+          initialRecordedTime={dashboardData?.todayRecordedTime}
+          onStatusChange={handleStatusChange}
+        />
+      </section>
+
       {/* Main Responsive Grid: Stitch Core Experience on Left / Countdown & Clinical Context on Right */}
       <div className="grid grid-cols-1 md:grid-cols-12 gap-5 sm:gap-6 items-start">
         {/* LEFT COLUMN: Stitch Screen 2 Core Mobile Flow (md:col-span-7 lg:col-span-8) */}
@@ -455,16 +464,7 @@ export default function DashboardView() {
             />
           </section>
 
-          {/* 2. Status Kunjungan Hari Ini Card */}
-          <section aria-label="Status Kunjungan Hari Ini">
-            <StatusCard
-              initialStatus={dashboardData?.todayStatus || 'pending'}
-              initialRecordedTime={dashboardData?.todayRecordedTime}
-              onStatusChange={handleStatusChange}
-            />
-          </section>
-
-          {/* 3. Standar Skrining Catin Kemenkes Box */}
+          {/* 2. Standar Skrining Catin Kemenkes Box */}
           <Card padding="md" className="bg-linear-to-br from-[#aff1d0]/25 to-[#eff4ff] border-[#aff1d0]/40">
             <div className="flex items-center gap-2.5 mb-2">
               <div className="w-8 h-8 rounded-xl bg-[#2a6950] text-white flex items-center justify-center shrink-0 shadow-xs">

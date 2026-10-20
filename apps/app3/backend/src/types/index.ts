@@ -37,6 +37,10 @@ export interface UserScheduleData {
   category?: string;
   isEnabled: boolean;
   remind15MinBefore: boolean;
+  reminderTiming: string;
+  channelPush: boolean;
+  channelWhatsapp: boolean;
+  channelEmail: boolean;
   nextDate: string;
   daysRemaining: number;
   instructions: string;

@@ -55,11 +55,7 @@ export interface MedicationSchedule {
 
 export type ArticleCategory =
   | 'Imunisasi TT'
-  | 'Kesehatan Pranikah'
-  | 'Nutrisi & Anemia'
-  | 'Persiapan Kehamilan'
-  | 'Mitos & Fakta TT'
-  | 'Skrining Laboratorium';
+  | 'Catin';
 
 export interface HealthArticle {
   id: string;
