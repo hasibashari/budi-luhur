@@ -1,93 +1,89 @@
 'use client';
 
-import React from 'react';
+import {
+  Area,
+  AreaChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts';
 import { Card } from '../ui/Card';
 
-export interface MonthlyTrendItem {
-  month: string;
-  count: number;
-  target: number;
+export interface ConsumptionTrendItem {
+  label: string;
+  completed: number;
+  scheduled: number;
+  completionRate: number;
 }
 
 export interface ConsumptionChartProps {
-  data: MonthlyTrendItem[];
-  totalCount?: number;
-  compliancePercent?: number;
+  data: ConsumptionTrendItem[];
+  totalCount: number;
+  compliancePercent: number;
+  loading?: boolean;
 }
 
 export function ConsumptionChart({
   data,
-  totalCount = 4,
-  compliancePercent = 95,
+  totalCount,
+  compliancePercent,
+  loading = false,
 }: ConsumptionChartProps) {
-  const maxTarget = 4;
-
   return (
     <Card padding='md' className='w-full'>
-      <div className='flex items-center justify-between mb-4'>
-        <div>
-          <h4 className='text-sm sm:text-base font-bold text-[#1e293b]'>Grafik Konsumsi TTD</h4>
-          <p className='text-xs text-[#64748b]'>Histori kepatuhan 6 bulan terakhir</p>
-        </div>
-        <span className='text-xs font-bold text-[#e11d48] bg-[#ffe4e6] px-2.5 py-1 rounded-full'>
-          Target: 4x / bln
-        </span>
+      <div className='mb-4'>
+        <h4 className='text-sm sm:text-base font-bold text-[#1e293b]'>Grafik Konsumsi TTD</h4>
+        <p className='text-xs text-[#64748b]'>Kepatuhan berdasarkan catatan konsumsi aktual</p>
       </div>
-
-      {/* Chart Visual Area */}
-      <div className='relative pt-6 pb-2'>
-        {/* Dashed Target Line */}
-        <div className='absolute top-6 left-0 right-0 border-b border-dashed border-rose-300 flex justify-end'>
-          <span className='text-[10px] text-rose-500 font-bold bg-white/90 px-1 -mt-2'>
-            Target 100%
-          </span>
+      {loading ? (
+        <div className='h-56 animate-pulse rounded-xl bg-slate-100' />
+      ) : data.length === 0 ? (
+        <div className='h-56 flex items-center justify-center rounded-xl border border-dashed border-slate-200 text-sm text-slate-500'>
+          Belum ada data konsumsi untuk ditampilkan.
         </div>
-
-        {/* Vertical Bars Grid */}
-        <div className='grid grid-cols-6 gap-2 sm:gap-3 items-end h-36 pt-4'>
-          {data.map((item, idx) => {
-            const heightPercent = Math.min(100, Math.round((item.count / maxTarget) * 100));
-            const isFull = item.count >= item.target;
-
-            return (
-              <div key={item.month} className='flex flex-col items-center h-full justify-end group'>
-                <span className='text-[11px] font-bold text-[#1e293b] mb-1 opacity-0 group-hover:opacity-100 transition-opacity'>
-                  {item.count}x
-                </span>
-
-                <div className='w-full max-w-[32px] bg-rose-100 rounded-t-lg h-28 relative flex items-end overflow-hidden'>
-                  <div
-                    style={{ height: `${heightPercent}%` }}
-                    className={`w-full rounded-t-lg transition-all duration-500 ${
-                      isFull
-                        ? 'bg-gradient-to-t from-rose-600 to-rose-400'
-                        : 'bg-gradient-to-t from-rose-500 to-rose-300'
-                    }`}
-                  />
-                </div>
-
-                <span
-                  className={`text-xs mt-2 font-semibold ${
-                    idx === data.length - 1 ? 'text-[#e11d48] font-bold' : 'text-[#64748b]'
-                  }`}
-                >
-                  {item.month}
-                </span>
-              </div>
-            );
-          })}
+      ) : (
+        <div className='h-56 w-full'>
+          <ResponsiveContainer width='100%' height='100%'>
+            <AreaChart data={data} margin={{ top: 8, right: 8, left: -20, bottom: 0 }}>
+              <defs>
+                <linearGradient id='consumption-fill' x1='0' y1='0' x2='0' y2='1'>
+                  <stop offset='5%' stopColor='#e11d48' stopOpacity={0.3} />
+                  <stop offset='95%' stopColor='#e11d48' stopOpacity={0.03} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray='3 3' stroke='#fce7f3' />
+              <XAxis dataKey='label' tick={{ fontSize: 10, fill: '#64748b' }} />
+              <YAxis domain={[0, 100]} tickFormatter={value => `${value}%`} tick={{ fontSize: 10, fill: '#64748b' }} />
+              <Tooltip
+                formatter={value => {
+                  const numericValue = Array.isArray(value) ? Number(value[0] ?? 0) : Number(value ?? 0);
+                  return [`${Number.isFinite(numericValue) ? numericValue : 0}%`, 'Kepatuhan'];
+                }}
+                labelFormatter={label => `Tanggal ${label}`}
+                contentStyle={{ borderRadius: 12, borderColor: '#fce7f3', fontSize: 12 }}
+              />
+              <Area
+                type='monotone'
+                dataKey='completionRate'
+                name='Kepatuhan'
+                stroke='#e11d48'
+                strokeWidth={2}
+                fill='url(#consumption-fill)'
+                connectNulls
+              />
+            </AreaChart>
+          </ResponsiveContainer>
         </div>
-      </div>
-
-      {/* Summary Metrics 2-column */}
+      )}
       <div className='grid grid-cols-2 gap-2.5 mt-4 pt-3 border-t border-[#fce7f3]'>
         <div className='bg-[#fff5f7] rounded-xl p-2.5 text-center'>
-          <span className='text-[11px] font-medium text-[#64748b] block'>Total Bulan Ini</span>
+          <span className='text-[11px] font-medium text-[#64748b] block'>Total Selesai</span>
           <span className='text-base font-bold text-[#1e293b]'>{totalCount} Kali</span>
         </div>
-
         <div className='bg-[#fff5f7] rounded-xl p-2.5 text-center'>
-          <span className='text-[11px] font-medium text-[#64748b] block'>Kepatuhan Rata-rata</span>
+          <span className='text-[11px] font-medium text-[#64748b] block'>Kepatuhan</span>
           <span className='text-base font-bold text-[#10b981]'>{compliancePercent}%</span>
         </div>
       </div>

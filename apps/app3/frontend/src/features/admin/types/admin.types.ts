@@ -53,9 +53,7 @@ export interface MedicationSchedule {
   todayStatus?: 'COMPLETED' | 'PENDING' | 'NOT_YET_TIME' | 'OFF_SCHEDULE' | 'MISSED';
 }
 
-export type ArticleCategory =
-  | 'Imunisasi TT'
-  | 'Catin';
+export type ArticleCategory = string;
 
 export interface HealthArticle {
   id: string;

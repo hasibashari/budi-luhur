@@ -56,8 +56,8 @@ export default function ProfileView() {
       authUser?.avatarUrl ||
       'https://lh3.googleusercontent.com/aida-public/AB6AXuASU_mx41_tQVZO5PJK8thoHAwg3EmqwdxbO-1uCsQclTg_oEdDtDcxQuSaWht_p65HC5c5kde9C2nZpa5w4RoOWtfB8j6IBXY1Y3JTrsJbWMyIwws6S2_8klGCwNO8mlArvkBjH-4FJ4UvXAfKfmeJ-ochtXIDet-V_65nWx4HVXv7J8epJll0bVr_mTDwMjS8SL8J6NAgDhASn9IuTtfuwNsZPkmLO7lgdSO4QmsRHaNL5eocv7mh',
     streakCount: authUser?.streakCount || 0,
-    hbLevel: authUser?.hbLevel || 12.8,
-    schoolOrOrg: authUser?.schoolOrOrg || 'Puskesmas Kebayoran',
+    hbLevel: authUser?.hbLevel || null,
+    schoolOrOrg: authUser?.schoolOrOrg || null,
     riskLevel: null,
     notes: null,
   });

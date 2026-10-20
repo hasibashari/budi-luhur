@@ -13,7 +13,7 @@ export const ARTICLE_CATEGORIES = [
   'Kesehatan Reproduksi',
 ] as const;
 
-export type ArticleCategory = (typeof ARTICLE_CATEGORIES)[number];
+export type ArticleCategory = string;
 
 export const DEFAULT_CATEGORY_IMAGES: Record<string, string> = {
   'Kontrasepsi & Pil KB':

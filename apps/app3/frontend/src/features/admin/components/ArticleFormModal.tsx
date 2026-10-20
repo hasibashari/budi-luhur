@@ -212,21 +212,18 @@ export default function ArticleFormModal({
       <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
         <div>
           <label className='block text-xs font-bold text-[#121c2a] mb-1'>Kategori Edukasi</label>
-          <select
+          <input
+            list='article-category-options'
             value={formData.category}
-            onChange={e =>
-              updateFormData({
-                category: e.target.value as ArticleFormData['category'],
-              })
-            }
+            onChange={e => updateFormData({ category: e.target.value })}
+            placeholder='Pilih atau ketik kategori baru'
             className='w-full px-3.5 py-2.5 rounded-xl border border-[#dee9fc] bg-white text-base sm:text-sm text-[#121c2a] focus:outline-none focus:ring-2 focus:ring-[#ffd9de] focus:border-[#aa294d] transition-all cursor-pointer'
-          >
+          />
+          <datalist id='article-category-options'>
             {ARTICLE_CATEGORIES.filter(c => c !== 'Semua').map(cat => (
-              <option key={cat} value={cat}>
-                {cat}
-              </option>
+              <option key={cat} value={cat} />
             ))}
-          </select>
+          </datalist>
         </div>
         <div>
           <label className='block text-xs font-bold text-[#121c2a] mb-1'>
@@ -242,16 +239,6 @@ export default function ArticleFormModal({
       </div>
 
       <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
-        <div>
-          <label className='block text-xs font-bold text-[#121c2a] mb-1'>Estimasi Waktu Baca</label>
-          <input
-            type='text'
-            placeholder='3 min read'
-            value={formData.readTime}
-            onChange={e => updateFormData({ readTime: e.target.value })}
-            className='w-full px-3.5 py-2.5 rounded-xl border border-[#dee9fc] bg-white text-base sm:text-sm text-[#121c2a] focus:outline-none focus:ring-2 focus:ring-[#ffd9de] focus:border-[#aa294d] transition-all'
-          />
-        </div>
         <div>
           <label className='block text-xs font-bold text-[#121c2a] mb-1'>Status Publikasi</label>
           <select

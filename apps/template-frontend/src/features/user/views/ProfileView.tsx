@@ -297,33 +297,43 @@ export default function ProfileView() {
     {
       id: 'risk',
       label: 'Status Risiko Anemia',
-      value: userProfile.riskLevel || 'Rendah',
-      subtitle: 'Berdasarkan evaluasi UKS',
+      value: userProfile.riskLevel || 'Belum Dinilai',
+      subtitle: userProfile.riskLevel
+        ? 'Berdasarkan hasil pemeriksaan terakhir'
+        : 'Isi kadar Hb untuk mendapatkan penilaian',
       icon: HeartPulse,
       iconBgColor:
         userProfile.riskLevel === 'Tinggi'
           ? 'bg-rose-100'
           : userProfile.riskLevel === 'Sedang'
             ? 'bg-amber-100'
-            : 'bg-emerald-100',
+            : userProfile.riskLevel
+              ? 'bg-emerald-100'
+              : 'bg-slate-100',
       iconColor:
         userProfile.riskLevel === 'Tinggi'
           ? 'text-rose-600'
           : userProfile.riskLevel === 'Sedang'
             ? 'text-amber-600'
-            : 'text-emerald-600',
+            : userProfile.riskLevel
+              ? 'text-emerald-600'
+              : 'text-slate-600',
       badgeText:
         userProfile.riskLevel === 'Tinggi'
           ? 'Perhatian'
           : userProfile.riskLevel === 'Sedang'
             ? 'Waspada'
-            : 'Aman',
+            : userProfile.riskLevel
+              ? 'Aman'
+              : 'Belum Dinilai',
       badgeColor:
         userProfile.riskLevel === 'Tinggi'
           ? 'bg-rose-100 text-rose-700'
           : userProfile.riskLevel === 'Sedang'
             ? 'bg-amber-100 text-amber-700'
-            : 'bg-emerald-100 text-emerald-700',
+            : userProfile.riskLevel
+              ? 'bg-emerald-100 text-emerald-700'
+              : 'bg-slate-100 text-slate-600',
     },
   ];
 

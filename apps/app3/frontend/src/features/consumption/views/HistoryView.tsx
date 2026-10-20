@@ -39,7 +39,7 @@ export default function HistoryView() {
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   // Hook for existing backend sync
-  const { dashboardData, loading, stats } = useMonitoringData(userId);
+  const { dashboardData, loading, stats, allLogs } = useMonitoringData(userId);
 
   // Extract TT Level from notes or default 3
   const notesStr = (dashboardData?.user as any)?.notes || '';
@@ -579,6 +579,7 @@ export default function HistoryView() {
             streakUnit={dashboardData?.user.streakUnit || 'Minggu'}
             hbLevel={dashboardData?.user.hbLevel}
             riskLevel={dashboardData?.user.riskLevel}
+            logs={allLogs}
           />
         </div>
       </div>

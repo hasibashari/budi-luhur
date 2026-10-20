@@ -36,6 +36,11 @@ const initialArticleFormData: ArticleFormData = {
   imageUrl: '',
 };
 
+const getAutomaticReadTime = (content: string, summary: string) => {
+  const characterCount = (content.trim() || summary.trim()).length;
+  return `${Math.max(1, Math.ceil(characterCount / 1000))} min read`;
+};
+
 export default function ArticleManagementView() {
   const navigate = useNavigate();
   const [articles, setArticles] = useState<HealthArticle[]>([]);
@@ -77,14 +82,8 @@ export default function ArticleManagementView() {
   }, []);
 
   useEffect(() => {
-    let isMounted = true;
-    getAdminArticlesAction().then(data => {
-      if (isMounted) setArticles(data);
-    });
-    return () => {
-      isMounted = false;
-    };
-  }, []);
+    void loadData();
+  }, [loadData]);
 
   const filteredArticles = articles.filter(a => {
     const matchesSearch =
@@ -127,7 +126,7 @@ export default function ArticleManagementView() {
           author: formData.author,
           summary: formData.summary,
           content: formData.content,
-          readTime: formData.readTime,
+          readTime: getAutomaticReadTime(formData.content, formData.summary),
           status: formData.status,
           imageUrl: formData.imageUrl,
         });
@@ -148,7 +147,7 @@ export default function ArticleManagementView() {
             formData.summary ||
             'Ringkasan materi edukasi kesehatan pranikah dan imunisasi TT calon pengantin.',
           content: formData.content,
-          readTime: formData.readTime,
+          readTime: getAutomaticReadTime(formData.content, formData.summary),
           status: formData.status,
           imageUrl: formData.imageUrl,
         });

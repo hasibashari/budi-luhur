@@ -187,7 +187,7 @@ CREATE TABLE buddy_cheers (
 CREATE TABLE articles (
     id VARCHAR(255) PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
-    category VARCHAR(100) NOT NULL CHECK(category IN ('Anemia', 'TTD', 'Nutrisi', 'Gaya Hidup', 'Mitos & Fakta', 'Mitos', 'Anemia & TTD', 'Nutrisi & Gizi', 'Kesehatan Remaja', 'Tips Menstruasi')),
+    category VARCHAR(100) NOT NULL,
     summary TEXT NOT NULL,
     lead_paragraph TEXT,
     image_url TEXT NOT NULL,

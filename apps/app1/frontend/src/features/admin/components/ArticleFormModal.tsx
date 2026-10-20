@@ -169,7 +169,6 @@ export default function ArticleFormModal({
         </div>
       </div>
 
-      {/* AI Assistant Generator Banner */}
       <div className='p-4 rounded-2xl border border-rose-200 bg-rose-50/70 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3'>
         <div className='flex items-center gap-3'>
           <div className='w-9 h-9 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center shrink-0'>
@@ -211,21 +210,18 @@ export default function ArticleFormModal({
       <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
         <div>
           <label className='block text-xs font-bold text-slate-700 mb-1'>Kategori</label>
-          <select
+          <input
+            list='article-category-options'
             value={formData.category}
-            onChange={e =>
-              updateFormData({
-                category: e.target.value as ArticleFormData['category'],
-              })
-            }
+            onChange={e => updateFormData({ category: e.target.value })}
+            placeholder='Pilih atau ketik kategori baru'
             className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-400 focus:border-transparent transition-all'
-          >
+          />
+          <datalist id='article-category-options'>
             {ARTICLE_CATEGORIES.filter(c => c !== 'Semua').map(cat => (
-              <option key={cat} value={cat}>
-                {cat}
-              </option>
+              <option key={cat} value={cat} />
             ))}
-          </select>
+          </datalist>
         </div>
         <div>
           <label className='block text-xs font-bold text-slate-700 mb-1'>
@@ -241,17 +237,6 @@ export default function ArticleFormModal({
       </div>
 
       <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
-        <div>
-          <label className='block text-xs font-bold text-slate-700 mb-1'>
-            Waktu Baca (misal: 3 min read)
-          </label>
-          <input
-            type='text'
-            value={formData.readTime}
-            onChange={e => updateFormData({ readTime: e.target.value })}
-            className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-400 focus:border-transparent transition-all'
-          />
-        </div>
         <div>
           <label className='block text-xs font-bold text-slate-700 mb-1'>Status Publikasi</label>
           <select

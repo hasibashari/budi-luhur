@@ -296,8 +296,8 @@ export class UserService {
 
         // Auto evaluate hb_status and risk_level
         const hb = Number(data.hbLevel);
-        let hbStatus = 'Normal';
-        let riskLevel = 'Rendah';
+        let hbStatus: string | null = hb > 0 ? 'Normal' : null;
+        let riskLevel: string | null = hb > 0 ? 'Rendah' : null;
         if (hb > 0 && hb < 8.0) {
           hbStatus = 'Anemia Berat';
           riskLevel = 'Tinggi';
@@ -357,8 +357,8 @@ export class UserService {
 
       // 2. Update user profile
       const hb = data.hbLevel ? Number(data.hbLevel) : null;
-      let hbStatus = 'Normal';
-      let riskLevel = 'Rendah';
+      let hbStatus: string | null = hb ? 'Normal' : null;
+      let riskLevel: string | null = hb ? 'Rendah' : null;
       if (hb && hb < 11.0) {
         hbStatus = hb < 8.0 ? 'Anemia Berat' : 'Anemia Sedang';
         riskLevel = 'Tinggi';

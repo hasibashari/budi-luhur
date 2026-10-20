@@ -49,13 +49,7 @@ export interface MedicationSchedule {
   todayStatus?: 'COMPLETED' | 'PENDING' | 'NOT_YET_TIME' | 'OFF_SCHEDULE' | 'MISSED';
 }
 
-export type ArticleCategory =
-  | 'Anemia & TTD'
-  | 'Nutrisi & Gizi'
-  | 'Kesehatan Remaja'
-  | 'Tips Menstruasi'
-  | 'Mitos & Fakta'
-  | 'Gaya Hidup';
+export type ArticleCategory = string;
 
 export interface HealthArticle {
   id: string;

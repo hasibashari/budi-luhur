@@ -10,7 +10,7 @@ export const ARTICLE_CATEGORIES = [
   'Catin',
 ] as const;
 
-export type ArticleCategory = (typeof ARTICLE_CATEGORIES)[number];
+export type ArticleCategory = string;
 export const ARTICLE_CONTENT_CATEGORIES = ['Imunisasi TT', 'Catin'] as const;
 
 export function normalizeArticleCategory(category?: string): string {

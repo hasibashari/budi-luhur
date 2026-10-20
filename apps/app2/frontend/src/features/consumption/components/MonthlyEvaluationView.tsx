@@ -1,10 +1,10 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Flame, CalendarCheck, ShieldCheck, Sparkles } from 'lucide-react';
 import { Card } from '@/src/shared/components/ui/Card';
 import { ConsumptionChart } from '@/src/shared/components/domain/ConsumptionChart';
-import { ConsumptionStats } from '../types';
+import { ConsumptionLog, ConsumptionStats } from '../types';
 
 export interface MonthlyEvaluationViewProps {
   stats: ConsumptionStats | null;
@@ -12,6 +12,22 @@ export interface MonthlyEvaluationViewProps {
   streakUnit: string;
   hbLevel?: number | null;
   riskLevel?: string | null;
+  logs: ConsumptionLog[];
+}
+
+function buildTrend(logs: ConsumptionLog[]) {
+  const byDate = new Map<string, { completed: number; scheduled: number }>();
+  logs.forEach(log => {
+    const current = byDate.get(log.scheduledDate) || { completed: 0, scheduled: 0 };
+    current.scheduled += 1;
+    if (log.status === 'ON_TIME' || log.status === 'LATE') current.completed += 1;
+    byDate.set(log.scheduledDate, current);
+  });
+  return [...byDate.entries()].sort(([a], [b]) => a.localeCompare(b)).slice(-14).map(([date, item]) => ({
+    label: date.slice(5),
+    ...item,
+    completionRate: Math.round((item.completed / item.scheduled) * 100),
+  }));
 }
 
 export function MonthlyEvaluationView({
@@ -19,22 +35,13 @@ export function MonthlyEvaluationView({
   streakCount,
   streakUnit,
   riskLevel = 'Rendah',
+  logs,
 }: MonthlyEvaluationViewProps) {
+  const trend = useMemo(() => buildTrend(logs), [logs]);
   return (
     <div className='flex flex-col gap-6 animate-fade-in'>
       {/* Monthly Bar Chart Component */}
-      <ConsumptionChart
-        data={[
-          { month: 'Mei', count: 28, target: 28 },
-          { month: 'Jun', count: 28, target: 28 },
-          { month: 'Jul', count: 26, target: 28 },
-          { month: 'Agt', count: 28, target: 28 },
-          { month: 'Sep', count: 28, target: 28 },
-          { month: 'Okt', count: Math.min(28, stats?.totalCompleted || 28), target: 28 },
-        ]}
-        totalCount={stats?.totalCompleted || 28}
-        compliancePercent={stats?.adherenceRate || 98}
-      />
+      <ConsumptionChart data={trend} totalCount={stats?.totalCompleted || 0} compliancePercent={stats?.adherenceRate || 0} />
 
       {/* 4-Grid Responsive Milestone Metrics */}
       <div className='grid grid-cols-2 md:grid-cols-4 gap-3.5'>

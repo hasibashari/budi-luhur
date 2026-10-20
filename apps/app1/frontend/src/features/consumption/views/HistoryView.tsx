@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { CalendarCheck, Flame, Activity } from 'lucide-react';
+import { Flame } from 'lucide-react';
 import { StreakProgressCard } from '@/src/shared/components/domain/StreakProgressCard';
 import { useAuth } from '@/src/features/auth/context/AuthContext';
 import { useMonitoringData } from '../hooks/useMonitoringData';
@@ -15,14 +15,9 @@ import {
 } from '../components';
 import { getTodayDateString, formatShortDate } from '../utils/dateHelpers';
 
-type MonitoringViewMode = 'timeline' | 'evaluation';
-
 export default function HistoryView() {
   const { user } = useAuth();
   const userId = user?.id || 'usr_1';
-
-  // Navigation mode: Timeline or Evaluation
-  const [viewMode, setViewMode] = useState<MonitoringViewMode>('timeline');
 
   // Filter states
   const todayStr = useMemo(() => getTodayDateString(), []);
@@ -31,15 +26,8 @@ export default function HistoryView() {
   const [statusFilter, setStatusFilter] = useState<StatusFilterOption>('ALL');
 
   // Unified PostgreSQL data fetching & realtime mutations hook
-  const {
-    dashboardData,
-    activityMap,
-    allLogs,
-    stats,
-    loading,
-    isUpdatingDate,
-    updateDateStatus,
-  } = useMonitoringData(userId);
+  const { dashboardData, activityMap, allLogs, stats, loading, isUpdatingDate, updateDateStatus } =
+    useMonitoringData(userId);
 
   // Selected date details and status
   const selectedDateActivity = activityMap[selectedDate];
@@ -128,37 +116,7 @@ export default function HistoryView() {
         showDetailsLink={false}
       />
 
-      {/* 3. View Mode Switcher: Timeline vs Evaluasi Bulanan */}
-      <div className='flex items-center p-1 bg-white rounded-2xl border border-[#fce7f3] shadow-xs max-w-sm'>
-        <button
-          type='button'
-          onClick={() => setViewMode('timeline')}
-          className={`flex-1 py-2 text-xs sm:text-sm font-bold rounded-xl transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
-            viewMode === 'timeline'
-              ? 'bg-[#e11d48] text-white shadow-sm shadow-rose-500/20'
-              : 'text-[#64748b] hover:text-[#e11d48]'
-          }`}
-        >
-          <CalendarCheck size={14} />
-          <span>Riwayat & Filter</span>
-        </button>
-        <button
-          type='button'
-          onClick={() => setViewMode('evaluation')}
-          className={`flex-1 py-2 text-xs sm:text-sm font-bold rounded-xl transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
-            viewMode === 'evaluation'
-              ? 'bg-[#e11d48] text-white shadow-sm shadow-rose-500/20'
-              : 'text-[#64748b] hover:text-[#e11d48]'
-          }`}
-        >
-          <Activity size={14} />
-          <span>Grafik Evaluasi</span>
-        </button>
-      </div>
-
-      {/* VIEW MODE 1: TIMELINE WITH DATE FILTER & ACTION CARDS */}
-      {viewMode === 'timeline' && (
-        <div className='flex flex-col gap-5 animate-fade-in'>
+      <div className='flex flex-col gap-5 animate-fade-in'>
           {/* COMPACT FILTER BAR WITH CALENDAR POPOVER */}
           <DateFilterBar
             selectedDate={selectedDate}
@@ -168,6 +126,15 @@ export default function HistoryView() {
             activityMap={activityMap}
             todayStr={todayStr}
             todayStatus={dashboardData?.todayStatus}
+          />
+
+          <MonthlyEvaluationView
+            stats={stats}
+            streakCount={streakCount}
+            streakUnit={streakUnit}
+            hbLevel={dashboardData?.user.hbLevel}
+            riskLevel={dashboardData?.user.riskLevel}
+            logs={allLogs}
           />
 
           {/* ACTIVE DATE QUICK ACTION CARD */}
@@ -191,19 +158,7 @@ export default function HistoryView() {
             statusFilter={statusFilter}
             onStatusFilterChange={setStatusFilter}
           />
-        </div>
-      )}
-
-      {/* VIEW MODE 2: MONTHLY EVALUATION CHART & MILESTONE METRICS */}
-      {viewMode === 'evaluation' && (
-        <MonthlyEvaluationView
-          stats={stats}
-          streakCount={streakCount}
-          streakUnit={streakUnit}
-          hbLevel={dashboardData?.user.hbLevel}
-          riskLevel={dashboardData?.user.riskLevel}
-        />
-      )}
+      </div>
     </div>
   );
 }

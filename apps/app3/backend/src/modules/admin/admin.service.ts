@@ -521,11 +521,10 @@ export class AdminService {
 
     const newId = `art_${Date.now().toString().slice(-4)}`;
     const today = new Date().toISOString().split('T')[0];
-    const finalImageUrl =
-      data.imageUrl?.trim() ||
-      'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=1200&auto=format&fit=crop';
+    const finalImageUrl = data.imageUrl?.trim() || '';
     const finalContent = data.content?.trim() || data.summary;
-    const readTime = data.readTime || '3 min read';
+    const characterCount = finalContent.length;
+    const readTime = `${Math.max(1, Math.ceil(characterCount / 1000))} min read`;
 
     await db.transaction(async (client) => {
       await client.query(
