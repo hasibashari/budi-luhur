@@ -15,6 +15,7 @@ DROP TABLE IF EXISTS buddy_group_messages CASCADE;
 DROP TABLE IF EXISTS buddy_group_members CASCADE;
 DROP TABLE IF EXISTS buddy_groups CASCADE;
 DROP TABLE IF EXISTS consumption_logs CASCADE;
+DROP TABLE IF EXISTS daily_health_logs CASCADE;
 DROP TABLE IF EXISTS schedule_time_slots CASCADE;
 DROP TABLE IF EXISTS reminder_schedules CASCADE;
 DROP TABLE IF EXISTS medication_schedules CASCADE;
@@ -113,6 +114,23 @@ CREATE TABLE consumption_logs (
     notes TEXT,
     taken_by VARCHAR(100) NOT NULL DEFAULT 'Self',
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 6. DAILY HEALTH NOTES
+CREATE TABLE daily_health_logs (
+    id VARCHAR(255) PRIMARY KEY,
+    user_id VARCHAR(255) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    log_date DATE NOT NULL,
+    mood VARCHAR(50) NOT NULL CHECK(mood IN ('sedih', 'murung', 'biasa_saja', 'bahagia')),
+    pain VARCHAR(50) NOT NULL CHECK(pain IN ('tidak_ada', 'ringan', 'sedang', 'berat')),
+    bleeding VARCHAR(50) NOT NULL CHECK(bleeding IN ('haid_normal', 'haid_banyak', 'flek', 'tidak_ada')),
+    side_effects TEXT[] NOT NULL DEFAULT ARRAY['tidak_ada'],
+    weight_status VARCHAR(50) NOT NULL CHECK(weight_status IN ('stabil', 'naik', 'turun')),
+    weight_kg NUMERIC(5, 1),
+    notes TEXT NOT NULL DEFAULT '',
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT uq_daily_health_log_user_date UNIQUE(user_id, log_date)
 );
 
 -- 6. BUDDY STREAK SYSTEM (BUDDY GROUPS, MEMBERS, MESSAGES, CONNECTIONS)

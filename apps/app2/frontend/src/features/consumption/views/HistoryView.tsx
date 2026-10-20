@@ -125,7 +125,6 @@ export default function HistoryView() {
         onSelectDate={setSelectedDate}
         todayStr={todayStr}
         todayStatus={dashboardData?.todayStatus}
-        currentStreak={streakCount}
       />
 
       {/* 3. View Mode Switcher: Timeline vs Evaluasi Bulanan */}

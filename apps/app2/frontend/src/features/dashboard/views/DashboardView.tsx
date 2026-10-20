@@ -16,7 +16,6 @@ import {
 import { DailyPrescriptionHeroCard } from '@/src/shared/components/domain/DailyPrescriptionHeroCard';
 import { ActiveBlisterStripWidget } from '@/src/shared/components/domain/ActiveBlisterStripWidget';
 import { QuickAction } from '@/src/shared/components/domain/QuickAction';
-import { SymptomHealthCard } from '@/src/shared/components/domain/SymptomHealthCard';
 import { Card } from '@/src/shared/components/ui/Card';
 import { Button } from '@/src/shared/components/ui/Button';
 import { useAuth } from '@/src/features/auth/context/AuthContext';
@@ -439,11 +438,6 @@ export default function DashboardView() {
           {/* Desktop Quick Menu */}
           <section aria-label='Menu Cepat Navigasi' className='hidden md:block'>
             <QuickAction />
-          </section>
-
-          {/* Symptom & Side Effect Health Tracker (Replaces UKS BuddyCard) */}
-          <section aria-label='Pelacak Gejala dan Efek Samping'>
-            <SymptomHealthCard />
           </section>
 
           {/* Motivation & Level Milestone Widget */}

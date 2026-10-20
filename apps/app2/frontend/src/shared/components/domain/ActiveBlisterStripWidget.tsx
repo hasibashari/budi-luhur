@@ -1,5 +1,5 @@
-import React from 'react';
-import { CalendarDays, Check, Clock, AlertCircle, Info } from 'lucide-react';
+import React, { useMemo } from 'react';
+import { CalendarDays, Check, Clock, Info } from 'lucide-react';
 import { Card } from '@/src/shared/components/ui/Card';
 import { Badge } from '@/src/shared/components/ui/Badge';
 
@@ -7,151 +7,141 @@ interface ActiveBlisterStripWidgetProps {
   streakCount: number;
   todayStatus: 'recorded' | 'missed' | 'pending';
   consecutiveDates?: string[];
-  currentPillDay?: number; // 1 to 28
 }
+
+const getLocalDateString = (date: Date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
 
 export const ActiveBlisterStripWidget: React.FC<ActiveBlisterStripWidgetProps> = ({
   streakCount,
   todayStatus,
-  currentPillDay: initialPillDay,
+  consecutiveDates = [],
 }) => {
-  // Hitung nomor butir pil aktif dalam siklus kemasan 28 butir
-  // Default: hitung dari streak atau hari ini (modulo 28)
-  const currentPillDay = initialPillDay || ((streakCount % 28) === 0 && streakCount > 0 ? 28 : (streakCount % 28) || 1);
-  const isPlaceboWeek = currentPillDay > 21;
+  const today = useMemo(() => new Date(), []);
+  const todayStr = getLocalDateString(today);
+  const weekStart = useMemo(() => {
+    const date = new Date(today);
+    const day = date.getDay();
+    date.setDate(date.getDate() - (day === 0 ? 6 : day - 1));
+    date.setHours(0, 0, 0, 0);
+    return date;
+  }, [today]);
 
-  // Nama-nama hari untuk strip 7 hari berjalan
-  const dayNames = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'];
-  
-  // Tentukan jendela 7 hari (minggu saat ini di blister)
-  const currentWeekIndex = Math.floor((currentPillDay - 1) / 7); // 0, 1, 2, atau 3
-  const startDayOfWeek = currentWeekIndex * 7 + 1;
+  const weekDates = useMemo(
+    () =>
+      Array.from({ length: 7 }, (_, index) => {
+        const date = new Date(weekStart);
+        date.setDate(weekStart.getDate() + index);
+        const dateStr = getLocalDateString(date);
+        const isToday = dateStr === todayStr;
+        const isRecorded = isToday
+          ? todayStatus === 'recorded'
+          : consecutiveDates.includes(dateStr);
 
-  const currentWeekPills = Array.from({ length: 7 }, (_, i) => {
-    const pillNum = startDayOfWeek + i;
-    const isPlacebo = pillNum > 21;
-    const isToday = pillNum === currentPillDay;
-    const isPast = pillNum < currentPillDay;
-    const isFuture = pillNum > currentPillDay;
-
-    let status: 'taken' | 'today-pending' | 'today-taken' | 'missed' | 'upcoming' = 'upcoming';
-    if (isPast) {
-      status = 'taken';
-    } else if (isToday) {
-      status = todayStatus === 'recorded' ? 'today-taken' : todayStatus === 'missed' ? 'missed' : 'today-pending';
-    } else {
-      status = 'upcoming';
-    }
-
-    return {
-      dayName: dayNames[i],
-      pillNum,
-      isPlacebo,
-      isToday,
-      status,
-    };
-  });
+        return {
+          dateStr,
+          dayNumber: date.getDate(),
+          dayName: date.toLocaleDateString('id-ID', { weekday: 'short' }),
+          isToday,
+          isRecorded,
+          isMissed: isToday && todayStatus === 'missed',
+          isFuture: dateStr > todayStr,
+        };
+      }),
+    [consecutiveDates, todayStr, todayStatus, weekStart],
+  );
 
   return (
-    <Card padding="md" className="border border-slate-200/80 shadow-xs bg-white">
-      {/* Header Widget */}
-      <div className="flex items-center justify-between gap-3 mb-4">
-        <div className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center shrink-0 border border-teal-100">
+    <Card padding='md' className='border border-slate-200/80 bg-white shadow-xs'>
+      <div className='mb-4 flex items-center justify-between gap-3'>
+        <div className='flex items-center gap-2.5'>
+          <div className='flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-teal-100 bg-teal-50 text-teal-600'>
             <CalendarDays size={18} strokeWidth={1.75} />
           </div>
           <div>
-            <div className="flex items-center gap-2">
-              <h3 className="text-sm font-bold text-slate-800 tracking-tight">
-                Strip Kemasan Aktif (Minggu ke-{currentWeekIndex + 1})
+            <div className='flex items-center gap-2'>
+              <h3 className='text-sm font-bold tracking-tight text-slate-800'>
+                Kalender Minggu Ini
               </h3>
-              {isPlaceboWeek ? (
-                <Badge variant="placebo" size="sm">Fase Plasebo</Badge>
-              ) : (
-                <Badge variant="protected" size="sm">Fase Aktif</Badge>
-              )}
+              <Badge variant='protected' size='sm'>
+                {streakCount} Hari Konsisten
+              </Badge>
             </div>
-            <p className="text-xs text-slate-500 mt-0.5">
-              Butir ke-{currentPillDay} dari total 28 butir kemasan blister
+            <p className='mt-0.5 text-xs text-slate-500'>
+              Pantau tanggal konsumsi pil pada minggu berjalan
             </p>
           </div>
         </div>
 
-        <div className="hidden sm:flex items-center gap-1.5 text-xs text-slate-600 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200">
-          <Clock size={13} className="text-teal-600" />
-          <span className="font-semibold text-slate-700">Rutinitas: 20:00 WIB</span>
+        <div className='hidden items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs text-slate-600 sm:flex'>
+          <Clock size={13} className='text-teal-600' />
+          <span className='font-semibold text-slate-700'>Rutinitas: 20:00 WIB</span>
         </div>
       </div>
 
-      {/* Visual Strip 7 Butir */}
-      <div className="grid grid-cols-7 gap-1.5 sm:gap-2.5 py-2">
-        {currentWeekPills.map((pill) => {
-          let pillBg = 'bg-slate-100 text-slate-400 border-slate-200';
-          let statusIcon = null;
-
-          if (pill.status === 'taken' || pill.status === 'today-taken') {
-            pillBg = pill.isPlacebo 
-              ? 'bg-slate-200 text-slate-700 border-slate-300' 
-              : 'bg-teal-600 text-white border-teal-600 shadow-xs shadow-teal-600/30';
-            statusIcon = <Check size={12} strokeWidth={3} />;
-          } else if (pill.status === 'today-pending') {
-            pillBg = 'bg-orange-50 text-orange-600 border-2 border-orange-500 animate-pulse';
-            statusIcon = <span className="w-1.5 h-1.5 rounded-full bg-orange-500" />;
-          } else if (pill.status === 'missed') {
-            pillBg = 'bg-red-50 text-red-600 border-red-300';
-            statusIcon = <AlertCircle size={12} />;
-          } else {
-            // upcoming
-            pillBg = pill.isPlacebo 
-              ? 'bg-slate-50 text-slate-400 border-dashed border-slate-300' 
-              : 'bg-teal-50/60 text-teal-700 border-teal-200/70';
-          }
-
-          return (
-            <div
-              key={pill.pillNum}
-              className={`flex flex-col items-center justify-between p-2 rounded-xl border transition-all ${
-                pill.isToday ? 'ring-2 ring-teal-500/20 bg-teal-50/20' : ''
+      <div className='grid grid-cols-7 gap-1.5 sm:gap-2.5'>
+        {weekDates.map(date => (
+          <div
+            key={date.dateStr}
+            className={`flex min-h-16 flex-col items-center justify-center gap-1 rounded-xl border p-1.5 transition-all sm:min-h-20 ${
+              date.isToday ? 'ring-2 ring-orange-400 ring-offset-1' : ''
+            } ${
+              date.isRecorded
+                ? 'border-teal-600 bg-teal-600 text-white shadow-xs shadow-teal-600/25'
+                : date.isMissed
+                  ? 'border-rose-300 bg-rose-100 text-rose-700'
+                  : date.isFuture
+                    ? 'border-slate-200 bg-slate-50 text-slate-400'
+                    : 'border-slate-200 bg-white text-slate-700'
+            }`}
+          >
+            <span
+              className={`text-[10px] font-bold uppercase ${
+                date.isToday
+                  ? date.isRecorded
+                    ? 'text-teal-100'
+                    : 'text-orange-600'
+                  : date.isRecorded
+                    ? 'text-teal-100'
+                    : 'text-slate-400'
               }`}
             >
-              <span className={`text-[10px] font-bold uppercase tracking-wider mb-1 ${
-                pill.isToday ? 'text-teal-700 font-extrabold' : 'text-slate-400'
-              }`}>
-                {pill.dayName}
-              </span>
-
-              {/* Bentuk Tablet / Pil Fisik */}
-              <div
-                className={`w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center font-bold text-xs border transition-transform ${pillBg}`}
-                title={`Pil ke-${pill.pillNum} (${pill.isPlacebo ? 'Plasebo' : 'Hormon Aktif'})`}
-              >
-                {statusIcon || pill.pillNum}
-              </div>
-
-              <span className="text-[10px] text-slate-500 mt-1 font-medium">
-                P{pill.pillNum}
-              </span>
-            </div>
-          );
-        })}
+              {date.dayName}
+            </span>
+            <span className='text-sm font-extrabold sm:text-base'>{date.dayNumber}</span>
+            <span className='flex h-3.5 items-center justify-center'>
+              {date.isRecorded && <Check size={13} strokeWidth={3} />}
+              {date.isToday && !date.isRecorded && !date.isMissed && (
+                <span className='h-1.5 w-1.5 animate-pulse rounded-full bg-orange-500' />
+              )}
+            </span>
+          </div>
+        ))}
       </div>
 
-      {/* Keterangan & Indikator Medis */}
-      <div className="mt-3.5 pt-3 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
-        <div className="flex items-center gap-3 text-slate-500 text-[11px] flex-wrap">
-          <div className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-teal-600 inline-block" />
-            <span>21 Pil Hormon Aktif</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-slate-300 inline-block" />
-            <span>7 Pil Plasebo (Bebas Hormon)</span>
-          </div>
+      <div className='mt-3.5 flex flex-col justify-between gap-2 border-t border-slate-100 pt-3 text-[11px] sm:flex-row sm:items-center'>
+        <div className='flex flex-wrap items-center gap-3 text-slate-500'>
+          <span className='flex items-center gap-1.5'>
+            <span className='h-2.5 w-2.5 rounded-full bg-teal-600' />
+            Selesai
+          </span>
+          <span className='flex items-center gap-1.5'>
+            <span className='h-2.5 w-2.5 rounded-full bg-rose-300' />
+            Terlewat
+          </span>
+          <span className='flex items-center gap-1.5'>
+            <span className='h-2.5 w-2.5 rounded-full bg-orange-300' />
+            Hari ini
+          </span>
         </div>
 
-        <div className="flex items-center gap-1.5 text-teal-700 font-medium text-[11px] bg-teal-50/70 px-2.5 py-1 rounded-md">
-          <Info size={12} className="shrink-0" />
-          <span>Jangan lewatkan urutan panah blister</span>
+        <div className='flex items-center gap-1.5 rounded-md bg-teal-50/70 px-2.5 py-1 font-medium text-teal-700'>
+          <Info size={12} className='shrink-0' />
+          <span>Tanggal akan berubah warna setelah selesai</span>
         </div>
       </div>
     </Card>

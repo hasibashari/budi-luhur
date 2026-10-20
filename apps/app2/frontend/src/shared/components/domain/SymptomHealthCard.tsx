@@ -1,149 +1,297 @@
-import React, { useState } from 'react';
-import { Activity, Check, HelpCircle, AlertCircle, Sparkles } from 'lucide-react';
+'use client';
+
+import React, { useEffect, useMemo, useState } from 'react';
+import { Calendar as CalendarIcon } from 'lucide-react';
 import { Card } from '@/src/shared/components/ui/Card';
-import { Chip } from '@/src/shared/components/ui/Chip';
-import { Button } from '@/src/shared/components/ui/Button';
+import {
+  DailyHealthLog,
+  MoodType,
+  PainLevel,
+  BleedingType,
+  WeightTrend,
+  SymptomHealthCardProps,
+  ClinicalAdvice,
+  DUMMY_HISTORY,
+  MOOD_OPTIONS,
+  PAIN_OPTIONS,
+  BLEEDING_OPTIONS,
+  SIDE_EFFECT_OPTIONS,
+  getLocalDateString,
+} from './symptom/symptomHealth.types';
+import { SymptomDailyForm } from './symptom/SymptomDailyForm';
+import { SymptomHistoryTab } from './symptom/SymptomHistoryTab';
 
-interface SymptomHealthCardProps {
-  onSaveSymptom?: (symptoms: string[]) => void;
-}
+// Re-export types, constants, and subcomponents for backward compatibility
+export * from './symptom';
 
-const COMMON_SYMPTOMS = [
-  { id: 'none', label: 'Bebas Keluhan / Nyaman', isNormal: true },
-  {
-    id: 'spotting',
-    label: 'Flek / Spotting Ringan',
-    isNormal: true,
-    advice: 'Flek ringan umum terjadi pada 1-3 bulan pertama adaptasi pil KB hormonal.',
-  },
-  {
-    id: 'cramp',
-    label: 'Kram Perut Ringan',
-    isNormal: true,
-    advice: 'Dapat diredakan dengan kompres hangat dan minum air putih yang cukup.',
-  },
-  {
-    id: 'nausea',
-    label: 'Mual Ringan',
-    isNormal: true,
-    advice: 'Konsumsi pil KB setelah makan malam atau menjelang tidur untuk meminimalkan mual.',
-  },
-  {
-    id: 'breast_tenderness',
-    label: 'Nyeri Payudara',
-    isNormal: true,
-    advice: 'Perubahan hormon sementara. Gunakan bra tanpa kawat yang nyaman.',
-  },
-  {
-    id: 'headache',
-    label: 'Pusing / Sakit Kepala',
-    isNormal: false,
-    advice: 'Jika sakit kepala hebat mendadak, segera konsultasikan dengan dokter atau bidan.',
-  },
-  {
-    id: 'mood',
-    label: 'Perubahan Mood',
-    isNormal: true,
-    advice: 'Respon adaptasi fluktuasi hormon alami.',
-  },
-];
+export const SymptomHealthCard: React.FC<SymptomHealthCardProps> = ({
+  initialLogs = DUMMY_HISTORY,
+  onSaveLog,
+}) => {
+  // State Navigasi Tab & Tanggal
+  const [activeTab, setActiveTab] = useState<'harian' | 'riwayat'>('harian');
+  const [selectedDate, setSelectedDate] = useState<string>(() => getLocalDateString(new Date()));
+  const [logs, setLogs] = useState<DailyHealthLog[]>(initialLogs);
+  const [isSavedToast, setIsSavedToast] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
-export const SymptomHealthCard: React.FC<SymptomHealthCardProps> = ({ onSaveSymptom }) => {
-  const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>(['none']);
-  const [isSaved, setIsSaved] = useState(false);
+  // Cari apakah tanggal yang dipilih sudah punya catatan di database/state
+  const existingLog = useMemo(
+    () => logs.find(item => item.logDate === selectedDate),
+    [logs, selectedDate],
+  );
 
-  const toggleSymptom = (id: string) => {
-    setIsSaved(false);
-    if (id === 'none') {
-      setSelectedSymptoms(['none']);
+  useEffect(() => {
+    setLogs(initialLogs);
+  }, [initialLogs]);
+
+  // State Form Harian
+  const [mood, setMood] = useState<MoodType>(existingLog?.mood || 'bahagia');
+  const [pain, setPain] = useState<PainLevel>(existingLog?.pain || 'tidak_ada');
+  const [bleeding, setBleeding] = useState<BleedingType>(existingLog?.bleeding || 'haid_normal');
+  const [sideEffects, setSideEffects] = useState<string[]>(
+    existingLog?.sideEffects || ['tidak_ada'],
+  );
+  const [weightStatus, setWeightStatus] = useState<WeightTrend>(
+    existingLog?.weightStatus || 'stabil',
+  );
+  const [weightKg, setWeightKg] = useState<string>(existingLog?.weightKg || '55');
+  const [notes, setNotes] = useState<string>(existingLog?.notes || '');
+
+  useEffect(() => {
+    if (existingLog) {
+      setMood(existingLog.mood);
+      setPain(existingLog.pain);
+      setBleeding(existingLog.bleeding);
+      setSideEffects(existingLog.sideEffects);
+      setWeightStatus(existingLog.weightStatus);
+      setWeightKg(existingLog.weightKg);
+      setNotes(existingLog.notes);
       return;
     }
 
-    const withoutNone = selectedSymptoms.filter(s => s !== 'none');
-    if (withoutNone.includes(id)) {
-      const updated = withoutNone.filter(s => s !== id);
-      setSelectedSymptoms(updated.length > 0 ? updated : ['none']);
+    setMood('bahagia');
+    setPain('tidak_ada');
+    setBleeding('tidak_ada');
+    setSideEffects(['tidak_ada']);
+    setWeightStatus('stabil');
+    setWeightKg('55');
+    setNotes('');
+  }, [existingLog]);
+
+  // Sinkronisasi ulang form ketika pengguna mengganti tanggal
+  const syncFormWithDate = (newDate: string) => {
+    setSelectedDate(newDate);
+    setIsSavedToast(false);
+    const found = logs.find(item => item.logDate === newDate);
+    if (found) {
+      setMood(found.mood);
+      setPain(found.pain);
+      setBleeding(found.bleeding);
+      setSideEffects(found.sideEffects);
+      setWeightStatus(found.weightStatus);
+      setWeightKg(found.weightKg);
+      setNotes(found.notes);
     } else {
-      setSelectedSymptoms([...withoutNone, id]);
+      setMood('bahagia');
+      setPain('tidak_ada');
+      setBleeding('tidak_ada');
+      setSideEffects(['tidak_ada']);
+      setWeightStatus('stabil');
+      setWeightKg('55');
+      setNotes('');
     }
   };
 
-  const handleSave = () => {
-    setIsSaved(true);
-    if (onSaveSymptom) {
-      onSaveSymptom(selectedSymptoms);
+  // Handler Multi-select Efek Samping
+  const toggleSideEffect = (id: string) => {
+    setIsSavedToast(false);
+    if (id === 'tidak_ada') {
+      setSideEffects(['tidak_ada']);
+      return;
+    }
+    const withoutNone = sideEffects.filter(item => item !== 'tidak_ada');
+    if (withoutNone.includes(id)) {
+      const updated = withoutNone.filter(item => item !== id);
+      setSideEffects(updated.length > 0 ? updated : ['tidak_ada']);
+    } else {
+      setSideEffects([...withoutNone, id]);
     }
   };
 
-  // Cari saran medis jika ada gejala terpilih yang memiliki saran
-  const activeAdvices = COMMON_SYMPTOMS.filter(s => selectedSymptoms.includes(s.id) && s.advice);
+  // Kumpulkan Saran Klinis Bidan secara dinamis berdasarkan input
+  const activeAdvices = useMemo(() => {
+    const list: ClinicalAdvice[] = [];
+
+    const moodObj = MOOD_OPTIONS.find(m => m.id === mood);
+    if (moodObj?.advice) list.push({ category: `Mood (${moodObj.label})`, text: moodObj.advice });
+
+    const painObj = PAIN_OPTIONS.find(p => p.id === pain);
+    if (painObj?.advice) list.push({ category: `Nyeri (${painObj.label})`, text: painObj.advice });
+
+    const bleedObj = BLEEDING_OPTIONS.find(b => b.id === bleeding);
+    if (bleedObj?.advice)
+      list.push({ category: `Pendarahan (${bleedObj.label})`, text: bleedObj.advice });
+
+    SIDE_EFFECT_OPTIONS.forEach(se => {
+      if (sideEffects.includes(se.id) && se.advice) {
+        list.push({ category: `Efek Samping (${se.label})`, text: se.advice });
+      }
+    });
+
+    return list;
+  }, [mood, pain, bleeding, sideEffects]);
+
+  // Handler Simpan Catatan (Upsert ke state & trigger prop onSaveLog)
+  const handleSave = async () => {
+    const timeStr =
+      new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB';
+
+    const newEntry: DailyHealthLog = {
+      id: existingLog?.id || `log-${Date.now()}`,
+      logDate: selectedDate,
+      mood,
+      pain,
+      bleeding,
+      sideEffects,
+      weightStatus,
+      weightKg,
+      notes,
+      updatedAt: timeStr,
+    };
+
+    setIsSaving(true);
+    setSaveError(null);
+    try {
+      await onSaveLog?.(newEntry);
+      setLogs(prev => {
+        const exists = prev.some(item => item.logDate === selectedDate);
+        if (exists) {
+          return prev.map(item => (item.logDate === selectedDate ? newEntry : item));
+        }
+        return [newEntry, ...prev].sort((a, b) => b.logDate.localeCompare(a.logDate));
+      });
+      setIsSavedToast(true);
+    } catch (error) {
+      setSaveError(error instanceof Error ? error.message : 'Gagal menyimpan catatan.');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  // Handler Klik Riwayat untuk Lihat/Edit
+  const handleEditFromHistory = (logDate: string) => {
+    syncFormWithDate(logDate);
+    setActiveTab('harian');
+  };
 
   return (
-    <Card padding='md' className='border border-slate-200/80 shadow-xs bg-white'>
-      <div className='flex items-center justify-between gap-3 mb-3'>
-        <div className='flex items-center gap-2.5'>
-          <div className='w-9 h-9 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center shrink-0 border border-orange-100'>
-            <Activity size={18} strokeWidth={1.75} />
-          </div>
-          <div>
-            <h3 className='text-sm font-bold text-slate-800 tracking-tight'>
-              Kondisi & Efek Samping Hari Ini
-            </h3>
-            <p className='text-xs text-slate-500 mt-0.5'>
-              Pantau respon tubuh terhadap adaptasi hormon pil KB
-            </p>
-          </div>
+    <div className='mx-auto w-full max-w-6xl'>
+      {/* HEADER TITLE */}
+      <div className='flex items-center gap-3 mb-4 px-1'>
+        <div className='flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-white shadow-sm sm:h-11 sm:w-11'>
+          <CalendarIcon className='w-5 h-5 sm:w-6 sm:h-6' />
+        </div>
+        <div>
+          <h2 className='text-lg font-extrabold tracking-tight text-ink sm:text-xl md:text-2xl'>
+            Catatan Harian
+          </h2>
+          <p className='text-xs text-muted sm:text-sm'>
+            Pantau kondisi harian dan riwayat adaptasi tubuh Anda
+          </p>
         </div>
       </div>
 
-      {/* Chip Pilihan Gejala */}
-      <div className='flex flex-wrap gap-1.5 py-1.5'>
-        {COMMON_SYMPTOMS.map(symptom => {
-          const isSelected = selectedSymptoms.includes(symptom.id);
-          return (
-            <Chip
-              key={symptom.id}
-              active={isSelected}
-              size='sm'
-              onClick={() => toggleSymptom(symptom.id)}
+      {/* MAIN CONTAINER CARD */}
+      <Card className='rounded-3xl border border-border bg-surface/95 p-3.5 shadow-sm sm:p-5 md:p-6'>
+        {/* TAB SWITCHER (Harian | Riwayat) */}
+        <div className='mb-4 grid grid-cols-2 rounded-full border border-primary-soft bg-primary-subtle p-1'>
+          <button
+            type='button'
+            onClick={() => setActiveTab('harian')}
+            className={`py-2 sm:py-2.5 text-xs sm:text-sm font-bold rounded-full transition-all cursor-pointer ${
+              activeTab === 'harian'
+                ? 'bg-primary text-white shadow-xs'
+                : 'text-primary-hover hover:text-primary'
+            }`}
+          >
+            Harian
+          </button>
+          <button
+            type='button'
+            onClick={() => setActiveTab('riwayat')}
+            className={`py-2 sm:py-2.5 text-xs sm:text-sm font-bold rounded-full transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+              activeTab === 'riwayat'
+                ? 'bg-primary text-white shadow-xs'
+                : 'text-primary-hover hover:text-primary'
+            }`}
+          >
+            <span>Riwayat</span>
+            <span
+              className={`rounded-full px-1.5 py-0.2 text-[10px] ${
+                activeTab === 'riwayat'
+                  ? 'bg-white/20 text-white'
+                  : 'bg-primary-soft text-primary-hover'
+              }`}
             >
-              {symptom.label}
-            </Chip>
-          );
-        })}
-      </div>
-
-      {/* Feedback Medis Edukatif Singkat */}
-      {activeAdvices.length > 0 && selectedSymptoms[0] !== 'none' && (
-        <div className='mt-3 p-3 bg-teal-50/70 rounded-xl border border-teal-100/80 text-xs text-slate-700 space-y-1.5 animate-fade-in'>
-          <div className='flex items-center gap-1.5 text-teal-800 font-bold'>
-            <Sparkles size={13} className='text-teal-600' />
-            <span>Catatan Klinis Bidan Pilluna</span>
-          </div>
-          {activeAdvices.map(item => (
-            <p key={item.id} className='text-[11px] leading-relaxed text-slate-600'>
-              <strong className='text-teal-900'>{item.label}:</strong> {item.advice}
-            </p>
-          ))}
+              {logs.length}
+            </span>
+          </button>
         </div>
-      )}
 
-      {/* Tombol Simpan & Status Terkirim */}
-      <div className='mt-3.5 pt-3 border-t border-slate-100 flex items-center justify-between'>
-        <span className='text-[11px] text-slate-400'>
-          {isSaved ? 'Catatan tersimpan di jurnal kesehatan' : 'Pilih kondisi Anda hari ini'}
-        </span>
+        {/* TAB 1: HARIAN */}
+        {activeTab === 'harian' && (
+          <SymptomDailyForm
+            selectedDate={selectedDate}
+            onDateChange={syncFormWithDate}
+            mood={mood}
+            onMoodChange={val => {
+              setMood(val);
+              setIsSavedToast(false);
+            }}
+            pain={pain}
+            onPainChange={val => {
+              setPain(val);
+              setIsSavedToast(false);
+            }}
+            bleeding={bleeding}
+            onBleedingChange={val => {
+              setBleeding(val);
+              setIsSavedToast(false);
+            }}
+            sideEffects={sideEffects}
+            onToggleSideEffect={toggleSideEffect}
+            weightStatus={weightStatus}
+            onWeightStatusChange={val => {
+              setWeightStatus(val);
+              setIsSavedToast(false);
+            }}
+            weightKg={weightKg}
+            onWeightKgChange={val => {
+              setWeightKg(val);
+              setIsSavedToast(false);
+            }}
+            notes={notes}
+            onNotesChange={val => {
+              setNotes(val);
+              setIsSavedToast(false);
+            }}
+            activeAdvices={activeAdvices}
+            onSave={handleSave}
+            isSaving={isSaving}
+            isSavedToast={isSavedToast}
+            saveError={saveError}
+          />
+        )}
 
-        <Button
-          variant={isSaved ? 'soft' : 'primary'}
-          size='sm'
-          onClick={handleSave}
-          icon={isSaved ? <Check size={14} className='text-teal-700' /> : undefined}
-          className={isSaved ? 'bg-teal-50 text-teal-700 hover:bg-teal-100' : ''}
-        >
-          {isSaved ? 'Tersimpan' : 'Simpan Gejala'}
-        </Button>
-      </div>
-    </Card>
+        {/* TAB 2: RIWAYAT */}
+        {activeTab === 'riwayat' && (
+          <SymptomHistoryTab logs={logs} onEditLog={handleEditFromHistory} />
+        )}
+      </Card>
+    </div>
   );
 };
+
+export default SymptomHealthCard;

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, CalendarDays, BookOpen, Ribbon, User } from 'lucide-react';
+import { Home, CalendarDays, BookOpen, Ribbon, User, FileText } from 'lucide-react';
 
 export interface BottomNavItem {
   name: string;
@@ -11,6 +11,7 @@ export interface BottomNavItem {
 export const USER_BOTTOM_NAV_ITEMS: BottomNavItem[] = [
   { name: 'Beranda', href: '/user/dashboard', icon: Home },
   { name: 'Monitoring', href: '/user/history', icon: CalendarDays },
+  { name: 'Catatan', href: '/user/notes', icon: FileText },
   { name: 'Edukasi', href: '/user/education', icon: BookOpen },
   { name: 'SADARI', href: '/user/sadari', icon: Ribbon },
   { name: 'Profil', href: '/user/profile', icon: User },
