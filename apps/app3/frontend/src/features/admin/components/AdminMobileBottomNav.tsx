@@ -5,7 +5,7 @@ import { LayoutDashboard, Users, CalendarCheck, BarChart3, FileText } from 'luci
 const ADMIN_BOTTOM_ITEMS = [
   { name: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
   { name: 'Catin', href: '/admin/users', icon: Users },
-  { name: 'Jadwal TT', href: '/admin/schedules', icon: CalendarCheck },
+  { name: 'Jadwal', href: '/admin/schedules', icon: CalendarCheck },
   { name: 'Artikel', href: '/admin/articles', icon: FileText },
   { name: 'Laporan', href: '/admin/reports', icon: BarChart3 },
 ];

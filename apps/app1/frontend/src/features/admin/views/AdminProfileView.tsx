@@ -25,8 +25,8 @@ export default function AdminProfileView() {
 
   // Profile State
   const [profileData, setProfileData] = useState({
-    name: user?.name || 'dr. Sarah Jenkins, Sp.GK',
-    email: user?.email || 'admin@femory.id',
+    name: user?.name || 'SUPER ADMIN',
+    email: user?.email || 'superAdmin@gmail.com',
     phone: user?.phone || '+62 811-2233-4455',
     title: user?.schoolOrOrg || 'Fasilitator Kesehatan UKS',
     department: 'Manajemen Program TTD & Anemia Remaja',

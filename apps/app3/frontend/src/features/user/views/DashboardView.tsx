@@ -49,7 +49,7 @@ export default function DashboardView() {
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  const userId = authUser?.id || 'usr_1';
+  const userId = authUser?.id || '';
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
@@ -154,12 +154,12 @@ export default function DashboardView() {
 
   const currentUser = dashboardData?.user || {
     id: authUser?.id || '',
-    name: authUser?.name || 'Shofa Zulfia Zahra',
+    name: authUser?.name || '',
     streakCount: 0,
     streakUnit: 'Minggu' as const,
     consecutiveDates: [],
     hbLevel: authUser?.hbLevel || null,
-    schoolOrOrg: authUser?.schoolOrOrg || 'Puskesmas Kebayoran',
+    schoolOrOrg: authUser?.schoolOrOrg || '',
     avatarUrl: authUser?.avatarUrl || null,
   };
 
@@ -174,7 +174,7 @@ export default function DashboardView() {
 
   const nextAppointmentDate = dashboardData?.activeSchedule
     ? `${dashboardData.activeSchedule.dayOfWeek}, ${dashboardData.activeSchedule.time}`
-    : '12 Juli 2026';
+    : undefined;
 
   if (loading && !dashboardData) {
     return (
@@ -199,7 +199,7 @@ export default function DashboardView() {
         isOpen={isVaccineCardOpen}
         onClose={() => setIsVaccineCardOpen(false)}
         userName={currentUser.name}
-        faskesName={currentUser.schoolOrOrg || 'Puskesmas Kebayoran'}
+        faskesName={currentUser.schoolOrOrg || ''}
         partnerName={partnerName}
         currentTTLevel={ttLevel}
         records={dashboardData?.immunizationRecords}
@@ -223,7 +223,7 @@ export default function DashboardView() {
               <CheckCircle2 size={14} className="text-[#2a6950]" />
               Faskes Terdaftar:{' '}
               <strong className="text-[#121c2a] font-semibold">
-                {currentUser.schoolOrOrg || 'Puskesmas Kebayoran'}
+                {currentUser.schoolOrOrg || 'Belum dipilih'}
               </strong>
             </span>
           </div>

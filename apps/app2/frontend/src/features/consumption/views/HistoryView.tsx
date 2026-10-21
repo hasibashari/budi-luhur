@@ -17,7 +17,7 @@ import { getTodayDateString, formatShortDate } from '../utils/dateHelpers';
 
 export default function HistoryView() {
   const { user } = useAuth();
-  const userId = user?.id || 'usr_1';
+  const userId = user?.id || '';
 
   // Filter states
   const todayStr = useMemo(() => getTodayDateString(), []);

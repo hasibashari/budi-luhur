@@ -44,7 +44,7 @@ export default function ArticleDetailView({
   const [readProgress, setReadProgress] = useState(35);
 
   const { user } = useAuth();
-  const userId = user?.id || 'usr_1';
+  const userId = user?.id || '';
 
   const showToast = (msg: string) => {
     setToastMessage(msg);

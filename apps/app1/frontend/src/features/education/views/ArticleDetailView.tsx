@@ -37,7 +37,7 @@ export default function ArticleDetailView({
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const { user } = useAuth();
-  const userId = user?.id || 'usr_1';
+  const userId = user?.id || '';
 
   const showToast = (msg: string) => {
     setToastMessage(msg);

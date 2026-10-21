@@ -79,7 +79,7 @@ export default function AdminDashboardView() {
     timeSlot?: string,
   ) => {
     setReminderData({
-      userId: userId || 'usr_1',
+      userId: userId || '',
       userName: name,
       userPhone: phone || '0812-3456-7890',
       medicationName: medicationName || 'Tablet Tambah Darah (TTD)',

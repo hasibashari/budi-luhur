@@ -1,13 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  Mail,
-  Phone,
-  Shield,
-  Building,
-  CheckCircle2,
-  Check,
-} from 'lucide-react';
+import { Mail, Phone, Shield, Building, CheckCircle2, Check } from 'lucide-react';
 import {
   ProfileHeaderCard,
   ProfileContactCard,
@@ -25,8 +18,8 @@ export default function AdminProfileView() {
 
   // Profile State
   const [profileData, setProfileData] = useState({
-    name: user?.name || 'Bdn. Sarah Jenkins, S.Tr.Keb',
-    email: user?.email || 'bidan@pilluna.com',
+    name: user?.name || 'SUPER ADMIN',
+    email: user?.email || 'superAdmin@gmail.com',
     phone: user?.phone || '+62 811-2233-4455',
     title: user?.schoolOrOrg || 'Bidan Koordinator KB & Kespro',
     department: 'Layanan Kontrasepsi & Kesehatan Reproduksi',
@@ -217,7 +210,9 @@ export default function AdminProfileView() {
       {/* 4. Security & Logout */}
       <ProfileSecuritySection
         onLogoutClick={handleConfirmLogout}
-        onChangePasswordClick={() => showToast('Ubah password admin dapat dilakukan via pengaturan master.')}
+        onChangePasswordClick={() =>
+          showToast('Ubah password admin dapat dilakukan via pengaturan master.')
+        }
       />
 
       {/* 5. Edit Modal */}
@@ -230,7 +225,9 @@ export default function AdminProfileView() {
         isSaving={isSaving}
       >
         <div>
-          <label className='block text-xs font-bold text-slate-700 mb-1.5'>Nama Lengkap & Gelar</label>
+          <label className='block text-xs font-bold text-slate-700 mb-1.5'>
+            Nama Lengkap & Gelar
+          </label>
           <input
             type='text'
             value={editForm.name}
@@ -252,7 +249,9 @@ export default function AdminProfileView() {
         </div>
 
         <div>
-          <label className='block text-xs font-bold text-slate-700 mb-1.5'>Nomor Telepon Dinas</label>
+          <label className='block text-xs font-bold text-slate-700 mb-1.5'>
+            Nomor Telepon Dinas
+          </label>
           <input
             type='tel'
             value={editForm.phone}

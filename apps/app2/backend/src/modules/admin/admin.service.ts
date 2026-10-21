@@ -710,7 +710,8 @@ export class AdminService {
     category?: 'TTD Rutin' | 'Terapi Anemia' | 'Suplemen Tambahan';
     instructions?: string;
   }) {
-    const targetUserId = data.userId || data.patientId || 'usr_1';
+    const targetUserId = data.userId || data.patientId;
+    if (!targetUserId) throw new Error('User tujuan wajib dipilih.');
     const newId = `sch_${Date.now().toString().slice(-6)}`;
     const mainSlot = (data.timeSlots && data.timeSlots[0]) || '20:00';
     const dayOfWeek = data.dayOfWeek || 'Sabtu';

@@ -38,7 +38,7 @@ import {
 
 export default function BuddyView() {
   const { user } = useAuth();
-  const userId = user?.id || 'usr_1';
+  const userId = user?.id || '';
 
   // State Management
   const [groups, setGroups] = useState<BuddyGroupItem[]>([]);

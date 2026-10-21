@@ -25,8 +25,8 @@ export default function AdminProfileView() {
 
   // Profile State
   const [profileData, setProfileData] = useState({
-    name: user?.name || 'Bd. Siti Rahmah, S.Tr.Keb',
-    email: user?.email || 'admin@preluna.id',
+    name: user?.name || 'SUPER ADMIN',
+    email: user?.email || 'superAdmin@gmail.com',
     phone: user?.phone || '+62 811-2233-4455',
     title: user?.schoolOrOrg || 'Bidan Koordinator / Petugas KUA Pranikah',
     department: 'Pelayanan Kesehatan Reproduksi & Imunisasi TT Catin',

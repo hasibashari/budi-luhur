@@ -41,7 +41,7 @@ export default function DashboardView() {
   const [activeNudge, setActiveNudge] = useState<AdminNudge | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const userId = authUser?.id || 'usr_1';
+  const userId = authUser?.id || '';
 
   const handleAutoMissed = React.useCallback(async () => {
     if (dashboardData && dashboardData.todayStatus === 'pending') {

@@ -26,7 +26,7 @@ export function InputRiwayatTTModal({
 }: InputRiwayatTTModalProps) {
   const [doseLevel, setDoseLevel] = useState(defaultDose);
   const [vaccineDate, setVaccineDate] = useState(new Date().toISOString().split('T')[0]);
-  const [faskesName, setFaskesName] = useState('Puskesmas Kebayoran, Jakarta Selatan');
+  const [faskesName, setFaskesName] = useState('');
   const [batchNumber, setBatchNumber] = useState('');
   const [notes, setNotes] = useState('');
   const [selectedFile, setSelectedFile] = useState<{ name: string; size: string } | null>(null);
@@ -199,7 +199,7 @@ export function InputRiwayatTTModal({
                 type='text'
                 value={faskesName}
                 onChange={e => setFaskesName(e.target.value)}
-                placeholder='Puskesmas Kebayoran, Jakarta Selatan'
+                placeholder='Nama faskes tempat imunisasi'
                 className='w-full h-11 pl-11 pr-4 rounded-xl bg-stone-50 border border-stone-200 text-[#121c2a] text-xs sm:text-sm shadow-xs focus:outline-none focus:border-[#aa294d] transition-all'
                 required
               />

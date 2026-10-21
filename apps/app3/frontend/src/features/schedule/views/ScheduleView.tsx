@@ -94,7 +94,7 @@ export default function ScheduleView() {
               navigator
                 .share({
                   title: 'Jadwal Suntik TT Pranikah - PRELUNA',
-                  text: 'Jadwal suntik TT4 di Puskesmas Kebayoran Baru (15 Januari 2026).',
+                  text: 'Jadwal imunisasi TT pranikah saya di PRELUNA.',
                   url: window.location.href,
                 })
                 .catch(() => {});

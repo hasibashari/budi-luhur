@@ -18,8 +18,8 @@ export interface QuickActionProps {
 }
 
 export function QuickAction({
-  currentTTLevel = 3,
-  nextScheduleDate = '12 Juli 2026',
+  currentTTLevel = 0,
+  nextScheduleDate,
   onToggleReminder,
 }: QuickActionProps) {
   const [reminderActive, setReminderActive] = useState(true);

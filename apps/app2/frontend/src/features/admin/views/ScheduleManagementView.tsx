@@ -148,15 +148,15 @@ export default function ScheduleManagementView() {
 
   const onOpenAdd = () => {
     handleOpenAdd({
-      userId: users[0]?.id || 'usr_1',
-      patientId: users[0]?.id || 'usr_1',
+      userId: users[0]?.id || '',
+      patientId: users[0]?.id || '',
     });
   };
 
   const onOpenEdit = (schedule: MedicationSchedule) => {
     handleOpenEdit(schedule.id, {
-      userId: schedule.userId || schedule.patientId || 'usr_1',
-      patientId: schedule.userId || schedule.patientId || 'usr_1',
+      userId: schedule.userId || schedule.patientId || '',
+      patientId: schedule.userId || schedule.patientId || '',
       medicationName: schedule.medicationName,
       dosage: schedule.dosage,
       frequency: schedule.frequency === 'Harian' ? 'Harian' : '1x Seminggu',
@@ -184,7 +184,7 @@ export default function ScheduleManagementView() {
     setSubmitting(true);
     const isDaily = formData.frequency === 'Harian';
     const cleanDayOfWeek = isDaily ? 'Setiap Hari' : formData.dayOfWeek || 'Sabtu';
-    const targetUserId = formData.userId || formData.patientId || users[0]?.id || 'usr_1';
+    const targetUserId = formData.userId || formData.patientId || users[0]?.id || '';
 
     try {
       if (editingId) {

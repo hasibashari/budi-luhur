@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { pool } from '../config/database.js';
+import { getDatabasePool, pool } from '../config/database.js';
 import { initializeDatabase } from './init.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -24,6 +24,7 @@ export async function seedDatabase() {
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
+    await client.query(`DELETE FROM users WHERE role <> 'admin'`);
 
     // 1. Users (Role: 'admin' | 'user')
     console.log('  -> Seeding users (2 Roles)...');
@@ -464,12 +465,12 @@ export async function seedDatabase() {
 if (process.argv[1]?.includes('seed.ts') || process.argv[1]?.includes('seed.js')) {
   seedDatabase()
     .then(async () => {
-      await pool.end();
+      await getDatabasePool().end();
       process.exit(0);
     })
     .catch(async error => {
       console.error('Failed to seed:', error);
-      await pool.end();
+      await getDatabasePool().end();
       process.exit(1);
     });
 }

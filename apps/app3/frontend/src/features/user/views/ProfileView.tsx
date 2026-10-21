@@ -53,9 +53,9 @@ export default function ProfileView() {
 
   const [userProfile, setUserProfile] = useState<UserProfileState>({
     id: authUser?.id || '',
-    name: authUser?.name || 'Shofa Zulfia Zahra',
+    name: authUser?.name || '',
     email: authUser?.email || '',
-    phone: authUser?.phone || '081234567890',
+    phone: authUser?.phone || '',
     avatarUrl: authUser?.avatarUrl || '',
     streakCount: authUser?.streakCount || 0,
     hbLevel: authUser?.hbLevel || null,
@@ -77,7 +77,7 @@ export default function ProfileView() {
 
   // Edit fields
   const [editName, setEditName] = useState(userProfile.name);
-  const [editFaskes, setEditFaskes] = useState(userProfile.schoolOrOrg || 'Puskesmas Kebayoran');
+  const [editFaskes, setEditFaskes] = useState(userProfile.schoolOrOrg || '');
   const [editPhone, setEditPhone] = useState(userProfile.phone);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -201,7 +201,7 @@ export default function ProfileView() {
 
   const handleOpenEdit = () => {
     setEditName(userProfile.name);
-    setEditFaskes(userProfile.schoolOrOrg || 'Puskesmas Kebayoran');
+    setEditFaskes(userProfile.schoolOrOrg || '');
     setEditPhone(userProfile.phone);
     setIsEditProfileModalOpen(true);
   };
@@ -275,13 +275,19 @@ export default function ProfileView() {
     {
       id: 'tt_status',
       label: 'Status Imunisasi TT',
-      value: `TT${currentTTLevel} (Aktif)`,
-      subtitle: 'Masa perlindungan s/d 12 Jul 2028',
+      value: currentTTLevel > 0 ? `TT${currentTTLevel}` : 'Belum ada dosis',
+      subtitle:
+        currentTTLevel > 0
+          ? 'Status berdasarkan data imunisasi yang tersimpan'
+          : 'Belum ada perlindungan imunisasi yang tercatat',
       icon: ShieldCheck,
       iconBgColor: 'bg-[#ffd9de] border border-[#ffc2cc]',
       iconColor: 'text-[#aa294d]',
-      badgeText: '95% Efektif',
-      badgeColor: 'bg-[#ffd9de] text-[#8c0f39] border border-[#ffc2cc]',
+      badgeText: currentTTLevel > 0 ? 'Tercatat' : 'Belum ada data',
+      badgeColor:
+        currentTTLevel > 0
+          ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
+          : 'bg-slate-100 text-slate-600 border border-slate-200',
     },
     {
       id: 'certificate',
@@ -311,17 +317,17 @@ export default function ProfileView() {
     {
       icon: Mail,
       label: 'Alamat Email',
-      value: userProfile.email || 'catin.preluna@kemenkes.go.id',
+      value: userProfile.email || 'Belum tersedia',
     },
     {
       icon: Phone,
       label: 'Nomor WhatsApp / HP',
-      value: userProfile.phone || '081234567890',
+      value: userProfile.phone || 'Belum tersedia',
     },
     {
       icon: Building2,
       label: 'Fasilitas Kesehatan / KUA',
-      value: userProfile.schoolOrOrg || 'Puskesmas Kebayoran / KUA Setempat',
+      value: userProfile.schoolOrOrg || 'Belum dipilih',
     },
   ];
 
@@ -351,7 +357,7 @@ export default function ProfileView() {
         avatarUrl={userProfile.avatarUrl}
         roleBadgeText='Calon Pengantin Wanita (Catin)'
         roleBadgeColor='user'
-        subtitle={`${userProfile.schoolOrOrg || 'Puskesmas Kebayoran'} • PRELUNA 💍`}
+        subtitle={`${userProfile.schoolOrOrg || 'Faskes belum dipilih'} • PRELUNA 💍`}
         verified={true}
         verifiedText='Terverifikasi'
         onEditClick={handleOpenEdit}
@@ -374,7 +380,7 @@ export default function ProfileView() {
       />
 
       {/* 4. Faskes Rujukan Terpilih */}
-      <FaskesRujukanCard faskesName={userProfile.schoolOrOrg || 'Puskesmas Kebayoran Baru'} />
+      <FaskesRujukanCard faskesName={userProfile.schoolOrOrg || undefined} />
 
       {/* 5. Notification & Reminder Settings Card (Burgundy Theme) */}
       <ProfileNotificationCard
@@ -402,7 +408,7 @@ export default function ProfileView() {
         isOpen={isCertificateModalOpen}
         onClose={() => setIsCertificateModalOpen(false)}
         userName={userProfile.name}
-        faskesName={userProfile.schoolOrOrg || 'Puskesmas Kebayoran'}
+        faskesName={userProfile.schoolOrOrg || ''}
         partnerName={partnerName}
         currentTTLevel={currentTTLevel}
         records={immunizationRecords}

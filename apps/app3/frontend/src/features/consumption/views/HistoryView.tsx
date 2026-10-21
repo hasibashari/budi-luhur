@@ -26,7 +26,7 @@ import { ImmunizationRecord } from '@/src/features/user/types';
 export default function HistoryView() {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const userId = user?.id || 'usr_1';
+  const userId = user?.id || '';
 
   const [isInputModalOpen, setIsInputModalOpen] = useState(false);
   const [isVaccineCardOpen, setIsVaccineCardOpen] = useState(false);
@@ -42,7 +42,7 @@ export default function HistoryView() {
     Number(dashboardData?.user.ttStatus?.slice(2) || 0),
   );
   const partnerName = dashboardData?.user.partnerName;
-  const faskesName = dashboardData?.user.schoolOrOrg || 'Puskesmas Kebayoran Baru';
+  const faskesName = dashboardData?.user.schoolOrOrg || 'Belum dipilih';
 
   // Dynamic Doses list state
   const [dosesHistory, setDosesHistory] = useState([
@@ -79,7 +79,7 @@ export default function HistoryView() {
     {
       dose: 'TT4',
       title: 'Dosis TT4',
-      faskes: 'Puskesmas Kebayoran Baru',
+      faskes: faskesName,
       date: 'Estimasi: 15 Januari 2026',
       batch: 'Minimal 1 Th setelah TT3',
       status: 'upcoming',
@@ -205,7 +205,7 @@ export default function HistoryView() {
       <VaccineCardModal
         isOpen={isVaccineCardOpen}
         onClose={() => setIsVaccineCardOpen(false)}
-        userName={dashboardData?.user.name || 'Shofa Zulfia Zahra'}
+        userName={dashboardData?.user.name || 'Calon Pengantin'}
         faskesName={faskesName}
         partnerName={partnerName}
         currentTTLevel={currentTTLevel}

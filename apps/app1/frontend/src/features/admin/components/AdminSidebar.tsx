@@ -6,10 +6,10 @@ import { useAuth } from '@/src/features/auth';
 const ADMIN_NAVIGATION_ITEMS: NavItem[] = [
   { name: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
   { name: 'Data Siswi', href: '/admin/users', icon: Users },
-  { name: 'Jadwal & Pengingat', href: '/admin/schedules', icon: Calendar },
-  { name: 'Laporan & Screening', href: '/admin/reports', icon: FileText },
-  { name: 'Artikel Edukasi', href: '/admin/articles', icon: BookOpen },
-  { name: 'Profil Admin', href: '/admin/profile', icon: User },
+  { name: 'Jadwal', href: '/admin/schedules', icon: Calendar },
+  { name: 'Laporan', href: '/admin/reports', icon: FileText },
+  { name: 'Artikel', href: '/admin/articles', icon: BookOpen },
+  { name: 'Profil & Akun', href: '/admin/profile', icon: User },
 ];
 
 export interface AdminSidebarProps {

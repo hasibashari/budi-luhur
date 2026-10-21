@@ -87,18 +87,16 @@ export function SetupProfileView() {
     setErrorMessage(null);
 
     try {
-      const res = await saveUserInitialSetupAction(authUser?.id || 'me', {
-        profile: {
-          schoolOrOrg: schoolOrOrg.trim(),
-          dateOfBirth: dateOfBirth || undefined,
-          bloodType: bloodType || undefined,
-          height: height ? Number(height) : undefined,
-          weight: weight ? Number(weight) : undefined,
-          hbLevel: hbLevel ? Number(hbLevel) : undefined,
-          partnerName: partnerName.trim() || undefined,
-          weddingDate: weddingDate || undefined,
-          ttStatus: lastTTStatus || 'TT0',
-        },
+      const res = await saveUserInitialSetupAction(authUser?.id || '', {
+        schoolOrOrg: schoolOrOrg.trim(),
+        dateOfBirth: dateOfBirth || undefined,
+        bloodType: bloodType || undefined,
+        height: height ? Number(height) : undefined,
+        weight: weight ? Number(weight) : undefined,
+        hbLevel: hbLevel ? Number(hbLevel) : undefined,
+        partnerName: partnerName.trim() || undefined,
+        weddingDate: weddingDate || undefined,
+        ttStatus: lastTTStatus || 'TT0',
         schedule: {
           dayOfWeek: selectedDay,
           timeSlot: selectedTime,
@@ -340,7 +338,7 @@ export function SetupProfileView() {
                 icon={<ArrowRight size={16} />}
                 className='flex-1 sm:flex-initial px-6 sm:px-8 min-h-[48px] py-3.5 font-bold shadow-md shadow-rose-950/20 text-xs sm:text-sm flex items-center justify-center gap-2 bg-[#aa294d] hover:bg-[#8c0f39] text-white cursor-pointer active:scale-[0.98]'
               >
-                Lanjut ke Rencana Pranikah
+                Lanjut
               </Button>
             </div>
           </form>

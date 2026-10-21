@@ -46,7 +46,7 @@ export default function DashboardView() {
   const [loading, setLoading] = useState(true);
   const [isVaccineCardOpen, setIsVaccineCardOpen] = useState(false);
 
-  const userId = authUser?.id || 'usr_1';
+  const userId = authUser?.id || '';
 
   useEffect(() => {
     let isMounted = true;
@@ -146,7 +146,7 @@ export default function DashboardView() {
     streakUnit: 'Minggu' as const,
     consecutiveDates: [],
     hbLevel: authUser?.hbLevel || null,
-    schoolOrOrg: authUser?.schoolOrOrg || 'Puskesmas Binaan Kemenkes',
+    schoolOrOrg: authUser?.schoolOrOrg || '',
     avatarUrl: authUser?.avatarUrl || null,
   };
 

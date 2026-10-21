@@ -129,7 +129,7 @@ export default function ScheduleView() {
       setIsModalOpen(false);
       showToast('Jadwal pengingat Pil KB berhasil dibuat!');
 
-      await createUserScheduleAction(user?.id || 'usr_1', {
+      await createUserScheduleAction(user?.id || '', {
         dayOfWeek: tempDay,
         timeSlot: tempTime,
         frequency: updatedFrequency === 'Harian' ? 'daily' : 'weekly',
