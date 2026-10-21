@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
 import { X, ShieldCheck, Download, Printer, QrCode, Building2, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/src/shared/components/ui/Button';
+import { ImmunizationRecord } from '@/src/features/user/types';
 
 export interface VaccineCardModalProps {
   isOpen: boolean;
@@ -9,6 +10,7 @@ export interface VaccineCardModalProps {
   faskesName: string;
   partnerName?: string;
   currentTTLevel: number;
+  records?: ImmunizationRecord[];
 }
 
 export function VaccineCardModal({
@@ -18,6 +20,7 @@ export function VaccineCardModal({
   faskesName,
   partnerName,
   currentTTLevel = 3,
+  records = [],
 }: VaccineCardModalProps) {
   const cardRef = useRef<HTMLDivElement>(null);
 
@@ -27,13 +30,17 @@ export function VaccineCardModal({
     window.print();
   };
 
-  const doses = [
-    { level: 'TT1', status: currentTTLevel >= 1 ? 'Selesai' : 'Belum', date: '10 Feb 2024', faskes: faskesName, duration: 'Skrining Awal' },
-    { level: 'TT2', status: currentTTLevel >= 2 ? 'Selesai' : 'Belum', date: '12 Mar 2024', faskes: faskesName, duration: '3 Tahun' },
-    { level: 'TT3', status: currentTTLevel >= 3 ? 'Selesai' : 'Belum', date: '12 Jul 2024', faskes: faskesName, duration: '5 Tahun' },
-    { level: 'TT4', status: currentTTLevel >= 4 ? 'Selesai' : 'Jadwal 2025', date: 'Estimasi Jul 2025', faskes: faskesName, duration: '10 Tahun' },
-    { level: 'TT5', status: currentTTLevel >= 5 ? 'Selesai' : 'Jadwal 2026', date: 'Estimasi Jul 2026', faskes: faskesName, duration: 'Seumur Hidup' },
-  ];
+  const doses = Array.from({ length: 5 }, (_, index) => {
+    const level = `TT${index + 1}` as ImmunizationRecord['doseLevel'];
+    const record = records.find(item => item.doseLevel === level);
+    return {
+      level,
+      status: record ? 'Selesai' : 'Belum',
+      date: record?.vaccineDate || '-',
+      faskes: record?.faskesName || faskesName,
+      duration: ['Skrining Awal', '3 Tahun', '5 Tahun', '10 Tahun', 'Seumur Hidup'][index],
+    };
+  });
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-950/60 backdrop-blur-xs animate-fade-in">
@@ -69,7 +76,7 @@ export function VaccineCardModal({
         </div>
 
         {/* Card Body - Printable Area */}
-        <div ref={cardRef} className="p-5 overflow-y-auto flex-1 flex flex-col gap-4 text-[#121c2a]">
+        <div ref={cardRef} className="vaccine-card-printable p-5 overflow-y-auto flex-1 flex flex-col gap-4 text-[#121c2a]">
           {/* Institution Header */}
           <div className="flex items-center justify-between pb-3 border-b border-stone-200 text-xs">
             <div className="flex items-center gap-2">

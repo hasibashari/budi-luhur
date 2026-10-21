@@ -74,4 +74,32 @@ export class UserController {
       res.status(500).json({ success: false, error: 'Gagal menyimpan setup awal.' });
     }
   }
+
+  static async getImmunizationRecords(req: AuthRequest, res: Response) {
+      try {
+        const userId = req.user?.id;
+        if (!userId) {
+          res.status(401).json({ success: false, error: 'Sesi tidak valid.' });
+          return;
+        }
+        res.json(await UserService.getImmunizationRecords(userId));
+      } catch (error: any) {
+        console.error('UserController.getImmunizationRecords error:', error);
+        res.status(500).json({ success: false, error: 'Gagal memuat riwayat imunisasi.' });
+      }
+    }
+
+  static async saveImmunizationRecord(req: AuthRequest, res: Response) {
+      try {
+        const userId = req.user?.id;
+        if (!userId) {
+          res.status(401).json({ success: false, error: 'Sesi tidak valid.' });
+          return;
+        }
+        res.status(201).json(await UserService.saveImmunizationRecord(userId, req.body));
+      } catch (error: any) {
+        console.error('UserController.saveImmunizationRecord error:', error);
+        res.status(400).json({ success: false, error: error.message || 'Gagal menyimpan riwayat imunisasi.' });
+      }
+  }
 }

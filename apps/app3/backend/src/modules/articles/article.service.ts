@@ -38,11 +38,22 @@ export interface Article {
 
 export class ArticleService {
   static async getArticles(category?: string): Promise<Article[]> {
+    await db.query(`
+      WITH canonical AS (
+        SELECT lower(btrim(category)) AS category_key, min(btrim(category)) AS category
+        FROM articles WHERE btrim(category) <> ''
+        GROUP BY lower(btrim(category))
+      )
+      UPDATE articles AS a SET category = canonical.category
+      FROM canonical
+      WHERE lower(btrim(a.category)) = canonical.category_key
+        AND a.category <> canonical.category
+    `);
     let sql = `
       SELECT id, title, summary, lead_paragraph, image_url, image_caption, read_time, category, status, views, published_at,
              author_id, author_name, author_role, author_avatar_url, author_bio, key_takeaways, tags
       FROM articles
-      WHERE status = 'Terbit' AND category IN ('Imunisasi TT', 'Catin', 'Kesehatan Pranikah')
+      WHERE status = 'Terbit' AND btrim(category) <> ''
     `;
     const params: unknown[] = [];
 
@@ -102,7 +113,7 @@ export class ArticleService {
       `SELECT id, title, summary, lead_paragraph, image_url, image_caption, read_time, category, status, views, published_at,
               author_id, author_name, author_role, author_avatar_url, author_bio, key_takeaways, tags
        FROM articles 
-       WHERE id = $1 AND category IN ('Imunisasi TT', 'Catin', 'Kesehatan Pranikah')`,
+       WHERE id = $1 AND btrim(category) <> ''`,
       [id],
     );
     const row = res.rows[0];
@@ -189,7 +200,7 @@ export class ArticleService {
        FROM articles 
        WHERE id != $1
          AND status = 'Terbit'
-         AND category IN ('Imunisasi TT', 'Catin', 'Kesehatan Pranikah')
+         AND btrim(category) <> ''
        ORDER BY CASE WHEN category = $2 THEN 0 ELSE 1 END, published_at DESC
        LIMIT $3`,
       [currentId, category, limit],

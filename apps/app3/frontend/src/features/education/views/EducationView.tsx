@@ -14,7 +14,6 @@ import {
 import { getArticlesAction } from '../api/educationRepository';
 import { Article } from '../types';
 import {
-  isAllowedArticleCategory,
   normalizeArticleCategory,
 } from '../constants/education.constants';
 
@@ -97,7 +96,7 @@ export default function EducationView() {
         if (isMounted) {
           if (data && data.length > 0) {
             // merge with authentic stitch articles if needed
-            setArticles(data.filter(article => isAllowedArticleCategory(article.category)));
+            setArticles(data);
           } else {
             setArticles(defaultPrelunaArticles as any);
           }
@@ -117,11 +116,16 @@ export default function EducationView() {
     };
   }, []);
 
-  const categories = ['Semua', 'Imunisasi TT', 'Catin'];
+  const articleList = articles.length > 0 ? articles : defaultPrelunaArticles;
+  const categories = [
+    'Semua',
+    ...Array.from(
+      new Set(articleList.map(article => normalizeArticleCategory(article.category)).filter(Boolean)),
+    ).sort((a, b) => a.localeCompare(b, 'id')),
+  ];
 
   const filteredArticles = useMemo(() => {
-    const list = articles.length > 0 ? articles : defaultPrelunaArticles;
-    return list.filter(art => {
+    return articleList.filter(art => {
       const category = normalizeArticleCategory(art.category);
       const matchCategory =
         selectedCategory === 'Semua' ||
@@ -132,7 +136,7 @@ export default function EducationView() {
         art.summary.toLowerCase().includes(searchQuery.toLowerCase());
       return matchCategory && matchSearch;
     });
-  }, [articles, searchQuery, selectedCategory]);
+  }, [articleList, searchQuery, selectedCategory]);
 
   return (
     <div className='flex flex-col gap-5 sm:gap-6 w-full max-w-4xl mx-auto pb-12'>

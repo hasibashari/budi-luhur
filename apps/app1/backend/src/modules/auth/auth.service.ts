@@ -13,7 +13,11 @@ import {
 export class AuthService {
   static async login(credentials: LoginCredentials) {
     const normalizedEmail = (credentials.email || '').trim().toLowerCase();
-    let row: UserDbRow | undefined;
+    const password = credentials.password || '';
+
+    if (!normalizedEmail || !password) {
+      return { success: false, error: 'Email dan password wajib diisi.' };
+    }
 
     try {
       // 1. Check direct email match
@@ -25,96 +29,18 @@ export class AuthService {
          WHERE lower(u.email) = $1`,
         [normalizedEmail],
       );
-      row = res.rows[0];
-
-      // 2. Demo keyword / roleHint fallback
-      if (!row) {
-        if (normalizedEmail.includes('admin') || credentials.roleHint === 'admin') {
-          const adminRes = await db.query<UserDbRow>(
-            `SELECT u.id, u.name, u.email, u.password_hash, u.role, u.phone, u.avatar_url, u.gender,
-                    p.friend_code, p.school_or_org, p.hb_level, p.streak_count
-             FROM users u
-             LEFT JOIN user_profiles p ON u.id = p.user_id
-             WHERE u.role = 'admin' LIMIT 1`,
-          );
-          row = adminRes.rows[0];
-        } else if (
-          normalizedEmail.includes('sarah') ||
-          normalizedEmail.includes('user') ||
-          normalizedEmail.includes('budi') ||
-          credentials.roleHint === 'user'
-        ) {
-          const userRes = await db.query<UserDbRow>(
-            `SELECT u.id, u.name, u.email, u.password_hash, u.role, u.phone, u.avatar_url, u.gender,
-                    p.friend_code, p.school_or_org, p.hb_level, p.streak_count
-             FROM users u
-             LEFT JOIN user_profiles p ON u.id = p.user_id
-             WHERE u.role = 'user' LIMIT 1`,
-          );
-          row = userRes.rows[0];
-        }
+      const row = res.rows[0];
+      if (!row || !row.password_hash || !(await bcrypt.compare(password, row.password_hash))) {
+        return { success: false, error: 'Email atau password salah.' };
       }
+      return AuthService.createLoginResult(row);
     } catch (dbErr) {
-      console.warn('Database query during login failed, checking fallback:', dbErr);
+      console.error('Database query during login failed:', dbErr);
+      return { success: false, error: 'Login tidak dapat diproses saat ini.' };
     }
+  }
 
-    if (!row) {
-      if (normalizedEmail.includes('admin') || credentials.roleHint === 'admin') {
-        row = {
-          id: 'usr_admin',
-          name: 'Admin Puskesmas (FEMORY)',
-          email: 'admin@femory.id',
-          role: 'admin',
-          phone: '0812-3456-7890',
-          avatar_url: null,
-          gender: 'Perempuan',
-          friend_code: 'FE-ADMIN-1001',
-          school_or_org: 'Puskesmas Budi Luhur',
-          hb_level: null,
-          streak_count: 0,
-        } as unknown as UserDbRow;
-      } else if (
-        normalizedEmail.includes('sarah') ||
-        normalizedEmail.includes('user') ||
-        normalizedEmail.includes('budi') ||
-        credentials.roleHint === 'user'
-      ) {
-        row = {
-          id: 'usr_1',
-          name: 'Sarah Remaja',
-          email: 'sarah@femory.id',
-          role: 'user',
-          phone: '0812-9876-5432',
-          avatar_url: null,
-          gender: 'Perempuan',
-          friend_code: 'FE-SARAH-2001',
-          school_or_org: 'SMA Negeri 1 Budi Luhur',
-          hb_level: '12.4',
-          streak_count: 5,
-        } as unknown as UserDbRow;
-      }
-    }
-
-    if (!row) {
-      return {
-        success: false,
-        error: 'Pengguna tidak ditemukan. Silakan periksa kembali email Anda.',
-      };
-    }
-
-    // Optional password verification if password provided and hash exists
-    if (credentials.password && row.password_hash) {
-      const isMatch = await bcrypt
-        .compare(credentials.password, row.password_hash)
-        .catch(() => false);
-      if (!isMatch && credentials.password !== 'password123') {
-        return {
-          success: false,
-          error: 'Kata sandi yang Anda masukkan salah. Silakan coba lagi.',
-        };
-      }
-    }
-
+  private static async createLoginResult(row: UserDbRow) {
     // 3. Check active schedule count to determine if user has set up their initial schedule
     let scheduleCount = 1;
     try {
@@ -127,108 +53,6 @@ export class AuthService {
       // Keep default 1
     }
 
-    const hasSchool = Boolean(row.school_or_org && row.school_or_org.trim());
-    const hasSchedule = scheduleCount > 0;
-    const isProfileComplete = row.role === 'admin' || (hasSchool && hasSchedule);
-
-    const authUser: AuthUser = {
-      id: row.id,
-      name: row.name,
-      email: row.email,
-      role: row.role as UserRole,
-      phone: row.phone || undefined,
-      avatarUrl: row.avatar_url || undefined,
-      gender: row.gender || 'Perempuan',
-      friendCode: row.friend_code || undefined,
-      schoolOrOrg: row.school_or_org || undefined,
-      hbLevel: row.hb_level !== null ? Number(row.hb_level) : undefined,
-      streakCount: row.streak_count !== null ? Number(row.streak_count) : 0,
-      isProfileComplete,
-    };
-
-    const token = jwt.sign(
-      { id: authUser.id, email: authUser.email, role: authUser.role, name: authUser.name },
-      config.jwtSecret,
-      { expiresIn: config.jwtExpiresIn } as jwt.SignOptions,
-    );
-
-    const redirectTo =
-      authUser.role === 'admin'
-        ? '/admin/dashboard'
-        : isProfileComplete
-          ? '/user/dashboard'
-          : '/user/setup';
-
-    return {
-      success: true,
-      token,
-      user: authUser,
-      redirectTo,
-      isProfileComplete,
-    };
-  }
-
-  static async quickLogin(role: UserRole) {
-    const targetRole = role === 'admin' ? 'admin' : 'user';
-    let row: UserDbRow | undefined;
-
-    try {
-      const res = await db.query<UserDbRow>(
-        `SELECT u.id, u.name, u.email, u.role, u.phone, u.avatar_url, u.gender,
-                p.friend_code, p.school_or_org, p.hb_level, p.streak_count
-         FROM users u
-         LEFT JOIN user_profiles p ON u.id = p.user_id
-         WHERE u.role = $1 
-         ORDER BY u.id ASC LIMIT 1`,
-        [targetRole],
-      );
-      row = res.rows[0];
-    } catch (dbErr) {
-      console.warn('Database query during quickLogin failed, using fallback:', dbErr);
-    }
-
-    if (!row) {
-      if (targetRole === 'admin') {
-        row = {
-          id: 'usr_admin',
-          name: 'Admin Puskesmas (FEMORY)',
-          email: 'admin@femory.id',
-          role: 'admin',
-          phone: '0812-3456-7890',
-          avatar_url: null,
-          gender: 'Perempuan',
-          friend_code: 'FE-ADMIN-1001',
-          school_or_org: 'Puskesmas Budi Luhur',
-          hb_level: null,
-          streak_count: 0,
-        } as unknown as UserDbRow;
-      } else {
-        row = {
-          id: 'usr_1',
-          name: 'Sarah Remaja',
-          email: 'sarah@femory.id',
-          role: 'user',
-          phone: '0812-9876-5432',
-          avatar_url: null,
-          gender: 'Perempuan',
-          friend_code: 'FE-SARAH-2001',
-          school_or_org: 'SMA Negeri 1 Budi Luhur',
-          hb_level: '12.4',
-          streak_count: 5,
-        } as unknown as UserDbRow;
-      }
-    }
-
-    let scheduleCount = 1;
-    try {
-      const schedRes = await db.query<{ count: string }>(
-        `SELECT COUNT(*)::text as count FROM reminder_schedules WHERE user_id = $1 AND status = 'Aktif'`,
-        [row.id],
-      );
-      scheduleCount = Number(schedRes.rows[0]?.count || 0);
-    } catch {
-      // Keep default 1
-    }
     const hasSchool = Boolean(row.school_or_org && row.school_or_org.trim());
     const hasSchedule = scheduleCount > 0;
     const isProfileComplete = row.role === 'admin' || (hasSchool && hasSchedule);

@@ -1,19 +1,7 @@
 /**
  * Education Constants
- * Centralized static categories, tags, and fallback metadata for Articles.
+ * Centralized fallback metadata for Articles.
  */
-
-export const ARTICLE_CATEGORIES = [
-  'Semua',
-  'Kontrasepsi & Pil KB',
-  'Efek Samping & Solusi',
-  'Lupa Minum Pil',
-  'SADARI & Deteksi Dini',
-  'Mitos & Fakta KB',
-  'Kesehatan Reproduksi',
-] as const;
-
-export type ArticleCategory = string;
 
 export const DEFAULT_CATEGORY_IMAGES: Record<string, string> = {
   'Kontrasepsi & Pil KB':

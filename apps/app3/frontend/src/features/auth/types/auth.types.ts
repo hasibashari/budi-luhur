@@ -18,7 +18,6 @@ export interface AuthUser {
 export interface LoginCredentials {
   email: string;
   password?: string;
-  roleHint?: UserRole;
 }
 
 export interface RegisterCredentials {
@@ -47,7 +46,6 @@ export interface AuthContextValue extends AuthState {
     redirectTo?: string;
     isProfileComplete?: boolean;
   }>;
-  quickLogin: (role: UserRole) => Promise<{ success: boolean; redirectTo: string }>;
   register: (
     data: RegisterCredentials,
   ) => Promise<{ success: boolean; error?: string; message?: string }>;

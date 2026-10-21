@@ -24,9 +24,7 @@ export default function ScheduleView() {
   const [loading, setLoading] = useState(true);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  const notesStr = (user as any)?.notes || '';
-  const ttLevelMatch = notesStr.match(/Status TT Awal:\s*TT(\d)/);
-  const currentTTLevel = ttLevelMatch ? parseInt(ttLevelMatch[1], 10) : 3;
+  const currentTTLevel = Number((user as any)?.ttStatus?.slice(2) || 0);
 
   useEffect(() => {
     let isMounted = true;

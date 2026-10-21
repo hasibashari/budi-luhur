@@ -167,3 +167,22 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #8b7074;
 }
+@media print {
+  body * {
+    visibility: hidden !important;
+  }
+
+  .vaccine-card-printable,
+  .vaccine-card-printable * {
+    visibility: visible !important;
+  }
+
+  .vaccine-card-printable {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    max-height: none !important;
+    overflow: visible !important;
+    padding: 24px !important;
+  }
+}

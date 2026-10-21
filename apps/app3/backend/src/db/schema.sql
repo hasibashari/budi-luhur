@@ -64,6 +64,21 @@ CREATE TABLE user_profiles (
     last_active_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE immunization_records (
+    id VARCHAR(255) PRIMARY KEY,
+    user_id VARCHAR(255) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    dose_level VARCHAR(3) NOT NULL CHECK (dose_level IN ('TT1', 'TT2', 'TT3', 'TT4', 'TT5')),
+    vaccine_date DATE NOT NULL,
+    faskes_name VARCHAR(255) NOT NULL,
+    batch_number VARCHAR(100),
+    notes TEXT,
+    verification_status VARCHAR(30) NOT NULL DEFAULT 'PENDING'
+      CHECK (verification_status IN ('PENDING', 'VERIFIED', 'REJECTED')),
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE (user_id, dose_level)
+);
+
 -- 3. PRODUCTS (SUPPLEMENTS & TTD INVENTORY)
 CREATE TABLE products (
     id VARCHAR(255) PRIMARY KEY,
@@ -196,7 +211,7 @@ CREATE TABLE buddy_cheers (
 CREATE TABLE articles (
     id VARCHAR(255) PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
-    category VARCHAR(100) NOT NULL,
+    category VARCHAR(100) NOT NULL CHECK (btrim(category) <> ''),
     summary TEXT NOT NULL,
     lead_paragraph TEXT,
     image_url TEXT NOT NULL,
@@ -267,6 +282,7 @@ CREATE INDEX idx_users_email ON users(email);
 CREATE INDEX idx_users_role ON users(role);
 CREATE INDEX idx_profiles_friend_code ON user_profiles(friend_code);
 CREATE INDEX idx_profiles_school ON user_profiles(school_or_org);
+CREATE INDEX idx_immunization_records_user ON immunization_records(user_id, vaccine_date);
 CREATE INDEX idx_schedules_user_status ON reminder_schedules(user_id, status);
 CREATE INDEX idx_logs_user_date ON consumption_logs(user_id, scheduled_date);
 CREATE INDEX idx_buddy_user ON buddy_connections(user_id, status);

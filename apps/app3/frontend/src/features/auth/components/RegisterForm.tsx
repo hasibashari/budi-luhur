@@ -1,15 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import {
-  Eye,
-  EyeOff,
-  Mail,
-  Lock,
-  User,
-  ArrowRight,
-  CheckCircle2,
-  AlertCircle,
-} from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, User, ArrowRight, CheckCircle2, AlertCircle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 export interface RegisterFormProps {
@@ -156,7 +147,8 @@ export function RegisterForm({ onSwitchTab, hideHeader = false }: RegisterFormPr
             Daftar Akun PRELUNA
           </h2>
           <p className='text-xs sm:text-sm text-[#574144]'>
-            Daftarkan akun Calon Pengantin untuk memulai pemantauan imunisasi TT dan kesehatan pranikah.
+            Daftarkan akun Calon Pengantin untuk memulai pemantauan imunisasi TT dan kesehatan
+            pranikah.
           </p>
         </div>
       )}
@@ -197,16 +189,14 @@ export function RegisterForm({ onSwitchTab, hideHeader = false }: RegisterFormPr
       {!successMessage && (
         <form onSubmit={handleSubmit} noValidate className='flex flex-col gap-3.5'>
           <div>
-            <label className='text-xs font-bold text-[#121c2a] mb-1.5 block'>
-              Nama Lengkap Calon Pengantin
-            </label>
+            <label className='text-xs font-bold text-[#121c2a] mb-1.5 block'>Nama Lengkap</label>
             <div className='relative flex items-center'>
               <div className='absolute left-3.5 w-8 h-8 rounded-full bg-[#ffd9de]/50 flex items-center justify-center text-[#aa294d]'>
                 <User size={15} />
               </div>
               <input
                 type='text'
-                placeholder='Contoh: Siti Rahmawati / Muhammad Rizky'
+                placeholder='Siti Rahmawati / Muhammad Rizky'
                 value={name}
                 onChange={e => setName(e.target.value)}
                 required
@@ -217,9 +207,7 @@ export function RegisterForm({ onSwitchTab, hideHeader = false }: RegisterFormPr
           </div>
 
           <div>
-            <label className='text-xs font-bold text-[#121c2a] mb-1.5 block'>
-              Jenis Kelamin
-            </label>
+            <label className='text-xs font-bold text-[#121c2a] mb-1.5 block'>Jenis Kelamin</label>
             <div className='grid grid-cols-2 gap-2'>
               <button
                 type='button'
@@ -230,7 +218,7 @@ export function RegisterForm({ onSwitchTab, hideHeader = false }: RegisterFormPr
                     : 'bg-white border-slate-200 text-[#574144] hover:bg-slate-50'
                 }`}
               >
-                Calon Pengantin Perempuan
+                Perempuan
               </button>
               <button
                 type='button'
@@ -241,7 +229,7 @@ export function RegisterForm({ onSwitchTab, hideHeader = false }: RegisterFormPr
                     : 'bg-white border-slate-200 text-[#574144] hover:bg-slate-50'
                 }`}
               >
-                Calon Pengantin Laki-laki
+                Laki-laki
               </button>
             </div>
           </div>
@@ -405,14 +393,20 @@ export function RegisterForm({ onSwitchTab, hideHeader = false }: RegisterFormPr
                 onClick={onSwitchTab}
                 className='text-xs text-[#574144] hover:text-[#aa294d] font-medium transition-colors cursor-pointer bg-transparent border-none py-2 text-center sm:text-left inline-flex items-center justify-center sm:justify-start gap-1 min-h-[40px]'
               >
-                Sudah punya akun? <span className='font-bold text-[#aa294d] underline underline-offset-4 decoration-[#ffd9de]'>Masuk</span>
+                Sudah punya akun?{' '}
+                <span className='font-bold text-[#aa294d] underline underline-offset-4 decoration-[#ffd9de]'>
+                  Masuk
+                </span>
               </button>
             ) : (
               <Link
                 to='/auth/login'
                 className='text-xs text-[#574144] hover:text-[#aa294d] font-medium transition-colors py-2 text-center sm:text-left inline-flex items-center justify-center sm:justify-start gap-1 min-h-[40px]'
               >
-                Sudah punya akun? <span className='font-bold text-[#aa294d] underline underline-offset-4 decoration-[#ffd9de]'>Masuk</span>
+                Sudah punya akun?{' '}
+                <span className='font-bold text-[#aa294d] underline underline-offset-4 decoration-[#ffd9de]'>
+                  Masuk
+                </span>
               </Link>
             )}
           </div>

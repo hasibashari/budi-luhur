@@ -8,5 +8,7 @@ userRoutes.get('/dashboard', authMiddleware as any, UserController.getDashboard 
 userRoutes.get('/profile', authMiddleware as any, UserController.getProfile as any);
 userRoutes.put('/profile', authMiddleware as any, UserController.updateProfile as any);
 userRoutes.post('/setup', authMiddleware as any, UserController.saveInitialSetup as any);
+userRoutes.get('/immunizations', authMiddleware as any, UserController.getImmunizationRecords as any);
+userRoutes.post('/immunizations', authMiddleware as any, UserController.saveImmunizationRecord as any);
 
 export default userRoutes;

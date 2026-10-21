@@ -18,7 +18,6 @@ export interface AuthUser {
 export interface LoginCredentials {
   email: string;
   password?: string;
-  roleHint?: UserRole;
 }
 
 export interface RegisterCredentials {

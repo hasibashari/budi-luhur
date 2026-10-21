@@ -1,7 +1,20 @@
 import apiClient from '@/src/shared/api/client';
-import { UserProfile, UserScheduleData, UserDashboardData, StreakResult } from '../types';
+import { UserProfile, UserScheduleData, UserDashboardData, StreakResult, ImmunizationRecord } from '../types';
 
 export type { UserProfile, UserScheduleData, UserDashboardData, StreakResult };
+export type { ImmunizationRecord };
+
+export async function getImmunizationRecordsAction(): Promise<ImmunizationRecord[]> {
+  const response = await apiClient.get<ImmunizationRecord[]>('/users/immunizations');
+  return response.data;
+}
+
+export async function saveImmunizationRecordAction(
+  data: Omit<ImmunizationRecord, 'id' | 'verificationStatus'>,
+): Promise<ImmunizationRecord> {
+  const response = await apiClient.post<ImmunizationRecord>('/users/immunizations', data);
+  return response.data;
+}
 
 export async function getUserDashboardDataAction(_userId?: string): Promise<UserDashboardData> {
   const response = await apiClient.get<UserDashboardData>('/users/dashboard');
@@ -87,4 +100,3 @@ export async function updateUserScheduleSettingsAction(
     return { success: false, error: err.response?.data?.error || err.message };
   }
 }
-

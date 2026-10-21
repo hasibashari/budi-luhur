@@ -164,13 +164,13 @@ export default function DashboardView() {
   };
 
   // Extract meta from notes if available
-  const notesStr = (dashboardData?.user as any)?.notes || '';
-  const partnerMatch = notesStr.match(/Pasangan:\s*([^|]+)/);
-  const partnerName = partnerMatch ? partnerMatch[1].trim() : 'Farhan Ramadhan';
-  const weddingMatch = notesStr.match(/Rencana Akad:\s*([^|]+)/);
-  const weddingDate = weddingMatch ? weddingMatch[1].trim() : undefined;
-  const ttLevelMatch = notesStr.match(/Status TT Awal:\s*TT(\d)/);
-  const ttLevel = ttLevelMatch ? parseInt(ttLevelMatch[1], 10) : 3;
+  const partnerName = dashboardData?.user.partnerName;
+  const weddingDate = dashboardData?.user.weddingDate;
+  const ttLevel = Math.max(
+    0,
+    ...(dashboardData?.immunizationRecords || []).map(record => Number(record.doseLevel.slice(2))),
+    Number(dashboardData?.user.ttStatus?.slice(2) || 0),
+  );
 
   const nextAppointmentDate = dashboardData?.activeSchedule
     ? `${dashboardData.activeSchedule.dayOfWeek}, ${dashboardData.activeSchedule.time}`
@@ -202,6 +202,7 @@ export default function DashboardView() {
         faskesName={currentUser.schoolOrOrg || 'Puskesmas Kebayoran'}
         partnerName={partnerName}
         currentTTLevel={ttLevel}
+        records={dashboardData?.immunizationRecords}
       />
 
       {/* Top Personal Greeting & Notification Bar (Screen 2 Stitch) */}

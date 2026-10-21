@@ -4,23 +4,11 @@
  * (Premarital Health, Tetanus Toxoid Immunization, & Maternal Wellness)
  */
 
-export const ARTICLE_CATEGORIES = [
-  'Semua',
-  'Imunisasi TT',
-  'Catin',
-] as const;
-
 export type ArticleCategory = string;
-export const ARTICLE_CONTENT_CATEGORIES = ['Imunisasi TT', 'Catin'] as const;
 
 export function normalizeArticleCategory(category?: string): string {
-  return category === 'Kesehatan Pranikah' ? 'Catin' : category || '';
-}
-
-export function isAllowedArticleCategory(category?: string): boolean {
-  return ARTICLE_CONTENT_CATEGORIES.includes(
-    normalizeArticleCategory(category) as (typeof ARTICLE_CONTENT_CATEGORIES)[number],
-  );
+  const normalized = (category || '').trim().replace(/\s+/g, ' ');
+  return normalized.toLowerCase() === 'kesehatan pranikah' ? 'Catin' : normalized;
 }
 
 export const DEFAULT_CATEGORY_IMAGES: Record<string, string> = {

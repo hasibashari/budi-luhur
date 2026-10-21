@@ -28,7 +28,7 @@ export function AuthCardLayout({ children }: AuthCardLayoutProps) {
           <div className='flex items-center justify-center gap-1.5 mt-6 sm:mt-8 text-center text-[#64748b]'>
             <ShieldCheck size={16} className='text-[#2a6950] shrink-0' />
             <span className='text-[11px] sm:text-xs font-medium'>
-              Privasi rekam imunisasi terproteksi standar Kementerian Kesehatan RI
+              Privasi standar Kementerian Kesehatan RI
             </span>
           </div>
         </div>
@@ -101,7 +101,8 @@ export function AuthCardLayout({ children }: AuthCardLayoutProps) {
               Langkah Suci Menuju Keluarga Bahagia
             </h3>
             <p className='text-xs text-[#574144] leading-relaxed'>
-              Pantau jadwal imunisasi Tetanus Toxoid, simpan e-sertifikat kesehatan nikah, dan dapatkan bimbingan kesehatan reproduksi terpercaya.
+              Pantau jadwal imunisasi Tetanus Toxoid, simpan e-sertifikat kesehatan nikah, dan
+              dapatkan bimbingan kesehatan reproduksi terpercaya.
             </p>
           </div>
         </div>

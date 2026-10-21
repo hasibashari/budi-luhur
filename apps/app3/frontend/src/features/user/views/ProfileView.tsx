@@ -30,6 +30,7 @@ import {
   updateUserScheduleSettingsAction,
   UserScheduleData,
 } from '../api/userRepository';
+import { ImmunizationRecord } from '../types';
 
 interface UserProfileState {
   id: string;
@@ -41,6 +42,9 @@ interface UserProfileState {
   hbLevel?: number | null;
   schoolOrOrg?: string | null;
   riskLevel?: string | null;
+  partnerName?: string;
+  weddingDate?: string;
+  ttStatus?: string;
 }
 
 export default function ProfileView() {
@@ -60,6 +64,7 @@ export default function ProfileView() {
   });
 
   const [scheduleData, setScheduleData] = useState<UserScheduleData | null>(null);
+  const [immunizationRecords, setImmunizationRecords] = useState<ImmunizationRecord[]>([]);
   const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
   const [isCertificateModalOpen, setIsCertificateModalOpen] = useState(false);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
@@ -77,9 +82,9 @@ export default function ProfileView() {
   const [isSaving, setIsSaving] = useState(false);
 
   // Partner info
-  const partnerName = 'Farhan Ramadhan';
-  const catinId = 'CT-884920';
-  const currentTTLevel = 3;
+  const partnerName = userProfile.partnerName;
+  const catinId = userProfile.id;
+  const currentTTLevel = Number(userProfile.ttStatus?.slice(2) || 0);
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
@@ -99,9 +104,13 @@ export default function ProfileView() {
               schoolOrOrg: data.user.schoolOrOrg || prev.schoolOrOrg,
               hbLevel: data.user.hbLevel || prev.hbLevel,
               avatarUrl: data.user.avatarUrl || prev.avatarUrl,
+              partnerName: data.user.partnerName,
+              weddingDate: data.user.weddingDate,
+              ttStatus: data.user.ttStatus,
             }));
             setEditName(data.user.name || userProfile.name);
             setEditFaskes(data.user.schoolOrOrg || userProfile.schoolOrOrg || '');
+            setImmunizationRecords(data.immunizationRecords || []);
           }
         } catch (e) {
           console.error('Failed to load profile dashboard:', e);
@@ -288,7 +297,7 @@ export default function ProfileView() {
     {
       id: 'partner',
       label: 'Sinkronisasi Pasangan',
-      value: partnerName,
+      value: partnerName || 'Belum diatur',
       subtitle: `ID Catin: ${catinId} • Terhubung KUA`,
       icon: Heart,
       iconBgColor: 'bg-rose-50 border border-rose-100',
@@ -396,6 +405,7 @@ export default function ProfileView() {
         faskesName={userProfile.schoolOrOrg || 'Puskesmas Kebayoran'}
         partnerName={partnerName}
         currentTTLevel={currentTTLevel}
+        records={immunizationRecords}
       />
 
       {/* Edit Profile Modal */}

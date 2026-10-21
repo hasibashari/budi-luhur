@@ -12,6 +12,21 @@ export interface UserProfile {
   hbLevel?: number;
   streakCount?: number;
   friendCode?: string;
+  weddingDate?: string;
+  ttStatus?: string;
+  kuaStatus?: string;
+  partnerName?: string;
+  notes?: string;
+}
+
+export interface ImmunizationRecord {
+  id: string;
+  doseLevel: 'TT1' | 'TT2' | 'TT3' | 'TT4' | 'TT5';
+  vaccineDate: string;
+  faskesName: string;
+  batchNumber?: string;
+  notes?: string;
+  verificationStatus: 'PENDING' | 'VERIFIED' | 'REJECTED';
 }
 
 export interface StreakResult {
@@ -55,7 +70,13 @@ export interface UserDashboardData {
     schoolOrOrg?: string | null;
     riskLevel?: string | null;
     friendCode?: string;
+    weddingDate?: string;
+    ttStatus?: string;
+    kuaStatus?: string;
+    partnerName?: string;
+    notes?: string;
   };
+  immunizationRecords: ImmunizationRecord[];
   todayStatus: 'recorded' | 'missed' | 'pending';
   todayRecordedTime?: string;
   activeSchedule: UserScheduleData | null;

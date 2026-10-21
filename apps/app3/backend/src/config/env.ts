@@ -13,7 +13,7 @@ export const config = {
   port: parseInt(process.env.PORT || '4001', 10),
   corsOrigin: process.env.CORS_ORIGIN || 'http://localhost:5173',
   databaseUrl: process.env.APP3_DATABASE_URL || process.env.DATABASE_URL || '',
-  jwtSecret: process.env.APP3_JWT_SECRET || process.env.JWT_SECRET || 'preluna_jwt_default_secret_key_2026',
+  jwtSecret: process.env.APP3_JWT_SECRET || process.env.JWT_SECRET || '',
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || '7d',
   geminiApiKey: process.env.GEMINI_API_KEY || process.env.GEMINI_API || '',
   nodeEnv: process.env.NODE_ENV || 'development',
@@ -24,4 +24,8 @@ export const config = {
 
 if (!config.databaseUrl) {
   console.warn('⚠️ WARNING: DATABASE_URL is not set in environment variables');
+}
+
+if (config.nodeEnv === 'production' && config.jwtSecret.length < 32) {
+  throw new Error('APP3_JWT_SECRET or JWT_SECRET must be set to at least 32 characters in production');
 }

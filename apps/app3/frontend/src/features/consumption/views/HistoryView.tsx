@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import {
   ShieldCheck,
@@ -20,6 +20,8 @@ import { useMonitoringData } from '../hooks/useMonitoringData';
 import { InputRiwayatTTModal, NewTTRiwayatData } from '../components/InputRiwayatTTModal';
 import { VaccineCardModal } from '@/src/features/dashboard/components/VaccineCardModal';
 import { MonthlyEvaluationView } from '../components/MonthlyEvaluationView';
+import { saveImmunizationRecordAction } from '@/src/features/user/api/userRepository';
+import { ImmunizationRecord } from '@/src/features/user/types';
 
 export default function HistoryView() {
   const navigate = useNavigate();
@@ -33,13 +35,13 @@ export default function HistoryView() {
   // Hook for existing backend sync
   const { dashboardData, loading, stats, allLogs } = useMonitoringData(userId);
 
-  // Extract TT Level from notes or default 3
-  const notesStr = (dashboardData?.user as any)?.notes || '';
-  const ttLevelMatch = notesStr.match(/Status TT Awal:\s*TT(\d)/);
-  const currentTTLevel = ttLevelMatch ? parseInt(ttLevelMatch[1], 10) : 3;
-
-  const partnerMatch = notesStr.match(/Pasangan:\s*([^|]+)/);
-  const partnerName = partnerMatch ? partnerMatch[1].trim() : 'Farhan Ramadhan';
+  const records = dashboardData?.immunizationRecords || [];
+  const currentTTLevel = Math.max(
+    0,
+    ...records.map(record => Number(record.doseLevel.slice(2))),
+    Number(dashboardData?.user.ttStatus?.slice(2) || 0),
+  );
+  const partnerName = dashboardData?.user.partnerName;
   const faskesName = dashboardData?.user.schoolOrOrg || 'Puskesmas Kebayoran Baru';
 
   // Dynamic Doses list state
@@ -47,31 +49,31 @@ export default function HistoryView() {
     {
       dose: 'TT1',
       title: 'Dosis TT1',
-      faskes: 'Puskesmas Kebayoran',
-      date: '10 Januari 2020',
-      batch: 'Batch: TT-A902',
-      status: 'completed',
-      statusLabel: 'Lengkap / Terverifikasi',
+      faskes: faskesName,
+      date: '-',
+      batch: '-',
+      status: 'pending',
+      statusLabel: 'Belum ada data',
       description: 'Langkah awal pembentukan antibodi',
     },
     {
       dose: 'TT2',
       title: 'Dosis TT2',
-      faskes: 'Puskesmas Kebayoran',
-      date: '12 Februari 2020',
-      batch: 'Batch: TT-B114',
-      status: 'completed',
-      statusLabel: 'Lengkap / Terverifikasi',
+      faskes: faskesName,
+      date: '-',
+      batch: '-',
+      status: 'pending',
+      statusLabel: 'Belum ada data',
       description: 'Proteksi 3 tahun terhadap tetanus maternal',
     },
     {
       dose: 'TT3',
       title: 'Dosis TT3 (Pranikah)',
-      faskes: 'RSUD Pasar Minggu',
-      date: '15 Juli 2023',
-      batch: 'Batch: BIO-883C',
-      status: 'completed',
-      statusLabel: 'Lengkap / Terverifikasi',
+      faskes: faskesName,
+      date: '-',
+      batch: '-',
+      status: 'pending',
+      statusLabel: 'Belum ada data',
       description: 'Proteksi 5 tahun masa awal pernikahan',
     },
     {
@@ -96,6 +98,26 @@ export default function HistoryView() {
     },
   ]);
 
+  useEffect(() => {
+    if (records.length === 0) return;
+    setDosesHistory(prev =>
+      prev.map(item => {
+        const record = records.find(saved => saved.doseLevel === item.dose);
+        return record
+          ? {
+              ...item,
+              faskes: record.faskesName,
+              date: record.vaccineDate,
+              batch: record.batchNumber || 'Batch: Bio-Catin',
+              status: 'completed',
+              statusLabel: 'Lengkap / Terverifikasi',
+              description: record.notes || item.description,
+            }
+          : item;
+      }),
+    );
+  }, [dashboardData?.immunizationRecords]);
+
   const showToast = (msg: string) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 3000);
@@ -115,7 +137,20 @@ export default function HistoryView() {
     }
   };
 
-  const handleAddNewDose = (newData: NewTTRiwayatData) => {
+  const handleAddNewDose = async (newData: NewTTRiwayatData) => {
+    try {
+      await saveImmunizationRecordAction({
+        doseLevel: newData.doseLevel as ImmunizationRecord['doseLevel'],
+        vaccineDate: newData.vaccineDate,
+        faskesName: newData.faskesName,
+        batchNumber: newData.batchNumber,
+        notes: newData.notes,
+      });
+    } catch (error) {
+      console.error('Failed to save immunization record:', error);
+      showToast('Gagal menyimpan riwayat imunisasi.');
+      return;
+    }
     setDosesHistory(prev => {
       const idx = prev.findIndex(item => item.dose === newData.doseLevel);
       if (idx !== -1) {
@@ -145,7 +180,7 @@ export default function HistoryView() {
         ...prev,
       ];
     });
-    showToast(`Dosis ${newData.doseLevel} berhasil disimpan & menunggu verifikasi!`);
+    showToast(`Dosis ${newData.doseLevel} berhasil disimpan.`);
   };
 
   return (
@@ -174,6 +209,7 @@ export default function HistoryView() {
         faskesName={faskesName}
         partnerName={partnerName}
         currentTTLevel={currentTTLevel}
+        records={records}
       />
 
       {/* 1. Top Navigation & Action Bar */}

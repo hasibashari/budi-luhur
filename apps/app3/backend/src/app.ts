@@ -15,8 +15,8 @@ app.use(
   }),
 );
 app.options('*', cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '5mb' }));
+app.use(express.urlencoded({ extended: true, limit: '5mb' }));
 
 // Prefix-stripping middleware for Vercel serverless rewrites
 app.use((req: Request, _res: Response, next: NextFunction) => {

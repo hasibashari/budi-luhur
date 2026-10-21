@@ -151,26 +151,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     [saveSession],
   );
 
-  const quickLogin = useCallback(
-    async (role: UserRole) => {
-      setState(prev => ({ ...prev, isLoading: true }));
-      try {
-        const res = await apiClient.post('/auth/quick-login', { role });
-        const { token, user, redirectTo } = res.data;
-        if (token && user) {
-          saveSession(token, user);
-          return { success: true, redirectTo };
-        }
-        setState(prev => ({ ...prev, isLoading: false }));
-        return { success: false, redirectTo: '/auth/login' };
-      } catch {
-        setState(prev => ({ ...prev, isLoading: false }));
-        return { success: false, redirectTo: '/auth/login' };
-      }
-    },
-    [saveSession],
-  );
-
   const register = useCallback(async (data: RegisterCredentials) => {
     setState(prev => ({ ...prev, isLoading: true }));
     try {
@@ -247,7 +227,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       value={{
         ...state,
         login,
-        quickLogin,
         register,
         logout,
         deleteAccount,

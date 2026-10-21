@@ -4,7 +4,6 @@ import { CrudModalDialog } from '@/src/shared/components/CrudModalDialog';
 import { MarkdownEditor } from '@/src/shared/components/markdown';
 import { generateAiArticleDraftAction } from '@/src/lib/gemini';
 import { ArticleCategory } from '../types/admin.types';
-import { ARTICLE_CATEGORIES } from '@/src/features/education/constants/education.constants';
 
 export interface ArticleFormData {
   title: string;
@@ -67,7 +66,7 @@ export default function ArticleFormModal({
   const handleGenerateAiArticle = async () => {
     const topic = formData.title.trim() || formData.category;
     if (!topic) {
-      showToast('Ketik judul atau pilih kategori artikel terlebih dahulu', 'error');
+      showToast('Ketik judul atau kategori artikel terlebih dahulu', 'error');
       return;
     }
 
@@ -213,17 +212,11 @@ export default function ArticleFormModal({
         <div>
           <label className='block text-xs font-bold text-[#121c2a] mb-1'>Kategori Edukasi</label>
           <input
-            list='article-category-options'
             value={formData.category}
             onChange={e => updateFormData({ category: e.target.value })}
-            placeholder='Pilih atau ketik kategori baru'
+            placeholder='Ketik nama kategori atau genre'
             className='w-full px-3.5 py-2.5 rounded-xl border border-[#dee9fc] bg-white text-base sm:text-sm text-[#121c2a] focus:outline-none focus:ring-2 focus:ring-[#ffd9de] focus:border-[#aa294d] transition-all cursor-pointer'
           />
-          <datalist id='article-category-options'>
-            {ARTICLE_CATEGORIES.filter(c => c !== 'Semua').map(cat => (
-              <option key={cat} value={cat} />
-            ))}
-          </datalist>
         </div>
         <div>
           <label className='block text-xs font-bold text-[#121c2a] mb-1'>

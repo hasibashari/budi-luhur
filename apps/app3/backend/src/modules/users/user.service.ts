@@ -8,6 +8,16 @@ import {
 import { calculateNextSchedule } from '../../utils/scheduleHelpers.js';
 import { calculateChronologicalStreak } from '../../utils/streakCalculator.js';
 
+export interface ImmunizationRecord {
+  id: string;
+  doseLevel: 'TT1' | 'TT2' | 'TT3' | 'TT4' | 'TT5';
+  vaccineDate: string;
+  faskesName: string;
+  batchNumber?: string;
+  notes?: string;
+  verificationStatus: 'PENDING' | 'VERIFIED' | 'REJECTED';
+}
+
 export class UserService {
   static async calculateAndSyncUserStreak(
     userId: string,
@@ -34,11 +44,10 @@ export class UserService {
 
     return streakResult;
   }
-
   static async getDashboardData(userId: string): Promise<UserDashboardData | null> {
     const todayStr = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Jakarta' });
 
-    const [userRes, scheduleRes, todayLogRes, articleRes, groupRes] = await Promise.all([
+    const [userRes, immunizationRes, scheduleRes, todayLogRes, articleRes, groupRes] = await Promise.all([
       db.query<{
         name: string;
         email: string;
@@ -49,12 +58,27 @@ export class UserService {
         hb_level: number | null;
         risk_level: string | null;
         streak_count: number;
+        wedding_date: string | null;
+        tt_status: string | null;
+        kua_status: string | null;
+        partner_name: string | null;
+        notes: string | null;
       }>(
         `SELECT u.name, u.email, u.phone, u.avatar_url,
-                p.friend_code, p.school_or_org, p.hb_level, p.risk_level, p.streak_count
+                p.friend_code, p.school_or_org, p.hb_level, p.risk_level, p.streak_count,
+                p.wedding_date, p.tt_status, p.kua_status, p.partner_name, p.notes
          FROM users u
          LEFT JOIN user_profiles p ON u.id = p.user_id
          WHERE u.id = $1`,
+        [userId],
+      ),
+      db.query<ImmunizationRecord>(
+        `SELECT id, dose_level AS "doseLevel", vaccine_date AS "vaccineDate",
+                faskes_name AS "faskesName", batch_number AS "batchNumber",
+                notes, verification_status AS "verificationStatus"
+         FROM immunization_records
+         WHERE user_id = $1 AND verification_status <> 'REJECTED'
+         ORDER BY vaccine_date ASC, dose_level ASC`,
         [userId],
       ),
       db.query<{
@@ -184,34 +208,40 @@ export class UserService {
         schoolOrOrg: userRow.school_or_org,
         riskLevel: userRow.risk_level,
         friendCode: userRow.friend_code || undefined,
+        weddingDate: userRow.wedding_date || undefined,
+        ttStatus: userRow.tt_status || 'TT0',
+        kuaStatus: userRow.kua_status || undefined,
+        partnerName: userRow.partner_name || undefined,
+        notes: userRow.notes || undefined,
       },
+      immunizationRecords: immunizationRes.rows,
       todayStatus,
       todayRecordedTime,
       activeSchedule,
       featuredArticle: article
         ? {
-            id: article.id,
-            title: article.title,
-            category: article.category,
-            readTime: article.read_time,
-            summary: article.summary,
-            imageUrl: article.image_url,
-          }
+          id: article.id,
+          title: article.title,
+          category: article.category,
+          readTime: article.read_time,
+          summary: article.summary,
+          imageUrl: article.image_url,
+        }
         : null,
       activeBuddy: null,
       primaryGroup: group
         ? {
-            id: group.id,
-            name: group.name,
-            groupCode: group.group_code,
-            streakCount: group.streak_count,
-            memberCount: 1,
-            membersSummary: [userRow.name],
-            weeklyCompletedCount: todayStatus === 'recorded' ? 1 : 0,
-            weeklyTotalCount: 1,
-            weeklyCompletionRate: todayStatus === 'recorded' ? 100 : 0,
-            avatarUrl: group.avatar_url || undefined,
-          }
+          id: group.id,
+          name: group.name,
+          groupCode: group.group_code,
+          streakCount: group.streak_count,
+          memberCount: 1,
+          membersSummary: [userRow.name],
+          weeklyCompletedCount: todayStatus === 'recorded' ? 1 : 0,
+          weeklyTotalCount: 1,
+          weeklyCompletionRate: todayStatus === 'recorded' ? 100 : 0,
+          avatarUrl: group.avatar_url || undefined,
+        }
         : null,
     };
   }
@@ -249,6 +279,59 @@ export class UserService {
       status: row.status || undefined,
       notes: row.notes || undefined,
     };
+  }
+
+  static async getImmunizationRecords(userId: string): Promise<ImmunizationRecord[]> {
+    const result = await db.query<ImmunizationRecord>(
+      `SELECT id, dose_level AS "doseLevel", vaccine_date AS "vaccineDate",
+              faskes_name AS "faskesName", batch_number AS "batchNumber",
+              notes, verification_status AS "verificationStatus"
+       FROM immunization_records
+       WHERE user_id = $1 AND verification_status <> 'REJECTED'
+       ORDER BY vaccine_date ASC, dose_level ASC`,
+      [userId],
+    );
+    return result.rows;
+  }
+
+  static async saveImmunizationRecord(userId: string, data: {
+    doseLevel: ImmunizationRecord['doseLevel'];
+    vaccineDate: string;
+    faskesName: string;
+    batchNumber?: string;
+    notes?: string;
+  }) {
+    const id = `imm_${Date.now().toString().slice(-8)}`;
+    const doseLevel = String(data.doseLevel).toUpperCase();
+    if (!/^TT[1-5]$/.test(doseLevel) || !data.vaccineDate || !data.faskesName?.trim()) {
+      throw new Error('Dosis, tanggal vaksin, dan faskes wajib diisi.');
+    }
+
+    return db.transaction(async client => {
+      const result = await client.query<ImmunizationRecord>(
+        `INSERT INTO immunization_records
+          (id, user_id, dose_level, vaccine_date, faskes_name, batch_number, notes, verification_status)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, 'VERIFIED')
+         ON CONFLICT (user_id, dose_level) DO UPDATE SET
+           vaccine_date = EXCLUDED.vaccine_date,
+           faskes_name = EXCLUDED.faskes_name,
+           batch_number = EXCLUDED.batch_number,
+           notes = EXCLUDED.notes,
+           verification_status = 'VERIFIED',
+           updated_at = CURRENT_TIMESTAMP
+         RETURNING id, dose_level AS "doseLevel", vaccine_date AS "vaccineDate",
+                   faskes_name AS "faskesName", batch_number AS "batchNumber",
+                   notes, verification_status AS "verificationStatus"`,
+        [id, userId, doseLevel, data.vaccineDate, data.faskesName.trim(), data.batchNumber || null, data.notes || null],
+      );
+      await client.query(
+        `UPDATE user_profiles
+         SET tt_status = $1, last_active_at = CURRENT_TIMESTAMP
+         WHERE user_id = $2`,
+        [doseLevel, userId],
+      );
+      return result.rows[0];
+    });
   }
 
   static async updateProfile(userId: string, data: any) {
@@ -330,6 +413,18 @@ export class UserService {
         profileUpdates.push(`weight = $${idx++}`);
         profileParams.push(data.weight ? Number(data.weight) : null);
       }
+      if (data.partnerName !== undefined) {
+        profileUpdates.push(`partner_name = $${idx++}`);
+        profileParams.push(data.partnerName || null);
+      }
+      if (data.weddingDate !== undefined) {
+        profileUpdates.push(`wedding_date = $${idx++}`);
+        profileParams.push(data.weddingDate || null);
+      }
+      if (data.ttStatus !== undefined) {
+        profileUpdates.push(`tt_status = $${idx++}`);
+        profileParams.push(data.ttStatus || 'TT0');
+      }
 
       if (profileUpdates.length > 0) {
         profileParams.push(userId);
@@ -374,8 +469,11 @@ export class UserService {
              hb_level = $5,
              hb_status = $6,
              risk_level = $7,
+             partner_name = $8,
+             wedding_date = $9,
+             tt_status = $10,
              last_active_at = CURRENT_TIMESTAMP
-         WHERE user_id = $8`,
+         WHERE user_id = $11`,
         [
           data.schoolOrOrg || null,
           data.bloodType || null,
@@ -384,6 +482,9 @@ export class UserService {
           hb,
           hbStatus,
           riskLevel,
+          data.partnerName || null,
+          data.weddingDate || null,
+          data.ttStatus || 'TT0',
           userId,
         ],
       );

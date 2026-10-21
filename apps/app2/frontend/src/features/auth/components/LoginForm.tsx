@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock, ArrowRight, CheckCircle2, AlertCircle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import { UserRole } from '../types/auth.types';
 
 export interface LoginFormProps {
   onSwitchTab?: () => void;
@@ -20,7 +19,6 @@ export function LoginForm({ hideHeader = false }: LoginFormProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [selectedRoleHint] = useState<UserRole>('user');
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successRole, setSuccessRole] = useState<string | null>(null);
@@ -39,7 +37,6 @@ export function LoginForm({ hideHeader = false }: LoginFormProps) {
       const res = await login({
         email,
         password,
-        roleHint: selectedRoleHint,
       });
 
       if (res.success && res.redirectTo) {
