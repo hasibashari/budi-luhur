@@ -17,6 +17,8 @@ export interface WeeklyAdherencePoint {
   isUpcoming: boolean; // True jika minggu ini di masa depan dan belum ada aktivitas
   isCurrent: boolean; // True jika tanggal hari ini berada di rentang minggu ini
   status: 'OPTIMAL' | 'MODERATE' | 'LOW' | 'UPCOMING';
+  targetDoses?: number; // Target dosis aktif dalam bulan ini
+  isInactive?: boolean; // True jika minggu lampau sebelum jadwal/pengguna mulai
 }
 
 const MONTH_NAMES_SHORT = [
@@ -36,12 +38,12 @@ const MONTH_NAMES_SHORT = [
 
 /**
  * Menghitung kepatuhan mingguan (M1 - M4) dari kecil ke atas (0% -> 100%)
- * berdasarkan data konsumsi aktual dan target bulanan 4 dosis TTD.
+ * berdasarkan data konsumsi aktual dan target bulanan yang aktif.
  *
- * Formula:
- * Target 4 dosis (masing-masing 25%).
- * Persentase = (cumulativeCompleted / 4 * 100%) - (cumulativeMissed * 10%)
- * dengan batas [0%, 100%].
+ * Formula dinamis:
+ * Jika pengguna baru mulai di pertengahan bulan (misal M3-M4 tersisa 2 minggu),
+ * target bulanan disesuaikan menjadi 2 dosis (masing-masing 50%).
+ * Minggu lampau sebelum jadwal/catatan dibuat tidak dihitung sebagai kewajiban.
  */
 export function calculateWeeklyAdherence(
   logs: ConsumptionLog[] = [],
@@ -70,14 +72,10 @@ export function calculateWeeklyAdherence(
     return `${year}-${mm}-${dd}`;
   };
 
-  let runningCompleted = 0;
-  let runningMissed = 0;
-  let previousPercentage: number | null = null;
-
-  return weekRanges.map(wr => {
+  // Identifikasi log dan status untuk masing-masing minggu terlebih dahulu
+  const weekLogsInfo = weekRanges.map(wr => {
     const startDate = formatYMD(wr.startDay);
     const endDate = formatYMD(wr.endDay);
-    const dateRange = `${wr.startDay} - ${wr.endDay} ${monthShort}`;
 
     // Filter log aktual pengguna yang jatuh di rentang minggu ini
     const logsInWeek = logs.filter(log => {
@@ -93,21 +91,64 @@ export function calculateWeeklyAdherence(
     ).length;
     const scheduledCount = completedCount + missedCount;
 
-    // Evaluasi apakah minggu ini berada di masa depan
+    // Minggu lampau tanpa catatan/jadwal sama sekali (sebelum jadwal dibuat/sebelum user isi)
+    const isPastEmpty = todayDate > wr.endDay && scheduledCount === 0;
+    // Minggu masa depan
     const isUpcoming = todayDate < wr.startDay && scheduledCount === 0;
+    // Minggu berjalan
     const isCurrent = todayDate >= wr.startDay && todayDate <= wr.endDay;
+
+    return {
+      wr,
+      startDate,
+      endDate,
+      completedCount,
+      missedCount,
+      scheduledCount,
+      isPastEmpty,
+      isUpcoming,
+      isCurrent,
+    };
+  });
+
+  // Tentukan target dosis aktif bulan ini.
+  // Jika 2 minggu pertama belum ada jadwal/log (misal user baru mulai di M3),
+  // target yang dibebankan hanyalah minggu-minggu aktif (misal 2 dosis).
+  const activeWeeks = weekLogsInfo.filter(w => !w.isPastEmpty);
+  const targetDoses = Math.max(1, activeWeeks.length);
+  const doseWeight = 100 / targetDoses;
+
+  let runningCompleted = 0;
+  let runningMissed = 0;
+  let previousPercentage: number | null = null;
+
+  return weekLogsInfo.map(info => {
+    const {
+      wr,
+      startDate,
+      endDate,
+      completedCount,
+      missedCount,
+      scheduledCount,
+      isPastEmpty,
+      isUpcoming,
+      isCurrent,
+    } = info;
+    const dateRange = `${wr.startDay} - ${wr.endDay} ${monthShort}`;
 
     let percentage: number | null = null;
     let delta: number | null = null;
     let status: 'OPTIMAL' | 'MODERATE' | 'LOW' | 'UPCOMING' = 'UPCOMING';
 
-    if (!isUpcoming) {
+    if (isPastEmpty) {
+      // Minggu lampau sebelum pengguna mulai/ada jadwal
+      status = 'UPCOMING';
+    } else if (!isUpcoming) {
       runningCompleted += completedCount;
       runningMissed += missedCount;
 
-      // Formula kepatuhan dari kecil ke atas (0 - 100%)
-      // Dimulai dari 0, setiap dosis menambah +25%, dan setiap dosis terlewat mengurangi 10%
-      const rawPercentage = Math.round((runningCompleted / 4) * 100 - runningMissed * 10);
+      // Formula kepatuhan dari kecil ke atas (0 - 100%) berdasarkan target dosis aktif
+      const rawPercentage = Math.round(runningCompleted * doseWeight - runningMissed * 10);
       percentage = Math.max(0, Math.min(100, rawPercentage));
 
       if (previousPercentage !== null) {
@@ -138,9 +179,11 @@ export function calculateWeeklyAdherence(
       cumulativeMissed: runningMissed,
       percentage,
       delta,
-      isUpcoming,
+      isUpcoming: isUpcoming || isPastEmpty,
       isCurrent,
       status,
+      targetDoses,
+      isInactive: isPastEmpty,
     };
   });
 }

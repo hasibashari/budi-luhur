@@ -210,7 +210,7 @@ export class ConsumptionService {
 
     const total = rows.length;
     const completedCount = onTimeCount + lateCount;
-    const adherenceRate = total > 0 ? Math.round((completedCount / total) * 100) : 100;
+    const adherenceRate = total > 0 ? Math.round((completedCount / total) * 100) : 0;
     const streakResult = await calculateChronologicalStreak(completedDates, schedFreq);
 
     return {

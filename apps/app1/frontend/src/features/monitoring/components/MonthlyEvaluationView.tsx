@@ -40,14 +40,15 @@ export function MonthlyEvaluationView({ stats, logs }: MonthlyEvaluationViewProp
     const completedFromLogs = logs.filter(
       log => log.status === 'ON_TIME' || log.status === 'LATE'
     ).length;
-    const scheduledFromLogs = logs.length;
+    const targetDoses = weeklyData[0]?.targetDoses || 4;
     return {
       totalCompleted: stats?.totalCompleted ?? completedFromLogs,
       adherenceRate:
-        stats?.adherenceRate ??
-        (scheduledFromLogs > 0 ? Math.round((completedFromLogs / scheduledFromLogs) * 100) : 0),
+        targetDoses > 0
+          ? Math.min(100, Math.round((completedFromLogs / targetDoses) * 100))
+          : 0,
     };
-  }, [logs, stats]);
+  }, [logs, stats, weeklyData]);
 
   return (
     <div className='flex flex-col gap-6 animate-fade-in'>
