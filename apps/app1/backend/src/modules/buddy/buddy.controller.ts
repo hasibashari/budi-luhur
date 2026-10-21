@@ -53,6 +53,66 @@ export class BuddyController {
     }
   }
 
+  static async updateGroup(req: AuthRequest, res: Response) {
+    try {
+      const userId = req.user?.id;
+      const id = String(req.params.id);
+      if (!userId) {
+        res.status(401).json({ success: false, error: 'Sesi tidak valid.' });
+        return;
+      }
+      const result = await BuddyService.updateGroup(id, userId, req.body);
+      if (!result.success) {
+        res.status(403).json(result);
+        return;
+      }
+      res.json(result);
+    } catch (error: any) {
+      console.error('BuddyController.updateGroup error:', error);
+      res.status(500).json({ success: false, error: 'Gagal memperbarui grup.' });
+    }
+  }
+
+  static async deleteGroup(req: AuthRequest, res: Response) {
+    try {
+      const userId = req.user?.id;
+      const id = String(req.params.id);
+      if (!userId) {
+        res.status(401).json({ success: false, error: 'Sesi tidak valid.' });
+        return;
+      }
+      const result = await BuddyService.deleteGroup(id, userId);
+      if (!result.success) {
+        res.status(403).json(result);
+        return;
+      }
+      res.json(result);
+    } catch (error: any) {
+      console.error('BuddyController.deleteGroup error:', error);
+      res.status(500).json({ success: false, error: 'Gagal menghapus grup.' });
+    }
+  }
+
+  static async leaveGroup(req: AuthRequest, res: Response) {
+    try {
+      const userId = req.user?.id;
+      const id = String(req.params.id);
+      if (!userId) {
+        res.status(401).json({ success: false, error: 'Sesi tidak valid.' });
+        return;
+      }
+      const result = await BuddyService.leaveGroup(id, userId);
+      if (!result.success) {
+        res.status(400).json(result);
+        return;
+      }
+      res.json(result);
+    } catch (error: any) {
+      console.error('BuddyController.leaveGroup error:', error);
+      res.status(500).json({ success: false, error: 'Gagal keluar dari grup.' });
+    }
+  }
+
   static async joinGroup(req: AuthRequest, res: Response) {
     try {
       const userId = req.user?.id;

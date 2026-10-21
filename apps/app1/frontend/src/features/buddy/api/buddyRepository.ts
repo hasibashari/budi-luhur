@@ -101,7 +101,9 @@ export async function leaveGroupAction(
   _userId: string,
 ): Promise<LeaveGroupResult & { message?: string }> {
   try {
-    const response = await apiClient.delete<LeaveGroupResult & { message?: string }>(`/buddy/groups/${groupId}/leave`);
+    const response = await apiClient.delete<LeaveGroupResult & { message?: string }>(
+      `/buddy/groups/${groupId}/leave`,
+    );
     return { ...response.data, message: response.data.message || 'Berhasil keluar dari grup.' };
   } catch (err: any) {
     return { success: false, error: err.response?.data?.error || err.message };
@@ -126,11 +128,17 @@ export async function updateBuddyGroupAction(
 
 export async function deleteBuddyGroupAction(
   groupId: string,
-  userId: string,
+  _userId: string,
 ): Promise<{ success: boolean; message?: string; error?: string }> {
   try {
-    const res = await leaveGroupAction(groupId, userId);
-    return { success: res.success, message: res.message || 'Grup berhasil dihapus.', error: res.error };
+    const response = await apiClient.delete<{ success: boolean; message?: string; error?: string }>(
+      `/buddy/groups/${groupId}`,
+    );
+    return {
+      success: response.data.success,
+      message: response.data.message || 'Grup berhasil dihapus.',
+      error: response.data.error,
+    };
   } catch (err: any) {
     return { success: false, error: err.response?.data?.error || err.message };
   }

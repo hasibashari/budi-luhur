@@ -89,7 +89,10 @@ export class BuddyService {
 
   static async getGroupChatDetails(groupId: string, userId: string) {
     const [groupRes, membersRes, messagesRes] = await Promise.all([
-      db.query<any>(`SELECT id, name, description, group_code, creator_id, streak_count, avatar_url FROM buddy_groups WHERE id = $1`, [groupId]),
+      db.query<any>(
+        `SELECT id, name, description, group_code, creator_id, streak_count, avatar_url FROM buddy_groups WHERE id = $1`,
+        [groupId],
+      ),
       db.query<any>(
         `SELECT u.id, u.name, u.avatar_url, gm.role, p.streak_count, p.school_or_org
          FROM buddy_group_members gm
@@ -133,7 +136,8 @@ export class BuddyService {
       type: msg.message_type,
       content: msg.content,
       cheerType: msg.cheer_type || undefined,
-      timestamp: msg.created_at.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB',
+      timestamp:
+        msg.created_at.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB',
       isMe: msg.sender_id === userId,
     }));
 
@@ -161,12 +165,16 @@ export class BuddyService {
     }
 
     const cleanName = data.name.trim();
-    const tag = cleanName.toUpperCase().replace(/[^A-Z]/g, '').slice(0, 4) || 'GRP';
+    const tag =
+      cleanName
+        .toUpperCase()
+        .replace(/[^A-Z]/g, '')
+        .slice(0, 4) || 'GRP';
     const randCode = Math.floor(100 + Math.random() * 900);
     const groupCode = `FEM-${tag}-${randCode}`;
     const groupId = `grp_${Date.now().toString().slice(-6)}`;
 
-    await db.transaction(async (client) => {
+    await db.transaction(async client => {
       await client.query(
         `INSERT INTO buddy_groups (id, name, description, group_code, creator_id, streak_count)
          VALUES ($1, $2, $3, $4, $5, 0)`,
@@ -182,11 +190,26 @@ export class BuddyService {
       await client.query(
         `INSERT INTO buddy_group_messages (id, group_id, sender_id, message_type, content)
          VALUES ($1, $2, $3, 'system', $4)`,
-        [`msg_${Date.now().toString().slice(-6)}`, groupId, userId, 'Grup berhasil dibuat! Mari cegah anemia bersama-sama 🌸'],
+        [
+          `msg_${Date.now().toString().slice(-6)}`,
+          groupId,
+          userId,
+          'Grup berhasil dibuat! Mari cegah anemia bersama-sama 🌸',
+        ],
       );
     });
 
-    return { success: true, groupId, groupCode };
+    return {
+      success: true,
+      group: {
+        id: groupId,
+        name: cleanName,
+        groupCode,
+        creatorId: userId,
+        streakCount: 0,
+        memberCount: 1,
+      },
+    };
   }
 
   static async joinGroupByCode(userId: string, groupCode: string) {
@@ -209,7 +232,7 @@ export class BuddyService {
       return { success: false, error: 'Anda sudah bergabung dalam grup ini.' };
     }
 
-    await db.transaction(async (client) => {
+    await db.transaction(async client => {
       await client.query(
         `INSERT INTO buddy_group_members (id, group_id, user_id, role)
          VALUES ($1, $2, $3, 'member')`,
@@ -224,13 +247,26 @@ export class BuddyService {
     });
 
     await this.calculateAndSyncGroupStreak(group.id);
-    return { success: true, groupId: group.id, groupName: group.name };
+    return {
+      success: true,
+      group: {
+        id: group.id,
+        name: group.name,
+        groupCode: cleanCode,
+      },
+    };
   }
 
   static async sendMessage(
     userId: string,
     groupId: string,
-    data: { content?: string; message?: string; type?: string; messageType?: string; cheerType?: string },
+    data: {
+      content?: string;
+      message?: string;
+      type?: string;
+      messageType?: string;
+      cheerType?: string;
+    },
   ) {
     const textContent = (data.content || data.message || '').trim();
     const rawType = (data.messageType || data.type || 'text').toLowerCase();
@@ -243,7 +279,9 @@ export class BuddyService {
       [msgId, groupId, userId, type, textContent, data.cheerType || null],
     );
 
-    await db.query(`UPDATE buddy_groups SET updated_at = CURRENT_TIMESTAMP WHERE id = $1`, [groupId]);
+    await db.query(`UPDATE buddy_groups SET updated_at = CURRENT_TIMESTAMP WHERE id = $1`, [
+      groupId,
+    ]);
 
     const [groupRes, membersRes] = await Promise.all([
       db.query<{ name: string }>(`SELECT name FROM buddy_groups WHERE id = $1`, [groupId]),
@@ -264,5 +302,107 @@ export class BuddyService {
     );
 
     return { success: true, messageId: msgId };
+  }
+
+  // ── TAMBAH: Update group ────────────────────────────────────────────────
+  static async updateGroup(
+    groupId: string,
+    userId: string,
+    data: { name?: string; description?: string },
+  ): Promise<{ success: boolean; message?: string; error?: string }> {
+    // Cek bahwa user adalah admin
+    const roleRes = await db.query<{ role: string }>(
+      `SELECT role FROM buddy_group_members WHERE group_id = $1 AND user_id = $2`,
+      [groupId, userId],
+    );
+    if (!roleRes.rows[0] || roleRes.rows[0].role !== 'admin') {
+      return { success: false, error: 'Hanya admin grup yang dapat mengubah informasi grup.' };
+    }
+
+    const cleanName = data.name?.trim();
+    const cleanDesc = data.description?.trim() || null;
+
+    if (cleanName) {
+      await db.query(
+        `UPDATE buddy_groups SET name = $1, description = $2, updated_at = CURRENT_TIMESTAMP WHERE id = $3`,
+        [cleanName, cleanDesc, groupId],
+      );
+    } else {
+      await db.query(
+        `UPDATE buddy_groups SET description = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2`,
+        [cleanDesc, groupId],
+      );
+    }
+
+    return { success: true, message: 'Informasi grup berhasil diperbarui.' };
+  }
+
+  // ── TAMBAH: Delete group (hanya admin) ─────────────────────────────────
+  static async deleteGroup(
+    groupId: string,
+    userId: string,
+  ): Promise<{ success: boolean; message?: string; error?: string }> {
+    const roleRes = await db.query<{ role: string }>(
+      `SELECT role FROM buddy_group_members WHERE group_id = $1 AND user_id = $2`,
+      [groupId, userId],
+    );
+    if (!roleRes.rows[0] || roleRes.rows[0].role !== 'admin') {
+      return { success: false, error: 'Hanya admin grup yang dapat menghapus grup.' };
+    }
+
+    await db.transaction(async client => {
+      await client.query(`DELETE FROM buddy_group_messages WHERE group_id = $1`, [groupId]);
+      await client.query(`DELETE FROM buddy_group_members WHERE group_id = $1`, [groupId]);
+      await client.query(`DELETE FROM buddy_groups WHERE id = $1`, [groupId]);
+    });
+
+    return { success: true, message: 'Grup berhasil dihapus.' };
+  }
+
+  // ── TAMBAH: Leave group (anggota biasa) ─────────────────────────────────
+  static async leaveGroup(
+    groupId: string,
+    userId: string,
+  ): Promise<{ success: boolean; message?: string; error?: string }> {
+    const memberRes = await db.query<{ role: string }>(
+      `SELECT role FROM buddy_group_members WHERE group_id = $1 AND user_id = $2`,
+      [groupId, userId],
+    );
+    if (!memberRes.rows[0]) {
+      return { success: false, error: 'Anda bukan anggota grup ini.' };
+    }
+
+    // Jika admin dan hanya 1 anggota → hapus grup
+    const countRes = await db.query<{ count: string }>(
+      `SELECT COUNT(*) as count FROM buddy_group_members WHERE group_id = $1`,
+      [groupId],
+    );
+    const memberCount = parseInt(countRes.rows[0]?.count || '0', 10);
+
+    if (memberRes.rows[0].role === 'admin' && memberCount <= 1) {
+      return this.deleteGroup(groupId, userId);
+    }
+
+    // Jika admin dan masih ada anggota lain → transfer admin
+    if (memberRes.rows[0].role === 'admin') {
+      const nextAdmin = await db.query<{ user_id: string }>(
+        `SELECT user_id FROM buddy_group_members WHERE group_id = $1 AND user_id <> $2 ORDER BY joined_at ASC LIMIT 1`,
+        [groupId, userId],
+      );
+      if (nextAdmin.rows[0]) {
+        await db.query(
+          `UPDATE buddy_group_members SET role = 'admin' WHERE group_id = $1 AND user_id = $2`,
+          [groupId, nextAdmin.rows[0].user_id],
+        );
+      }
+    }
+
+    await db.query(`DELETE FROM buddy_group_members WHERE group_id = $1 AND user_id = $2`, [
+      groupId,
+      userId,
+    ]);
+
+    await this.calculateAndSyncGroupStreak(groupId);
+    return { success: true, message: 'Berhasil keluar dari grup.' };
   }
 }
