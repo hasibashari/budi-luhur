@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
   ShieldCheck,
   Heart,
@@ -20,9 +20,9 @@ import {
   ProfileSecuritySection,
   ProfileNotificationCard,
 } from '@/src/shared/components/profile';
+import { FaskesRujukanCard } from '@/src/shared/components/domain/FaskesRujukanCard';
 import { useAuth } from '@/src/features/auth/context/AuthContext';
 import { VaccineCardModal } from '@/src/features/dashboard/components/VaccineCardModal';
-import { ReminderSettingsModal, ReminderSettingsData } from '../components/ReminderSettingsModal';
 import {
   getUserDashboardDataAction,
   getUserScheduleAction,
@@ -45,7 +45,6 @@ interface UserProfileState {
 
 export default function ProfileView() {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
   const { user: authUser, logout, updateUser, deleteAccount } = useAuth();
 
   const [userProfile, setUserProfile] = useState<UserProfileState>({
@@ -63,8 +62,6 @@ export default function ProfileView() {
   const [scheduleData, setScheduleData] = useState<UserScheduleData | null>(null);
   const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
   const [isCertificateModalOpen, setIsCertificateModalOpen] = useState(false);
-  const [isReminderModalOpen, setIsReminderModalOpen] = useState(false);
-  const [reminderSettings, setReminderSettings] = useState<ReminderSettingsData>();
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -88,12 +85,6 @@ export default function ProfileView() {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 3000);
   };
-
-  useEffect(() => {
-    if (searchParams.get('section') === 'reminder') {
-      setIsReminderModalOpen(true);
-    }
-  }, [searchParams]);
 
   useEffect(() => {
     let isMounted = true;
@@ -120,13 +111,6 @@ export default function ProfileView() {
           const schedule = await getUserScheduleAction(authUser.id);
           if (isMounted && schedule) {
             setScheduleData(schedule);
-            setReminderSettings({
-              isEnabled: schedule.isEnabled,
-              timing: schedule.reminderTiming,
-              channelPush: schedule.channelPush,
-              channelWhatsapp: schedule.channelWhatsapp,
-              channelEmail: schedule.channelEmail,
-            });
           }
         } catch (error) {
           console.error('Failed to load schedule:', error);
@@ -204,45 +188,6 @@ export default function ProfileView() {
           : 'Peringatan awal 15 menit dinonaktifkan.',
       );
     }
-  };
-
-  const handleSaveReminderSettings = async (settings: ReminderSettingsData) => {
-    const schedule = scheduleData || (await getUserScheduleAction(authUser?.id));
-    if (!schedule) {
-      showToast('Jadwal pengingat belum tersedia.');
-      return;
-    }
-
-    const result = await updateUserScheduleSettingsAction(schedule.id, {
-      isEnabled: settings.isEnabled,
-      reminderTiming: settings.timing,
-      channelPush: settings.channelPush,
-      channelWhatsapp: settings.channelWhatsapp,
-      channelEmail: settings.channelEmail,
-    });
-    if (!result.success) {
-      showToast(result.error || 'Gagal menyimpan pengaturan pengingat.');
-      return;
-    }
-
-    setReminderSettings(settings);
-    setScheduleData(prev =>
-      prev
-        ? {
-            ...prev,
-            isEnabled: settings.isEnabled,
-            reminderTiming: settings.timing,
-            channelPush: settings.channelPush,
-            channelWhatsapp: settings.channelWhatsapp,
-            channelEmail: settings.channelEmail,
-          }
-        : null,
-    );
-    showToast(
-      settings.isEnabled
-        ? 'Pengaturan pengingat otomatis berhasil disimpan!'
-        : 'Pengingat otomatis dinonaktifkan.',
-    );
   };
 
   const handleOpenEdit = () => {
@@ -399,19 +344,9 @@ export default function ProfileView() {
         roleBadgeColor='user'
         subtitle={`${userProfile.schoolOrOrg || 'Puskesmas Kebayoran'} • PRELUNA 💍`}
         verified={true}
-        verifiedText='Terverifikasi Kemenkes & KUA'
+        verifiedText='Terverifikasi'
         onEditClick={handleOpenEdit}
         onSaveAvatar={handleSaveAvatar}
-        extraBadges={
-          <button
-            type='button'
-            onClick={() => setIsCertificateModalOpen(true)}
-            className='inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#ffd9de] text-[#8c0f39] hover:bg-[#ffc6cf] active:scale-95 transition-all text-xs font-bold cursor-pointer border border-[#ffc2cc]'
-          >
-            <Award size={14} className='text-[#aa294d]' />
-            <span>Lihat Kartu Vaksin</span>
-          </button>
-        }
       />
 
       {/* 2. 3-Column Metrics Grid */}
@@ -429,7 +364,10 @@ export default function ProfileView() {
         items={contactItems}
       />
 
-      {/* 4. Notification & Reminder Settings Card (Burgundy Theme) */}
+      {/* 4. Faskes Rujukan Terpilih */}
+      <FaskesRujukanCard faskesName={userProfile.schoolOrOrg || 'Puskesmas Kebayoran Baru'} />
+
+      {/* 5. Notification & Reminder Settings Card (Burgundy Theme) */}
       <ProfileNotificationCard
         theme='burgundy'
         title='Pengingat Imunisasi TT'
@@ -517,7 +455,8 @@ export default function ProfileView() {
           <div className='relative z-10 bg-white rounded-3xl shadow-2xl border border-stone-200 max-w-sm w-full p-6 text-center animate-scale-up'>
             <h3 className='text-base font-bold text-slate-900'>Keluar dari PRELUNA?</h3>
             <p className='text-xs text-slate-600 mt-1 mb-5'>
-              Anda perlu masuk kembali untuk mengakses kartu vaksin digital dan jadwal kunjungan faskes.
+              Anda perlu masuk kembali untuk mengakses kartu vaksin digital dan jadwal kunjungan
+              faskes.
             </p>
             <div className='flex items-center gap-2.5'>
               <Button
@@ -553,7 +492,8 @@ export default function ProfileView() {
 
             <h3 className='text-lg font-bold text-slate-900 mb-2'>Konfirmasi Hapus Akun Catin</h3>
             <p className='text-xs text-slate-600 leading-relaxed mb-4'>
-              Tindakan ini akan menghapus akun calon pengantin Anda beserta riwayat imunisasi TT dan jadwal faskes secara permanen.
+              Tindakan ini akan menghapus akun calon pengantin Anda beserta riwayat imunisasi TT dan
+              jadwal faskes secara permanen.
             </p>
 
             <div className='mb-4 text-left'>
@@ -600,14 +540,6 @@ export default function ProfileView() {
           </div>
         </div>
       )}
-
-      {/* Reminder Settings Bottom Sheet Modal */}
-      <ReminderSettingsModal
-        isOpen={isReminderModalOpen}
-        onClose={() => setIsReminderModalOpen(false)}
-        onSave={handleSaveReminderSettings}
-        defaultSettings={reminderSettings}
-      />
     </div>
   );
 }

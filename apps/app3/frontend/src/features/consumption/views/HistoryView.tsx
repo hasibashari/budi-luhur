@@ -11,23 +11,15 @@ import {
   Printer,
   ArrowLeft,
   Clock,
-  Hourglass,
   PlusCircle,
   Activity,
   Heart,
-  Building2,
-  MapPin,
-  Pin,
-  ExternalLink,
-  BellRing,
-  ChevronRight,
 } from 'lucide-react';
 import { useAuth } from '@/src/features/auth/context/AuthContext';
 import { useMonitoringData } from '../hooks/useMonitoringData';
 import { InputRiwayatTTModal, NewTTRiwayatData } from '../components/InputRiwayatTTModal';
 import { VaccineCardModal } from '@/src/features/dashboard/components/VaccineCardModal';
 import { MonthlyEvaluationView } from '../components/MonthlyEvaluationView';
-import { TTIntervalGuideCard } from '@/src/features/schedule/components/TTIntervalGuideCard';
 
 export default function HistoryView() {
   const navigate = useNavigate();
@@ -317,157 +309,6 @@ export default function HistoryView() {
             </div>
           </div>
         </div>
-
-        {/* Quick Status Pengingat */}
-
-        {/* Stepper Progress Bar */}
-        <div className='bg-white rounded-2xl p-4 shadow-xs border border-[#eff4ff]'>
-          <div className='flex items-center justify-between mb-3'>
-            <span className='text-xs font-bold text-[#121c2a]'>
-              Progres Menuju Kekebalan Seumur Hidup
-            </span>
-            <span className='text-xs font-bold text-[#aa294d]'>Dosis 4 dari 5</span>
-          </div>
-          <div className='grid grid-cols-5 gap-1.5 mb-2'>
-            <div className='h-2 rounded-full bg-[#2a6950]' />
-            <div className='h-2 rounded-full bg-[#2a6950]' />
-            <div className='h-2 rounded-full bg-[#2a6950]' />
-            <div className='h-2 rounded-full bg-[#cb4364] animate-pulse' />
-            <div className='h-2 rounded-full bg-[#dee9fc]' />
-          </div>
-          <div className='flex justify-between items-center text-[10px] text-[#574144] font-semibold'>
-            <span className='text-[#2a6950]'>TT1-TT3 Selesai</span>
-            <span className='text-[#aa294d]'>Langkah Saat Ini: TT4</span>
-            <span className='text-[#8b7074]'>TT5 Terakhir</span>
-          </div>
-        </div>
-
-        {/* Faskes Rujukan Terpilih */}
-        <div>
-          <div className='flex items-center justify-between mb-2.5 px-0.5'>
-            <span className='text-sm sm:text-base font-bold text-[#121c2a]'>
-              Faskes Rujukan Terpilih
-            </span>
-            <span className='text-[11px] text-[#aa294d] font-bold'>Tersinkron BPJS & KUA</span>
-          </div>
-          <div className='bg-white rounded-2xl p-4 shadow-xs border border-[#eff4ff] flex flex-col gap-3'>
-            <div className='flex items-start justify-between gap-3'>
-              <div className='flex gap-3'>
-                <div className='w-11 h-11 rounded-xl bg-[#aff1d0]/50 flex items-center justify-center text-[#2a6950] shrink-0'>
-                  <Building2 size={24} />
-                </div>
-                <div className='flex flex-col min-w-0'>
-                  <h3 className='text-xs sm:text-sm font-bold text-[#121c2a] truncate'>
-                    {faskesName}
-                  </h3>
-                  <span className='text-[11px] text-[#574144] flex items-center gap-1 mt-0.5'>
-                    <CheckCircle2 size={13} className='text-[#2a6950]' />
-                    Faskes Utama Calon Pengantin
-                  </span>
-                </div>
-              </div>
-              <div className='bg-[#eff4ff] px-2.5 py-0.5 rounded-full flex items-center gap-1 shrink-0'>
-                <MapPin size={12} className='text-[#aa294d]' />
-                <span className='text-[11px] text-[#121c2a] font-semibold'>1.2 km</span>
-              </div>
-            </div>
-
-            <div className='flex items-center gap-2 bg-[#eff4ff]/60 px-3 py-2 rounded-xl text-xs text-[#574144]'>
-              <Clock size={15} className='text-[#8b7074]' />
-              <span className='font-medium text-[11px]'>Senin – Jumat, 08:00 – 14:00 WIB</span>
-            </div>
-
-            {/* Map Preview Banner */}
-            <div
-              className='w-full h-24 rounded-xl bg-cover bg-center relative overflow-hidden flex items-end p-2.5 shadow-inner'
-              style={{
-                backgroundImage: `url('https://lh3.googleusercontent.com/aida-public/AB6AXuBFV1kdSb2CiSwu7AGmIxW7cM2CvGaurtZEvxgwN5LglsjZEr4PHwHV2jIcAXZVHFNmvNTnmzp2cUTOElM0uVm3OcHxhGcl8426-bJN3C4R1XI5ZUCqvJYFHkR5UInfbiDmNHzydg83gH8NoBSqcjsLA7C4C4EvYrclwRBXjslcShlrtcQR8KTXL0rLHV2VPrvZkzmsE2Z2B2oJO1wWv5F45CdFGSp8jSuo60Y-c4lPw9uPGPU5j6aA')`,
-              }}
-            >
-              <div className='absolute inset-0 bg-gradient-to-t from-[#121c2a]/80 via-transparent to-transparent' />
-              <span className='relative text-[10px] text-white flex items-center gap-1 font-semibold truncate'>
-                <Pin size={12} className='text-rose-300' />
-                Jl. Gandaria Tengah II No. 14, Jakarta Selatan
-              </span>
-            </div>
-
-            <a
-              href='https://maps.google.com/?q=Puskesmas+Kebayoran+Baru'
-              target='_blank'
-              rel='noopener noreferrer'
-              className='w-full h-11 bg-white text-[#aa294d] border border-[#dee9fc] rounded-xl font-bold text-xs shadow-2xs hover:bg-[#eff4ff] active:scale-95 transition-all flex items-center justify-center gap-2 mt-1 cursor-pointer'
-            >
-              <ExternalLink size={16} />
-              <span>Buka Petunjuk Arah di Google Maps</span>
-            </a>
-          </div>
-        </div>
-
-        {/* 5-Step Horizontal Milestone Tracker */}
-        <section className='bg-white rounded-2xl p-4 sm:p-5 shadow-xs border border-[#eff4ff]'>
-          <div className='flex items-center justify-between mb-4'>
-            <div className='flex items-center gap-2'>
-              <div className='w-8 h-8 rounded-lg bg-[#ffd9de] text-[#aa294d] flex items-center justify-center'>
-                <span className='material-symbols-outlined text-[18px]'>linear_scale</span>
-              </div>
-              <h3 className='text-sm sm:text-base font-bold text-[#121c2a]'>
-                Rangkaian 5 Dosis Vaksin TT
-              </h3>
-            </div>
-            <span className='px-2.5 py-0.5 rounded-full bg-[#ffd9de] text-[#8c0f39] text-xs font-bold'>
-              {currentTTLevel} / 5 Selesai
-            </span>
-          </div>
-
-          <div className='relative w-full pt-2 pb-2'>
-            <div className='absolute top-6 left-6 right-6 h-1 bg-[#d9e3f6] rounded-full -translate-y-1/2' />
-            <div
-              className='absolute top-6 left-6 h-1 bg-[#2a6950] rounded-full -translate-y-1/2 transition-all duration-700'
-              style={{ width: `${Math.min(100, (currentTTLevel / 5) * 100)}%` }}
-            />
-
-            <div className='relative flex items-start justify-between z-10 px-1'>
-              {[1, 2, 3, 4, 5].map(step => {
-                const isCompleted = step <= currentTTLevel;
-                const isUpcoming = step === currentTTLevel + 1;
-
-                return (
-                  <div key={step} className='flex flex-col items-center'>
-                    <div
-                      className={`w-8 h-8 rounded-full flex items-center justify-center shadow-xs ring-4 ring-white transition-all ${
-                        isCompleted
-                          ? 'bg-[#2a6950] text-white'
-                          : isUpcoming
-                            ? 'bg-[#ffd9dd] text-[#ac254b]'
-                            : 'bg-[#e6eeff] text-[#8b7074]'
-                      }`}
-                    >
-                      {isCompleted ? (
-                        <CheckCircle2 size={16} />
-                      ) : isUpcoming ? (
-                        <Hourglass size={14} />
-                      ) : (
-                        <span className='w-2 h-2 rounded-full bg-[#8b7074]/40' />
-                      )}
-                    </div>
-                    <span className='text-xs font-bold text-[#121c2a] mt-1.5'>TT{step}</span>
-                    <span
-                      className={`text-[10px] font-semibold ${
-                        isCompleted
-                          ? 'text-[#2a6950]'
-                          : isUpcoming
-                            ? 'text-[#ac254b]'
-                            : 'text-[#8b7074]'
-                      }`}
-                    >
-                      {isCompleted ? 'Selesai' : isUpcoming ? 'Jadwal' : 'Belum'}
-                    </span>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </section>
 
         {/* Chronological Immunization History List */}
         <section className='flex flex-col gap-3'>
