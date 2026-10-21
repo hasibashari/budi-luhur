@@ -21,6 +21,20 @@ const MONTHS_INDO = [
 
 export function calculateNextSchedule(targetDayName: string, targetTime: string) {
   const now = new Date();
+  if (targetDayName === 'Setiap Hari') {
+    const [h, m] = targetTime.split(':').map(Number);
+    const scheduleDate = new Date(now);
+    scheduleDate.setHours(h || 8, m || 0, 0, 0);
+    const diff = now.getTime() > scheduleDate.getTime() ? 1 : 0;
+    const nextDateObj = new Date(now);
+    nextDateObj.setDate(now.getDate() + diff);
+
+    return {
+      nextDate: `${INDO_DAYS[nextDateObj.getDay()]}, ${nextDateObj.getDate()} ${MONTHS_INDO[nextDateObj.getMonth()]} ${nextDateObj.getFullYear()}`,
+      daysRemaining: diff,
+    };
+  }
+
   const currentDayIndex = now.getDay();
   let targetDayIndex = INDO_DAYS.indexOf(targetDayName);
   if (targetDayIndex === -1) targetDayIndex = 6; // Default Sabtu

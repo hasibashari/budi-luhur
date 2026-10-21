@@ -56,6 +56,8 @@ export function SetupProfileView() {
   // Step 1 Form States (Identitas Catin & Faskes)
   const [schoolOrOrg, setSchoolOrOrg] = useState('');
   const [dateOfBirth, setDateOfBirth] = useState('');
+  const today = new Date();
+  const maxDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
   const [bloodType, setBloodType] = useState<string>('');
   const [height, setHeight] = useState<string>('');
   const [weight, setWeight] = useState<string>('');
@@ -231,6 +233,7 @@ export function SetupProfileView() {
                     <input
                       type='date'
                       value={dateOfBirth}
+                      max={maxDate}
                       onChange={e => setDateOfBirth(e.target.value)}
                       className='w-full min-h-[48px] min-w-0 bg-white text-base sm:text-sm text-[#121c2a] rounded-full border border-stone-200 pl-12 pr-3 py-2.5 outline-none focus:border-[#aa294d] focus:ring-2 focus:ring-[#aa294d]/10 transition-colors shadow-2xs'
                     />
@@ -381,6 +384,7 @@ export function SetupProfileView() {
                     <input
                       type='date'
                       value={weddingDate}
+                      min={maxDate}
                       onChange={e => setWeddingDate(e.target.value)}
                       className='w-full min-h-[48px] bg-white text-base sm:text-sm text-[#121c2a] rounded-full border border-stone-200 pl-12 pr-3 py-2.5 outline-none focus:border-[#aa294d] focus:ring-2 focus:ring-[#aa294d]/10 transition-colors shadow-2xs'
                     />

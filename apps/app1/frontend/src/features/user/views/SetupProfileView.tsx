@@ -44,6 +44,8 @@ export function SetupProfileView() {
   // Step 1 Form States (Identitas Siswi & Sekolah)
   const [schoolOrOrg, setSchoolOrOrg] = useState('');
   const [dateOfBirth, setDateOfBirth] = useState('');
+  const today = new Date();
+  const maxDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
   const [bloodType, setBloodType] = useState<string>('');
   const [height, setHeight] = useState<string>('');
   const [weight, setWeight] = useState<string>('');
@@ -211,6 +213,7 @@ export function SetupProfileView() {
                     <input
                       type='date'
                       value={dateOfBirth}
+                      max={maxDate}
                       onChange={e => setDateOfBirth(e.target.value)}
                       className='w-full min-w-0 bg-white text-xs sm:text-sm text-[#1e293b] rounded-full border border-slate-200 pl-10 sm:pl-11 pr-2.5 sm:pr-3 py-2.5 sm:py-3 outline-none focus:border-[#e11d48] transition-colors shadow-2xs'
                     />
@@ -352,7 +355,7 @@ export function SetupProfileView() {
               {/* Time Presets & Custom Time */}
               <div>
                 <label className='block text-xs font-bold text-slate-800 mb-2'>
-                  Pilih Jam Minum Obat
+                  Pilih Jam Minum TTD
                 </label>
                 <div className='grid grid-cols-3 gap-2 mb-2'>
                   {TIME_PRESETS.map(preset => (

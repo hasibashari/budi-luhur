@@ -3,24 +3,13 @@
     {
       "id": "adm_1",
       "name": "dr. Sarah Jenkins, Sp.GK",
-      "email": "admin@femory.id",
-      "passwordHash": "$2a$10$wNqH.J6uF.r7N7ZqK2K4ZeW6h2qPqP7aW8fV7n1j3lK9mOpQrStUu",
+      "email": "superAdmin@gmail.com",
+      "passwordHash": "$2b$10$DfBOGQuKkeTjls.wkSdiUe2/Dp3yQ2ymEOA15OJJIejYkXmDyaj9y",
       "role": "admin",
       "phone": "0811-2233-4455",
       "avatarUrl": "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?q=80&w=200&auto=format&fit=crop",
       "gender": "Perempuan",
       "dateOfBirth": "1988-03-12"
-    },
-    {
-      "id": "adm_2",
-      "name": "dr. Siti Rahma, Sp.PD",
-      "email": "siti.rahma@femory.com",
-      "passwordHash": null,
-      "role": "admin",
-      "phone": "0812-9988-7766",
-      "avatarUrl": "https://images.unsplash.com/photo-1594824813589-cf9b009e4d0b?q=80&w=200&auto=format&fit=crop",
-      "gender": "Perempuan",
-      "dateOfBirth": "1981-08-20"
     },
     {
       "id": "usr_1",
@@ -58,7 +47,7 @@
     {
       "id": "usr_4",
       "name": "Budi Santoso",
-      "email": "budi@medicore.com",
+      "email": "budi@gmail.com",
       "passwordHash": "$2a$10$wNqH.J6uF.r7N7ZqK2K4ZeW6h2qPqP7aW8fV7n1j3lK9mOpQrStUu",
       "role": "user",
       "phone": "0812-3456-7890",
@@ -408,7 +397,7 @@
       "isFeatured": false,
       "views": 215,
       "publishedAt": "2026-09-14",
-      "authorId": "adm_2",
+      "authorId": "adm_1",
       "authorName": "dr. Siti Rahma, Sp.PD",
       "authorRole": "Spesialis Penyakit Dalam",
       "authorAvatarUrl": "https://images.unsplash.com/photo-1594824813589-cf9b009e4d0b?q=80&w=200&auto=format&fit=crop",

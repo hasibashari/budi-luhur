@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  School,
+  Building2,
   Calendar,
   Clock,
   Droplets,
@@ -16,17 +16,6 @@ import {
 import { useAuth } from '@/src/features/auth/context/AuthContext';
 import { saveUserInitialSetupAction } from '../api/userRepository';
 import { Button } from '@/src/shared/components/ui/Button';
-
-const DAYS_OPTIONS = [
-  { day: 'Setiap Hari', desc: 'Rekomendasi Bidan (Rutin Harian)', isRecommended: true },
-  { day: 'Senin', desc: 'Awal siklus pekan', isRecommended: false },
-  { day: 'Selasa', desc: 'Hari biasa', isRecommended: false },
-  { day: 'Rabu', desc: 'Tengah pekan', isRecommended: false },
-  { day: 'Kamis', desc: 'Hari biasa', isRecommended: false },
-  { day: 'Jumat', desc: 'Menjelang akhir pekan', isRecommended: false },
-  { day: 'Sabtu', desc: 'Akhir pekan', isRecommended: false },
-  { day: 'Minggu', desc: 'Awal pekan santai', isRecommended: false },
-];
 
 const TIME_PRESETS = [
   { time: '20:00', label: '20:00 Malam', desc: 'Rekomendasi Bidan (Malam / sebelum istirahat)' },
@@ -45,13 +34,15 @@ export function SetupProfileView() {
   // Step 1 Form States (Identitas Akseptor)
   const [schoolOrOrg, setSchoolOrOrg] = useState('');
   const [dateOfBirth, setDateOfBirth] = useState('');
+  const today = new Date();
+  const maxDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
   const [bloodType, setBloodType] = useState<string>('');
   const [height, setHeight] = useState<string>('');
   const [weight, setWeight] = useState<string>('');
   const [hbLevel, setHbLevel] = useState<string>('');
 
   // Step 2 Form States (Jadwal Pengingat Pil KB)
-  const [selectedDay, setSelectedDay] = useState('Setiap Hari');
+  const selectedDay = 'Setiap Hari';
   const [selectedTime, setSelectedTime] = useState('20:00');
   const [remind15Min, setRemind15Min] = useState(true);
 
@@ -175,11 +166,11 @@ export function SetupProfileView() {
               {/* School / Domisili Field (Required) */}
               <div>
                 <label className='block text-xs font-bold text-[#0F172A] mb-1.5'>
-                  Faskes / Puskesmas / Domisili <span className='text-[#0D9488]'>*</span>
+                  Domisili / Faskes Rujukan <span className='text-[#0D9488]'>*</span>
                 </label>
                 <div className='relative flex items-center'>
                   <div className='absolute left-3.5 w-7 sm:w-8 h-7 sm:h-8 rounded-full bg-[#F0FDFA] flex items-center justify-center text-[#0D9488]'>
-                    <School size={15} />
+                    <Building2 size={15} />
                   </div>
                   <input
                     type='text'
@@ -209,6 +200,7 @@ export function SetupProfileView() {
                     <input
                       type='date'
                       value={dateOfBirth}
+                      max={maxDate}
                       onChange={e => setDateOfBirth(e.target.value)}
                       className='w-full min-w-0 bg-white text-xs sm:text-sm text-[#0F172A] rounded-full border border-slate-200 pl-10 sm:pl-11 pr-2.5 sm:pr-3 py-2.5 sm:py-3 outline-none focus:border-[#0D9488] focus:ring-2 focus:ring-[#0D9488]/15 transition-all shadow-2xs'
                     />
@@ -319,32 +311,11 @@ export function SetupProfileView() {
             className='flex-1 flex flex-col justify-between animate-fade-in'
           >
             <div className='space-y-3.5 sm:space-y-4'>
-              {/* Day Selector */}
-              <div>
-                <label className='block text-xs font-bold text-[#0F172A] mb-2'>
-                  Pilih Siklus / Hari Rutin Minum Pil KB
-                </label>
-                <div className='grid grid-cols-4 sm:grid-cols-4 gap-1.5 sm:gap-2'>
-                  {DAYS_OPTIONS.map(opt => (
-                    <button
-                      key={opt.day}
-                      type='button'
-                      onClick={() => setSelectedDay(opt.day)}
-                      className={`py-2 sm:py-2.5 px-1.5 sm:px-2 rounded-2xl border text-center transition-all cursor-pointer relative ${
-                        selectedDay === opt.day
-                          ? 'bg-[#F0FDFA] border-[#0D9488] text-[#0D9488] shadow-xs font-bold'
-                          : 'bg-white border-slate-200 text-[#334155] hover:bg-[#F0FDFA]/50 font-medium'
-                      }`}
-                    >
-                      {opt.isRecommended && (
-                        <span className='absolute -top-1.5 -right-1 px-1.5 py-0.2 bg-[#0D9488] text-[8px] font-black text-white rounded-full shadow-2xs'>
-                          Bidan
-                        </span>
-                      )}
-                      <span className='block text-xs sm:text-sm'>{opt.day}</span>
-                    </button>
-                  ))}
-                </div>
+              <div className='p-3 sm:p-3.5 rounded-2xl bg-[#F0FDFA] border border-[#CCFBF1] text-xs text-[#0F172A]'>
+                <span className='font-bold'>Jadwal minum: setiap hari</span>
+                <span className='block text-[10px] sm:text-[11px] text-[#334155] mt-0.5'>
+                  Pilih satu waktu yang mudah diingat dan gunakan secara konsisten.
+                </span>
               </div>
 
               {/* Time Presets & Custom Time */}
