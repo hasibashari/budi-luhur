@@ -38,11 +38,25 @@ export interface Article {
 
 export class ArticleService {
   static async getArticles(category?: string): Promise<Article[]> {
+    await db.query(`
+      WITH canonical AS (
+        SELECT lower(btrim(category)) AS category_key, min(btrim(category)) AS category
+        FROM articles
+        WHERE btrim(category) <> ''
+        GROUP BY lower(btrim(category))
+      )
+      UPDATE articles AS a
+      SET category = canonical.category
+      FROM canonical
+      WHERE lower(btrim(a.category)) = canonical.category_key
+        AND a.category <> canonical.category
+    `);
+
     let sql = `
       SELECT id, title, summary, lead_paragraph, image_url, image_caption, read_time, category, status, views, published_at,
              author_id, author_name, author_role, author_avatar_url, author_bio, key_takeaways, tags
       FROM articles
-      WHERE status = 'Terbit'
+      WHERE status = 'Terbit' AND btrim(category) <> ''
     `;
     const params: unknown[] = [];
 

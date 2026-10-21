@@ -6,16 +6,6 @@ import { Chip } from '@/src/shared/components/ui/Chip';
 import { getArticlesAction } from '../api/educationRepository';
 import { Article } from '../types';
 
-const CATEGORIES = [
-  'Semua',
-  'Anemia & TTD',
-  'Nutrisi & Gizi',
-  'Kesehatan Remaja',
-  'Tips Menstruasi',
-  'Mitos & Fakta',
-  'Gaya Hidup',
-];
-
 export default function EducationView() {
   const [articles, setArticles] = useState<Article[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -56,6 +46,14 @@ export default function EducationView() {
   }, [articles, searchQuery, selectedCategory]);
 
   const featuredArticle = articles[0];
+  const categories = useMemo(
+    () =>
+      Array.from(new Set(articles.map(article => article.category.trim()).filter(Boolean))).sort(
+        (a, b) => a.localeCompare(b, 'id'),
+      ),
+    [articles],
+  );
+  const categoryOptions = ['Semua', ...categories];
 
   return (
     <div className='flex flex-col gap-6 w-full'>
@@ -94,7 +92,7 @@ export default function EducationView() {
 
         {/* Category Chips Scroll/Wrap */}
         <div className='flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 no-scrollbar'>
-          {CATEGORIES.map(cat => (
+          {categoryOptions.map(cat => (
             <Chip
               key={cat}
               size='sm'

@@ -70,7 +70,49 @@ export interface ComplianceReport {
   adherencePercentage: number;
 }
 
+function normalizeCategory(category: string): string {
+  const normalized = category.trim().replace(/\s+/g, ' ');
+  if (!normalized) {
+    throw new Error('Kategori artikel wajib diisi.');
+  }
+  return normalized;
+}
+
 export class AdminService {
+  private static async resolveCategory(
+    client: { query: Function },
+    category: string,
+    articleId?: string,
+  ): Promise<string> {
+    const normalized = normalizeCategory(category);
+    const existing = await client.query(
+      `SELECT category
+       FROM articles
+       WHERE lower(btrim(category)) = lower($1)
+         AND ($2::text IS NULL OR id <> $2)
+       ORDER BY created_at ASC
+       LIMIT 1`,
+      [normalized, articleId ?? null],
+    );
+    return existing.rows[0]?.category || normalized;
+  }
+
+  private static async normalizeStoredCategories(client: { query: Function }) {
+    await client.query(`
+      WITH canonical AS (
+        SELECT lower(btrim(category)) AS category_key, min(btrim(category)) AS category
+        FROM articles
+        WHERE btrim(category) <> ''
+        GROUP BY lower(btrim(category))
+      )
+      UPDATE articles AS a
+      SET category = canonical.category
+      FROM canonical
+      WHERE lower(btrim(a.category)) = canonical.category_key
+        AND a.category <> canonical.category
+    `);
+  }
+
   static async getOverviewStats(): Promise<AdminStats> {
     const [usersRes, schedulesRes, adherenceRes, articlesRes, buddyRes] = await Promise.all([
       db.query<{ c: string }>(`SELECT count(*) as c FROM users WHERE role = 'user'`),
@@ -325,8 +367,11 @@ export class AdminService {
   }
 
   static async getAdminArticles(): Promise<HealthArticle[]> {
+    await AdminService.normalizeStoredCategories(db);
     const res = await db.query<any>(
-      `SELECT * FROM articles ORDER BY published_at DESC, created_at DESC`,
+      `SELECT * FROM articles
+       WHERE btrim(category) <> ''
+       ORDER BY published_at DESC, created_at DESC`,
     );
     const rows = res.rows;
     if (rows.length === 0) return [];
@@ -394,10 +439,13 @@ export class AdminService {
     const today = new Date().toISOString().split('T')[0];
     const finalImageUrl = data.imageUrl?.trim() || '';
     const finalContent = data.content?.trim() || data.summary;
+    const category = normalizeCategory(data.category);
+    let canonicalCategory = category;
     const characterCount = finalContent.length;
     const readTime = `${Math.max(1, Math.ceil(characterCount / 1000))} min read`;
 
     await db.transaction(async (client) => {
+      canonicalCategory = await AdminService.resolveCategory(client, category);
       await client.query(
         `INSERT INTO articles (
           id, title, summary, lead_paragraph, image_url, read_time, category, status, views, published_at, author_name
@@ -409,7 +457,7 @@ export class AdminService {
           finalContent,
           finalImageUrl,
           readTime,
-          data.category,
+          canonicalCategory,
           data.status || 'Terbit',
           today,
           data.author || 'Tim Ahli Gizi UKS',
@@ -432,7 +480,7 @@ export class AdminService {
     return {
       id: newId,
       title: data.title,
-      category: data.category,
+      category: canonicalCategory,
       author: data.author || 'Tim Ahli Gizi UKS',
       publishDate: today,
       status: (data.status || 'Terbit') as HealthArticle['status'],
@@ -446,6 +494,10 @@ export class AdminService {
 
   static async updateAdminArticle(articleId: string, data: any) {
     await db.transaction(async (client) => {
+      const category =
+        data.category === undefined || data.category === null
+          ? undefined
+          : await AdminService.resolveCategory(client, data.category, articleId);
       await client.query(
         `UPDATE articles
          SET
@@ -461,7 +513,7 @@ export class AdminService {
          WHERE id = $9`,
         [
           data.title ?? null,
-          data.category ?? null,
+          category ?? null,
           data.summary ?? null,
           data.readTime ?? null,
           data.status ?? null,
@@ -501,7 +553,10 @@ export class AdminService {
   }
 
   static async deleteAdminArticle(articleId: string) {
-    await db.query(`DELETE FROM articles WHERE id = $1`, [articleId]);
+    await db.transaction(async client => {
+      await client.query(`DELETE FROM articles WHERE id = $1`, [articleId]);
+      await AdminService.normalizeStoredCategories(client);
+    });
     return { success: true };
   }
 

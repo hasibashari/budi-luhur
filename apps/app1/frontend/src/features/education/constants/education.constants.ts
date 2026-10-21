@@ -1,19 +1,7 @@
 /**
  * Education Constants
- * Centralized static categories, tags, and fallback metadata for Articles.
+ * Centralized fallback metadata for Articles.
  */
-
-export const ARTICLE_CATEGORIES = [
-  'Semua',
-  'Anemia & TTD',
-  'Nutrisi & Gizi',
-  'Kesehatan Remaja',
-  'Tips Menstruasi',
-  'Mitos & Fakta',
-  'Gaya Hidup',
-] as const;
-
-export type ArticleCategory = string;
 
 export const DEFAULT_CATEGORY_IMAGES: Record<string, string> = {
   'Anemia & TTD':

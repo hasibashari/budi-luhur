@@ -17,11 +17,10 @@ import {
   deleteAdminArticleAction,
 } from '../api/articleRepository';
 import { HealthArticle, ArticleCategory } from '../types/admin.types';
-import { ARTICLE_CATEGORIES } from '@/src/features/education/constants/education.constants';
 
 const initialArticleFormData: ArticleFormData = {
   title: '',
-  category: 'Anemia & TTD',
+  category: '',
   author: 'Tim Ahli Gizi & UKS',
   summary: '',
   content: '',
@@ -86,11 +85,15 @@ export default function ArticleManagementView() {
     const matchesCategory = categoryFilter === 'Semua' || a.category === categoryFilter;
     return matchesSearch && matchesCategory;
   });
+  const categories = Array.from(
+    new Set(articles.map(article => article.category.trim()).filter(Boolean)),
+  ).sort((a, b) => a.localeCompare(b, 'id'));
+  const categoryOptions = ['Semua', ...categories];
 
   const onOpenEdit = (article: HealthArticle) => {
     handleOpenEdit(article.id, {
       title: article.title,
-      category: (article.category as ArticleCategory) || 'Anemia & TTD',
+    category: (article.category as ArticleCategory) || '',
       author: article.author,
       summary: article.summary || '',
       content: article.content || article.summary || '',
@@ -107,6 +110,10 @@ export default function ArticleManagementView() {
   const handleSaveArticle = async () => {
     if (!formData.title.trim()) {
       showToast('Judul artikel wajib diisi', 'error');
+      return;
+    }
+    if (!formData.category.trim()) {
+      showToast('Kategori artikel wajib diisi', 'error');
       return;
     }
 
@@ -356,7 +363,7 @@ export default function ArticleManagementView() {
                 onChange={e => setCategoryFilter(e.target.value)}
                 className='w-full px-3.5 py-2.5 rounded-xl border border-pink-100 bg-slate-50 text-xs sm:text-sm font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:bg-white transition-all cursor-pointer min-h-[44px]'
               >
-                {ARTICLE_CATEGORIES.map(cat => (
+                {categoryOptions.map(cat => (
                   <option key={cat} value={cat}>
                     {cat === 'Semua' ? 'Semua Kategori' : cat}
                   </option>
@@ -381,7 +388,7 @@ export default function ArticleManagementView() {
           <MobileFilterChips
             selectedValue={categoryFilter}
             onSelect={setCategoryFilter}
-            options={ARTICLE_CATEGORIES.map(cat => ({
+            options={categoryOptions.map(cat => ({
               label: cat === 'Semua' ? 'Semua Kategori' : cat,
               value: cat,
             }))}

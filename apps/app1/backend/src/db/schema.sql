@@ -188,7 +188,7 @@ CREATE TABLE buddy_cheers (
 CREATE TABLE articles (
     id VARCHAR(255) PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
-    category VARCHAR(100) NOT NULL,
+    category VARCHAR(100) NOT NULL CHECK (btrim(category) <> ''),
     summary TEXT NOT NULL,
     lead_paragraph TEXT,
     image_url TEXT NOT NULL,
