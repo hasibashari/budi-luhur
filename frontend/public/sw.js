@@ -6,8 +6,8 @@ const PRECACHE_ASSETS = [
   '/',
   OFFLINE_URL,
   '/manifest.webmanifest',
-  '/icons/sora.png',
-  '/images/sora.png',
+  '/icons/sibiru.png',
+  '/images/sibiru.png',
 ];
 
 // ============================================================
@@ -49,10 +49,10 @@ self.addEventListener('push', (event) => {
   }
 
   event.waitUntil(
-    self.registration.showNotification(payload.title || 'Notifikasi SORA', {
+    self.registration.showNotification(payload.title || 'Notifikasi SIBIRU', {
       body: payload.body || 'Anda memiliki pengingat baru.',
-      icon: '/icons/sora.png',
-      badge: '/icons/sora.png',
+      icon: '/icons/sibiru.png',
+      badge: '/icons/sibiru.png',
       vibrate: [200, 100, 200],
       data: { url: payload.url || '/' },
     }),

@@ -97,8 +97,8 @@ export const PWAInstallPrompt: React.FC = () => {
             <div className='flex items-center gap-3'>
               <div className='w-12 h-12 rounded-xl bg-teal-50 border border-teal-100 p-1 flex items-center justify-center shrink-0 shadow-xs'>
                 <img
-                  src='/icons/sora.png'
-                  alt='Logo Aplikasi SORA'
+                  src='/icons/sibiru.png'
+                  alt='Logo Aplikasi SIBIRU'
                   className='w-10 h-10 object-contain rounded-lg'
                 />
               </div>
@@ -110,7 +110,7 @@ export const PWAInstallPrompt: React.FC = () => {
                   <span className='text-xs text-slate-500 font-medium'>STIKes Budi Luhur</span>
                 </div>
                 <h4 className='text-sm sm:text-base font-bold text-slate-900 leading-snug'>
-                  Pasang Aplikasi SORA di Layar Utama
+                  Pasang Aplikasi SIBIRU di Layar Utama
                 </h4>
               </div>
             </div>
@@ -126,7 +126,7 @@ export const PWAInstallPrompt: React.FC = () => {
           {/* Description */}
           <p className='text-xs text-slate-600 leading-relaxed'>
             Akses cepat ke 3 aplikasi kesehatan mandiri (FEMORY, PILLUNA, PRELUNA) melalui Aplikasi
-            SORA langsung dari layar utama perangkat Anda.
+            SIBIRU langsung dari layar utama perangkat Anda.
           </p>
 
           {/* Action Button */}

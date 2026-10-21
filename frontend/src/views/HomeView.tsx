@@ -68,8 +68,8 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate }) => {
           <div className='flex items-center gap-3.5 mb-3.5'>
             <div className='w-13 h-13 rounded-2xl bg-white/95 p-1.5 shadow-xs border border-teal-100 flex items-center justify-center shrink-0'>
               <img
-                src='/images/sora.png'
-                alt='Logo Aplikasi SORA'
+                src='/images/sibiru.png'
+                alt='Logo Aplikasi SIBIRU'
                 className='w-full h-full object-contain'
               />
             </div>
@@ -78,7 +78,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate }) => {
                 Selamat datang di,
               </p>
               <h2 className='text-2xl font-extrabold text-gray-900 tracking-tight leading-tight'>
-                Aplikasi SORA
+                Aplikasi SIBIRU
               </h2>
             </div>
           </div>

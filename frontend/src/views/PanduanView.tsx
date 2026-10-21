@@ -37,9 +37,9 @@ export const PanduanView: React.FC<PanduanViewProps> = ({ onNavigate }) => {
           <BookOpen className='w-3.5 h-3.5' />
           <span>Panduan Penggunaan</span>
         </div>
-        <h2 className='text-2xl font-bold text-gray-900'>Panduan Layanan Aplikasi SORA</h2>
+        <h2 className='text-2xl font-bold text-gray-900'>Panduan Layanan Aplikasi SIBIRU</h2>
         <p className='text-sm text-gray-600 mt-1 leading-relaxed'>
-          Informasi panduan operasional 3 aplikasi mandiri dalam ekosistem SORA STIKes Budi Luhur
+          Informasi panduan operasional 3 aplikasi mandiri dalam ekosistem SIBIRU STIKes Budi Luhur
           Cimahi.
         </p>
       </div>

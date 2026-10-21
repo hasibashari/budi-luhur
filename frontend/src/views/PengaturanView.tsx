@@ -15,10 +15,10 @@ export const PengaturanView: React.FC<PengaturanViewProps> = ({ onNavigate }) =>
           <Settings className='w-3.5 h-3.5' />
           <span>Pengaturan & Sistem</span>
         </div>
-        <h2 className='text-2xl font-bold text-gray-900'>Pengaturan Aplikasi SORA</h2>
+        <h2 className='text-2xl font-bold text-gray-900'>Pengaturan Aplikasi SIBIRU</h2>
         <p className='text-sm text-gray-600 mt-1 leading-relaxed'>
           Informasi profil kelembagaan, arsitektur basis data, dan status operasional sistem
-          Aplikasi SORA.
+          Aplikasi SIBIRU.
         </p>
       </div>
 
@@ -26,10 +26,10 @@ export const PengaturanView: React.FC<PengaturanViewProps> = ({ onNavigate }) =>
       <section className='p-5 rounded-2xl bg-gradient-to-br from-[#004B87] to-[#005EB8] text-white shadow-md space-y-3.5'>
         <div className='flex items-center gap-3'>
           <div className='w-10 h-10 rounded-xl bg-white p-1 flex items-center justify-center shrink-0 shadow-xs'>
-            <img src='/images/sora.png' alt='Logo SORA' className='w-full h-full object-contain' />
+            <img src='/images/sibiru.png' alt='Logo SIBIRU' className='w-full h-full object-contain' />
           </div>
           <div>
-            <h4 className='text-sm font-bold text-white leading-tight'>Aplikasi SORA</h4>
+            <h4 className='text-sm font-bold text-white leading-tight'>Aplikasi SIBIRU</h4>
             <p className='text-[11px] text-sky-200'>STIKes Budi Luhur Cimahi</p>
           </div>
         </div>

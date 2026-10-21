@@ -27,13 +27,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeMenu, onSelectMenu }) =>
       <div className='p-5 flex items-center gap-3 border-b border-gray-100'>
         <div className='w-11 h-11 rounded-xl overflow-hidden shadow-xs shrink-0 flex items-center justify-center bg-white border border-gray-100 p-1'>
           <img
-            src='/images/sora.png'
-            alt='Logo Aplikasi SORA'
+            src='/images/sibiru.png'
+            alt='Logo Aplikasi SIBIRU'
             className='w-full h-full object-contain'
           />
         </div>
         <div>
-          <h1 className='font-bold text-gray-900 text-base leading-tight'>Aplikasi SORA</h1>
+          <h1 className='font-bold text-gray-900 text-base leading-tight'>Aplikasi SIBIRU</h1>
           <p className='text-xs text-gray-500 font-medium'>STIKes Budi Luhur</p>
         </div>
       </div>
@@ -62,7 +62,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeMenu, onSelectMenu }) =>
 
       {/* Footer Info Sidebar */}
       <div className='p-4 border-t border-gray-100 text-[11px] text-gray-400'>
-        <p className='font-semibold text-gray-600'>Aplikasi SORA</p>
+        <p className='font-semibold text-gray-600'>Aplikasi SIBIRU</p>
         <p>© 2026 STIKes Budi Luhur Cimahi</p>
       </div>
     </aside>
