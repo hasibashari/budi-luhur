@@ -19,9 +19,15 @@ import {
   ProfileMetricsGrid,
   ProfileEditModal,
   ProfileSecuritySection,
+  ProfileNotificationCard,
 } from '@/src/shared/components/profile';
 import { useAuth } from '@/src/features/auth/context/AuthContext';
-import { getUserDashboardDataAction, updateUserProfileAction } from '../api/userRepository';
+import {
+  getUserDashboardDataAction,
+  updateUserProfileAction,
+  updateUserScheduleSettingsAction,
+  UserScheduleData,
+} from '../api/userRepository';
 
 interface UserProfileState {
   id: string;
@@ -151,6 +157,8 @@ export default function ProfileView() {
     }
   };
 
+  const [scheduleData, setScheduleData] = useState<UserScheduleData | null>(null);
+
   useEffect(() => {
     let isMounted = true;
     async function loadData() {
@@ -172,6 +180,9 @@ export default function ProfileView() {
           setEditSchool(dashboard.user.schoolOrOrg || '');
           setEditPhone(dashboard.user.phone || '');
           setEditHb(dashboard.user.hbLevel ? String(dashboard.user.hbLevel) : '');
+          if (dashboard.activeSchedule) {
+            setScheduleData(dashboard.activeSchedule);
+          }
         }
       } catch (err) {
         console.error('Failed to load user profile:', err);
@@ -182,6 +193,35 @@ export default function ProfileView() {
       isMounted = false;
     };
   }, [authUser?.id]);
+
+  const handleToggleScheduleEnabled = async (enabled: boolean) => {
+    if (!scheduleData) {
+      showToast('Jadwal belum dikonfigurasi. Atur jadwal terlebih dahulu.');
+      return;
+    }
+    setScheduleData(prev => (prev ? { ...prev, isEnabled: enabled } : null));
+    const res = await updateUserScheduleSettingsAction(scheduleData.id, { isEnabled: enabled });
+    if (res.success) {
+      showToast(
+        enabled ? 'Pengingat otomatis diaktifkan! 🔔' : 'Pengingat otomatis dinonaktifkan.',
+      );
+    } else {
+      showToast(res.error || 'Gagal memperbarui status pengingat.');
+    }
+  };
+
+  const handleToggleRemind15 = async (remind15: boolean) => {
+    if (!scheduleData) return;
+    setScheduleData(prev => (prev ? { ...prev, remind15MinBefore: remind15 } : null));
+    const res = await updateUserScheduleSettingsAction(scheduleData.id, {
+      remind15MinBefore: remind15,
+    });
+    if (res.success) {
+      showToast(
+        remind15 ? 'Peringatan 15 menit sebelum aktif.' : 'Peringatan 15 menit dinonaktifkan.',
+      );
+    }
+  };
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
@@ -403,7 +443,21 @@ export default function ProfileView() {
         items={contactItems}
       />
 
-      {/* 4. Security & Session Section */}
+      {/* 4. Notification & Reminder Settings Card */}
+      <ProfileNotificationCard
+        theme='rose'
+        title='Pengingat Minum TTD'
+        subtitle={
+          scheduleData?.isEnabled
+            ? `Pengingat aktif (${scheduleData?.dayOfWeek || 'Sabtu'}, ${scheduleData?.time || '20:00'} WIB)`
+            : 'Pengingat otomatis dinonaktifkan'
+        }
+        isEnabled={scheduleData?.isEnabled ?? true}
+        onToggleEnabled={handleToggleScheduleEnabled}
+        onPermissionError={showToast}
+      />
+
+      {/* 5. Security & Session Section */}
       <ProfileSecuritySection
         onLogoutClick={handleConfirmLogout}
         onChangePasswordClick={() =>

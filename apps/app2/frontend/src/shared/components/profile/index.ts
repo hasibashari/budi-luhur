@@ -3,3 +3,4 @@ export * from './ProfileContactCard';
 export * from './ProfileMetricsGrid';
 export * from './ProfileEditModal';
 export * from './ProfileSecuritySection';
+export * from './ProfileNotificationCard';

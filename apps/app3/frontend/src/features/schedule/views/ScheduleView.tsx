@@ -20,10 +20,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/src/features/auth/context/AuthContext';
 import { TTIntervalGuideCard } from '../components/TTIntervalGuideCard';
-import {
-  getUserScheduleAction,
-  UserScheduleData,
-} from '@/src/features/user/api/userRepository';
+import { getUserScheduleAction, UserScheduleData } from '@/src/features/user/api/userRepository';
 
 export default function ScheduleView() {
   const navigate = useNavigate();
@@ -116,202 +113,198 @@ export default function ScheduleView() {
       </div>
 
       <div className='flex flex-col gap-5 sm:gap-6 animate-fade-in'>
-          <div className='flex flex-col gap-5'>
-            {/* Warm Introductory Greeting for Calon Pengantin (Stitch Screen 7) */}
-            <div className='flex items-center justify-between'>
-              <div className='flex flex-col'>
-                <span className='text-[11px] uppercase tracking-wider text-[#aa294d] font-bold'>
-                  Rencana Kesehatan Catin
-                </span>
-                <h2 className='text-base sm:text-lg font-bold text-[#121c2a]'>
-                  Tetap Terlindungi Bersama
-                </h2>
+        <div className='flex flex-col gap-5'>
+          {/* Warm Introductory Greeting for Calon Pengantin (Stitch Screen 7) */}
+          <div className='flex items-center justify-between'>
+            <div className='flex flex-col'>
+              <span className='text-[11px] uppercase tracking-wider text-[#aa294d] font-bold'>
+                Rencana Kesehatan Catin
+              </span>
+              <h2 className='text-base sm:text-lg font-bold text-[#121c2a]'>
+                Tetap Terlindungi Bersama
+              </h2>
+            </div>
+            <div className='w-10 h-10 rounded-full bg-[#ffd9de] flex items-center justify-center text-[#aa294d] shadow-2xs'>
+              <Heart size={20} className='fill-[#aa294d]' />
+            </div>
+          </div>
+
+          {/* Highlight Card: Jadwal Utama TT4 (Stitch Screen 7) */}
+          <div className='relative bg-white rounded-2xl p-5 shadow-[0_4px_20px_-2px_rgba(170,41,77,0.08)] border border-[#eff4ff] overflow-hidden'>
+            {/* Decorative Ambient Soft Glow */}
+            <div className='absolute -right-8 -top-8 w-36 h-36 rounded-full bg-[#ffd9de]/40 blur-2xl pointer-events-none' />
+
+            {/* Header Card Meta with Countdown Badge */}
+            <div className='relative flex items-start justify-between gap-3 mb-4'>
+              <div className='flex items-center gap-3'>
+                <div className='w-12 h-12 rounded-2xl bg-[#ffd9de] flex items-center justify-center text-[#aa294d] shadow-inner shrink-0'>
+                  <CalendarClock size={26} />
+                </div>
+                <div>
+                  <span className='text-[11px] text-[#574144] block'>
+                    Dosis Dianjurkan Berikutnya
+                  </span>
+                  <h3 className='text-base sm:text-lg font-bold text-[#aa294d] tracking-tight'>
+                    TT4 (Dosis Keempat)
+                  </h3>
+                </div>
               </div>
-              <div className='w-10 h-10 rounded-full bg-[#ffd9de] flex items-center justify-center text-[#aa294d] shadow-2xs'>
-                <Heart size={20} className='fill-[#aa294d]' />
-              </div>
+              <span className='inline-flex items-center gap-1.5 bg-[#aff1d0] text-[#0a5139] text-xs font-semibold px-2.5 py-1 rounded-full whitespace-nowrap shadow-2xs'>
+                <span className='w-1.5 h-1.5 rounded-full bg-[#2a6950] animate-pulse' />
+                Tersedia 12 hari lagi
+              </span>
             </div>
 
-            {/* Highlight Card: Jadwal Utama TT4 (Stitch Screen 7) */}
-            <div className='relative bg-white rounded-2xl p-5 shadow-[0_4px_20px_-2px_rgba(170,41,77,0.08)] border border-[#eff4ff] overflow-hidden'>
-              {/* Decorative Ambient Soft Glow */}
-              <div className='absolute -right-8 -top-8 w-36 h-36 rounded-full bg-[#ffd9de]/40 blur-2xl pointer-events-none' />
-
-              {/* Header Card Meta with Countdown Badge */}
-              <div className='relative flex items-start justify-between gap-3 mb-4'>
-                <div className='flex items-center gap-3'>
-                  <div className='w-12 h-12 rounded-2xl bg-[#ffd9de] flex items-center justify-center text-[#aa294d] shadow-inner shrink-0'>
-                    <CalendarClock size={26} />
-                  </div>
-                  <div>
-                    <span className='text-[11px] text-[#574144] block'>
-                      Dosis Dianjurkan Berikutnya
-                    </span>
-                    <h3 className='text-base sm:text-lg font-bold text-[#aa294d] tracking-tight'>
-                      TT4 (Dosis Keempat)
-                    </h3>
-                  </div>
-                </div>
-                <span className='inline-flex items-center gap-1.5 bg-[#aff1d0] text-[#0a5139] text-xs font-semibold px-2.5 py-1 rounded-full whitespace-nowrap shadow-2xs'>
-                  <span className='w-1.5 h-1.5 rounded-full bg-[#2a6950] animate-pulse' />
-                  Tersedia 12 hari lagi
+            {/* Schedule Detail Section */}
+            <div className='bg-[#eff4ff] rounded-xl p-3.5 flex flex-col gap-2 mb-4 border border-[#d9e3f6]/60'>
+              <div className='flex items-center gap-2.5'>
+                <span className='p-1 rounded-lg bg-[#ffd9de] text-[#aa294d] shrink-0'>
+                  <CalendarIcon size={18} />
                 </span>
-              </div>
-
-              {/* Schedule Detail Section */}
-              <div className='bg-[#eff4ff] rounded-xl p-3.5 flex flex-col gap-2 mb-4 border border-[#d9e3f6]/60'>
-                <div className='flex items-center gap-2.5'>
-                  <span className='p-1 rounded-lg bg-[#ffd9de] text-[#aa294d] shrink-0'>
-                    <CalendarIcon size={18} />
-                  </span>
-                  <div className='flex flex-col'>
-                    <span className='text-[11px] text-[#574144]'>Rekomendasi Waktu Kunjungan</span>
-                    <span className='text-xs sm:text-sm font-bold text-[#121c2a]'>
-                      15 Januari 2026
-                    </span>
-                    <span className='text-[10px] text-[#8b7074]'>
-                      (± 1 tahun setelah dosis TT3)
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Protection Lifespan Metric */}
-              <div className='flex items-start gap-3 pt-1'>
-                <div className='w-8 h-8 rounded-full bg-[#aff1d0] shrink-0 flex items-center justify-center text-[#0a5139] mt-0.5 shadow-2xs'>
-                  <ShieldCheck size={18} />
-                </div>
                 <div className='flex flex-col'>
-                  <span className='text-xs font-bold text-[#121c2a]'>
-                    Manfaat Perlindungan Imun
+                  <span className='text-[11px] text-[#574144]'>Rekomendasi Waktu Kunjungan</span>
+                  <span className='text-xs sm:text-sm font-bold text-[#121c2a]'>
+                    15 Januari 2026
                   </span>
-                  <p className='text-[11px] text-[#574144] leading-relaxed mt-0.5'>
-                    Menyuntikkan TT4 akan memperpanjang imunitas maternal dan calon bayi hingga{' '}
-                    <strong className='text-[#2a6950] font-bold'>10 tahun ke depan</strong> (sampai
-                    tahun 2036).
-                  </p>
+                  <span className='text-[10px] text-[#8b7074]'>(± 1 tahun setelah dosis TT3)</span>
                 </div>
               </div>
             </div>
 
-            {/* Visual Delight: Journey Milestones Peek (Stitch Screen 7) */}
-            <div className='bg-white rounded-2xl p-4 shadow-xs border border-[#eff4ff]'>
-              <div className='flex items-center justify-between mb-3'>
-                <span className='text-xs font-bold text-[#121c2a]'>
-                  Progres Menuju Kekebalan Seumur Hidup
-                </span>
-                <span className='text-xs font-bold text-[#aa294d]'>Dosis 4 dari 5</span>
-              </div>
-              {/* Stepper bar */}
-              <div className='grid grid-cols-5 gap-1.5 mb-2'>
-                <div className='h-2 rounded-full bg-[#2a6950]' />
-                <div className='h-2 rounded-full bg-[#2a6950]' />
-                <div className='h-2 rounded-full bg-[#2a6950]' />
-                <div className='h-2 rounded-full bg-[#cb4364] animate-pulse' />
-                <div className='h-2 rounded-full bg-[#dee9fc]' />
-              </div>
-              <div className='flex justify-between items-center text-[10px] text-[#574144] font-semibold'>
-                <span className='text-[#2a6950]'>TT1-TT3 Selesai</span>
-                <span className='text-[#aa294d]'>Langkah Saat Ini: TT4</span>
-                <span className='text-[#8b7074]'>TT5 Terakhir</span>
-              </div>
-            </div>
-
-            {/* Medical Guidance Callout (Clinical Reassurance) (Stitch Screen 7) */}
-            <div className='bg-[#eff4ff] rounded-2xl p-4 flex gap-3.5 items-start border border-[#d9e3f6]/60 shadow-2xs'>
-              <div className='w-8 h-8 rounded-full bg-white flex items-center justify-center text-[#aa294d] shrink-0 shadow-2xs mt-0.5'>
-                <Info size={18} />
+            {/* Protection Lifespan Metric */}
+            <div className='flex items-start gap-3 pt-1'>
+              <div className='w-8 h-8 rounded-full bg-[#aff1d0] shrink-0 flex items-center justify-center text-[#0a5139] mt-0.5 shadow-2xs'>
+                <ShieldCheck size={18} />
               </div>
               <div className='flex flex-col'>
-                <span className='text-xs font-bold text-[#121c2a] mb-0.5'>
-                  Catatan Bidan & Faskes
-                </span>
-                <p className='text-[11px] text-[#574144] leading-relaxed'>
-                  Pastikan kamu menerima vaksin sesuai interval waktu minimal agar respon antibodi
-                  optimal. Konsultasikan kartu riwayat TT ini kepada bidan desa atau dokter saat
-                  skrining berkala.
+                <span className='text-xs font-bold text-[#121c2a]'>Manfaat Perlindungan Imun</span>
+                <p className='text-[11px] text-[#574144] leading-relaxed mt-0.5'>
+                  Menyuntikkan TT4 akan memperpanjang imunitas maternal dan calon bayi hingga{' '}
+                  <strong className='text-[#2a6950] font-bold'>10 tahun ke depan</strong> (sampai
+                  tahun 2036).
                 </p>
               </div>
             </div>
+          </div>
 
-            {/* Recommended Healthcare Facility (Faskes Terdekat) (Stitch Screen 7) */}
-            <div>
-              <div className='flex items-center justify-between mb-2.5 px-0.5'>
-                <span className='text-sm sm:text-base font-bold text-[#121c2a]'>
-                  Faskes Rujukan Terpilih
-                </span>
-                <span className='text-[11px] text-[#aa294d] font-bold'>Tersinkron BPJS</span>
-              </div>
-              <div className='bg-white rounded-2xl p-4 shadow-xs border border-[#eff4ff] flex flex-col gap-3'>
-                <div className='flex items-start justify-between gap-3'>
-                  <div className='flex gap-3'>
-                    <div className='w-11 h-11 rounded-xl bg-[#aff1d0]/50 flex items-center justify-center text-[#2a6950] shrink-0'>
-                      <Building2 size={24} />
-                    </div>
-                    <div className='flex flex-col min-w-0'>
-                      <h3 className='text-xs sm:text-sm font-bold text-[#121c2a] truncate'>
-                        Puskesmas Kebayoran Baru
-                      </h3>
-                      <span className='text-[11px] text-[#574144] flex items-center gap-1 mt-0.5'>
-                        <CheckCircle2 size={13} className='text-[#2a6950]' />
-                        Faskes Utama Calon Pengantin
-                      </span>
-                    </div>
-                  </div>
-                  <div className='bg-[#eff4ff] px-2.5 py-0.5 rounded-full flex items-center gap-1 shrink-0'>
-                    <MapPin size={12} className='text-[#aa294d]' />
-                    <span className='text-[11px] text-[#121c2a] font-semibold'>1.2 km</span>
-                  </div>
-                </div>
-
-                {/* Schedule & Operational Hours */}
-                <div className='flex items-center gap-2 bg-[#eff4ff]/60 px-3 py-2 rounded-xl text-xs text-[#574144]'>
-                  <Clock size={15} className='text-[#8b7074]' />
-                  <span className='font-medium text-[11px]'>Senin – Jumat, 08:00 – 14:00 WIB</span>
-                </div>
-
-                {/* Facility Mini Map View Trigger (Stitch Screen 7) */}
-                <div
-                  className='w-full h-24 rounded-xl bg-cover bg-center relative overflow-hidden flex items-end p-2.5 shadow-inner'
-                  style={{
-                    backgroundImage: `url('https://lh3.googleusercontent.com/aida-public/AB6AXuBFV1kdSb2CiSwu7AGmIxW7cM2CvGaurtZEvxgwN5LglsjZEr4PHwHV2jIcAXZVHFNmvNTnmzp2cUTOElM0uVm3OcHxhGcl8426-bJN3C4R1XI5ZUCqvJYFHkR5UInfbiDmNHzydg83gH8NoBSqcjsLA7C4C4EvYrclwRBXjslcShlrtcQR8KTXL0rLHV2VPrvZkzmsE2Z2B2oJO1wWv5F45CdFGSp8jSuo60Y-c4lPw9uPGPU5j6aA')`,
-                  }}
-                >
-                  <div className='absolute inset-0 bg-linear-to-t from-[#121c2a]/80 via-transparent to-transparent' />
-                  <span className='relative text-[10px] text-white flex items-center gap-1 font-semibold truncate'>
-                    <Pin size={12} className='text-rose-300' />
-                    Jl. Gandaria Tengah II No. 14, Jakarta Selatan
-                  </span>
-                </div>
-              </div>
+          {/* Visual Delight: Journey Milestones Peek (Stitch Screen 7) */}
+          <div className='bg-white rounded-2xl p-4 shadow-xs border border-[#eff4ff]'>
+            <div className='flex items-center justify-between mb-3'>
+              <span className='text-xs font-bold text-[#121c2a]'>
+                Progres Menuju Kekebalan Seumur Hidup
+              </span>
+              <span className='text-xs font-bold text-[#aa294d]'>Dosis 4 dari 5</span>
             </div>
-
-            {/* Primary & Secondary Interactive Action Buttons (Stitch Screen 7) */}
-            <div className='flex flex-col gap-2.5 pt-1'>
-              <button
-                type='button'
-                onClick={() => navigate('/user/profile?section=reminder')}
-                className='w-full h-12 bg-[#aa294d] text-white rounded-full font-bold text-xs sm:text-sm shadow-[0_4px_16px_rgba(170,41,77,0.32)] hover:bg-[#cb4364] active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer'
-              >
-                <BellRing size={18} />
-                <span>Pasang Pengingat Jadwal</span>
-              </button>
-              <a
-                href='https://maps.google.com/?q=Puskesmas+Kebayoran+Baru'
-                target='_blank'
-                rel='noopener noreferrer'
-                className='w-full h-12 bg-white text-[#aa294d] border border-[#eff4ff] rounded-full font-bold text-xs sm:text-sm shadow-xs hover:bg-[#eff4ff] active:scale-[0.98] transition-all flex items-center justify-center gap-2'
-              >
-                <ExternalLink size={18} />
-                <span>Lihat Lokasi Faskes</span>
-              </a>
+            {/* Stepper bar */}
+            <div className='grid grid-cols-5 gap-1.5 mb-2'>
+              <div className='h-2 rounded-full bg-[#2a6950]' />
+              <div className='h-2 rounded-full bg-[#2a6950]' />
+              <div className='h-2 rounded-full bg-[#2a6950]' />
+              <div className='h-2 rounded-full bg-[#cb4364] animate-pulse' />
+              <div className='h-2 rounded-full bg-[#dee9fc]' />
+            </div>
+            <div className='flex justify-between items-center text-[10px] text-[#574144] font-semibold'>
+              <span className='text-[#2a6950]'>TT1-TT3 Selesai</span>
+              <span className='text-[#aa294d]'>Langkah Saat Ini: TT4</span>
+              <span className='text-[#8b7074]'>TT5 Terakhir</span>
             </div>
           </div>
 
-          <div className='flex flex-col gap-5'>
-            <TTIntervalGuideCard />
+          {/* Medical Guidance Callout (Clinical Reassurance) (Stitch Screen 7) */}
+          <div className='bg-[#eff4ff] rounded-2xl p-4 flex gap-3.5 items-start border border-[#d9e3f6]/60 shadow-2xs'>
+            <div className='w-8 h-8 rounded-full bg-white flex items-center justify-center text-[#aa294d] shrink-0 shadow-2xs mt-0.5'>
+              <Info size={18} />
+            </div>
+            <div className='flex flex-col'>
+              <span className='text-xs font-bold text-[#121c2a] mb-0.5'>
+                Catatan Bidan & Faskes
+              </span>
+              <p className='text-[11px] text-[#574144] leading-relaxed'>
+                Pastikan kamu menerima vaksin sesuai interval waktu minimal agar respon antibodi
+                optimal. Konsultasikan kartu riwayat TT ini kepada bidan desa atau dokter saat
+                skrining berkala.
+              </p>
+            </div>
+          </div>
+
+          {/* Recommended Healthcare Facility (Faskes Terdekat) (Stitch Screen 7) */}
+          <div>
+            <div className='flex items-center justify-between mb-2.5 px-0.5'>
+              <span className='text-sm sm:text-base font-bold text-[#121c2a]'>
+                Faskes Rujukan Terpilih
+              </span>
+              <span className='text-[11px] text-[#aa294d] font-bold'>Tersinkron BPJS</span>
+            </div>
+            <div className='bg-white rounded-2xl p-4 shadow-xs border border-[#eff4ff] flex flex-col gap-3'>
+              <div className='flex items-start justify-between gap-3'>
+                <div className='flex gap-3'>
+                  <div className='w-11 h-11 rounded-xl bg-[#aff1d0]/50 flex items-center justify-center text-[#2a6950] shrink-0'>
+                    <Building2 size={24} />
+                  </div>
+                  <div className='flex flex-col min-w-0'>
+                    <h3 className='text-xs sm:text-sm font-bold text-[#121c2a] truncate'>
+                      Puskesmas Kebayoran Baru
+                    </h3>
+                    <span className='text-[11px] text-[#574144] flex items-center gap-1 mt-0.5'>
+                      <CheckCircle2 size={13} className='text-[#2a6950]' />
+                      Faskes Utama Calon Pengantin
+                    </span>
+                  </div>
+                </div>
+                <div className='bg-[#eff4ff] px-2.5 py-0.5 rounded-full flex items-center gap-1 shrink-0'>
+                  <MapPin size={12} className='text-[#aa294d]' />
+                  <span className='text-[11px] text-[#121c2a] font-semibold'>1.2 km</span>
+                </div>
+              </div>
+
+              {/* Schedule & Operational Hours */}
+              <div className='flex items-center gap-2 bg-[#eff4ff]/60 px-3 py-2 rounded-xl text-xs text-[#574144]'>
+                <Clock size={15} className='text-[#8b7074]' />
+                <span className='font-medium text-[11px]'>Senin – Jumat, 08:00 – 14:00 WIB</span>
+              </div>
+
+              {/* Facility Mini Map View Trigger (Stitch Screen 7) */}
+              <div
+                className='w-full h-24 rounded-xl bg-cover bg-center relative overflow-hidden flex items-end p-2.5 shadow-inner'
+                style={{
+                  backgroundImage: `url('https://lh3.googleusercontent.com/aida-public/AB6AXuBFV1kdSb2CiSwu7AGmIxW7cM2CvGaurtZEvxgwN5LglsjZEr4PHwHV2jIcAXZVHFNmvNTnmzp2cUTOElM0uVm3OcHxhGcl8426-bJN3C4R1XI5ZUCqvJYFHkR5UInfbiDmNHzydg83gH8NoBSqcjsLA7C4C4EvYrclwRBXjslcShlrtcQR8KTXL0rLHV2VPrvZkzmsE2Z2B2oJO1wWv5F45CdFGSp8jSuo60Y-c4lPw9uPGPU5j6aA')`,
+                }}
+              >
+                <div className='absolute inset-0 bg-linear-to-t from-[#121c2a]/80 via-transparent to-transparent' />
+                <span className='relative text-[10px] text-white flex items-center gap-1 font-semibold truncate'>
+                  <Pin size={12} className='text-rose-300' />
+                  Jl. Gandaria Tengah II No. 14, Jakarta Selatan
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Primary & Secondary Interactive Action Buttons (Stitch Screen 7) */}
+          <div className='flex flex-col gap-2.5 pt-1'>
+            <button
+              type='button'
+              onClick={() => navigate('/user/profile?section=reminder')}
+              className='w-full h-12 bg-[#aa294d] text-white rounded-full font-bold text-xs sm:text-sm shadow-[0_4px_16px_rgba(170,41,77,0.32)] hover:bg-[#cb4364] active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer'
+            >
+              <BellRing size={18} />
+              <span>Pasang Pengingat Jadwal</span>
+            </button>
+            <a
+              href='https://maps.google.com/?q=Puskesmas+Kebayoran+Baru'
+              target='_blank'
+              rel='noopener noreferrer'
+              className='w-full h-12 bg-white text-[#aa294d] border border-[#eff4ff] rounded-full font-bold text-xs sm:text-sm shadow-xs hover:bg-[#eff4ff] active:scale-[0.98] transition-all flex items-center justify-center gap-2'
+            >
+              <ExternalLink size={18} />
+              <span>Lihat Lokasi Faskes</span>
+            </a>
           </div>
         </div>
+
+        <div className='flex flex-col gap-5'>
+          <TTIntervalGuideCard />
+        </div>
+      </div>
     </div>
   );
 }

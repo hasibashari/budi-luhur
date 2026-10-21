@@ -1,6 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import { Heart, Flame, Sparkles, MessageSquare, Zap, ThumbsUp } from 'lucide-react';
 import { BuddyGroupMessage } from '../types';
+import Avatar from '@/shared/components/ui/Avatar';
 
 interface GroupChatMessagesProps {
   messages: BuddyGroupMessage[];
@@ -66,13 +67,13 @@ export default function GroupChatMessages({ messages, currentUserId }: GroupChat
             >
               {/* Sender Avatar (Only for others) */}
               {!isSelf && (
-                <div className='relative w-7 h-7 sm:w-8 sm:h-8 rounded-full overflow-hidden shrink-0 ring-1 ring-slate-200 mt-0.5'>
-                  <img
-                    src={msg.senderAvatarUrl}
-                    alt={msg.senderName}
-                    className='w-full h-full object-cover'
-                  />
-                </div>
+                <Avatar
+                  src={msg.senderAvatarUrl}
+                  name={msg.senderName}
+                  size='xs'
+                  className='mt-0.5 shrink-0'
+                  ringClassName='ring-1 ring-slate-200'
+                />
               )}
 
               {/* Message Bubble */}

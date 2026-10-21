@@ -29,7 +29,7 @@ export function ProfileSecuritySection({
         {/* Password Management Card */}
         <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl bg-stone-50 border border-stone-200/80'>
           <div className='flex items-center gap-3'>
-            <div className='w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0 border border-emerald-100'>
+            <div className='w-10 h-10 rounded-xl bg-[#ffd9de]/60 text-[#aa294d] flex items-center justify-center shrink-0 border border-[#ffd9de]'>
               <KeyRound size={18} />
             </div>
             <div>

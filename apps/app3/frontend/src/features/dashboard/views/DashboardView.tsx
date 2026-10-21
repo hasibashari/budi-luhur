@@ -147,7 +147,7 @@ export default function DashboardView() {
     consecutiveDates: [],
     hbLevel: authUser?.hbLevel || null,
     schoolOrOrg: authUser?.schoolOrOrg || 'Puskesmas Binaan Kemenkes',
-    avatarUrl: authUser?.avatarUrl || 'https://api.dicebear.com/7.x/avataaars/svg?seed=PRELUNA',
+    avatarUrl: authUser?.avatarUrl || null,
   };
 
   const featuredArticle = dashboardData?.featuredArticle;

@@ -35,9 +35,9 @@ export function ProfileHeaderCard({
   const isRoleAdmin = roleBadgeColor === 'admin';
 
   return (
-    <div className='relative overflow-hidden rounded-3xl bg-white border border-stone-200 shadow-sm p-5 sm:p-7'>
+    <div className='relative overflow-hidden rounded-3xl bg-white border border-[#ffd9de] shadow-sm p-5 sm:p-7'>
       {/* Background Decorative Banner */}
-      <div className='absolute top-0 left-0 right-0 h-24 sm:h-28 bg-linear-to-r from-emerald-800 via-emerald-700 to-teal-800 opacity-95' />
+      <div className='absolute top-0 left-0 right-0 h-24 sm:h-28 bg-gradient-to-r from-[#aa294d] via-[#8c0f39] to-[#574144] opacity-95' />
 
       <div className='relative z-10 flex flex-col sm:flex-row items-center sm:items-end justify-between gap-4 pt-8 sm:pt-10'>
         {/* Avatar & Identitas */}
@@ -60,8 +60,8 @@ export function ProfileHeaderCard({
               <span
                 className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wide ${
                   isRoleAdmin
-                    ? 'bg-emerald-800 text-white shadow-xs'
-                    : 'bg-emerald-50 text-emerald-800 border border-emerald-200'
+                    ? 'bg-[#8c0f39] text-white shadow-xs'
+                    : 'bg-[#ffd9de] text-[#8c0f39] border border-[#ffd9de]'
                 }`}
               >
                 {roleBadgeText}

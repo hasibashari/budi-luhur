@@ -160,7 +160,7 @@ export default function DashboardView() {
     consecutiveDates: [],
     hbLevel: authUser?.hbLevel || null,
     schoolOrOrg: authUser?.schoolOrOrg || null,
-    avatarUrl: authUser?.avatarUrl || 'https://api.dicebear.com/7.x/avataaars/svg?seed=FEMORY',
+    avatarUrl: authUser?.avatarUrl || null,
   };
 
   const featuredArticle = dashboardData?.featuredArticle;

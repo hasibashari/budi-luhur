@@ -19,9 +19,15 @@ import {
   ProfileMetricsGrid,
   ProfileEditModal,
   ProfileSecuritySection,
+  ProfileNotificationCard,
 } from '@/src/shared/components/profile';
 import { useAuth } from '@/src/features/auth/context/AuthContext';
-import { getUserDashboardDataAction, updateUserProfileAction } from '../api/userRepository';
+import {
+  getUserDashboardDataAction,
+  updateUserProfileAction,
+  updateUserScheduleSettingsAction,
+  UserScheduleData,
+} from '../api/userRepository';
 
 interface UserProfileState {
   id: string;
@@ -88,6 +94,8 @@ export default function ProfileView() {
     }
   };
 
+  const [scheduleData, setScheduleData] = useState<UserScheduleData | null>(null);
+
   useEffect(() => {
     let isMounted = true;
     async function loadData() {
@@ -107,6 +115,9 @@ export default function ProfileView() {
           setEditName(dashboard.user.name);
           setEditFaskes(dashboard.user.schoolOrOrg || '');
           setEditPhone(dashboard.user.phone || '');
+          if (dashboard.activeSchedule) {
+            setScheduleData(dashboard.activeSchedule);
+          }
         }
       } catch (err) {
         console.error('Failed to load user profile:', err);
@@ -117,6 +128,33 @@ export default function ProfileView() {
       isMounted = false;
     };
   }, [authUser?.id]);
+
+  const handleToggleScheduleEnabled = async (enabled: boolean) => {
+    if (!scheduleData) {
+      showToast('Jadwal belum dikonfigurasi. Atur jadwal terlebih dahulu.');
+      return;
+    }
+    setScheduleData(prev => (prev ? { ...prev, isEnabled: enabled } : null));
+    const res = await updateUserScheduleSettingsAction(scheduleData.id, { isEnabled: enabled });
+    if (res.success) {
+      showToast(enabled ? 'Pengingat Pil KB diaktifkan! 🔔' : 'Pengingat Pil KB dinonaktifkan.');
+    } else {
+      showToast(res.error || 'Gagal memperbarui status pengingat.');
+    }
+  };
+
+  const handleToggleRemind15 = async (remind15: boolean) => {
+    if (!scheduleData) return;
+    setScheduleData(prev => (prev ? { ...prev, remind15MinBefore: remind15 } : null));
+    const res = await updateUserScheduleSettingsAction(scheduleData.id, {
+      remind15MinBefore: remind15,
+    });
+    if (res.success) {
+      showToast(
+        remind15 ? 'Peringatan 15 menit sebelum aktif.' : 'Peringatan 15 menit dinonaktifkan.',
+      );
+    }
+  };
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
@@ -291,6 +329,20 @@ export default function ProfileView() {
         items={contactItems}
       />
 
+      {/* 4. Notification & Reminder Settings Card */}
+      <ProfileNotificationCard
+        theme='teal'
+        title='Pengingat Harian Pil KB'
+        subtitle={
+          scheduleData?.isEnabled
+            ? `Pengingat aktif (Setiap Hari, ${scheduleData?.time || '21:00'} WIB)`
+            : 'Pengingat otomatis dinonaktifkan'
+        }
+        isEnabled={scheduleData?.isEnabled ?? true}
+        onToggleEnabled={handleToggleScheduleEnabled}
+        onPermissionError={showToast}
+      />
+
       {/* Security & Account Management */}
       <ProfileSecuritySection
         onLogoutClick={handleConfirmLogout}
@@ -353,7 +405,8 @@ export default function ProfileView() {
 
             <h3 className='text-lg font-bold text-slate-900 mb-2'>Konfirmasi Hapus Akun</h3>
             <p className='text-xs text-slate-600 leading-relaxed mb-4'>
-              Tindakan ini akan menghapus akun akseptor Anda beserta seluruh riwayat kepatuhan 28 butir dan jadwal pengingat secara permanen.
+              Tindakan ini akan menghapus akun akseptor Anda beserta seluruh riwayat kepatuhan 28
+              butir dan jadwal pengingat secara permanen.
             </p>
 
             <div className='mb-4 text-left'>

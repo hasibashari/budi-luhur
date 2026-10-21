@@ -16,6 +16,7 @@ import {
   Trash2,
 } from 'lucide-react';
 import { Button } from '@/src/shared/components/ui/Button';
+import Avatar from '@/shared/components/ui/Avatar';
 import { BuddyGroupItem, BuddyGroupMember } from '../types';
 
 interface GroupInfoModalProps {
@@ -257,13 +258,13 @@ export default function GroupInfoModal({
                   <div key={member.id} className='py-2 flex items-center justify-between gap-2'>
                     {/* Member Info */}
                     <div className='flex items-center gap-2.5 min-w-0'>
-                      <div className='relative w-8 h-8 rounded-full overflow-hidden shrink-0 ring-1 ring-slate-200'>
-                        <img
-                          src={member.avatarUrl}
-                          alt={member.name}
-                          className='w-full h-full object-cover'
-                        />
-                      </div>
+                      <Avatar
+                        src={member.avatarUrl}
+                        name={member.name}
+                        size='sm'
+                        ringClassName='ring-1 ring-slate-200'
+                        className='shrink-0'
+                      />
 
                       <div className='min-w-0'>
                         <div className='flex items-center gap-1.5'>

@@ -63,7 +63,7 @@ export class BuddyService {
       const members = membersRes.rows.map((m: any) => ({
         userId: m.id,
         name: m.name,
-        avatarUrl: m.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(m.name)}`,
+        avatarUrl: m.avatar_url || null,
         role: m.role as 'admin' | 'member',
         streakCount: m.streak_count || 0,
         school: m.school_or_org || undefined,
@@ -116,7 +116,7 @@ export class BuddyService {
     const members = membersRes.rows.map((m: any) => ({
       userId: m.id,
       name: m.name,
-      avatarUrl: m.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(m.name)}`,
+      avatarUrl: m.avatar_url || null,
       role: m.role as 'admin' | 'member',
       streakCount: m.streak_count || 0,
       school: m.school_or_org || undefined,

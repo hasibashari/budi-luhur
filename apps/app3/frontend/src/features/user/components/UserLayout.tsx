@@ -13,8 +13,9 @@ export default function UserLayout({ children }: UserLayoutProps) {
   const location = useLocation();
   const pathname = location.pathname;
   const { user } = useAuth();
-  const displayName = user?.name ? user.name.split(' ')[0] : 'Calon Pengantin';
-  const avatarUrl = user?.avatarUrl || 'https://api.dicebear.com/7.x/avataaars/svg?seed=PRELUNA';
+  const fullName = user?.name || 'Calon Pengantin PRELUNA';
+  const firstName = user?.name ? user.name.split(' ')[0] : 'Calon Pengantin';
+  const avatarUrl = user?.avatarUrl || null;
 
   if (pathname === '/user/setup') {
     return <AuthGuard requiredRole='user'>{children || <Outlet />}</AuthGuard>;
@@ -25,7 +26,11 @@ export default function UserLayout({ children }: UserLayoutProps) {
       <div className='min-h-[100dvh] md:h-screen md:overflow-hidden bg-[#f8f9ff] flex flex-col md:flex-row selection:bg-[#ffd9de] selection:text-[#400014]'>
         {/* Mobile Top Header (< md) */}
         <div className='block md:hidden shrink-0'>
-          <MobileTopBar userName={displayName} avatarUrl={avatarUrl} />
+          <MobileTopBar
+            userName={fullName}
+            brandTitle={`Hai, ${firstName}! 💍`}
+            avatarUrl={avatarUrl}
+          />
         </div>
 
         {/* Desktop / Tablet Left Sidebar (>= md) */}

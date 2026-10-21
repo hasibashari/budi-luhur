@@ -153,7 +153,7 @@ export function ProfilePhotoUploader({
           src={currentAvatarUrl}
           name={name}
           size={size}
-          ringClassName='ring-4 ring-emerald-200 group-hover:ring-emerald-400 transition-all shadow-md'
+          ringClassName='ring-4 ring-[#ffd9de] group-hover:ring-[#aa294d]/40 transition-all shadow-md'
         />
 
         {canEdit && (
@@ -162,7 +162,7 @@ export function ProfilePhotoUploader({
             onClick={handleOpenModal}
             aria-label='Ubah Foto Profil'
             title='Ubah Foto Profil'
-            className='absolute bottom-0 right-0 w-8 h-8 sm:w-9 sm:h-9 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full flex items-center justify-center shadow-lg border-2 border-white transition-all cursor-pointer hover:scale-105 active:scale-95 z-10'
+            className='absolute bottom-0 right-0 w-8 h-8 sm:w-9 sm:h-9 bg-[#aa294d] hover:bg-[#8c0f39] text-white rounded-full flex items-center justify-center shadow-lg border-2 border-white transition-all cursor-pointer hover:scale-105 active:scale-95 z-10'
           >
             <Camera size={15} />
           </button>
@@ -173,7 +173,7 @@ export function ProfilePhotoUploader({
       {isModalOpen && (
         <div className='fixed inset-0 z-[70] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fade-in'>
           <div
-            className='bg-white rounded-3xl shadow-2xl border border-slate-200 max-w-md w-full p-5 sm:p-6 relative overflow-hidden animate-scale-up max-h-[88dvh] sm:max-h-[90vh] flex flex-col'
+            className='bg-white rounded-3xl shadow-2xl border border-[#ffd9de] max-w-md w-full p-5 sm:p-6 relative overflow-hidden animate-scale-up max-h-[88dvh] sm:max-h-[90vh] flex flex-col'
             onClick={e => e.stopPropagation()}
           >
             {/* Modal Header */}
@@ -238,7 +238,7 @@ export function ProfilePhotoUploader({
                   type='button'
                   onClick={() => fileInputRef.current?.click()}
                   disabled={isProcessing}
-                  className='flex items-center justify-center gap-2 py-2.5 px-3 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 rounded-xl text-xs font-bold transition-all border border-emerald-200 cursor-pointer disabled:opacity-50'
+                  className='flex items-center justify-center gap-2 py-2.5 px-3 bg-[#ffd9de]/50 hover:bg-[#ffd9de] text-[#8c0f39] rounded-xl text-xs font-bold transition-all border border-[#ffd9de] cursor-pointer disabled:opacity-50'
                 >
                   <Upload size={14} />
                   <span>Pilih Foto</span>
@@ -250,7 +250,7 @@ export function ProfilePhotoUploader({
                   disabled={isProcessing || !previewUrl}
                   className='flex items-center justify-center gap-2 py-2.5 px-3 bg-slate-50 hover:bg-slate-100 text-slate-700 rounded-xl text-xs font-bold transition-all border border-slate-200 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed'
                 >
-                  <Trash2 size={14} className='text-rose-500' />
+                  <Trash2 size={14} className='text-red-500' />
                   <span>Hapus Foto</span>
                 </button>
               </div>

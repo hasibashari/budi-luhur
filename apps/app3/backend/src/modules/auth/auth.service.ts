@@ -66,7 +66,7 @@ export class AuthService {
           email: 'admin@preluna.id',
           role: 'admin',
           phone: '0812-3456-7890',
-          avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=AdminPreluna',
+          avatar_url: null,
           gender: 'Perempuan',
           friend_code: 'FE-ADMIN-1001',
           school_or_org: 'Puskesmas Budi Luhur',
@@ -85,7 +85,7 @@ export class AuthService {
           email: 'sarah@preluna.id',
           role: 'user',
           phone: '0812-9876-5432',
-          avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=SarahPreluna',
+          avatar_url: null,
           gender: 'Perempuan',
           friend_code: 'FE-SARAH-3001',
           school_or_org: 'KUA Budi Luhur',
@@ -192,7 +192,7 @@ export class AuthService {
           email: 'admin@preluna.id',
           role: 'admin',
           phone: '0812-3456-7890',
-          avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=AdminPreluna',
+          avatar_url: null,
           gender: 'Perempuan',
           friend_code: 'FE-ADMIN-1001',
           school_or_org: 'Puskesmas Budi Luhur',
@@ -206,7 +206,7 @@ export class AuthService {
           email: 'sarah@preluna.id',
           role: 'user',
           phone: '0812-9876-5432',
-          avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=SarahPreluna',
+          avatar_url: null,
           gender: 'Perempuan',
           friend_code: 'FE-SARAH-3001',
           school_or_org: 'KUA Budi Luhur',
@@ -299,7 +299,7 @@ export class AuthService {
     const friendCode = `FE-${cleanTag}-${randNum}`;
 
     const newId = `usr_${Date.now().toString().slice(-6)}`;
-    const avatarUrl = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(cleanName)}`;
+    const avatarUrl = null;
     const passwordHash = await bcrypt.hash(data.password, 10);
 
     await db.transaction(async client => {

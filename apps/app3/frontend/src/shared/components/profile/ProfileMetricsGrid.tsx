@@ -50,7 +50,7 @@ export function ProfileMetricsGrid({
           return (
             <div
               key={metric.id}
-              className='p-4 rounded-2xl bg-stone-50/70 border border-stone-200/80 hover:border-emerald-300 hover:shadow-xs transition-all flex flex-col justify-between'
+              className='p-4 rounded-2xl bg-stone-50/70 border border-stone-200/80 hover:border-[#aa294d]/40 hover:shadow-xs transition-all flex flex-col justify-between'
             >
               <div className='flex items-start justify-between gap-2 mb-2'>
                 <span className='text-xs font-bold text-slate-500'>{metric.label}</span>

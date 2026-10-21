@@ -40,12 +40,12 @@ export function ProfileContactCard({
           return (
             <div
               key={idx}
-              className='flex items-center gap-3.5 p-3.5 rounded-2xl bg-stone-50/70 border border-stone-200/80 hover:border-emerald-300 transition-all'
+              className='flex items-center gap-3.5 p-3.5 rounded-2xl bg-stone-50/70 border border-stone-200/80 hover:border-[#aa294d]/40 transition-all'
             >
               <div
                 className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 shadow-2xs ${
-                  item.iconBgColor || 'bg-emerald-50'
-                } ${item.iconColor || 'text-emerald-700'}`}
+                  item.iconBgColor || 'bg-[#ffd9de]/60'
+                } ${item.iconColor || 'text-[#aa294d]'}`}
               >
                 <Icon size={18} />
               </div>

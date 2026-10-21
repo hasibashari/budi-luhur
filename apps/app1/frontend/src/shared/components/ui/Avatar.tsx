@@ -82,7 +82,10 @@ export function Avatar({
   const initials = getInitials(name);
   const paletteClass = getPaletteForName(name);
 
-  const hasValidImage = src && src.trim() !== '' && !hasImageError;
+  const isPlaceholderUrl =
+    typeof src === 'string' &&
+    (src.includes('dicebear.com') || src.includes('googleusercontent.com/aida-public'));
+  const hasValidImage = src && src.trim() !== '' && !isPlaceholderUrl && !hasImageError;
 
   return (
     <div className={`relative inline-flex shrink-0 select-none ${className}`}>

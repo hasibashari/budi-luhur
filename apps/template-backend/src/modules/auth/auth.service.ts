@@ -213,7 +213,7 @@ export class AuthService {
     const friendCode = `FE-${cleanTag}-${randNum}`;
 
     const newId = `usr_${Date.now().toString().slice(-6)}`;
-    const avatarUrl = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(cleanName)}`;
+    const avatarUrl = null;
     const passwordHash = await bcrypt.hash(data.password, 10);
 
     await db.transaction(async client => {

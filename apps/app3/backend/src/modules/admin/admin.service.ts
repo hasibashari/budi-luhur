@@ -180,9 +180,7 @@ export class AdminService {
         gender: r.gender || 'Perempuan',
         phone: r.phone || '-',
         email: r.email,
-        avatarUrl:
-          r.avatar_url ||
-          `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(r.name)}`,
+        avatarUrl: r.avatar_url || null,
         riskLevel: r.risk_level || 'Rendah',
         status: r.status || 'Aktif',
         schoolOrOrg,
@@ -268,9 +266,7 @@ export class AdminService {
       gender: r.gender || 'Perempuan',
       phone: r.phone || '-',
       email: r.email,
-      avatarUrl:
-        r.avatar_url ||
-        `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(r.name)}`,
+      avatarUrl: r.avatar_url || null,
       riskLevel: r.risk_level || 'Rendah',
       status: r.status || 'Aktif',
       schoolOrOrg,
@@ -303,7 +299,7 @@ export class AdminService {
     partnerName?: string;
   }) {
     const newId = `usr_${Date.now().toString().slice(-6)}`;
-    const avatarUrl = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(data.name)}`;
+    const avatarUrl = null;
     const cleanTag =
       data.name
         .toUpperCase()

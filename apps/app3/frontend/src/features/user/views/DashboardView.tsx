@@ -160,7 +160,7 @@ export default function DashboardView() {
     consecutiveDates: [],
     hbLevel: authUser?.hbLevel || null,
     schoolOrOrg: authUser?.schoolOrOrg || 'Puskesmas Kebayoran',
-    avatarUrl: authUser?.avatarUrl || 'https://api.dicebear.com/7.x/avataaars/svg?seed=PRELUNA',
+    avatarUrl: authUser?.avatarUrl || null,
   };
 
   // Extract meta from notes if available

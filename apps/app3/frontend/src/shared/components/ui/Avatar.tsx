@@ -16,16 +16,16 @@ export interface AvatarProps {
 }
 
 const AVATAR_PALETTES = [
+  'bg-[#aa294d] text-white',
+  'bg-[#8c0f39] text-white',
+  'bg-rose-600 text-white',
+  'bg-pink-600 text-white',
   'bg-emerald-600 text-white',
-  'bg-teal-600 text-white',
-  'bg-amber-600 text-white',
-  'bg-emerald-700 text-white',
-  'bg-slate-700 text-white',
-  'bg-cyan-600 text-white',
-  'bg-emerald-800 text-white',
+  'bg-indigo-600 text-white',
+  'bg-[#574144] text-white',
   'bg-teal-700 text-white',
-  'bg-amber-700 text-white',
-  'bg-stone-700 text-white',
+  'bg-amber-600 text-white',
+  'bg-slate-700 text-white',
 ];
 
 export function getInitials(name?: string | null): string {
@@ -82,7 +82,10 @@ export function Avatar({
   const initials = getInitials(name);
   const paletteClass = getPaletteForName(name);
 
-  const hasValidImage = src && src.trim() !== '' && !hasImageError;
+  const isPlaceholderUrl =
+    typeof src === 'string' &&
+    (src.includes('dicebear.com') || src.includes('googleusercontent.com/aida-public'));
+  const hasValidImage = src && src.trim() !== '' && !isPlaceholderUrl && !hasImageError;
 
   return (
     <div className={`relative inline-flex shrink-0 select-none ${className}`}>

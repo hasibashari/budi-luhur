@@ -67,7 +67,7 @@ export class AuthService {
           email: normalizedEmail || 'admin@pilluna.com',
           role: 'admin',
           phone: '0812-3456-7890',
-          avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=AdminBidan',
+          avatar_url: null,
           gender: 'Perempuan',
           friend_code: 'FE-ADMIN-1001',
           school_or_org: 'Puskesmas Budi Luhur',
@@ -81,7 +81,7 @@ export class AuthService {
           email: normalizedEmail || 'sarah@pilluna.com',
           role: 'user',
           phone: '0812-9876-5432',
-          avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=SarahPilluna',
+          avatar_url: null,
           gender: 'Perempuan',
           friend_code: 'FE-SARAH-2001',
           school_or_org: 'Kecamatan Budi Luhur',
@@ -180,7 +180,7 @@ export class AuthService {
           email: 'admin@pilluna.com',
           role: 'admin',
           phone: '0812-3456-7890',
-          avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=AdminBidan',
+          avatar_url: null,
           gender: 'Perempuan',
           friend_code: 'FE-ADMIN-1001',
           school_or_org: 'Puskesmas Budi Luhur',
@@ -194,7 +194,7 @@ export class AuthService {
           email: 'sarah@pilluna.com',
           role: 'user',
           phone: '0812-9876-5432',
-          avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=SarahPilluna',
+          avatar_url: null,
           gender: 'Perempuan',
           friend_code: 'FE-SARAH-2001',
           school_or_org: 'Kecamatan Budi Luhur',
@@ -288,7 +288,7 @@ export class AuthService {
     const friendCode = `FE-${cleanTag}-${randNum}`;
 
     const newId = `usr_${Date.now().toString().slice(-6)}`;
-    const avatarUrl = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(cleanName)}`;
+    const avatarUrl = null;
     const passwordHash = await bcrypt.hash(data.password, 10);
 
     await db.transaction(async client => {
