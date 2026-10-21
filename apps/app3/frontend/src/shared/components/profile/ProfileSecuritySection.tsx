@@ -19,7 +19,9 @@ export function ProfileSecuritySection({
   return (
     <div className='rounded-3xl bg-white border border-stone-200 shadow-sm p-5 sm:p-6'>
       <div className='mb-4 pb-3 border-b border-stone-100'>
-        <h2 className='text-sm sm:text-base font-bold text-slate-900'>Keamanan & Sesi Akun Catin</h2>
+        <h2 className='text-sm sm:text-base font-bold text-slate-900'>
+          Keamanan & Sesi Akun Catin
+        </h2>
         <p className='text-xs text-slate-500 mt-0.5'>
           Kelola autentikasi, status sesi, dan kontrol privasi data Anda
         </p>
@@ -90,7 +92,8 @@ export function ProfileSecuritySection({
                   </span>
                 </div>
                 <p className='text-[11px] text-rose-700 mt-0.5 max-w-md'>
-                  Hapus akun dan semua riwayat vaksinasi TT, catatan jadwal, dan profil catin secara permanen.
+                  Hapus akun dan semua riwayat vaksinasi TT, catatan jadwal, dan profil catin secara
+                  permanen.
                 </p>
               </div>
             </div>

@@ -18,6 +18,21 @@ export class ScheduleController {
     }
   }
 
+  static async createSchedule(req: AuthRequest, res: Response) {
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        res.status(401).json({ success: false, error: 'Sesi tidak valid.' });
+        return;
+      }
+      const result = await ScheduleService.createOrUpsertSchedule(userId, req.body);
+      res.json(result);
+    } catch (error: any) {
+      console.error('ScheduleController.createSchedule error:', error);
+      res.status(500).json({ success: false, error: 'Gagal membuat jadwal alarm.' });
+    }
+  }
+
   static async updateSchedule(req: AuthRequest, res: Response) {
     try {
       const id = String(req.params.id);
@@ -26,6 +41,22 @@ export class ScheduleController {
     } catch (error: any) {
       console.error('ScheduleController.updateSchedule error:', error);
       res.status(500).json({ success: false, error: 'Gagal memperbarui jadwal.' });
+    }
+  }
+
+  static async deleteSchedule(req: AuthRequest, res: Response) {
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        res.status(401).json({ success: false, error: 'Sesi tidak valid.' });
+        return;
+      }
+      const id = String(req.params.id);
+      const result = await ScheduleService.deleteSchedule(id, userId);
+      res.json(result);
+    } catch (error: any) {
+      console.error('ScheduleController.deleteSchedule error:', error);
+      res.status(500).json({ success: false, error: 'Gagal menghapus jadwal alarm.' });
     }
   }
 

@@ -114,47 +114,47 @@ export default function HistoryView() {
       />
 
       <div className='flex flex-col gap-5 animate-fade-in'>
-          {/* COMPACT FILTER BAR WITH CALENDAR POPOVER */}
-          <DateFilterBar
+        {/* COMPACT FILTER BAR WITH CALENDAR POPOVER */}
+        <DateFilterBar
+          selectedDate={selectedDate}
+          onSelectDate={setSelectedDate}
+          dateFilterPreset={dateFilterPreset}
+          onDateFilterPresetChange={setDateFilterPreset}
+          activityMap={activityMap}
+          todayStr={todayStr}
+          todayStatus={dashboardData?.todayStatus}
+        />
+
+        <MonthlyEvaluationView
+          stats={stats}
+          streakCount={streakCount}
+          streakUnit={streakUnit}
+          hbLevel={dashboardData?.user.hbLevel}
+          riskLevel={dashboardData?.user.riskLevel}
+          logs={allLogs}
+        />
+
+        {/* ACTIVE DATE QUICK ACTION CARD */}
+        {(dateFilterPreset === 'CUSTOM' || dateFilterPreset === 'TODAY') && (
+          <ActiveDateActionCard
             selectedDate={selectedDate}
-            onSelectDate={setSelectedDate}
-            dateFilterPreset={dateFilterPreset}
-            onDateFilterPresetChange={setDateFilterPreset}
-            activityMap={activityMap}
-            todayStr={todayStr}
-            todayStatus={dashboardData?.todayStatus}
+            isToday={isSelectedDateToday}
+            activity={selectedDateActivity}
+            effectiveStatus={effectiveSelectedStatus}
+            fallbackTabletName={dashboardData?.activeSchedule?.tabletName}
+            fallbackTime={dashboardData?.activeSchedule?.time}
+            isUpdating={isUpdatingDate}
+            onUpdateStatus={updateDateStatus}
           />
+        )}
 
-          <MonthlyEvaluationView
-            stats={stats}
-            streakCount={streakCount}
-            streakUnit={streakUnit}
-            hbLevel={dashboardData?.user.hbLevel}
-            riskLevel={dashboardData?.user.riskLevel}
-            logs={allLogs}
-          />
-
-          {/* ACTIVE DATE QUICK ACTION CARD */}
-          {(dateFilterPreset === 'CUSTOM' || dateFilterPreset === 'TODAY') && (
-            <ActiveDateActionCard
-              selectedDate={selectedDate}
-              isToday={isSelectedDateToday}
-              activity={selectedDateActivity}
-              effectiveStatus={effectiveSelectedStatus}
-              fallbackTabletName={dashboardData?.activeSchedule?.tabletName}
-              fallbackTime={dashboardData?.activeSchedule?.time}
-              isUpdating={isUpdatingDate}
-              onUpdateStatus={updateDateStatus}
-            />
-          )}
-
-          {/* UNIFIED CONSUMPTION LOG LIST WITH STATUS FILTER DROPDOWN */}
-          <ConsumptionLogList
-            logs={filteredLogs}
-            filterLabel={filterLabel}
-            statusFilter={statusFilter}
-            onStatusFilterChange={setStatusFilter}
-          />
+        {/* UNIFIED CONSUMPTION LOG LIST WITH STATUS FILTER DROPDOWN */}
+        <ConsumptionLogList
+          logs={filteredLogs}
+          filterLabel={filterLabel}
+          statusFilter={statusFilter}
+          onStatusFilterChange={setStatusFilter}
+        />
       </div>
     </div>
   );

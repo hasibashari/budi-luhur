@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, Plus, Eye, Edit, Trash2, Clock, Image as ImageIcon } from 'lucide-react';
+import { Search, Plus, Eye, Edit, Trash2, Clock, Calendar, Image as ImageIcon } from 'lucide-react';
 import AdminHeader from '../components/AdminHeader';
 import ArticleFormModal, { ArticleFormData } from '../components/ArticleFormModal';
 import { DataTable, Column } from '@/src/shared/components/DataTable';
@@ -21,7 +21,7 @@ import { HealthArticle, ArticleCategory } from '../types/admin.types';
 const initialArticleFormData: ArticleFormData = {
   title: '',
   category: '',
-  author: 'Tim Ahli Gizi & UKS',
+  author: '',
   summary: '',
   content: '',
   readTime: '3 min read',
@@ -81,7 +81,7 @@ export default function ArticleManagementView() {
   const filteredArticles = articles.filter(a => {
     const matchesSearch =
       a.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      a.author.toLowerCase().includes(searchQuery.toLowerCase());
+      a.category.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = categoryFilter === 'Semua' || a.category === categoryFilter;
     return matchesSearch && matchesCategory;
   });
@@ -93,7 +93,7 @@ export default function ArticleManagementView() {
   const onOpenEdit = (article: HealthArticle) => {
     handleOpenEdit(article.id, {
       title: article.title,
-    category: (article.category as ArticleCategory) || '',
+      category: (article.category as ArticleCategory) || '',
       author: article.author,
       summary: article.summary || '',
       content: article.content || article.summary || '',
@@ -186,7 +186,7 @@ export default function ArticleManagementView() {
     {
       id: 'judul',
       label: 'Judul Artikel',
-      width: '35%',
+      width: '45%',
       renderCell: article => (
         <div>
           <div className='font-bold text-slate-900 text-sm leading-snug'>{article.title}</div>
@@ -199,7 +199,7 @@ export default function ArticleManagementView() {
     {
       id: 'kategori',
       label: 'Kategori',
-      width: '18%',
+      width: '22%',
       renderCell: article => (
         <span className='inline-flex items-center px-2.5 py-1 rounded-full bg-rose-50 text-rose-700 border border-pink-200 text-xs font-bold'>
           {article.category}
@@ -207,17 +207,9 @@ export default function ArticleManagementView() {
       ),
     },
     {
-      id: 'penulis',
-      label: 'Penulis',
-      width: '18%',
-      renderCell: article => (
-        <span className='font-semibold text-slate-800 text-sm'>{article.author}</span>
-      ),
-    },
-    {
       id: 'publikasi_waktu',
       label: 'Publikasi & Waktu',
-      width: '14%',
+      width: '18%',
       renderCell: article => (
         <div>
           <div className='text-slate-800 text-xs sm:text-sm font-medium'>{article.publishDate}</div>
@@ -295,7 +287,10 @@ export default function ArticleManagementView() {
       </div>
 
       <div className='flex items-center justify-between bg-slate-50 rounded-xl p-2.5 text-xs'>
-        <span className='font-bold text-slate-700 truncate max-w-[60%]'>✍️ {article.author}</span>
+        <span className='font-medium text-slate-500 flex items-center gap-1.5'>
+          <Calendar size={13} className='text-rose-500' />
+          <span>{article.publishDate}</span>
+        </span>
         <span className='flex items-center gap-1 text-slate-400 font-medium shrink-0'>
           <Clock size={12} /> {article.readTime}
         </span>
@@ -350,7 +345,7 @@ export default function ArticleManagementView() {
               </span>
               <input
                 type='text'
-                placeholder='Cari judul artikel atau nama penulis...'
+                placeholder='Cari judul artikel...'
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
                 className='w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-xs sm:text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-400 focus:border-transparent transition-all min-h-[44px]'

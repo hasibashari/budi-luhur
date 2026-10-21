@@ -55,7 +55,7 @@ export class AuthService {
 
     const hasSchool = Boolean(row.school_or_org && row.school_or_org.trim());
     const hasSchedule = scheduleCount > 0;
-    const isProfileComplete = row.role === 'admin' || (hasSchool && hasSchedule);
+    const isProfileComplete = row.role === 'admin' || hasSchool;
 
     const authUser: AuthUser = {
       id: row.id,

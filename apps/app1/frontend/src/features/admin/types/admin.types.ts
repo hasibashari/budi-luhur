@@ -43,6 +43,7 @@ export interface MedicationSchedule {
   startDate: string;
   endDate: string;
   status: 'Aktif' | 'Selesai' | 'Diberhentikan';
+  isEnabled?: boolean;
   category: ScheduleCategory;
   instructions: string;
   lastReminderSent?: string;

@@ -9,7 +9,7 @@ import { OnboardingView } from '@/src/features/onboarding';
 // User Portal Views
 import { UserLayout, DashboardView, SetupProfileView, ProfileView } from '@/src/features/user';
 import { ScheduleView } from '@/src/features/schedule';
-import { HistoryView } from '@/src/features/consumption';
+import { HistoryView } from '@/src/features/monitoring';
 import { BuddyView } from '@/src/features/buddy';
 import { EducationView, ArticleDetailView } from '@/src/features/education';
 import { ConsultationView } from '@/src/features/consultation';

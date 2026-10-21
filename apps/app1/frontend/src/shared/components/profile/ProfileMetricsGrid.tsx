@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import { LucideIcon } from 'lucide-react';
 
 export interface ProfileMetricItem {
@@ -44,19 +43,21 @@ export function ProfileMetricsGrid({
         </div>
       </div>
 
-      <div className={`grid ${colClass} gap-3.5`}>
-        {metrics.map(metric => {
+      <div className={`grid ${colClass} divide-y sm:divide-y-0 sm:divide-x divide-slate-100/80`}>
+        {metrics.map((metric, idx) => {
           const Icon = metric.icon;
           return (
             <div
               key={metric.id}
-              className='p-4 rounded-2xl bg-gradient-to-br from-rose-50/40 via-white to-pink-50/20 border border-rose-100/60 hover:shadow-xs transition-all flex flex-col justify-between'
+              className={`py-3.5 sm:py-1 ${
+                idx === 0 ? 'sm:pr-5' : idx === metrics.length - 1 ? 'sm:pl-5' : 'sm:px-5'
+              } flex flex-col justify-between`}
             >
-              <div className='flex items-start justify-between gap-2 mb-2'>
-                <span className='text-xs font-bold text-slate-500'>{metric.label}</span>
+              <div className='flex items-center justify-between gap-2 mb-2'>
+                <span className='text-xs font-semibold text-slate-500'>{metric.label}</span>
                 <div
-                  className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
-                    metric.iconBgColor || 'bg-rose-100'
+                  className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${
+                    metric.iconBgColor || 'bg-rose-50'
                   } ${metric.iconColor || 'text-rose-600'}`}
                 >
                   <Icon size={16} />
@@ -64,7 +65,7 @@ export function ProfileMetricsGrid({
               </div>
 
               <div>
-                <div className='flex items-baseline gap-2'>
+                <div className='flex items-baseline gap-2 flex-wrap'>
                   <span className='text-xl sm:text-2xl font-black text-slate-800 tracking-tight'>
                     {metric.value}
                   </span>
@@ -79,7 +80,7 @@ export function ProfileMetricsGrid({
                   )}
                 </div>
                 {metric.subtitle && (
-                  <p className='text-[11px] font-medium text-slate-400 mt-1 truncate'>
+                  <p className='text-[11px] font-medium text-slate-400 mt-1 leading-relaxed'>
                     {metric.subtitle}
                   </p>
                 )}

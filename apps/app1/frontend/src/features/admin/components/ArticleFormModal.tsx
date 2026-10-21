@@ -8,7 +8,7 @@ import { ArticleCategory } from '../types/admin.types';
 export interface ArticleFormData {
   title: string;
   category: ArticleCategory;
-  author: string;
+  author?: string;
   summary: string;
   content: string;
   readTime: string;
@@ -216,20 +216,6 @@ export default function ArticleFormModal({
             className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-400 focus:border-transparent transition-all'
           />
         </div>
-        <div>
-          <label className='block text-xs font-bold text-slate-700 mb-1'>
-            Penulis / Ahli Gizi UKS
-          </label>
-          <input
-            type='text'
-            value={formData.author}
-            onChange={e => updateFormData({ author: e.target.value })}
-            className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-400 focus:border-transparent transition-all'
-          />
-        </div>
-      </div>
-
-      <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
         <div>
           <label className='block text-xs font-bold text-slate-700 mb-1'>Status Publikasi</label>
           <select

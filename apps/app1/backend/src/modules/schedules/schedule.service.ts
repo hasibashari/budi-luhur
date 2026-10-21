@@ -39,7 +39,8 @@ export class ScheduleService {
       time: timeSlot,
       isEnabled: sch.is_enabled,
       remind15MinBefore: sch.remind_15min_before,
-      instructions: sch.instructions || 'Minum setelah makan malam atau sebelum tidur dengan air putih.',
+      instructions:
+        sch.instructions || 'Minum setelah makan malam atau sebelum tidur dengan air putih.',
       nextDate,
       daysRemaining,
     };
@@ -85,6 +86,78 @@ export class ScheduleService {
     return { success: true, message: 'Jadwal berhasil diperbarui.' };
   }
 
+  static async createOrUpsertSchedule(userId: string, data: any) {
+    const dayOfWeek = data.dayOfWeek || 'Sabtu';
+    const timeSlot = data.timeSlot || data.time || '20:00';
+    const frequency =
+      data.frequency === 'daily' || data.frequency === 'Harian' ? 'daily' : 'weekly';
+    const remind15MinBefore = data.remind15MinBefore ?? true;
+    const tabletName = data.tabletName || 'Tablet Tambah Darah (TTD)';
+    const dosage = data.dosage || '1 tablet';
+    const instructions =
+      data.instructions || 'Minum setelah makan malam atau sebelum tidur dengan air putih.';
+
+    // Check if user already has an active schedule to prevent duplicate rows
+    const existing = await db.query<{ id: string }>(
+      `SELECT id FROM reminder_schedules WHERE user_id = $1 AND status = 'Aktif' ORDER BY created_at DESC LIMIT 1`,
+      [userId],
+    );
+
+    let scheduleId: string;
+    if (existing.rows.length > 0) {
+      // Upsert: update the existing active schedule
+      scheduleId = existing.rows[0].id;
+      await db.query(
+        `UPDATE reminder_schedules 
+         SET day_of_week = $1, time_slot = $2, frequency = $3, remind_15min_before = $4, is_enabled = true, updated_at = CURRENT_TIMESTAMP
+         WHERE id = $5`,
+        [dayOfWeek, timeSlot, frequency, remind15MinBefore, scheduleId],
+      );
+      await db.query(`DELETE FROM schedule_time_slots WHERE schedule_id = $1`, [scheduleId]);
+      await db.query(`INSERT INTO schedule_time_slots (schedule_id, time) VALUES ($1, $2)`, [
+        scheduleId,
+        timeSlot,
+      ]);
+    } else {
+      // Insert fresh schedule
+      scheduleId = `sch_${Date.now().toString().slice(-6)}`;
+      await db.query(
+        `INSERT INTO reminder_schedules (
+          id, user_id, tablet_name, dosage, frequency, day_of_week, time_slot, is_enabled, remind_15min_before, instructions, status
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, true, $8, $9, 'Aktif')`,
+        [
+          scheduleId,
+          userId,
+          tabletName,
+          dosage,
+          frequency,
+          dayOfWeek,
+          timeSlot,
+          remind15MinBefore,
+          instructions,
+        ],
+      );
+      await db.query(`INSERT INTO schedule_time_slots (schedule_id, time) VALUES ($1, $2)`, [
+        scheduleId,
+        timeSlot,
+      ]);
+    }
+
+    return {
+      success: true,
+      message: 'Alarm pengingat berhasil disimpan.',
+      data: { id: scheduleId },
+    };
+  }
+
+  static async deleteSchedule(scheduleId: string, userId: string) {
+    await db.query(`DELETE FROM reminder_schedules WHERE id = $1 AND user_id = $2`, [
+      scheduleId,
+      userId,
+    ]);
+    return { success: true, message: 'Alarm berhasil dihapus.' };
+  }
+
   static async getActiveNudge(userId: string) {
     const res = await db.query<{
       id: string;
@@ -122,7 +195,8 @@ export class ScheduleService {
       message: row.message,
       channel: (row.channel as 'app' | 'whatsapp') || 'app',
       status: row.status as 'UNREAD' | 'READ' | 'DISMISSED',
-      sentAt: row.created_at.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB',
+      sentAt:
+        row.created_at.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB',
     };
   }
 

@@ -38,9 +38,7 @@ export function Pagination({
   const startItem =
     totalItems && totalItems > 0 && pageSize ? (safeCurrentPage - 1) * pageSize + 1 : 0;
   const endItem =
-    totalItems && totalItems > 0 && pageSize
-      ? Math.min(safeCurrentPage * pageSize, totalItems)
-      : 0;
+    totalItems && totalItems > 0 && pageSize ? Math.min(safeCurrentPage * pageSize, totalItems) : 0;
 
   const getPageNumbers = () => {
     const pages: (number | string)[] = [];
@@ -88,8 +86,11 @@ export function Pagination({
               '0 data'
             ) : (
               <>
-                Menampilkan <strong className='text-[#1e293b] font-bold'>{startItem}–{endItem}</strong> dari{' '}
-                <strong className='text-[#1e293b] font-bold'>{totalItems}</strong> data
+                Menampilkan{' '}
+                <strong className='text-[#1e293b] font-bold'>
+                  {startItem}–{endItem}
+                </strong>{' '}
+                dari <strong className='text-[#1e293b] font-bold'>{totalItems}</strong> data
               </>
             )}
           </p>
@@ -142,10 +143,7 @@ export function Pagination({
           {pageNumbers.map((p, idx) => {
             if (p === '...') {
               return (
-                <span
-                  key={`ellipsis-${idx}`}
-                  className='px-1 text-xs text-[#94a3b8] select-none'
-                >
+                <span key={`ellipsis-${idx}`} className='px-1 text-xs text-[#94a3b8] select-none'>
                   …
                 </span>
               );

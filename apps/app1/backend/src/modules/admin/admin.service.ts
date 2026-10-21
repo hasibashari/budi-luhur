@@ -61,6 +61,7 @@ export interface MedicationSchedule {
   instructions: string;
   lastReminderSent?: string;
   todayStatus?: 'COMPLETED' | 'PENDING' | 'NOT_YET_TIME' | 'OFF_SCHEDULE' | 'MISSED';
+  isEnabled?: boolean;
 }
 
 export interface ComplianceReport {
@@ -116,7 +117,9 @@ export class AdminService {
   static async getOverviewStats(): Promise<AdminStats> {
     const [usersRes, schedulesRes, adherenceRes, articlesRes, buddyRes] = await Promise.all([
       db.query<{ c: string }>(`SELECT count(*) as c FROM users WHERE role = 'user'`),
-      db.query<{ c: string }>(`SELECT count(*) as c FROM reminder_schedules WHERE status = 'Aktif'`),
+      db.query<{ c: string }>(
+        `SELECT count(*) as c FROM reminder_schedules WHERE status = 'Aktif'`,
+      ),
       db.query<{ total: string; completed: string }>(`
         SELECT 
           COUNT(*) as total,
@@ -263,7 +266,7 @@ export class AdminService {
     const friendCode = `FE-${cleanTag}-${Math.floor(1000 + Math.random() * 9000)}`;
     const school = data.schoolOrOrg || 'SMA Negeri 1 Sehat';
 
-    await db.transaction(async (client) => {
+    await db.transaction(async client => {
       await client.query(
         `INSERT INTO users (id, name, email, role, phone, avatar_url, gender)
          VALUES ($1, $2, $3, 'user', $4, $5, $6)`,
@@ -294,7 +297,7 @@ export class AdminService {
   }
 
   static async updateUser(userId: string, data: any) {
-    await db.transaction(async (client) => {
+    await db.transaction(async client => {
       if (data.name || data.email || data.phone || data.gender) {
         await client.query(
           `UPDATE users 
@@ -355,13 +358,14 @@ export class AdminService {
       [nudgeId, userId, msg, channel],
     );
 
-    const push = channel === 'app'
-      ? await NotificationService.sendToUser(userId, {
-          title: 'Pengingat Minum TTD',
-          body: msg,
-          url: '/app1/user/dashboard',
-        })
-      : { sent: 0, configured: true };
+    const push =
+      channel === 'app'
+        ? await NotificationService.sendToUser(userId, {
+            title: 'Pengingat Minum TTD',
+            body: msg,
+            url: '/app1/user/dashboard',
+          })
+        : { sent: 0, configured: true };
 
     return { success: true, nudgeId, pushSent: push.sent > 0, pushConfigured: push.configured };
   }
@@ -400,9 +404,10 @@ export class AdminService {
     return rows.map((r: any) => {
       const allParagraphs = sectionsByArticle.get(r.id);
       const content =
-        allParagraphs && allParagraphs.length > 0
+        r.lead_paragraph ||
+        (allParagraphs && allParagraphs.length > 0
           ? allParagraphs.join('\n\n')
-          : r.lead_paragraph || r.summary;
+          : r.summary);
 
       const d = r.published_at ? new Date(r.published_at) : new Date();
       const publishDateStr = !isNaN(d.getTime())
@@ -444,7 +449,7 @@ export class AdminService {
     const characterCount = finalContent.length;
     const readTime = `${Math.max(1, Math.ceil(characterCount / 1000))} min read`;
 
-    await db.transaction(async (client) => {
+    await db.transaction(async client => {
       canonicalCategory = await AdminService.resolveCategory(client, category);
       await client.query(
         `INSERT INTO articles (
@@ -463,18 +468,6 @@ export class AdminService {
           data.author || 'Tim Ahli Gizi UKS',
         ],
       );
-
-      const paragraphs = finalContent
-        .split('\n\n')
-        .map((p) => p.trim())
-        .filter(Boolean);
-      if (paragraphs.length > 0) {
-        await client.query(
-          `INSERT INTO article_sections (article_id, order_index, heading, paragraphs)
-           VALUES ($1, 1, 'Pembahasan Edukasi', $2)`,
-          [newId, JSON.stringify(paragraphs)],
-        );
-      }
     });
 
     return {
@@ -493,7 +486,7 @@ export class AdminService {
   }
 
   static async updateAdminArticle(articleId: string, data: any) {
-    await db.transaction(async (client) => {
+    await db.transaction(async client => {
       const category =
         data.category === undefined || data.category === null
           ? undefined
@@ -525,27 +518,10 @@ export class AdminService {
       );
 
       if (data.content !== undefined) {
-        const paragraphs = data.content
-          .split('\n\n')
-          .map((p: string) => p.trim())
-          .filter(Boolean);
-        const existingSectionRes = await client.query<{ id: number }>(
-          `SELECT id FROM article_sections WHERE article_id = $1 ORDER BY order_index ASC LIMIT 1`,
+        await client.query(
+          `DELETE FROM article_sections WHERE article_id = $1 AND heading = 'Pembahasan Edukasi'`,
           [articleId],
         );
-        const existingSection = existingSectionRes.rows[0];
-
-        if (existingSection) {
-          await client.query(`UPDATE article_sections SET paragraphs = $1 WHERE id = $2`, [
-            JSON.stringify(paragraphs),
-            existingSection.id,
-          ]);
-        } else if (paragraphs.length > 0) {
-          await client.query(
-            `INSERT INTO article_sections (article_id, order_index, heading, paragraphs) VALUES ($1, 1, 'Pembahasan Edukasi', $2)`,
-            [articleId, JSON.stringify(paragraphs)],
-          );
-        }
       }
     });
 
@@ -563,7 +539,7 @@ export class AdminService {
   static async getSchedules(): Promise<MedicationSchedule[]> {
     const res = await db.query<any>(`
       SELECT 
-        s.id, s.user_id, s.tablet_name, s.dosage, s.frequency, s.day_of_week, s.time_slot, s.status, s.instructions, s.created_at,
+        s.id, s.user_id, s.tablet_name, s.dosage, s.frequency, s.day_of_week, s.time_slot, s.status, s.is_enabled, s.instructions, s.created_at,
         u.name as user_name
       FROM reminder_schedules s
       JOIN users u ON s.user_id = u.id
@@ -643,7 +619,8 @@ export class AdminService {
         timeSlots: slots,
         startDate: r.created_at ? new Date(r.created_at).toISOString().split('T')[0] : '2026-09-01',
         endDate: '2026-12-31',
-        status: r.status,
+        status: r.is_enabled === false ? 'Diberhentikan' : r.status,
+        isEnabled: r.is_enabled ?? true,
         category,
         instructions:
           r.instructions || 'Minum setelah makan malam atau sebelum tidur dengan air putih.',
@@ -730,7 +707,7 @@ export class AdminService {
     const dbFrequency =
       data.frequency === 'Harian' || data.category === 'Terapi Anemia' ? 'daily' : 'weekly';
 
-    await db.transaction(async (client) => {
+    await db.transaction(async client => {
       await client.query(
         `INSERT INTO reminder_schedules (
           id, user_id, tablet_name, dosage, frequency, day_of_week, time_slot, status, instructions
@@ -750,10 +727,10 @@ export class AdminService {
 
       if (data.timeSlots && Array.isArray(data.timeSlots)) {
         for (const slot of data.timeSlots) {
-          await client.query(`INSERT INTO schedule_time_slots (schedule_id, time) VALUES ($1, $2)`, [
-            newId,
-            slot,
-          ]);
+          await client.query(
+            `INSERT INTO schedule_time_slots (schedule_id, time) VALUES ($1, $2)`,
+            [newId, slot],
+          );
         }
       }
     });
@@ -771,7 +748,7 @@ export class AdminService {
 
     const mainSlot = data.timeSlots && data.timeSlots.length > 0 ? data.timeSlots[0] : null;
 
-    await db.transaction(async (client) => {
+    await db.transaction(async client => {
       await client.query(
         `UPDATE reminder_schedules
          SET
@@ -811,7 +788,7 @@ export class AdminService {
   }
 
   static async deleteSchedule(scheduleId: string) {
-    await db.transaction(async (client) => {
+    await db.transaction(async client => {
       await client.query(`DELETE FROM schedule_time_slots WHERE schedule_id = $1`, [scheduleId]);
       await client.query(`DELETE FROM reminder_schedules WHERE id = $1`, [scheduleId]);
     });

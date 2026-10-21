@@ -5,7 +5,12 @@ import React from 'react';
 export interface StatCardProps {
   title: string;
   value: React.ReactNode;
-  icon: React.ComponentType<{ size?: number; color?: string; className?: string; style?: React.CSSProperties }>;
+  icon: React.ComponentType<{
+    size?: number;
+    color?: string;
+    className?: string;
+    style?: React.CSSProperties;
+  }>;
   iconBgColor?: string;
   iconColor?: string;
   valueColor?: string;

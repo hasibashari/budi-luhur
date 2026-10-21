@@ -2,16 +2,26 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import {
-  Area,
-  AreaChart,
+  Bar,
+  BarChart,
   CartesianGrid,
+  Cell,
+  LabelList,
+  ReferenceLine,
   ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
 } from 'recharts';
-import { CheckCircle2, RotateCcw, Sparkles } from 'lucide-react';
+import {
+  Sparkles,
+  TrendingUp,
+  TrendingDown,
+  Minus,
+  Calendar,
+} from 'lucide-react';
 import { Card } from '../ui/Card';
+import { WeeklyAdherencePoint } from '@/src/features/monitoring/utils/weeklyAdherence';
 
 export interface ConsumptionTrendItem {
   label: string;
@@ -22,80 +32,208 @@ export interface ConsumptionTrendItem {
 
 export interface ConsumptionChartProps {
   data?: ConsumptionTrendItem[];
+  weeklyData?: WeeklyAdherencePoint[];
   totalCount?: number;
   compliancePercent?: number;
   loading?: boolean;
 }
 
-interface MonthlyWeekPoint {
+interface ChartBarItem {
   week: number;
   label: string;
-  target: number;
-  actual: number | null;
+  fullLabel: string;
+  dateRange: string;
+  percentage: number;
+  displayPercentage: string;
+  completedCount: number;
+  missedCount: number;
+  cumulativeCompleted: number;
+  delta: number | null;
+  isUpcoming: boolean;
+  status: 'OPTIMAL' | 'MODERATE' | 'LOW' | 'UPCOMING';
 }
 
-export function ConsumptionChart({ totalCount = 0, loading = false }: ConsumptionChartProps) {
-  // Initialize active week based on current totalCount (0 to 4 times per month)
+export function ConsumptionChart({
+  weeklyData,
+  totalCount = 0,
+  compliancePercent,
+  loading = false,
+}: ConsumptionChartProps) {
+  // Hitung initial active week dari totalCount atau weeklyData terakhir yang aktif
   const initialWeek = useMemo(() => {
+    if (weeklyData && weeklyData.length > 0) {
+      // Cari minggu terakhir yang bukan upcoming
+      const pastWeeks = weeklyData.filter(w => !w.isUpcoming && w.percentage !== null);
+      if (pastWeeks.length > 0) {
+        return pastWeeks[pastWeeks.length - 1].week;
+      }
+    }
     return Math.min(4, Math.max(0, totalCount));
-  }, [totalCount]);
+  }, [totalCount, weeklyData]);
 
   const [activeWeek, setActiveWeek] = useState<number>(initialWeek);
 
-  // Sync if external totalCount changes
+  // Sync saat data external berubah
   useEffect(() => {
     setActiveWeek(initialWeek);
   }, [initialWeek]);
 
-  // Construct the 4-week cumulative chart data
-  const chartData: MonthlyWeekPoint[] = useMemo(() => {
-    const weeks = [
-      { week: 0, label: 'Awal', target: 0 },
-      { week: 1, label: 'Minggu 1', target: 25 },
-      { week: 2, label: 'Minggu 2', target: 50 },
-      { week: 3, label: 'Minggu 3', target: 75 },
-      { week: 4, label: 'Minggu 4', target: 100 },
-    ];
-
-    return weeks.map(item => {
-      if (activeWeek === 0) {
-        // Flat at the bottom (0%)
+  // Siapkan dataset diagram batang untuk 4 minggu (M1 - M4)
+  const chartBars: ChartBarItem[] = useMemo(() => {
+    // 1. Jika weeklyData aktual tersedia
+    if (weeklyData && weeklyData.length === 4) {
+      return weeklyData.map(w => {
+        const pct = w.percentage ?? 0;
         return {
-          ...item,
-          actual: 0,
+          week: w.week,
+          label: w.label,
+          fullLabel: w.fullLabel,
+          dateRange: w.dateRange,
+          percentage: pct,
+          displayPercentage: w.isUpcoming ? '-' : `${pct}%`,
+          completedCount: w.completedCount,
+          missedCount: w.missedCount,
+          cumulativeCompleted: w.cumulativeCompleted,
+          delta: w.delta,
+          isUpcoming: w.isUpcoming,
+          status: w.status,
         };
-      }
+      });
+    }
 
-      if (item.week <= activeWeek) {
-        return {
-          ...item,
-          actual: item.target,
-        };
-      }
-
+    // 2. Fallback progresif 4 minggu dari totalCount (0% -> 25% -> 50% -> 75% -> 100%)
+    const defaultRanges = ['1 - 7', '8 - 14', '15 - 21', '22 - Akhir'];
+    return [1, 2, 3, 4].map(w => {
+      const isPastOrDone = totalCount >= w;
+      const isUpcoming = totalCount < w;
+      const pct = isPastOrDone ? w * 25 : 0;
       return {
-        ...item,
-        actual: null,
+        week: w,
+        label: `M${w}`,
+        fullLabel: `Minggu ${w}`,
+        dateRange: defaultRanges[w - 1],
+        percentage: pct,
+        displayPercentage: isUpcoming && totalCount === 0 ? '-' : `${pct}%`,
+        completedCount: isPastOrDone ? 1 : 0,
+        missedCount: 0,
+        cumulativeCompleted: Math.min(w, totalCount),
+        delta: w === 1 ? null : 25,
+        isUpcoming: isUpcoming && totalCount === 0,
+        status: (pct >= 60 ? 'OPTIMAL' : pct >= 30 ? 'MODERATE' : 'LOW') as any,
       };
     });
-  }, [activeWeek]);
+  }, [weeklyData, totalCount]);
 
-  const currentPercent = activeWeek * 25;
+  // Data ringkasan untuk minggu yang sedang aktif/dipilih
+  const activeSummary = useMemo(() => {
+    if (activeWeek === 0) {
+      return {
+        completedDoses: 0,
+        percentage: 0,
+        statusText: '0 / 4 Dosis',
+        delta: null,
+        label: 'Awal Bulan',
+      };
+    }
+
+    const currentItem = chartBars.find(b => b.week === activeWeek);
+
+    // Jika pengguna secara spesifik mengklik M4 untuk melihat target lengkap
+    const isWeek4Selected = activeWeek === 4;
+    const completedDoses = isWeek4Selected ? 4 : currentItem?.cumulativeCompleted || activeWeek;
+    const percentage = isWeek4Selected ? 100 : (currentItem?.percentage ?? activeWeek * 25);
+
+    const statusText =
+      isWeek4Selected || completedDoses >= 4
+        ? 'Lengkap (4/4 Dosis)'
+        : completedDoses === 0
+          ? '0 / 4 Dosis'
+          : `Dosis ${completedDoses} Terpenuhi`;
+
+    return {
+      completedDoses,
+      percentage,
+      statusText,
+      delta: currentItem?.delta ?? null,
+      label: currentItem?.fullLabel || `Minggu ${activeWeek}`,
+      dateRange: currentItem?.dateRange,
+    };
+  }, [activeWeek, chartBars]);
 
   const handleSelectWeek = (week: number) => {
     if (activeWeek === week) {
-      setActiveWeek(0); // Toggle back to 0 if clicked again
+      setActiveWeek(0); // Toggle reset
     } else {
       setActiveWeek(week);
     }
   };
 
-  const handleAdvanceStep = () => {
-    setActiveWeek(prev => (prev >= 4 ? 0 : prev + 1));
+  // Custom Tooltip Recharts untuk Diagram Batang
+  const CustomTooltip = ({ active, payload }: any) => {
+    if (active && payload && payload.length) {
+      const data: ChartBarItem = payload[0].payload;
+      return (
+        <div className='bg-white/95 backdrop-blur-xs p-3 rounded-xl border border-[#fce7f3] shadow-lg shadow-rose-500/10 text-xs min-w-[170px]'>
+          <div className='flex items-center justify-between gap-2 border-b border-slate-100 pb-1.5 mb-2'>
+            <span className='font-bold text-[#1e293b] flex items-center gap-1.5'>
+              <Calendar size={13} className='text-[#e11d48]' />
+              <span>{data.fullLabel}</span>
+            </span>
+            <span className='text-[10px] text-slate-400 font-medium'>{data.dateRange}</span>
+          </div>
+
+          {data.isUpcoming ? (
+            <p className='text-slate-400 italic text-[11px] py-1'>Jadwal belum tiba</p>
+          ) : (
+            <div className='space-y-1.5'>
+              <div className='flex items-center justify-between'>
+                <span className='text-slate-500'>Kepatuhan:</span>
+                <span className='font-extrabold text-[#1e293b]'>{data.percentage}%</span>
+              </div>
+              <div className='flex items-center justify-between'>
+                <span className='text-slate-500'>Diminum:</span>
+                <span className='font-semibold text-emerald-600'>{data.completedCount} tablet</span>
+              </div>
+              {data.missedCount > 0 && (
+                <div className='flex items-center justify-between'>
+                  <span className='text-slate-500'>Terlewat:</span>
+                  <span className='font-semibold text-rose-500'>{data.missedCount} tablet</span>
+                </div>
+              )}
+              {data.delta !== null && (
+                <div className='flex items-center justify-between pt-1 border-t border-slate-100'>
+                  <span className='text-slate-500'>Tren Delta:</span>
+                  <span
+                    className={`font-bold flex items-center gap-0.5 ${
+                      data.delta > 0
+                        ? 'text-emerald-600'
+                        : data.delta < 0
+                          ? 'text-rose-500'
+                          : 'text-slate-400'
+                    }`}
+                  >
+                    {data.delta > 0 ? (
+                      <TrendingUp size={12} />
+                    ) : data.delta < 0 ? (
+                      <TrendingDown size={12} />
+                    ) : (
+                      <Minus size={12} />
+                    )}
+                    <span>{data.delta > 0 ? `+${data.delta}%` : `${data.delta}%`}</span>
+                  </span>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      );
+    }
+    return null;
   };
 
   return (
     <Card padding='md' className='w-full'>
+      {/* 1. Header & Info */}
       <div className='flex items-start justify-between gap-2 mb-3'>
         <div>
           <div className='flex items-center gap-1.5'>
@@ -107,82 +245,34 @@ export function ConsumptionChart({ totalCount = 0, loading = false }: Consumptio
             </span>
           </div>
           <p className='text-xs text-[#64748b] mt-0.5'>
-            Klik per minggu untuk melihat kenaikan dari 0% hingga 100%
+            Perubahan persentase kepatuhan mingguan (dari kecil ke atas menuju 100%)
           </p>
         </div>
-
-        {activeWeek > 0 && (
-          <button
-            type='button'
-            onClick={() => setActiveWeek(0)}
-            className='text-[11px] font-semibold text-slate-400 hover:text-[#e11d48] transition-colors inline-flex items-center gap-1 cursor-pointer pt-0.5 shrink-0'
-            title='Reset ke 0%'
-          >
-            <RotateCcw size={12} />
-            <span>Reset (0%)</span>
-          </button>
-        )}
       </div>
 
-      {/* 4 Interactive Week Buttons (Step-by-Step) */}
-      <div className='grid grid-cols-4 gap-2 mb-3.5'>
-        {[1, 2, 3, 4].map(week => {
-          const isCompleted = activeWeek >= week;
-          const isCurrent = activeWeek === week;
-          const percent = week * 25;
-          return (
-            <button
-              key={week}
-              type='button'
-              onClick={() => handleSelectWeek(week)}
-              className={`py-2 px-1.5 rounded-xl border text-center transition-all cursor-pointer active:scale-95 ${
-                isCurrent
-                  ? 'bg-[#e11d48] border-[#e11d48] text-white shadow-md shadow-rose-500/25'
-                  : isCompleted
-                    ? 'bg-rose-50 border-rose-200 text-[#e11d48] hover:bg-rose-100/70'
-                    : 'bg-slate-50 border-slate-200 text-slate-500 hover:bg-slate-100'
-              }`}
-            >
-              <div className='flex items-center justify-center gap-1 text-xs font-bold leading-tight'>
-                {isCompleted && (
-                  <CheckCircle2 size={13} className={isCurrent ? 'text-white' : 'text-[#e11d48]'} />
-                )}
-                <span>M{week}</span>
-              </div>
-              <span
-                className={`text-[10px] font-medium block mt-0.5 ${
-                  isCurrent ? 'text-rose-100' : 'text-slate-400'
-                }`}
-              >
-                {percent}%
-              </span>
-            </button>
-          );
-        })}
-      </div>
-
+      {/* 3. Diagram Batang (Vertical Bar Chart - Recharts) */}
       {loading ? (
         <div className='h-52 animate-pulse rounded-xl bg-slate-100' />
       ) : (
         <div className='h-52 w-full'>
           <ResponsiveContainer width='100%' height='100%'>
-            <AreaChart
-              data={chartData}
-              margin={{ top: 12, right: 12, left: -18, bottom: 0 }}
-              onClick={handleAdvanceStep}
+            <BarChart
+              data={chartBars}
+              margin={{ top: 22, right: 12, left: -18, bottom: 0 }}
+              onClick={(state: any) => {
+                if (state && state.activePayload && state.activePayload.length) {
+                  const clickedWeek = state.activePayload[0].payload.week;
+                  handleSelectWeek(clickedWeek);
+                }
+              }}
               className='cursor-pointer select-none'
             >
-              <defs>
-                <linearGradient id='consumption-fill' x1='0' y1='0' x2='0' y2='1'>
-                  <stop offset='5%' stopColor='#e11d48' stopOpacity={0.4} />
-                  <stop offset='95%' stopColor='#e11d48' stopOpacity={0.03} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray='3 3' stroke='#fce7f3' />
+              <CartesianGrid strokeDasharray='3 3' stroke='#fce7f3' vertical={false} />
               <XAxis
                 dataKey='label'
-                tick={{ fontSize: 10.5, fill: '#64748b', fontWeight: 500 }}
+                tick={{ fontSize: 11, fill: '#64748b', fontWeight: 600 }}
                 axisLine={{ stroke: '#fce7f3' }}
+                tickLine={false}
               />
               <YAxis
                 domain={[0, 100]}
@@ -190,92 +280,102 @@ export function ConsumptionChart({ totalCount = 0, loading = false }: Consumptio
                 tickFormatter={value => `${value}%`}
                 tick={{ fontSize: 10, fill: '#64748b' }}
                 axisLine={{ stroke: '#fce7f3' }}
+                tickLine={false}
               />
-              <Tooltip
-                formatter={(value: any, name: any) => {
-                  if (value === null || value === undefined) return ['Belum dicapai', 'Status'];
-                  const labelName = name === 'actual' ? 'Kepatuhan Aktual' : 'Target Bulanan';
-                  return [`${value}%`, labelName];
-                }}
-                labelFormatter={label => `${label}`}
-                contentStyle={{
-                  borderRadius: 12,
-                  borderColor: '#fce7f3',
-                  fontSize: 12,
-                  boxShadow: '0 4px 12px rgba(225, 29, 72, 0.08)',
-                }}
-              />
-              {/* Target Baseline Track (Dashed 100% line) */}
-              <Area
-                type='monotone'
-                dataKey='target'
-                name='Target'
+              <Tooltip content={<CustomTooltip />} />
+              {/* Garis target ideal 100% */}
+              <ReferenceLine
+                y={100}
                 stroke='#cbd5e1'
-                strokeWidth={1.5}
                 strokeDasharray='4 4'
-                fill='none'
-                dot={false}
-                isAnimationActive={false}
+                label={{
+                  value: 'Target 100%',
+                  position: 'insideTopRight',
+                  fill: '#94a3b8',
+                  fontSize: 10,
+                }}
               />
-              {/* Actual Filled Area (Rises on week clicks) */}
-              <Area
-                type='monotone'
-                dataKey='actual'
+              <Bar
+                dataKey='percentage'
                 name='Kepatuhan'
-                stroke='#e11d48'
-                strokeWidth={3}
-                fill='url(#consumption-fill)'
-                dot={{ r: 4, fill: '#e11d48', stroke: '#fff', strokeWidth: 2 }}
-                activeDot={{ r: 6.5, fill: '#e11d48', stroke: '#fff', strokeWidth: 2.5 }}
-                connectNulls={false}
-                isAnimationActive={true}
-                animationDuration={700}
+                radius={[6, 6, 0, 0]}
+                maxBarSize={44}
+                animationDuration={600}
                 animationEasing='ease-out'
-              />
-            </AreaChart>
+              >
+                {/* Teks persentase langsung di atas puncak setiap batang */}
+                <LabelList
+                  dataKey='displayPercentage'
+                  position='top'
+                  fill='#64748b'
+                  fontSize={11}
+                  fontWeight={700}
+                  offset={6}
+                />
+                {chartBars.map((entry, index) => {
+                  const isSelected = activeWeek === entry.week;
+                  let fillColor = '#e11d48'; // Primary FEMORY rose
+
+                  if (entry.isUpcoming) {
+                    fillColor = '#e2e8f0'; // Gray Upcoming
+                  } else if (entry.percentage >= 60) {
+                    fillColor = '#10b981'; // Emerald High
+                  } else if (entry.percentage >= 30) {
+                    fillColor = '#e11d48'; // Rose Moderate
+                  } else {
+                    fillColor = '#f59e0b'; // Amber Low
+                  }
+
+                  return (
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={fillColor}
+                      fillOpacity={isSelected ? 1 : 0.85}
+                      stroke={isSelected ? '#881337' : 'none'}
+                      strokeWidth={isSelected ? 1.5 : 0}
+                      className='transition-all duration-200'
+                    />
+                  );
+                })}
+              </Bar>
+            </BarChart>
           </ResponsiveContainer>
         </div>
       )}
 
-      {/* Summary Footer Cards */}
+      {/* 4. Kartu Rangkuman di Bawah Grafik */}
       <div className='grid grid-cols-2 gap-2.5 mt-3.5 pt-3 border-t border-[#fce7f3]'>
         <div className='bg-[#fff5f7] rounded-xl p-2.5 text-center transition-all'>
           <span className='text-[11px] font-medium text-[#64748b] block mb-0.5'>Total Selesai</span>
           <span className='text-base sm:text-lg font-bold text-[#1e293b]'>
-            {activeWeek} <span className='text-xs font-semibold text-[#64748b]'>/ 4 Kali</span>
+            {activeSummary.completedDoses}{' '}
+            <span className='text-xs font-semibold text-[#64748b]'>/ 4 Kali</span>
           </span>
           <span className='text-[10px] text-rose-500 font-medium block mt-0.5'>
-            {activeWeek === 4 ? 'Target Terpenuhi' : `${4 - activeWeek} kali lagi`}
+            {activeSummary.completedDoses >= 4
+              ? 'Target Terpenuhi'
+              : `${4 - activeSummary.completedDoses} kali lagi`}
           </span>
         </div>
+
         <div className='bg-[#fff5f7] rounded-xl p-2.5 text-center transition-all'>
           <span className='text-[11px] font-medium text-[#64748b] block mb-0.5'>
             Kepatuhan Bulanan
           </span>
           <span
             className={`text-base sm:text-lg font-bold transition-colors ${
-              currentPercent === 100
+              activeSummary.percentage >= 80
                 ? 'text-[#10b981]'
-                : currentPercent >= 50
+                : activeSummary.percentage >= 40
                   ? 'text-[#e11d48]'
                   : 'text-amber-600'
             }`}
           >
-            {currentPercent}%
+            {activeSummary.percentage}%
           </span>
           <span className='text-[10px] text-slate-500 font-medium block mt-0.5 flex items-center justify-center gap-1'>
-            {currentPercent === 100 && <Sparkles size={11} className='text-emerald-500' />}
-            <span>
-              {activeWeek === 0
-                ? '0 / 4 Dosis'
-                : activeWeek === 1
-                  ? 'Dosis 1 Terpenuhi'
-                  : activeWeek === 2
-                    ? 'Dosis 2 Terpenuhi'
-                    : activeWeek === 3
-                      ? 'Dosis 3 Terpenuhi'
-                      : 'Lengkap (4/4 Dosis)'}
-            </span>
+            {activeSummary.percentage >= 80 && <Sparkles size={11} className='text-emerald-500' />}
+            <span>{activeSummary.statusText}</span>
           </span>
         </div>
       </div>

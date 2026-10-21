@@ -7,6 +7,8 @@ import {
   Flame,
   Activity,
   Award,
+  Bell,
+  BellOff,
   BellRing,
   X,
   CheckCircle2,
@@ -25,6 +27,7 @@ import { useScheduleReminder } from '@/src/features/schedule/hooks/useScheduleRe
 import {
   getUserDashboardDataAction,
   recordUserConsumptionAction,
+  updateUserScheduleSettingsAction,
   UserDashboardData,
 } from '@/src/features/user/api/userRepository';
 import {
@@ -354,11 +357,10 @@ export default function DashboardView() {
                   </div>
                   <div>
                     <h4 className='text-xs sm:text-sm font-bold text-amber-900'>
-                      Jadwal Minum TTD Belum Dikonfigurasi
+                      Alarm Minum TTD Belum Dikonfigurasi ⏰
                     </h4>
                     <p className='text-[11px] sm:text-xs text-amber-800/80 mt-0.5 leading-relaxed'>
-                      Tentukan hari dan jam rutin minum Tablet Tambah Darah agar FEMORY dapat
-                      mengingatkanmu tepat waktu.
+                      Pasang alarm mingguan secara mandiri agar FEMORY dapat mengingatkanmu minum Tablet Tambah Darah tepat waktu.
                     </p>
                   </div>
                 </div>
@@ -366,9 +368,57 @@ export default function DashboardView() {
                   to='/user/schedule'
                   className='inline-flex items-center justify-center gap-1.5 px-3.5 py-2 bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold rounded-xl transition-colors shadow-2xs shrink-0 self-start sm:self-auto'
                 >
-                  <span>Atur Jadwal</span>
+                  <span>Setup Alarm 🔔</span>
                   <ArrowRight size={13} />
                 </Link>
+              </div>
+            </section>
+          )}
+
+          {/* Inactive Alarm Notice Banner */}
+          {dashboardData?.activeSchedule && !dashboardData.activeSchedule.isEnabled && (
+            <section aria-label='Pengingat Alarm Nonaktif'>
+              <div className='p-4 sm:p-4.5 rounded-2xl bg-slate-50 border border-slate-200 text-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs'>
+                <div className='flex items-start gap-3'>
+                  <div className='w-9 h-9 rounded-xl bg-slate-200 text-slate-600 flex items-center justify-center shrink-0 mt-0.5'>
+                    <BellOff size={18} />
+                  </div>
+                  <div>
+                    <h4 className='text-xs sm:text-sm font-bold text-slate-900'>
+                      Alarm Minum TTD Sedang Dinonaktifkan
+                    </h4>
+                    <p className='text-[11px] sm:text-xs text-slate-500 mt-0.5 leading-relaxed'>
+                      Pengingat rutin setiap {dashboardData.activeSchedule.dayOfWeek} ({dashboardData.activeSchedule.time} WIB) saat ini dimatikan.
+                    </p>
+                  </div>
+                </div>
+                <div className='flex items-center gap-2 self-start sm:self-auto shrink-0'>
+                  <button
+                    type='button'
+                    onClick={async () => {
+                      if (!dashboardData?.activeSchedule) return;
+                      await updateUserScheduleSettingsAction(dashboardData.activeSchedule.id, {
+                        isEnabled: true,
+                      });
+                      playNotificationTone();
+                      publishRealtimeEvent('SCHEDULE_UPDATED', {
+                        scheduleId: dashboardData.activeSchedule.id,
+                      });
+                      const fresh = await getUserDashboardDataAction(userId);
+                      if (fresh) setDashboardData(fresh);
+                    }}
+                    className='inline-flex items-center justify-center gap-1.5 px-3.5 py-2 bg-[#e11d48] hover:bg-rose-700 text-white text-xs font-bold rounded-xl transition-colors shadow-2xs cursor-pointer'
+                  >
+                    <Bell size={13} />
+                    <span>Nyalakan Alarm</span>
+                  </button>
+                  <Link
+                    to='/user/schedule'
+                    className='inline-flex items-center justify-center gap-1.5 px-3 py-2 bg-white hover:bg-slate-100 text-slate-700 text-xs font-semibold rounded-xl border border-slate-200 transition-colors'
+                  >
+                    <span>Kelola</span>
+                  </Link>
+                </div>
               </div>
             </section>
           )}

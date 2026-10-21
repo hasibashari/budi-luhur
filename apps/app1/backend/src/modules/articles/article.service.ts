@@ -159,11 +159,16 @@ export class ArticleService {
     }
 
     let content = '';
-    if (row.lead_paragraph) {
-      content += `${row.lead_paragraph}\n\n`;
-    }
 
-    if (sections && sections.length > 0) {
+    const isSingleDummySection =
+      sections.length === 1 &&
+      (sections[0].heading === 'Pembahasan Edukasi' ||
+        (sections[0].paragraphs &&
+          sections[0].paragraphs.join('\n\n').trim() === (row.lead_paragraph || '').trim()));
+
+    if (isSingleDummySection) {
+      content = row.lead_paragraph || '';
+    } else if (sections && sections.length > 0) {
       const sectionMarkdown = sections
         .map(sec => {
           let s = '';
@@ -182,7 +187,14 @@ export class ArticleService {
         })
         .join('\n');
 
-      content += sectionMarkdown;
+      const lead = (row.lead_paragraph || '').trim();
+      if (lead && !sectionMarkdown.includes(lead)) {
+        content = `${lead}\n\n${sectionMarkdown}`;
+      } else {
+        content = sectionMarkdown || lead;
+      }
+    } else {
+      content = row.lead_paragraph || '';
     }
 
     if (!content.trim()) {

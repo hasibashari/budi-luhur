@@ -1,111 +1,109 @@
+'use client';
+
 import React from 'react';
-import { LogOut, KeyRound, Trash2, AlertTriangle } from 'lucide-react';
-import { Button } from '@/src/shared/components/ui/Button';
+import { LogOut, Trash2, KeyRound, ChevronRight } from 'lucide-react';
 
 export interface ProfileSecuritySectionProps {
+  title?: string;
   onLogoutClick: () => void;
   onChangePasswordClick?: () => void;
   onDeleteAccountClick?: () => void;
   lastLoginText?: string;
-  twoFactorEnabled?: boolean;
+  logoutSubtitle?: string;
+  deleteAccountSubtitle?: string;
 }
 
 export function ProfileSecuritySection({
+  title = 'Aksi Akun & Keamanan',
   onLogoutClick,
   onChangePasswordClick,
   onDeleteAccountClick,
-  lastLoginText = 'Hari ini via Web Browser',
+  lastLoginText,
+  logoutSubtitle = 'Keluar dari akun FEMORY pada perangkat ini',
+  deleteAccountSubtitle = 'Hapus permanen semua catatan riwayat dan jadwal TTD',
 }: ProfileSecuritySectionProps) {
   return (
-    <div className='rounded-3xl bg-white border border-rose-100/80 shadow-sm p-5 sm:p-6'>
-      <div className='mb-4 pb-3 border-b border-slate-100'>
-        <h2 className='text-sm sm:text-base font-bold text-slate-800'>Keamanan & Sesi Akun</h2>
-        <p className='text-xs text-slate-400 mt-0.5'>
-          Kelola autentikasi, status sesi, dan kontrol privasi data Anda
-        </p>
-      </div>
-
-      <div className='space-y-3.5'>
-        {/* Password Management Card */}
-        <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl bg-slate-50/70 border border-slate-100'>
-          <div className='flex items-center gap-3'>
-            <div className='w-10 h-10 rounded-xl bg-rose-100/80 text-rose-600 flex items-center justify-center shrink-0'>
-              <KeyRound size={18} />
-            </div>
-            <div>
-              <p className='text-xs font-bold text-slate-800'>Kata Sandi Akun</p>
-              <p className='text-[11px] text-slate-500'>
-                Diperbarui secara berkala untuk proteksi optimal
-              </p>
-            </div>
-          </div>
-          {onChangePasswordClick && (
-            <Button
-              variant='outline'
-              size='sm'
-              shape='rounded'
-              onClick={onChangePasswordClick}
-              className='text-xs font-bold py-2 px-3.5 self-end sm:self-auto border-slate-200 hover:bg-slate-100 cursor-pointer'
-            >
-              Ubah Password
-            </Button>
-          )}
+    <div>
+      {title && (
+        <div className='px-2 mb-1.5'>
+          <h2 className='text-[11px] font-bold text-slate-400 uppercase tracking-wider'>{title}</h2>
         </div>
-
-        {/* Session & Logout Card */}
-        <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl bg-slate-50/70 border border-slate-100'>
-          <div className='flex items-center gap-3'>
-            <div className='w-10 h-10 rounded-xl bg-slate-200/80 text-slate-700 flex items-center justify-center shrink-0'>
-              <LogOut size={18} />
-            </div>
-            <div>
-              <p className='text-xs font-bold text-slate-800'>Keluar dari Sesi</p>
-              <p className='text-[11px] text-slate-500'>Sesi aktif: {lastLoginText}</p>
-            </div>
-          </div>
-          <Button
-            variant='outline'
-            size='sm'
-            shape='rounded'
-            icon={<LogOut size={14} />}
-            onClick={onLogoutClick}
-            className='text-xs font-bold py-2 px-4 self-end sm:self-auto border-slate-300 text-slate-700 hover:bg-slate-100 cursor-pointer'
-          >
-            Keluar Akun
-          </Button>
-        </div>
-
-        {/* Danger Zone: Account Deletion (Google Play Compliance) */}
-        {onDeleteAccountClick && (
-          <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl bg-rose-50/50 border border-rose-200/70 mt-2'>
-            <div className='flex items-start sm:items-center gap-3'>
-              <div className='w-10 h-10 rounded-xl bg-rose-100 text-rose-700 flex items-center justify-center shrink-0 mt-0.5 sm:mt-0'>
-                <Trash2 size={18} />
+      )}
+      <div className='rounded-2xl sm:rounded-3xl bg-white border border-rose-100/90 shadow-2xs divide-y divide-slate-100 overflow-hidden'>
+        {/* Opsional: Ubah Kata Sandi bila dipanggil dari Security Section */}
+        {onChangePasswordClick && (
+          <div className='p-3.5 sm:p-4 flex items-center justify-between gap-3'>
+            <div className='flex items-center gap-3.5 min-w-0'>
+              <div className='w-9 h-9 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center shrink-0 border border-slate-200/60'>
+                <KeyRound size={17} />
               </div>
-              <div>
-                <div className='flex items-center gap-1.5'>
-                  <p className='text-xs font-bold text-rose-900'>Hapus Akun Pengguna</p>
-                  <span className='inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-extrabold bg-rose-200/60 text-rose-800'>
-                    Zona Bahaya
-                  </span>
-                </div>
-                <p className='text-[11px] text-rose-700/80 mt-0.5 max-w-md'>
-                  Hapus akun dan semua data medis, streak, dan jadwal secara permanen. Tidak dapat
-                  dibatalkan.
+              <div className='min-w-0'>
+                <p className='text-xs sm:text-sm font-bold text-slate-800 truncate'>
+                  Kata Sandi Akun
+                </p>
+                <p className='text-[11px] text-slate-500 truncate mt-0.5'>
+                  {lastLoginText ? `Sesi aktif: ${lastLoginText}` : 'Diperbarui secara berkala'}
                 </p>
               </div>
             </div>
-            <Button
-              variant='danger'
-              size='sm'
-              shape='rounded'
-              icon={<Trash2 size={14} />}
-              onClick={onDeleteAccountClick}
-              className='text-xs font-bold py-2 px-4 self-end sm:self-auto shadow-sm shadow-rose-200 cursor-pointer bg-rose-600 hover:bg-rose-700'
+            <button
+              type='button'
+              onClick={onChangePasswordClick}
+              className='text-xs font-bold text-rose-600 hover:text-rose-700 bg-rose-50/60 hover:bg-rose-100/60 px-3 py-1.5 rounded-lg border border-rose-200/60 transition-colors cursor-pointer shrink-0'
             >
-              Hapus Akun
-            </Button>
+              Ubah
+            </button>
           </div>
+        )}
+
+        {/* Keluar dari Sesi */}
+        <button
+          type='button'
+          onClick={onLogoutClick}
+          className='w-full p-3.5 sm:p-4 flex items-center justify-between gap-3 text-left hover:bg-slate-50/80 transition-colors cursor-pointer group'
+        >
+          <div className='flex items-center gap-3.5 min-w-0'>
+            <div className='w-9 h-9 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center shrink-0 border border-slate-200/60 group-hover:bg-slate-200 transition-colors'>
+              <LogOut size={17} />
+            </div>
+            <div className='min-w-0'>
+              <p className='text-xs sm:text-sm font-bold text-slate-800'>Keluar dari Sesi</p>
+              <p className='text-[11px] text-slate-500 truncate mt-0.5'>{logoutSubtitle}</p>
+            </div>
+          </div>
+          <div className='flex items-center gap-1 text-slate-400 group-hover:text-slate-600 transition-colors shrink-0'>
+            <span className='text-xs font-semibold hidden sm:inline'>Keluar</span>
+            <ChevronRight size={16} />
+          </div>
+        </button>
+
+        {/* Hapus Akun (Zona Bahaya) */}
+        {onDeleteAccountClick && (
+          <button
+            type='button'
+            onClick={onDeleteAccountClick}
+            className='w-full p-3.5 sm:p-4 flex items-center justify-between gap-3 text-left hover:bg-rose-50/50 transition-colors cursor-pointer group'
+          >
+            <div className='flex items-center gap-3.5 min-w-0'>
+              <div className='w-9 h-9 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center shrink-0 border border-rose-100 group-hover:bg-rose-100 transition-colors'>
+                <Trash2 size={17} />
+              </div>
+              <div className='min-w-0'>
+                <div className='flex items-center gap-2'>
+                  <p className='text-xs sm:text-sm font-bold text-rose-700'>Hapus Akun Pengguna</p>
+                  <span className='inline-flex items-center px-1.5 py-0.2 rounded-full text-[9px] font-extrabold bg-rose-100 text-rose-800'>
+                    Zona Bahaya
+                  </span>
+                </div>
+                <p className='text-[11px] text-rose-600/70 truncate mt-0.5'>
+                  {deleteAccountSubtitle}
+                </p>
+              </div>
+            </div>
+            <div className='flex items-center gap-1 text-rose-400 group-hover:text-rose-600 transition-colors shrink-0'>
+              <ChevronRight size={16} />
+            </div>
+          </button>
         )}
       </div>
     </div>

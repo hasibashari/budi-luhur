@@ -142,7 +142,9 @@ export default function ScheduleManagementView() {
     const matchesFrequency =
       frequencyFilter === 'Semua' ||
       (frequencyFilter === 'Harian' && s.frequency === 'Harian') ||
-      (frequencyFilter === 'Mingguan' && s.frequency !== 'Harian');
+      (frequencyFilter === 'Mingguan' && s.frequency !== 'Harian') ||
+      (frequencyFilter === 'Alarm Aktif' && s.isEnabled !== false) ||
+      (frequencyFilter === 'Alarm Nonaktif' && s.isEnabled === false);
     return matchesSearch && matchesFrequency;
   });
 
@@ -340,16 +342,27 @@ export default function ScheduleManagementView() {
     },
     {
       id: 'scheduleTime',
-      label: 'Waktu Minum',
-      width: '18%',
+      label: 'Waktu & Alarm',
+      width: '20%',
       renderCell: schedule => (
         <div>
-          <div className='font-semibold text-slate-800 text-xs sm:text-sm'>
-            {schedule.frequency === 'Harian' || schedule.frequency === 'daily'
-              ? 'Setiap Hari'
-              : schedule.dayOfWeek || 'Sabtu'}
+          <div className='flex items-center gap-1.5 flex-wrap'>
+            <span className='font-semibold text-slate-800 text-xs sm:text-sm'>
+              {schedule.frequency === 'Harian' || schedule.frequency === 'daily'
+                ? 'Setiap Hari'
+                : schedule.dayOfWeek || 'Sabtu'}
+            </span>
+            {schedule.isEnabled === false ? (
+              <span className='inline-flex items-center gap-1 px-1.5 py-0.2 rounded-full bg-slate-100 text-slate-500 border border-slate-200 text-[10px] font-bold'>
+                ⚪ Off
+              </span>
+            ) : (
+              <span className='inline-flex items-center gap-1 px-1.5 py-0.2 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold'>
+                🟢 On
+              </span>
+            )}
           </div>
-          <div className='flex gap-1 flex-wrap mt-0.5'>
+          <div className='flex gap-1 flex-wrap mt-1'>
             {schedule.timeSlots?.length > 0 ? (
               schedule.timeSlots.map((time, idx) => (
                 <span
@@ -453,9 +466,11 @@ export default function ScheduleManagementView() {
                 onChange={e => setFrequencyFilter(e.target.value)}
                 className='w-full px-3.5 py-2.5 rounded-xl border border-pink-100 bg-slate-50 text-xs sm:text-sm font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:bg-white transition-all cursor-pointer min-h-[44px]'
               >
-                <option value='Semua'>Semua Frekuensi</option>
+                <option value='Semua'>Semua Jadwal & Alarm</option>
                 <option value='Mingguan'>1x Seminggu</option>
                 <option value='Harian'>Harian</option>
+                <option value='Alarm Aktif'>🟢 Alarm Aktif</option>
+                <option value='Alarm Nonaktif'>⚪ Alarm Nonaktif</option>
               </select>
             </div>
           </div>
@@ -472,7 +487,7 @@ export default function ScheduleManagementView() {
 
         {/* Mobile Horizontal Filter Chips (< sm: 640px) */}
         <div className='block sm:hidden border-t border-slate-100 pt-2.5'>
-          <p className='text-[11px] font-bold text-slate-400 mb-1.5'>Filter Frekuensi Minum:</p>
+          <p className='text-[11px] font-bold text-slate-400 mb-1.5'>Filter Jadwal & Alarm:</p>
           <MobileFilterChips
             selectedValue={frequencyFilter}
             onSelect={setFrequencyFilter}
@@ -480,6 +495,8 @@ export default function ScheduleManagementView() {
               { label: 'Semua', value: 'Semua' },
               { label: '1x Seminggu', value: 'Mingguan' },
               { label: 'Harian', value: 'Harian' },
+              { label: '🟢 Alarm Aktif', value: 'Alarm Aktif' },
+              { label: '⚪ Alarm Nonaktif', value: 'Alarm Nonaktif' },
             ]}
           />
         </div>
@@ -530,6 +547,15 @@ export default function ScheduleManagementView() {
 
               {/* Middle Details Box */}
               <div className='p-3 rounded-xl bg-[#fff5f7] border border-pink-100 space-y-1.5 text-xs'>
+                <div className='flex justify-between items-center'>
+                  <span className='text-slate-500 font-medium'>Status Alarm:</span>
+                  {schedule.isEnabled === false ? (
+                    <span className='font-bold text-slate-500 text-xs'>⚪ Nonaktif</span>
+                  ) : (
+                    <span className='font-bold text-emerald-600 text-xs'>🟢 Aktif</span>
+                  )}
+                </div>
+
                 <div className='flex justify-between items-center'>
                   <span className='text-slate-500 font-medium'>Nama Obat:</span>
                   <span className='font-bold text-slate-900'>{schedule.medicationName}</span>

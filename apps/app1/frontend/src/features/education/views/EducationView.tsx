@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, BookOpen, Sparkles, Clock, ArrowRight, X } from 'lucide-react';
+import { Search, BookOpen, Sparkles, Clock, Calendar, ArrowRight, X } from 'lucide-react';
 import { Card } from '@/src/shared/components/ui/Card';
 import { Chip } from '@/src/shared/components/ui/Chip';
 import { getArticlesAction } from '../api/educationRepository';
@@ -131,9 +131,9 @@ export default function EducationView() {
                 {featuredArticle.summary}
               </p>
               <div className='flex items-center justify-between mt-3 pt-3 border-t border-[#fce7f3]'>
-                <span className='text-xs text-[#94a3b8]'>
-                  Oleh <strong>{featuredArticle.author?.name || 'Tim Medis FEMORY'}</strong> •{' '}
-                  {featuredArticle.publishedAt}
+                <span className='text-xs text-[#94a3b8] flex items-center gap-1.5'>
+                  <Calendar size={13} className='text-rose-500' />
+                  <span>{featuredArticle.publishedAt}</span>
                 </span>
                 <span className='text-xs sm:text-sm font-bold text-[#e11d48] flex items-center gap-1 group-hover:translate-x-0.5 transition-transform'>
                   <span>Baca</span>

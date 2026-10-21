@@ -192,10 +192,6 @@ export default function ArticleDetailView({
 
       {/* Article Header */}
       <div className='mb-6'>
-        <span className='inline-block px-3 py-1 rounded-lg bg-rose-50 text-rose-600 font-bold text-xs mb-3'>
-          {article.category}
-        </span>
-
         <h1 className='text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 leading-tight mb-3'>
           {article.title}
         </h1>
@@ -204,27 +200,9 @@ export default function ArticleDetailView({
 
         {/* Metadata Bar */}
         <div className='flex flex-wrap items-center justify-between gap-3 p-4 bg-[#fff5f7] rounded-2xl border border-pink-100'>
-          <div className='flex items-center gap-3'>
-            <div className='w-10 h-10 rounded-full bg-rose-200 flex items-center justify-center font-bold text-rose-700 text-sm overflow-hidden border border-pink-200'>
-              {article.author?.avatarUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={article.author.avatarUrl}
-                  alt={article.author.name}
-                  className='w-full h-full object-cover'
-                />
-              ) : (
-                <span>{article.author?.name?.charAt(0) || 'M'}</span>
-              )}
-            </div>
-            <div>
-              <div className='text-sm font-bold text-slate-900'>
-                {article.author?.name || 'Tim Medis FEMORY'}
-              </div>
-              <div className='text-xs text-slate-500'>
-                {article.author?.role || 'UKS & Fasilitator Kesehatan Remaja'}
-              </div>
-            </div>
+          <div className='flex items-center gap-2 text-xs font-bold text-rose-600 bg-rose-100/60 px-3 py-1.5 rounded-xl border border-rose-200/60'>
+            <BookOpen size={14} />
+            <span>{article.category}</span>
           </div>
 
           <div className='flex items-center gap-4 text-xs font-semibold text-slate-500'>

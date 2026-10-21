@@ -2,6 +2,7 @@
 
 import { ConsumptionChart } from '@/src/shared/components/domain/ConsumptionChart';
 import { ConsumptionLog, ConsumptionStats } from '../types';
+import { calculateWeeklyAdherence } from '../utils/weeklyAdherence';
 import { useMemo } from 'react';
 
 export interface MonthlyEvaluationViewProps {
@@ -33,8 +34,12 @@ function buildTrend(logs: ConsumptionLog[]) {
 
 export function MonthlyEvaluationView({ stats, logs }: MonthlyEvaluationViewProps) {
   const trend = useMemo(() => buildTrend(logs), [logs]);
+  const weeklyData = useMemo(() => calculateWeeklyAdherence(logs), [logs]);
+
   const metrics = useMemo(() => {
-    const completedFromLogs = logs.filter(log => log.status === 'ON_TIME' || log.status === 'LATE').length;
+    const completedFromLogs = logs.filter(
+      log => log.status === 'ON_TIME' || log.status === 'LATE'
+    ).length;
     const scheduledFromLogs = logs.length;
     return {
       totalCompleted: stats?.totalCompleted ?? completedFromLogs,
@@ -46,8 +51,13 @@ export function MonthlyEvaluationView({ stats, logs }: MonthlyEvaluationViewProp
 
   return (
     <div className='flex flex-col gap-6 animate-fade-in'>
-      {/* Monthly Bar Chart Component */}
-      <ConsumptionChart data={trend} totalCount={metrics.totalCompleted} compliancePercent={metrics.adherenceRate} />
+      {/* Monthly Bar Chart Component with Actual Weekly Data */}
+      <ConsumptionChart
+        data={trend}
+        weeklyData={weeklyData}
+        totalCount={metrics.totalCompleted}
+        compliancePercent={metrics.adherenceRate}
+      />
     </div>
   );
 }

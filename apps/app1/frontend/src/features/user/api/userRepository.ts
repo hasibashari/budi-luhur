@@ -67,7 +67,7 @@ export async function getUserScheduleAction(_userId?: string): Promise<UserSched
 export async function createUserScheduleAction(
   _userId: string,
   data: any,
-): Promise<{ success: boolean; error?: string }> {
+): Promise<{ success: boolean; data?: any; error?: string }> {
   try {
     const response = await apiClient.post('/schedules', data);
     return { success: true, ...response.data };
@@ -88,3 +88,13 @@ export async function updateUserScheduleSettingsAction(
   }
 }
 
+export async function deleteUserScheduleAction(
+  scheduleId: string,
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const response = await apiClient.delete(`/schedules/${scheduleId}`);
+    return { success: true, ...response.data };
+  } catch (err: any) {
+    return { success: false, error: err.response?.data?.error || err.message };
+  }
+}

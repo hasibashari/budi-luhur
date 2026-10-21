@@ -442,34 +442,8 @@ export class UserService {
           userId,
         ],
       );
-
-      // 2. Create initial reminder schedule if provided
-      if (data.schedule) {
-        const schedId = `sch_${Date.now().toString().slice(-6)}`;
-        await client.query(
-          `INSERT INTO reminder_schedules (
-            id, user_id, tablet_name, dosage, frequency, day_of_week, time_slot, is_enabled, remind_15min_before, instructions, status
-          ) VALUES ($1, $2, $3, $4, $5, $6, $7, true, $8, $9, 'Aktif')`,
-          [
-            schedId,
-            userId,
-            data.schedule.tabletName || 'Tablet Tambah Darah (TTD)',
-            data.schedule.dosage || '1 tablet',
-            data.schedule.frequency || 'weekly',
-            data.schedule.dayOfWeek || 'Sabtu',
-            data.schedule.timeSlot || '20:00',
-            data.schedule.remind15MinBefore ?? true,
-            'Minum setelah makan malam atau sebelum tidur dengan air putih.',
-          ],
-        );
-
-        await client.query(`INSERT INTO schedule_time_slots (schedule_id, time) VALUES ($1, $2)`, [
-          schedId,
-          data.schedule.timeSlot || '20:00',
-        ]);
-      }
     });
 
-    return { success: true, message: 'Setup profil awal dan jadwal berhasil disimpan.' };
+    return { success: true, message: 'Setup profil awal berhasil disimpan.' };
   }
 }
