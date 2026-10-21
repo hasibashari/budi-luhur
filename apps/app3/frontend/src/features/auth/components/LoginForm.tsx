@@ -110,7 +110,7 @@ export function LoginForm({ hideHeader = false }: LoginFormProps) {
             <input
               type='email'
               inputMode='email'
-              placeholder='calonpengantin@email.com'
+              placeholder='calonpengantin@gmail.com'
               value={email}
               onChange={e => setEmail(e.target.value)}
               required
@@ -174,6 +174,18 @@ export function LoginForm({ hideHeader = false }: LoginFormProps) {
           >
             Lupa kata sandi?
           </Link>
+        </div>
+
+        <div className='mt-6 pt-4 border-t border-slate-100 text-center'>
+          <p className='text-xs sm:text-sm text-[#574144]'>
+            Belum punya akun?{' '}
+            <Link
+              to='/auth/register'
+              className='font-bold text-[#aa294d] hover:text-[#8c0f39] transition-colors underline decoration-[#ffd9de] underline-offset-4'
+            >
+              Daftar Sekarang
+            </Link>
+          </p>
         </div>
       </form>
     </div>

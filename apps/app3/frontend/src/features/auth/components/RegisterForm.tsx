@@ -17,6 +17,50 @@ export interface RegisterFormProps {
   hideHeader?: boolean;
 }
 
+interface PasswordStrength {
+  score: 0 | 1 | 2 | 3;
+  label: string;
+  colorClass: string;
+  textColorClass: string;
+}
+
+function getPasswordStrength(pwd: string): PasswordStrength {
+  if (!pwd) {
+    return { score: 0, label: '', colorClass: '', textColorClass: '' };
+  }
+
+  let points = 0;
+  if (pwd.length >= 6) points += 1;
+  if (pwd.length >= 8) points += 1;
+  if (/[0-9]/.test(pwd) && /[a-zA-Z]/.test(pwd)) points += 1;
+  if (/[^a-zA-Z0-9]/.test(pwd) || (/[A-Z]/.test(pwd) && /[a-z]/.test(pwd) && /[0-9]/.test(pwd))) {
+    points += 1;
+  }
+
+  if (points <= 1) {
+    return {
+      score: 1,
+      label: 'Lemah',
+      colorClass: 'bg-rose-500',
+      textColorClass: 'text-rose-600',
+    };
+  }
+  if (points === 2 || points === 3) {
+    return {
+      score: 2,
+      label: 'Sedang',
+      colorClass: 'bg-amber-500',
+      textColorClass: 'text-amber-600',
+    };
+  }
+  return {
+    score: 3,
+    label: 'Kuat',
+    colorClass: 'bg-emerald-500',
+    textColorClass: 'text-emerald-600',
+  };
+}
+
 export function RegisterForm({ onSwitchTab, hideHeader = false }: RegisterFormProps) {
   const navigate = useNavigate();
   const { register } = useAuth();
@@ -25,10 +69,17 @@ export function RegisterForm({ onSwitchTab, hideHeader = false }: RegisterFormPr
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [gender, setGender] = useState<'Perempuan' | 'Laki-laki'>('Perempuan');
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  const passwordStrength = getPasswordStrength(password);
+  const isConfirmTouched = confirmPassword.length > 0;
+  const isPasswordMatch = isConfirmTouched && password.length > 0 && password === confirmPassword;
+  const isPasswordMismatch = isConfirmTouched && password !== confirmPassword;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,8 +94,24 @@ export function RegisterForm({ onSwitchTab, hideHeader = false }: RegisterFormPr
       return;
     }
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email.trim())) {
+      setErrorMessage('Format alamat email tidak valid (contoh: calonpengantin@gmail.com).');
+      return;
+    }
+
     if (!password || password.length < 6) {
       setErrorMessage('Kata sandi harus minimal 6 karakter.');
+      return;
+    }
+
+    if (!confirmPassword) {
+      setErrorMessage('Silakan masukkan konfirmasi kata sandi.');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setErrorMessage('Konfirmasi kata sandi tidak cocok dengan kata sandi.');
       return;
     }
 
@@ -128,7 +195,7 @@ export function RegisterForm({ onSwitchTab, hideHeader = false }: RegisterFormPr
       )}
 
       {!successMessage && (
-        <form onSubmit={handleSubmit} className='flex flex-col gap-3.5'>
+        <form onSubmit={handleSubmit} noValidate className='flex flex-col gap-3.5'>
           <div>
             <label className='text-xs font-bold text-[#121c2a] mb-1.5 block'>
               Nama Lengkap Calon Pengantin
@@ -226,6 +293,94 @@ export function RegisterForm({ onSwitchTab, hideHeader = false }: RegisterFormPr
                 {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
             </div>
+
+            {password.length > 0 && (
+              <div className='mt-2 px-1 flex flex-col gap-1.5 animate-fade-in'>
+                <div className='flex items-center justify-between text-[11px]'>
+                  <span className='text-slate-500 font-medium'>Kekuatan Sandi:</span>
+                  <span className={`font-bold ${passwordStrength.textColorClass}`}>
+                    {passwordStrength.label}
+                  </span>
+                </div>
+                <div className='flex items-center gap-1.5 w-full'>
+                  <div
+                    className={`h-1.5 flex-1 rounded-full transition-all duration-300 ${
+                      passwordStrength.score >= 1 ? passwordStrength.colorClass : 'bg-slate-200'
+                    }`}
+                  />
+                  <div
+                    className={`h-1.5 flex-1 rounded-full transition-all duration-300 ${
+                      passwordStrength.score >= 2 ? passwordStrength.colorClass : 'bg-slate-200'
+                    }`}
+                  />
+                  <div
+                    className={`h-1.5 flex-1 rounded-full transition-all duration-300 ${
+                      passwordStrength.score >= 3 ? passwordStrength.colorClass : 'bg-slate-200'
+                    }`}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div>
+            <label className='text-xs font-bold text-[#121c2a] mb-1.5 block'>
+              Konfirmasi Kata Sandi
+            </label>
+            <div className='relative flex items-center'>
+              <div
+                className={`absolute left-3.5 w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
+                  isPasswordMatch
+                    ? 'bg-emerald-50 text-emerald-600'
+                    : isPasswordMismatch
+                      ? 'bg-rose-50 text-rose-500'
+                      : 'bg-[#ffd9de]/50 text-[#aa294d]'
+                }`}
+              >
+                <Lock size={15} />
+              </div>
+              <input
+                type={showConfirmPassword ? 'text' : 'password'}
+                placeholder='Ulangi kata sandi'
+                value={confirmPassword}
+                onChange={e => setConfirmPassword(e.target.value)}
+                required
+                autoComplete='new-password'
+                className={`w-full min-h-[48px] bg-white text-base sm:text-sm text-[#121c2a] rounded-full border pl-13 pr-11 py-2.5 outline-none transition-all shadow-2xs ${
+                  isPasswordMatch
+                    ? 'border-emerald-400 focus:border-emerald-500 ring-2 ring-emerald-500/15'
+                    : isPasswordMismatch
+                      ? 'border-rose-300 focus:border-[#aa294d] ring-2 ring-rose-500/15'
+                      : 'border-slate-200 focus:border-[#aa294d] focus:ring-1 focus:ring-[#aa294d]'
+                }`}
+              />
+              <button
+                type='button'
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className='absolute right-2.5 min-w-[40px] min-h-[40px] flex items-center justify-center text-slate-400 hover:text-slate-600 cursor-pointer p-1 active:scale-90'
+                aria-label={
+                  showConfirmPassword
+                    ? 'Sembunyikan konfirmasi kata sandi'
+                    : 'Tampilkan konfirmasi kata sandi'
+                }
+              >
+                {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
+            </div>
+
+            {isPasswordMatch && (
+              <div className='flex items-center gap-1.5 mt-1.5 px-1 text-[11px] font-semibold text-emerald-600 animate-fade-in'>
+                <CheckCircle2 size={13} className='text-emerald-500 shrink-0' />
+                <span>Kata sandi cocok</span>
+              </div>
+            )}
+
+            {isPasswordMismatch && (
+              <div className='flex items-center gap-1.5 mt-1.5 px-1 text-[11px] font-medium text-rose-500 animate-fade-in'>
+                <AlertCircle size={13} className='text-rose-500 shrink-0' />
+                <span>Kata sandi belum cocok</span>
+              </div>
+            )}
           </div>
 
           <div className='flex flex-col sm:flex-row-reverse sm:items-center sm:justify-between gap-3 mt-4 pt-1'>
@@ -254,7 +409,7 @@ export function RegisterForm({ onSwitchTab, hideHeader = false }: RegisterFormPr
               </button>
             ) : (
               <Link
-                to='/auth?tab=login'
+                to='/auth/login'
                 className='text-xs text-[#574144] hover:text-[#aa294d] font-medium transition-colors py-2 text-center sm:text-left inline-flex items-center justify-center sm:justify-start gap-1 min-h-[40px]'
               >
                 Sudah punya akun? <span className='font-bold text-[#aa294d] underline underline-offset-4 decoration-[#ffd9de]'>Masuk</span>

@@ -177,6 +177,18 @@ export function LoginForm({ hideHeader = false }: LoginFormProps) {
             )}
           </button>
         </div>
+
+        <div className='mt-6 pt-4 border-t border-slate-100 text-center'>
+          <p className='text-xs sm:text-sm text-[#64748b]'>
+            Belum punya akun?{' '}
+            <Link
+              to='/auth/register'
+              className='font-bold text-[#e11d48] hover:text-[#be123c] transition-colors underline decoration-rose-200 underline-offset-4'
+            >
+              Daftar Sekarang
+            </Link>
+          </p>
+        </div>
       </form>
     </div>
   );

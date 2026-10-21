@@ -109,7 +109,7 @@ export function LoginForm({ hideHeader = false }: LoginFormProps) {
             </div>
             <input
               type='email'
-              placeholder='nama@email.com'
+              placeholder='nama@gmail.com'
               value={email}
               onChange={e => setEmail(e.target.value)}
               required
@@ -172,6 +172,18 @@ export function LoginForm({ hideHeader = false }: LoginFormProps) {
               </>
             )}
           </button>
+        </div>
+
+        <div className='mt-6 pt-4 border-t border-slate-100 text-center'>
+          <p className='text-xs sm:text-sm text-[#64748B]'>
+            Belum punya akun?{' '}
+            <Link
+              to='/auth/register'
+              className='font-bold text-[#0D9488] hover:text-[#0F766E] transition-colors underline decoration-teal-200 underline-offset-4'
+            >
+              Daftar Sekarang
+            </Link>
+          </p>
         </div>
       </form>
     </div>

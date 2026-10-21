@@ -76,9 +76,7 @@ export function ProfileHeaderCard({
             </div>
 
             {subtitle && (
-              <p className='text-xs sm:text-sm font-medium text-slate-500 max-w-lg'>
-                {subtitle}
-              </p>
+              <p className='text-xs sm:text-sm font-medium text-slate-500 max-w-lg'>{subtitle}</p>
             )}
           </div>
         </div>

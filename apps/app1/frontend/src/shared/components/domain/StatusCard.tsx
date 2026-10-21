@@ -137,7 +137,7 @@ export function StatusCard({
                 Jadwal Hari Ini Terlewat
               </p>
               <p className='text-[11px] text-[#be123c]'>
-                Jangan patah semangat, jadwalkan kembali besok!
+                Melewati jam jadwal yang diterapkan. Masih bisa diubah jika sudah minum!
               </p>
             </div>
           </div>

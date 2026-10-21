@@ -10,7 +10,8 @@ export class ConsumptionService {
     status: 'recorded' | 'missed' | 'pending' = 'recorded',
     notes?: string,
   ) {
-    const finalTargetDate = (targetDate && targetDate.trim()) || new Date().toLocaleDateString('en-CA');
+    const finalTargetDate =
+      (targetDate && targetDate.trim()) || new Date().toLocaleDateString('en-CA');
     const timeFormatter = new Intl.DateTimeFormat('en-GB', {
       timeZone: 'Asia/Jakarta',
       hour: '2-digit',
@@ -20,7 +21,12 @@ export class ConsumptionService {
     const nowTimeStr = timeFormatter.format(new Date()) + ' WIB';
 
     // Get active schedule
-    const schedRes = await db.query<{ id: string; tablet_name: string; dosage: string; frequency: string }>(
+    const schedRes = await db.query<{
+      id: string;
+      tablet_name: string;
+      dosage: string;
+      frequency: string;
+    }>(
       `SELECT id, tablet_name, dosage, frequency FROM reminder_schedules WHERE user_id = $1 AND status = 'Aktif' LIMIT 1`,
       [userId],
     );
@@ -31,10 +37,10 @@ export class ConsumptionService {
     const schedFreq = (activeSched?.frequency as 'daily' | 'weekly') || 'weekly';
 
     if (status === 'pending') {
-      await db.query(
-        `DELETE FROM consumption_logs WHERE user_id = $1 AND scheduled_date = $2`,
-        [userId, finalTargetDate],
-      );
+      await db.query(`DELETE FROM consumption_logs WHERE user_id = $1 AND scheduled_date = $2`, [
+        userId,
+        finalTargetDate,
+      ]);
     } else {
       const dbStatus = status === 'recorded' ? 'ON_TIME' : 'MISSED';
 
@@ -48,7 +54,12 @@ export class ConsumptionService {
           `UPDATE consumption_logs
            SET status = $1, taken_at = $2, notes = $3
            WHERE id = $4`,
-          [dbStatus, dbStatus === 'ON_TIME' ? nowTimeStr : null, notes || null, existingLogRes.rows[0].id],
+          [
+            dbStatus,
+            dbStatus === 'ON_TIME' ? nowTimeStr : null,
+            notes || null,
+            existingLogRes.rows[0].id,
+          ],
         );
       } else {
         const newLogId = `log_${Date.now().toString().slice(-6)}`;
@@ -88,6 +99,42 @@ export class ConsumptionService {
       newStreak: streakResult.streakCount,
       todayStatus: status,
     };
+  }
+
+  static async recordAutoMissedLog(
+    userId: string,
+    targetDate: string,
+    scheduleId?: string,
+    title: string = 'Tablet Tambah Darah (TTD)',
+    dosage: string = '1 Tablet',
+    notes: string = 'Otomatis terlewat karena melewati batas jam jadwal',
+  ) {
+    const existingLogRes = await db.query<{ id: string; status: string }>(
+      `SELECT id, status FROM consumption_logs WHERE user_id = $1 AND scheduled_date = $2 LIMIT 1`,
+      [userId, targetDate],
+    );
+
+    if (existingLogRes.rows.length > 0) {
+      return { success: true, id: existingLogRes.rows[0].id, alreadyExists: true };
+    }
+
+    const newLogId = `log_auto_${Date.now().toString().slice(-6)}_${Math.random().toString(36).substring(2, 6)}`;
+    await db.query(
+      `INSERT INTO consumption_logs (
+        id, user_id, schedule_id, title, category, dosage, scheduled_date, scheduled_time, status, notes, taken_by
+      ) VALUES ($1, $2, $3, $4, 'TTD', $5, $6, '20:00', 'MISSED', $7, 'System')`,
+      [newLogId, userId, scheduleId || null, title, dosage, targetDate, notes],
+    );
+
+    // Sync streak when an unrecorded date is auto-marked as missed
+    const schedRes = await db.query<{ frequency: string }>(
+      `SELECT frequency FROM reminder_schedules WHERE user_id = $1 AND status = 'Aktif' LIMIT 1`,
+      [userId],
+    );
+    const schedFreq = (schedRes.rows[0]?.frequency as 'daily' | 'weekly') || 'weekly';
+    await UserService.calculateAndSyncUserStreak(userId, schedFreq);
+
+    return { success: true, id: newLogId, alreadyExists: false };
   }
 
   static async getMonitoringSummary(userId: string) {

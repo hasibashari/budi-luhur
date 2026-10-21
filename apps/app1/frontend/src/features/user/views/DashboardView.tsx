@@ -21,6 +21,7 @@ import { Button } from '@/src/shared/components/ui/Button';
 import { useAuth } from '@/src/features/auth/context/AuthContext';
 import { publishRealtimeEvent, subscribeRealtimeEvent } from '@/src/shared/utils/realtimeSync';
 import { playNotificationTone, showSystemNotification } from '@/src/shared/utils/notifications';
+import { useScheduleReminder } from '@/src/features/schedule/hooks/useScheduleReminder';
 import {
   getUserDashboardDataAction,
   recordUserConsumptionAction,
@@ -41,6 +42,20 @@ export default function DashboardView() {
   const [loading, setLoading] = useState(true);
 
   const userId = authUser?.id || 'usr_1';
+
+  const handleAutoMissed = React.useCallback(async () => {
+    if (dashboardData && dashboardData.todayStatus === 'pending') {
+      setDashboardData(prev => (prev ? { ...prev, todayStatus: 'missed' } : null));
+      await recordUserConsumptionAction(userId, 'missed');
+    }
+  }, [dashboardData, userId]);
+
+  const { isReminderActive } = useScheduleReminder({
+    schedule: dashboardData?.activeSchedule,
+    todayStatus: dashboardData?.todayStatus || 'pending',
+    userId,
+    onAutoMissed: handleAutoMissed,
+  });
 
   useEffect(() => {
     let isMounted = true;
@@ -354,6 +369,46 @@ export default function DashboardView() {
                   <span>Atur Jadwal</span>
                   <ArrowRight size={13} />
                 </Link>
+              </div>
+            </section>
+          )}
+
+          {/* Active Scheduled Reminder Banner (Fires when schedule time arrives) */}
+          {isReminderActive && dashboardData?.todayStatus === 'pending' && (
+            <section aria-label='Pengingat Minum TTD Sekarang' className='animate-fade-in'>
+              <div className='p-4 rounded-2xl bg-gradient-to-r from-rose-500 via-rose-600 to-pink-600 text-white shadow-lg shadow-rose-500/25 border border-rose-300/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3'>
+                <div className='flex items-start gap-3'>
+                  <div className='w-10 h-10 rounded-xl bg-white/20 backdrop-blur-xs flex items-center justify-center shrink-0 mt-0.5 shadow-inner'>
+                    <BellRing size={20} className='animate-bounce text-white' />
+                  </div>
+                  <div>
+                    <div className='flex items-center gap-2 flex-wrap'>
+                      <span className='text-[10px] font-black uppercase tracking-wider bg-white/25 px-2 py-0.5 rounded-full'>
+                        Waktunya Minum TTD 🌸
+                      </span>
+                      <span className='text-xs text-rose-100 font-semibold'>
+                        Jadwal {dashboardData.activeSchedule?.time} WIB
+                      </span>
+                    </div>
+                    <h4 className='text-xs sm:text-sm font-bold text-white mt-1'>
+                      Waktu minum {dashboardData.activeSchedule?.tabletName || 'Tablet Tambah Darah'} telah tiba!
+                    </h4>
+                    <p className='text-[11px] text-rose-100 mt-0.5'>
+                      Minum 1 tablet sekarang dengan air putih untuk mencegah anemia dan menjaga kebugaran tubuhmu.
+                    </p>
+                  </div>
+                </div>
+
+                <Button
+                  variant='primary'
+                  size='sm'
+                  shape='pill'
+                  className='bg-white text-rose-600 hover:bg-rose-50 font-extrabold shadow-sm text-xs self-start sm:self-auto shrink-0'
+                  icon={<CheckCircle2 size={15} />}
+                  onClick={() => handleStatusChange('recorded')}
+                >
+                  Sudah Minum Sekarang
+                </Button>
               </div>
             </section>
           )}

@@ -25,15 +25,37 @@ export function StreakProgressCard({
   ];
 
   const maxTarget = 12;
-  const progressPercent = Math.min(100, Math.max(streakCount > 0 ? 8 : 0, (streakCount / maxTarget) * 100));
+  const progressPercent = Math.min(
+    100,
+    Math.max(streakCount > 0 ? 8 : 0, (streakCount / maxTarget) * 100),
+  );
 
   // Determine current milestone title & badge
   const getCurrentMilestone = (count: number) => {
-    if (count >= 12) return { title: 'Level 4: Duta Remaja Sehat (Champion)', color: 'text-amber-600 bg-amber-50 border-amber-200' };
-    if (count >= 6) return { title: 'Level 3: Pejuang Bebas Anemia', color: 'text-rose-600 bg-rose-50 border-rose-200' };
-    if (count >= 3) return { title: 'Level 2: Pejuang Konsisten', color: 'text-purple-600 bg-purple-50 border-purple-200' };
-    if (count >= 1) return { title: 'Level 1: Pemula Sehat', color: 'text-emerald-600 bg-emerald-50 border-emerald-200' };
-    return { title: 'Mulai Streak Pertamamu', color: 'text-slate-600 bg-slate-50 border-slate-200' };
+    if (count >= 12)
+      return {
+        title: 'Level 4: Duta Remaja Sehat (Champion)',
+        color: 'text-amber-600 bg-amber-50 border-amber-200',
+      };
+    if (count >= 6)
+      return {
+        title: 'Level 3: Pejuang Bebas Anemia',
+        color: 'text-rose-600 bg-rose-50 border-rose-200',
+      };
+    if (count >= 3)
+      return {
+        title: 'Level 2: Pejuang Konsisten',
+        color: 'text-purple-600 bg-purple-50 border-purple-200',
+      };
+    if (count >= 1)
+      return {
+        title: 'Level 1: Pemula Sehat',
+        color: 'text-emerald-600 bg-emerald-50 border-emerald-200',
+      };
+    return {
+      title: 'Mulai Streak Pertamamu',
+      color: 'text-slate-600 bg-slate-50 border-slate-200',
+    };
   };
 
   const currentLevel = getCurrentMilestone(streakCount);
@@ -57,7 +79,9 @@ export function StreakProgressCard({
                 </span>
               )}
             </div>
-            <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full border mt-1 inline-block ${currentLevel.color}`}>
+            <span
+              className={`text-[11px] font-bold px-2 py-0.5 rounded-full border mt-1 inline-block ${currentLevel.color}`}
+            >
               {currentLevel.title}
             </span>
           </div>
@@ -79,7 +103,9 @@ export function StreakProgressCard({
         <div className='flex items-center justify-between text-[11px] font-semibold text-[#64748b] mb-1.5'>
           <span>Progres Menuju Milestone Berikutnya</span>
           <span className='font-bold text-[#e11d48]'>
-            {streakCount >= 12 ? 'Milestone Maksimal Tercapai! 🏆' : `${streakCount}/${maxTarget} ${streakUnit}`}
+            {streakCount >= 12
+              ? 'Milestone Maksimal Tercapai! 🏆'
+              : `${streakCount}/${maxTarget} ${streakUnit}`}
           </span>
         </div>
 
@@ -107,7 +133,9 @@ export function StreakProgressCard({
                 >
                   {isAchieved ? '✓' : m.target}
                 </div>
-                <span className={`text-[10px] font-bold mt-1 leading-tight ${isAchieved ? 'text-[#1e293b]' : 'text-slate-400'}`}>
+                <span
+                  className={`text-[10px] font-bold mt-1 leading-tight ${isAchieved ? 'text-[#1e293b]' : 'text-slate-400'}`}
+                >
                   {m.label}
                 </span>
                 <span className='text-[9px] text-slate-400 hidden sm:block'>{m.title}</span>
@@ -116,7 +144,6 @@ export function StreakProgressCard({
           })}
         </div>
       </div>
-
     </Card>
   );
 }

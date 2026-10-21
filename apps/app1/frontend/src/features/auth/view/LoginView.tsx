@@ -3,7 +3,7 @@
 import React, { Suspense } from 'react';
 import { Loader2 } from 'lucide-react';
 import { AuthCardLayout } from '../components/AuthCardLayout';
-import { AuthTabbedContainer } from '../components/AuthTabbedContainer';
+import { LoginForm } from '../components/LoginForm';
 import { GuestGuard } from '../components/GuestGuard';
 
 export function LoginView() {
@@ -17,7 +17,7 @@ export function LoginView() {
             </div>
           }
         >
-          <AuthTabbedContainer initialTab='login' />
+          <LoginForm />
         </Suspense>
       </AuthCardLayout>
     </GuestGuard>

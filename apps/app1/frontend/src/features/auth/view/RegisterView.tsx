@@ -3,7 +3,7 @@
 import React, { Suspense } from 'react';
 import { Loader2 } from 'lucide-react';
 import { AuthCardLayout } from '../components/AuthCardLayout';
-import { AuthTabbedContainer } from '../components/AuthTabbedContainer';
+import { RegisterForm } from '../components/RegisterForm';
 import { GuestGuard } from '../components/GuestGuard';
 
 export function RegisterView() {
@@ -17,7 +17,7 @@ export function RegisterView() {
             </div>
           }
         >
-          <AuthTabbedContainer initialTab='register' />
+          <RegisterForm />
         </Suspense>
       </AuthCardLayout>
     </GuestGuard>

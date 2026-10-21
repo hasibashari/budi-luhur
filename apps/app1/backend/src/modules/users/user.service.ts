@@ -156,6 +156,56 @@ export class UserService {
       } else if (log.status === 'MISSED' || log.status === 'SKIPPED') {
         todayStatus = 'missed';
       }
+    } else if (activeSchedule && activeSchedule.isEnabled) {
+      // Evaluate if today is scheduled and if the time has passed tolerance window (60 mins)
+      const now = new Date();
+      const currentDayName = new Intl.DateTimeFormat('id-ID', {
+        timeZone: 'Asia/Jakarta',
+        weekday: 'long',
+      }).format(now);
+
+      const isScheduledToday =
+        activeSchedule.frequency === 'Harian' ||
+        activeSchedule.dayOfWeek.toLowerCase() === currentDayName.toLowerCase();
+
+      if (isScheduledToday) {
+        const currentTimeStr = new Intl.DateTimeFormat('en-GB', {
+          timeZone: 'Asia/Jakarta',
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false,
+        }).format(now);
+
+        const [currH, currM] = currentTimeStr.split(':').map(Number);
+        const [schH, schM] = activeSchedule.time.split(':').map(Number);
+        const nowMinutes = (currH || 0) * 60 + (currM || 0);
+        const schedMinutes = (schH || 20) * 60 + (schM || 0);
+
+        // Tolerance: 60 minutes after scheduled time
+        const toleranceMinutes = 60;
+
+        if (nowMinutes > schedMinutes + toleranceMinutes) {
+          todayStatus = 'missed';
+
+          // Persist the auto-missed log into consumption_logs if not already present
+          const autoLogId = `log_auto_${Date.now().toString().slice(-6)}_${Math.random().toString(36).substring(2, 6)}`;
+          await db.query(
+            `INSERT INTO consumption_logs (
+              id, user_id, schedule_id, title, category, dosage, scheduled_date, scheduled_time, status, notes, taken_by
+            ) VALUES ($1, $2, $3, $4, 'TTD', $5, $6, $7, 'MISSED', 'Otomatis terlewat karena melewati batas jam jadwal', 'System')
+            ON CONFLICT (id) DO NOTHING`,
+            [
+              autoLogId,
+              userId,
+              activeSchedule.id,
+              activeSchedule.tabletName,
+              activeSchedule.dosage,
+              todayStr,
+              activeSchedule.time,
+            ],
+          );
+        }
+      }
     }
 
     const article = articleRes.rows[0];

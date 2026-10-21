@@ -1,6 +1,7 @@
 import { app } from './app.js';
 import { config } from './config/env.js';
 import db from './config/database.js';
+import { ScheduleReminderService } from './modules/schedules/scheduleReminder.service.js';
 
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : config.port;
 
@@ -16,6 +17,9 @@ async function start() {
     );
     CREATE INDEX IF NOT EXISTS idx_push_subscriptions_user ON push_subscriptions(user_id);
   `);
+
+  ScheduleReminderService.startScheduler();
+
   app.listen(PORT, () => {
     console.log(`🚀 FEMORY Backend running on http://localhost:${PORT}`);
     console.log(`📡 Health check available at http://localhost:${PORT}/api/v1/health`);

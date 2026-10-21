@@ -274,6 +274,31 @@ export default function ScheduleView() {
                 mencukupi simpanan zat besi tanpa menimbulkan penumpukan berlebihan.
               </p>
             </Card>
+
+            {/* Auto-Reminder & Auto-Missed Tolerance Info */}
+            <Card padding='md' className='bg-[#f0fdf4] border border-[#bbf7d0]'>
+              <div className='flex items-center gap-2 text-xs font-bold text-[#166534] mb-1.5'>
+                <BellRing size={14} className='text-[#16a34a]' />
+                <span>Pengingat Otomatis & Toleransi Waktu</span>
+              </div>
+              <ul className='space-y-1.5 text-[11px] text-[#15803d] leading-relaxed'>
+                <li className='flex items-start gap-1.5'>
+                  <span className='font-bold text-[#16a34a]'>•</span>
+                  <span>
+                    <strong>Notifikasi Otomatis:</strong> Aplikasi akan membunyikan audio chime dan
+                    mengirim notifikasi saat jam jadwal tiba (atau 15 menit sebelumnya).
+                  </span>
+                </li>
+                <li className='flex items-start gap-1.5'>
+                  <span className='font-bold text-[#16a34a]'>•</span>
+                  <span>
+                    <strong>Otomatis Terlewat:</strong> Jika melewati jam jadwal lebih dari 60 menit
+                    dan belum dicatat, status akan otomatis ditandai <em>Terlewat</em> (kamu tetap
+                    bisa mengubahnya sewaktu-waktu jika sudah meminumnya).
+                  </span>
+                </li>
+              </ul>
+            </Card>
           </div>
 
           {/* RIGHT COLUMN: Medical Guidelines & FAQs (md:col-span-5) */}

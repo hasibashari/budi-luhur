@@ -3,7 +3,7 @@
 import React, { Suspense } from 'react';
 import { Loader2 } from 'lucide-react';
 import { AuthCardLayout } from '../components/AuthCardLayout';
-import { AuthTabbedContainer } from '../components/AuthTabbedContainer';
+import { RegisterForm } from '../components/RegisterForm';
 import { GuestGuard } from '../components/GuestGuard';
 
 export function RegisterView() {
@@ -12,12 +12,12 @@ export function RegisterView() {
       <AuthCardLayout>
         <Suspense
           fallback={
-            <div className="flex items-center justify-center py-12 text-rose-500">
+            <div className="flex items-center justify-center py-12 text-[#aa294d]">
               <Loader2 className="w-8 h-8 animate-spin" />
             </div>
           }
         >
-          <AuthTabbedContainer initialTab='register' />
+          <RegisterForm />
         </Suspense>
       </AuthCardLayout>
     </GuestGuard>
