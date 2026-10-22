@@ -1,8 +1,8 @@
 import { ConsumptionLog } from '../types';
 
 export interface WeeklyAdherencePoint {
-  week: number; // 1, 2, 3, 4
-  label: string; // 'M1', 'M2', 'M3', 'M4'
+  week: number; // 1, 2, 3, 4, 5
+  label: string; // 'M1', 'M2', 'M3', 'M4', 'M5'
   fullLabel: string; // 'Minggu 1', 'Minggu 2', ...
   dateRange: string; // '1 - 7 Okt', '8 - 14 Okt', dst.
   startDate: string; // 'YYYY-MM-01'
@@ -17,7 +17,9 @@ export interface WeeklyAdherencePoint {
   isUpcoming: boolean; // True jika minggu ini di masa depan dan belum ada aktivitas
   isCurrent: boolean; // True jika tanggal hari ini berada di rentang minggu ini
   status: 'OPTIMAL' | 'MODERATE' | 'LOW' | 'UPCOMING';
-  targetDoses?: number; // Target dosis aktif dalam bulan ini
+  targetDoses?: number; // Target total dosis aktif dalam bulan ini
+  targetCumulative?: number; // Target kumulatif dosis aktif s/d minggu ini (misal M3 = 1, M4 = 2)
+  totalWeeksInMonth?: number; // Jumlah total minggu dalam bulan ini (4 atau 5)
   isInactive?: boolean; // True jika minggu lampau sebelum jadwal/pengguna mulai
 }
 
@@ -37,13 +39,31 @@ const MONTH_NAMES_SHORT = [
 ];
 
 /**
- * Menghitung kepatuhan mingguan (M1 - M4) dari kecil ke atas (0% -> 100%)
- * berdasarkan data konsumsi aktual dan target bulanan yang aktif.
+ * Menghasilkan rentang minggu dinamis berdasarkan bulan (4 atau 5 minggu).
+ * Bulan dengan > 28 hari (seperti Oktober, 31 hari) memiliki 5 minggu (M1 - M5).
+ */
+export function getMonthWeekRanges(year: number, month: number) {
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const ranges = [
+    { week: 1, startDay: 1, endDay: 7 },
+    { week: 2, startDay: 8, endDay: 14 },
+    { week: 3, startDay: 15, endDay: 21 },
+    { week: 4, startDay: 22, endDay: 28 },
+  ];
+  if (daysInMonth > 28) {
+    ranges.push({ week: 5, startDay: 29, endDay: daysInMonth });
+  }
+  return ranges;
+}
+
+/**
+ * Menghitung kepatuhan mingguan (M1 - M4 / M5) secara dinamis & progresif.
  *
- * Formula dinamis:
- * Jika pengguna baru mulai di pertengahan bulan (misal M3-M4 tersisa 2 minggu),
- * target bulanan disesuaikan menjadi 2 dosis (masing-masing 50%).
- * Minggu lampau sebelum jadwal/catatan dibuat tidak dihitung sebagai kewajiban.
+ * Contoh logika progresif:
+ * - Jika mulai di M3 dan minum 1 kali: target kumulatif di M3 adalah 1 dosis ➔ 1/1 = 100%.
+ * - Saat masuk M4: target kumulatif bertambah jadi 2 dosis. Jika belum minum di M4 ➔ 1/2 = 50%.
+ * - Setelah minum di M4 ➔ 2/2 = 100%.
+ * - Minggu masa depan (misal M5 jika belum tgl 29) berstatus UPCOMING ('-').
  */
 export function calculateWeeklyAdherence(
   logs: ConsumptionLog[] = [],
@@ -54,16 +74,10 @@ export function calculateWeeklyAdherence(
   const year = now.getFullYear();
   const month = now.getMonth(); // 0-indexed
   const todayDate = now.getDate();
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
   const monthShort = MONTH_NAMES_SHORT[month] || '';
 
-  // Definisikan 4 rentang tanggal minggu
-  const weekRanges = [
-    { week: 1, startDay: 1, endDay: 7 },
-    { week: 2, startDay: 8, endDay: 14 },
-    { week: 3, startDay: 15, endDay: 21 },
-    { week: 4, startDay: 22, endDay: daysInMonth },
-  ];
+  // Definisikan rentang minggu dinamis (4 atau 5 minggu tergantung jumlah hari bulan ini)
+  const weekRanges = getMonthWeekRanges(year, month);
 
   // Helper format YYYY-MM-DD
   const formatYMD = (day: number) => {
@@ -93,7 +107,7 @@ export function calculateWeeklyAdherence(
 
     // Minggu lampau tanpa catatan/jadwal sama sekali (sebelum jadwal dibuat/sebelum user isi)
     const isPastEmpty = todayDate > wr.endDay && scheduledCount === 0;
-    // Minggu masa depan
+    // Minggu masa depan murni
     const isUpcoming = todayDate < wr.startDay && scheduledCount === 0;
     // Minggu berjalan
     const isCurrent = todayDate >= wr.startDay && todayDate <= wr.endDay;
@@ -111,15 +125,13 @@ export function calculateWeeklyAdherence(
     };
   });
 
-  // Tentukan target dosis aktif bulan ini.
-  // Jika 2 minggu pertama belum ada jadwal/log (misal user baru mulai di M3),
-  // target yang dibebankan hanyalah minggu-minggu aktif (misal 2 dosis).
+  // Tentukan target total dosis aktif bulan ini (minggu yang bukan lampau kosong)
   const activeWeeks = weekLogsInfo.filter(w => !w.isPastEmpty);
-  const targetDoses = Math.max(1, activeWeeks.length);
-  const doseWeight = 100 / targetDoses;
+  const totalActiveTarget = Math.max(1, activeWeeks.length);
 
   let runningCompleted = 0;
   let runningMissed = 0;
+  let runningActiveWeeks = 0;
   let previousPercentage: number | null = null;
 
   return weekLogsInfo.map(info => {
@@ -139,16 +151,25 @@ export function calculateWeeklyAdherence(
     let percentage: number | null = null;
     let delta: number | null = null;
     let status: 'OPTIMAL' | 'MODERATE' | 'LOW' | 'UPCOMING' = 'UPCOMING';
+    let targetCumulative = 0;
 
     if (isPastEmpty) {
       // Minggu lampau sebelum pengguna mulai/ada jadwal
       status = 'UPCOMING';
-    } else if (!isUpcoming) {
+    } else if (isUpcoming) {
+      // Minggu masa depan yang belum tiba
+      status = 'UPCOMING';
+    } else {
+      // Minggu aktif yang sudah berjalan atau sedang berjalan saat ini
+      runningActiveWeeks += 1;
+      targetCumulative = runningActiveWeeks;
       runningCompleted += completedCount;
       runningMissed += missedCount;
 
-      // Formula kepatuhan dari kecil ke atas (0 - 100%) berdasarkan target dosis aktif
-      const rawPercentage = Math.round(runningCompleted * doseWeight - runningMissed * 10);
+      // Kepatuhan progresif berjalan:
+      // (Dosis diminum s/d minggu ini / Target kumulatif minggu aktif s/d minggu ini) * 100% - penalti terlewat
+      const basePercentage = (runningCompleted / targetCumulative) * 100;
+      const rawPercentage = Math.round(basePercentage - runningMissed * 10);
       percentage = Math.max(0, Math.min(100, rawPercentage));
 
       if (previousPercentage !== null) {
@@ -182,7 +203,9 @@ export function calculateWeeklyAdherence(
       isUpcoming: isUpcoming || isPastEmpty,
       isCurrent,
       status,
-      targetDoses,
+      targetDoses: totalActiveTarget,
+      targetCumulative,
+      totalWeeksInMonth: weekRanges.length,
       isInactive: isPastEmpty,
     };
   });

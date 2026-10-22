@@ -53,12 +53,12 @@ export default function CreateGroupModal({
   };
 
   return (
-    <div className='fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/40 backdrop-blur-xs animate-fade-in'>
+    <div className='fixed inset-0 z-[80] flex items-center justify-center p-3 sm:p-4 pb-20 sm:pb-4 bg-slate-950/40 backdrop-blur-xs animate-fade-in'>
       <div className='absolute inset-0' onClick={onClose} />
 
-      <div className='relative z-10 w-full max-w-md bg-white rounded-2xl sm:rounded-3xl shadow-2xl border border-[#fce7f3] overflow-hidden flex flex-col animate-scale-up'>
+      <div className='relative z-10 w-full max-w-md bg-white rounded-2xl sm:rounded-3xl shadow-2xl border border-[#fce7f3] overflow-hidden flex flex-col max-h-[85dvh] animate-scale-up'>
         {/* Header */}
-        <div className='bg-white border-b border-[#fce7f3] px-5 py-3.5 flex items-center justify-between'>
+        <div className='shrink-0 bg-white border-b border-[#fce7f3] px-5 py-3.5 flex items-center justify-between'>
           <div className='flex items-center gap-2.5'>
             <div className='w-8 h-8 rounded-xl bg-[#e11d48] text-white flex items-center justify-center shadow-xs'>
               <PlusCircle size={16} />
@@ -79,7 +79,7 @@ export default function CreateGroupModal({
         </div>
 
         {/* Form Body */}
-        <form onSubmit={handleSubmit} className='p-4 sm:p-5 flex flex-col gap-3'>
+        <form onSubmit={handleSubmit} className='p-4 sm:p-5 flex flex-col gap-3 overflow-y-auto'>
           <div>
             <label className='text-xs font-semibold text-[#1e293b] mb-1 block'>
               Nama Grup <span className='text-[#e11d48]'>*</span>
@@ -129,7 +129,7 @@ export default function CreateGroupModal({
             </p>
           )}
 
-          <div className='flex items-center gap-2 pt-2 border-t border-slate-100'>
+          <div className='flex items-center gap-2 pt-2 border-t border-slate-100 shrink-0 mt-auto'>
             <Button
               type='button'
               variant='outline'

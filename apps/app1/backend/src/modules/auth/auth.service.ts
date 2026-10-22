@@ -30,8 +30,11 @@ export class AuthService {
         [normalizedEmail],
       );
       const row = res.rows[0];
-      if (!row || !row.password_hash || !(await bcrypt.compare(password, row.password_hash))) {
+      if (!row) {
         return { success: false, error: 'Email atau password salah.' };
+      }
+      if (!row.password_hash || !(await bcrypt.compare(password, row.password_hash))) {
+        return { success: false, error: 'Kata sandi yang Anda masukkan salah.' };
       }
       return AuthService.createLoginResult(row);
     } catch (dbErr) {

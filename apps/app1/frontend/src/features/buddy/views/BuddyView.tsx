@@ -16,12 +16,7 @@ import {
   updateBuddyGroupAction,
   deleteBuddyGroupAction,
 } from '../api/buddyRepository';
-import {
-  BuddyGroupItem,
-  GroupChatDetail,
-  CheerType,
-  BuddyGroupMessage,
-} from '../types';
+import { BuddyGroupItem, GroupChatDetail, CheerType, BuddyGroupMessage } from '../types';
 import GroupChatHeader from '../components/GroupChatHeader';
 import GroupStreakCompactBar from '../components/GroupStreakCompactBar';
 import GroupChatMessages from '../components/GroupChatMessages';
@@ -31,10 +26,7 @@ import CreateGroupModal from '../components/CreateGroupModal';
 import EditGroupModal from '../components/EditGroupModal';
 import JoinGroupModal from '../components/JoinGroupModal';
 import GroupSidebarList from '../components/GroupSidebarList';
-import {
-  publishRealtimeEvent,
-  subscribeRealtimeEvent,
-} from '@/src/shared/utils/realtimeSync';
+import { publishRealtimeEvent, subscribeRealtimeEvent } from '@/src/shared/utils/realtimeSync';
 
 export default function BuddyView() {
   const { user } = useAuth();
@@ -63,45 +55,51 @@ export default function BuddyView() {
   };
 
   // 1. Load User's Groups
-  const loadGroups = useCallback(async (preferredGroupId?: string) => {
-    setIsLoadingGroups(true);
-    try {
-      const userGroups = await getUserGroupsAction(userId);
-      setGroups(userGroups);
+  const loadGroups = useCallback(
+    async (preferredGroupId?: string) => {
+      setIsLoadingGroups(true);
+      try {
+        const userGroups = await getUserGroupsAction(userId);
+        setGroups(userGroups);
 
-      if (userGroups.length > 0) {
-        // Choose target group
-        const targetId =
-          preferredGroupId && userGroups.some(g => g.id === preferredGroupId)
-            ? preferredGroupId
-            : selectedGroupId && userGroups.some(g => g.id === selectedGroupId)
-            ? selectedGroupId
-            : userGroups[0].id;
+        if (userGroups.length > 0) {
+          // Choose target group
+          const targetId =
+            preferredGroupId && userGroups.some(g => g.id === preferredGroupId)
+              ? preferredGroupId
+              : selectedGroupId && userGroups.some(g => g.id === selectedGroupId)
+                ? selectedGroupId
+                : userGroups[0].id;
 
-        setSelectedGroupId(targetId);
-      } else {
-        setSelectedGroupId(null);
-        setChatDetail(null);
+          setSelectedGroupId(targetId);
+        } else {
+          setSelectedGroupId(null);
+          setChatDetail(null);
+        }
+      } catch (err) {
+        console.error('Failed to load user groups:', err);
+      } finally {
+        setIsLoadingGroups(false);
       }
-    } catch (err) {
-      console.error('Failed to load user groups:', err);
-    } finally {
-      setIsLoadingGroups(false);
-    }
-  }, [userId, selectedGroupId]);
+    },
+    [userId, selectedGroupId],
+  );
 
   // 2. Load Chat Details for Selected Group
-  const loadChatDetails = useCallback(async (groupId: string) => {
-    setIsLoadingChat(true);
-    try {
-      const detail = await getGroupChatDetailsAction(groupId, userId);
-      setChatDetail(detail);
-    } catch (err) {
-      console.error('Failed to load group chat details:', err);
-    } finally {
-      setIsLoadingChat(false);
-    }
-  }, [userId]);
+  const loadChatDetails = useCallback(
+    async (groupId: string) => {
+      setIsLoadingChat(true);
+      try {
+        const detail = await getGroupChatDetailsAction(groupId, userId);
+        setChatDetail(detail);
+      } catch (err) {
+        console.error('Failed to load group chat details:', err);
+      } finally {
+        setIsLoadingChat(false);
+      }
+    },
+    [userId],
+  );
 
   // Initial load
   useEffect(() => {
@@ -212,9 +210,7 @@ export default function BuddyView() {
       isSelf: true,
     };
 
-    setChatDetail(prev =>
-      prev ? { ...prev, messages: [...prev.messages, optimisticMsg] } : null
-    );
+    setChatDetail(prev => (prev ? { ...prev, messages: [...prev.messages, optimisticMsg] } : null));
 
     try {
       const res = await sendGroupMessageAction(selectedGroupId, userId, content, 'text');
@@ -268,9 +264,7 @@ export default function BuddyView() {
       isSelf: true,
     };
 
-    setChatDetail(prev =>
-      prev ? { ...prev, messages: [...prev.messages, optimisticMsg] } : null
-    );
+    setChatDetail(prev => (prev ? { ...prev, messages: [...prev.messages, optimisticMsg] } : null));
     showToast(`Stiker semangat terkirim! ${label} 🌸`);
 
     try {
@@ -302,7 +296,7 @@ export default function BuddyView() {
   const handleCreateGroup = async (
     name: string,
     description?: string,
-    initialFriendCodes?: string[]
+    initialFriendCodes?: string[],
   ): Promise<boolean> => {
     try {
       const res = await createBuddyGroupAction(userId, name, description, initialFriendCodes);
@@ -471,7 +465,8 @@ export default function BuddyView() {
               Belum Bergabung ke Grup Buddy
             </h3>
             <p className='text-xs sm:text-sm text-[#64748b] max-w-xs mt-1 mb-5 leading-relaxed'>
-              Ajak kawan sekelas atau sahabat UKS untuk saling mengingatkan jadwal minum TTD setiap minggu!
+              Ajak kawan sekelas atau sahabat UKS untuk saling mengingatkan jadwal minum TTD setiap
+              minggu!
             </p>
 
             <div className='flex items-center gap-2.5 w-full'>
@@ -532,7 +527,10 @@ export default function BuddyView() {
             } md:col-span-8 lg:col-span-8`}
           >
             {isLoadingChat && !chatDetail ? (
-              <Card padding='none' className='h-full flex flex-col items-center justify-center p-6 bg-white animate-pulse'>
+              <Card
+                padding='none'
+                className='h-full flex flex-col items-center justify-center p-6 bg-white animate-pulse'
+              >
                 <div className='w-12 h-12 rounded-full bg-rose-100 mb-3' />
                 <div className='w-40 h-4 bg-slate-200 rounded-full mb-2' />
                 <div className='w-64 h-3 bg-slate-100 rounded-full' />
@@ -554,10 +552,7 @@ export default function BuddyView() {
                 <GroupStreakCompactBar group={chatDetail.group} />
 
                 {/* 3. Message Thread (Flex-1 Scrollable) */}
-                <GroupChatMessages
-                  messages={chatDetail.messages}
-                  currentUserId={userId}
-                />
+                <GroupChatMessages messages={chatDetail.messages} currentUserId={userId} />
 
                 {/* 4. Sticky Chat Input + Quick Cheers */}
                 <GroupChatInput
@@ -579,7 +574,8 @@ export default function BuddyView() {
                   Pilih Grup untuk Mulai Chat
                 </h3>
                 <p className='text-xs text-[#64748b] max-w-xs mt-1'>
-                  Pilih salah satu grup dari daftar sebelah kiri untuk melihat pesan dan progres kepatuhan.
+                  Pilih salah satu grup dari daftar sebelah kiri untuk melihat pesan dan progres
+                  kepatuhan.
                 </p>
               </Card>
             )}

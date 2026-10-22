@@ -201,6 +201,7 @@ export class BuddyService {
 
     return {
       success: true,
+      groupId,
       group: {
         id: groupId,
         name: cleanName,

@@ -51,6 +51,8 @@ interface ChartBarItem {
   delta: number | null;
   isUpcoming: boolean;
   status: 'OPTIMAL' | 'MODERATE' | 'LOW' | 'UPCOMING';
+  targetCumulative?: number;
+  targetDoses?: number;
 }
 
 export function ConsumptionChart({
@@ -71,6 +73,10 @@ export function ConsumptionChart({
       }
     }
     return 4;
+  }, [weeklyData]);
+
+  const totalWeeksInMonth = useMemo(() => {
+    return weeklyData?.[0]?.totalWeeksInMonth || (weeklyData && weeklyData.length > 0 ? weeklyData.length : 4);
   }, [weeklyData]);
 
   // Hitung initial active week dari minggu saat ini atau minggu terakhir yang aktif
@@ -97,10 +103,10 @@ export function ConsumptionChart({
     setActiveWeek(initialWeek);
   }, [initialWeek]);
 
-  // Siapkan dataset diagram batang untuk 4 minggu (M1 - M4)
+  // Siapkan dataset diagram batang untuk seluruh minggu dinamis (M1 - M4 / M5)
   const chartBars: ChartBarItem[] = useMemo(() => {
     // 1. Jika weeklyData aktual tersedia
-    if (weeklyData && weeklyData.length === 4) {
+    if (weeklyData && weeklyData.length > 0) {
       return weeklyData.map(w => {
         const pct = w.percentage ?? 0;
         return {
@@ -116,13 +122,17 @@ export function ConsumptionChart({
           delta: w.delta,
           isUpcoming: w.isUpcoming,
           status: w.status,
+          targetCumulative: w.targetCumulative,
+          targetDoses: w.targetDoses,
         };
       });
     }
 
-    // 2. Fallback progresif 4 minggu dari totalCount
-    const defaultRanges = ['1 - 7', '8 - 14', '15 - 21', '22 - Akhir'];
-    return [1, 2, 3, 4].map(w => {
+    // 2. Fallback progresif dinamis berdasarkan total minggu
+    const totalBars = totalWeeksInMonth;
+    const defaultRanges = ['1 - 7', '8 - 14', '15 - 21', '22 - 28', '29 - Akhir'];
+    return Array.from({ length: totalBars }, (_, idx) => {
+      const w = idx + 1;
       const isPastOrDone = totalCount >= w;
       const isUpcoming = totalCount < w;
       const pct = isPastOrDone ? Math.round((w / targetCount) * 100) : 0;
@@ -130,7 +140,7 @@ export function ConsumptionChart({
         week: w,
         label: `M${w}`,
         fullLabel: `Minggu ${w}`,
-        dateRange: defaultRanges[w - 1],
+        dateRange: defaultRanges[idx] || `${(w - 1) * 7 + 1} - ${w * 7}`,
         percentage: pct,
         displayPercentage: isUpcoming ? '-' : `${pct}%`,
         completedCount: isPastOrDone ? 1 : 0,
@@ -139,17 +149,20 @@ export function ConsumptionChart({
         delta: null,
         isUpcoming,
         status: (pct >= 60 ? 'OPTIMAL' : pct >= 30 ? 'MODERATE' : isUpcoming ? 'UPCOMING' : 'LOW') as any,
+        targetCumulative: w,
+        targetDoses: targetCount,
       };
     });
-  }, [weeklyData, totalCount, targetCount]);
+  }, [weeklyData, totalCount, targetCount, totalWeeksInMonth]);
 
   // Data ringkasan untuk minggu yang sedang aktif/dipilih
   const activeSummary = useMemo(() => {
     if (activeWeek === 0) {
       return {
-        completedDoses: 0,
-        percentage: 0,
+        completedDoses: totalCount,
+        percentage: compliancePercent ?? 0,
         statusText: `0 / ${targetCount} Dosis`,
+        target: targetCount,
         delta: null,
         label: 'Awal Bulan',
         isUpcoming: false,
@@ -158,37 +171,41 @@ export function ConsumptionChart({
 
     const currentItem = chartBars.find(b => b.week === activeWeek);
 
+    // Target untuk minggu yang dipilih: gunakan targetCumulative jika ada, atau targetCount
+    const target = currentItem?.targetCumulative || targetCount;
+
     // Ambil data dosis selesai aktual dari currentItem atau totalCount
     const completedDoses = currentItem
       ? currentItem.cumulativeCompleted
-      : Math.min(totalCount, targetCount);
+      : Math.min(totalCount, target);
 
     const isUpcoming = currentItem ? currentItem.isUpcoming : false;
 
-    // Persentase kepatuhan: gunakan nilai dari currentItem, atau hitung dari completedDoses / targetCount
+    // Persentase kepatuhan: gunakan nilai dari currentItem, atau hitung dari completedDoses / target
     const percentage =
       currentItem?.percentage ??
-      (targetCount > 0 ? Math.round((completedDoses / targetCount) * 100) : 0);
+      (target > 0 ? Math.round((completedDoses / target) * 100) : 0);
 
-    let statusText = `0 / ${targetCount} Dosis`;
+    let statusText = `0 / ${target} Dosis`;
     if (isUpcoming) {
       statusText = 'Jadwal Belum Tiba';
-    } else if (completedDoses >= targetCount && targetCount > 0) {
-      statusText = `Lengkap (${targetCount}/${targetCount} Dosis)`;
+    } else if (completedDoses >= target && target > 0) {
+      statusText = `Lengkap (${target}/${target} Dosis)`;
     } else if (completedDoses > 0) {
-      statusText = `Dosis ${completedDoses} dari ${targetCount} Terpenuhi`;
+      statusText = `Dosis ${completedDoses} dari ${target} Terpenuhi`;
     }
 
     return {
       completedDoses,
       percentage,
       statusText,
+      target,
       delta: currentItem?.delta ?? null,
       label: currentItem?.fullLabel || `Minggu ${activeWeek}`,
       dateRange: currentItem?.dateRange,
       isUpcoming,
     };
-  }, [activeWeek, chartBars, targetCount, totalCount]);
+  }, [activeWeek, chartBars, targetCount, totalCount, compliancePercent]);
 
   const handleSelectWeek = (week: number) => {
     if (activeWeek === week) {
@@ -271,7 +288,7 @@ export function ConsumptionChart({
               Grafik Kepatuhan TTD Bulanan
             </h4>
             <span className='px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#fff1f2] text-[#e11d48] border border-[#fecdd3]'>
-              {targetCount}x / Bulan
+              {totalWeeksInMonth} Minggu / Bulan
             </span>
           </div>
           <p className='text-xs text-[#64748b] mt-0.5'>
@@ -379,12 +396,12 @@ export function ConsumptionChart({
           <span className='text-[11px] font-medium text-[#64748b] block mb-0.5'>Total Selesai</span>
           <span className='text-base sm:text-lg font-bold text-[#1e293b]'>
             {activeSummary.completedDoses}{' '}
-            <span className='text-xs font-semibold text-[#64748b]'>/ {targetCount} Kali</span>
+            <span className='text-xs font-semibold text-[#64748b]'>/ {activeSummary.target} Kali</span>
           </span>
           <span className='text-[10px] text-rose-500 font-medium block mt-0.5'>
-            {activeSummary.completedDoses >= targetCount
+            {activeSummary.completedDoses >= activeSummary.target
               ? 'Target Terpenuhi'
-              : `${Math.max(0, targetCount - activeSummary.completedDoses)} kali lagi`}
+              : `${Math.max(0, activeSummary.target - activeSummary.completedDoses)} kali lagi`}
           </span>
         </div>
 

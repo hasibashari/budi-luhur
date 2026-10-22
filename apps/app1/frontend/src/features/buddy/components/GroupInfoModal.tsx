@@ -112,12 +112,12 @@ export default function GroupInfoModal({
   const totalCount = memberList.length;
 
   return (
-    <div className='fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/40 backdrop-blur-xs animate-fade-in'>
+    <div className='fixed inset-0 z-[80] flex items-center justify-center p-3 sm:p-4 pb-20 sm:pb-4 bg-slate-950/40 backdrop-blur-xs animate-fade-in'>
       {/* Backdrop */}
       <div className='absolute inset-0' onClick={onClose} />
 
       {/* Modal Dialog */}
-      <div className='relative z-10 w-full max-w-lg bg-white rounded-2xl sm:rounded-3xl shadow-2xl border border-[#fce7f3] overflow-hidden flex flex-col max-h-[90vh] animate-scale-up'>
+      <div className='relative z-10 w-full max-w-lg bg-white rounded-2xl sm:rounded-3xl shadow-2xl border border-[#fce7f3] overflow-hidden flex flex-col max-h-[85dvh] animate-scale-up'>
         {/* Header (Shrink-0) */}
         <div className='shrink-0 bg-white border-b border-[#fce7f3] px-5 py-3.5 flex items-center justify-between'>
           <div className='flex items-center gap-2.5'>
