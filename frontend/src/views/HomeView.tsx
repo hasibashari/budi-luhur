@@ -147,16 +147,16 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate }) => {
           <div className='relative rounded-2xl bg-gradient-to-r from-[#218380] via-[#34A09B] to-[#68C3BE] p-5 text-white overflow-hidden shadow-md flex items-center justify-between min-h-[155px]'>
             {/* Konten Kiri (Teks & Tombol) */}
             <div className='z-10 max-w-[62%] sm:max-w-[60%] space-y-2'>
-              <h4 className='text-lg font-bold tracking-wide leading-tight'>Data Individu</h4>
+              <h4 className='text-lg font-bold tracking-wide leading-tight'>Tentang SIBIRU</h4>
               <p className='text-xs text-teal-50 leading-relaxed'>
-                Data masyarakat yang ada di dalam area layanan
+                Kenali SIBIRU dan layanan kesehatan perempuan di setiap tahap.
               </p>
               <div className='pt-2'>
                 <button
                   onClick={() => onNavigate('panduan')}
                   className='bg-white text-[#218380] px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-xs hover:bg-teal-50 active:scale-95 transition-all cursor-pointer'
                 >
-                  <span>Lihat data</span>
+                  <span>Lihat informasi</span>
                   <ChevronRight className='w-4 h-4 stroke-[2.5]' />
                 </button>
               </div>
