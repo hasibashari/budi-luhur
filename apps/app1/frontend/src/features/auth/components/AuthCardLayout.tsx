@@ -32,9 +32,7 @@ export function AuthCardLayout({ children }: AuthCardLayoutProps) {
           {/* Minimalist Trust & Privacy Footer */}
           <div className='flex items-center justify-center gap-1.5 mt-8 text-center text-[#64748b]'>
             <ShieldCheck size={16} className='text-emerald-500 shrink-0' />
-            <span className='text-xs font-medium'>
-              Privasi & rekam kesehatan terproteksi standar keamanan
-            </span>
+            <span className='text-xs font-medium'>Privasi terproteksi standar keamanan</span>
           </div>
         </div>
       </div>

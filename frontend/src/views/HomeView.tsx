@@ -149,7 +149,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate }) => {
             <div className='z-10 max-w-[62%] sm:max-w-[60%] space-y-2'>
               <h4 className='text-lg font-bold tracking-wide leading-tight'>Tentang SIBIRU</h4>
               <p className='text-xs text-teal-50 leading-relaxed'>
-                Kenali SIBIRU dan layanan kesehatan perempuan di setiap tahap.
+                Kenali SIBIRU dan layanan kesehatan perempuan di setiap tahap kehidupan.
               </p>
               <div className='pt-2'>
                 <button
