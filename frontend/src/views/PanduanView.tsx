@@ -33,7 +33,7 @@ export const PanduanView: React.FC<PanduanViewProps> = ({ onNavigate }) => {
     <div className='max-w-3xl mx-auto px-6 py-8 space-y-8'>
       {/* Header Halaman Panduan */}
       <div className='border-b border-gray-100 pb-5'>
-        <div className='inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-50 text-[#149690] text-xs font-semibold mb-2'>
+        <div className='inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-[#005EB8] text-xs font-semibold mb-2'>
           <BookOpen className='w-3.5 h-3.5' />
           <span>Panduan Penggunaan</span>
         </div>
@@ -51,7 +51,7 @@ export const PanduanView: React.FC<PanduanViewProps> = ({ onNavigate }) => {
           {APPS.map(app => (
             <div
               key={app.id}
-              className='p-4 sm:p-5 rounded-2xl bg-gray-50 border border-gray-200/80 hover:border-teal-300 transition-all shadow-2xs'
+              className='p-4 sm:p-5 rounded-2xl bg-gray-50 border border-gray-200/80 hover:border-blue-300 transition-all shadow-2xs'
             >
               <div className='flex items-start justify-between gap-3'>
                 <div className='space-y-1.5'>
@@ -65,7 +65,7 @@ export const PanduanView: React.FC<PanduanViewProps> = ({ onNavigate }) => {
                 </div>
                 <a
                   href={app.onboardingUrl}
-                  className='shrink-0 inline-flex items-center gap-1 text-xs font-bold text-[#149690] hover:text-[#0f766e] bg-white px-3 py-1.5 rounded-xl border border-teal-200 shadow-2xs hover:bg-teal-50 transition-colors'
+                  className='shrink-0 inline-flex items-center gap-1 text-xs font-bold text-[#005EB8] hover:text-[#004B87] bg-white px-3 py-1.5 rounded-xl border border-blue-200 shadow-2xs hover:bg-blue-50 transition-colors'
                 >
                   <span>Buka</span>
                   <ArrowRight className='w-3.5 h-3.5' />
@@ -79,7 +79,7 @@ export const PanduanView: React.FC<PanduanViewProps> = ({ onNavigate }) => {
       {/* Tanya Jawab (FAQ) */}
       <section className='space-y-4 pt-2'>
         <div className='flex items-center gap-2'>
-          <HelpCircle className='w-4 h-4 text-[#149690]' />
+          <HelpCircle className='w-4 h-4 text-[#005EB8]' />
           <h3 className='text-base font-bold text-gray-800'>Pertanyaan Umum (FAQ)</h3>
         </div>
 
@@ -93,13 +93,13 @@ export const PanduanView: React.FC<PanduanViewProps> = ({ onNavigate }) => {
               >
                 <button
                   onClick={() => setOpenFaqIndex(isOpen ? null : idx)}
-                  className='w-full px-5 py-4 text-left flex items-center justify-between gap-3 text-sm font-semibold text-gray-800 hover:text-[#149690] transition-colors'
+                  className='w-full px-5 py-4 text-left flex items-center justify-between gap-3 text-sm font-semibold text-gray-800 hover:text-[#005EB8] transition-colors'
                   aria-expanded={isOpen}
                 >
                   <span>{faq.q}</span>
                   <ChevronDown
                     className={`w-4 h-4 text-gray-400 shrink-0 transition-transform duration-200 ${
-                      isOpen ? 'rotate-180 text-[#149690]' : ''
+                      isOpen ? 'rotate-180 text-[#005EB8]' : ''
                     }`}
                   />
                 </button>
@@ -118,7 +118,7 @@ export const PanduanView: React.FC<PanduanViewProps> = ({ onNavigate }) => {
       <div className='pt-4 text-center'>
         <button
           onClick={() => onNavigate('beranda')}
-          className='inline-flex items-center gap-1.5 text-xs font-semibold text-gray-500 hover:text-[#149690] transition-colors py-2 px-4 rounded-xl hover:bg-teal-50'
+          className='inline-flex items-center gap-1.5 text-xs font-semibold text-gray-500 hover:text-[#005EB8] transition-colors py-2 px-4 rounded-xl hover:bg-blue-50'
         >
           <span>← Kembali ke Beranda</span>
         </button>

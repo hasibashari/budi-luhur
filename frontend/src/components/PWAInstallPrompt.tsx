@@ -95,7 +95,7 @@ export const PWAInstallPrompt: React.FC = () => {
           {/* Header Row */}
           <div className='flex items-start justify-between gap-3'>
             <div className='flex items-center gap-3'>
-              <div className='w-12 h-12 rounded-xl bg-teal-50 border border-teal-100 p-1 flex items-center justify-center shrink-0 shadow-xs'>
+              <div className='w-12 h-12 rounded-xl bg-blue-50 border border-blue-100 p-1 flex items-center justify-center shrink-0 shadow-xs'>
                 <img
                   src='/icons/sibiru.png'
                   alt='Logo Aplikasi SIBIRU'
@@ -104,7 +104,7 @@ export const PWAInstallPrompt: React.FC = () => {
               </div>
               <div>
                 <div className='flex items-center gap-1.5'>
-                  <span className='px-2 py-0.5 rounded-full bg-teal-100 text-[#149690] text-[10px] font-bold tracking-wide uppercase'>
+                  <span className='px-2 py-0.5 rounded-full bg-blue-100 text-[#005EB8] text-[10px] font-bold tracking-wide uppercase'>
                     PWA Ekosistem
                   </span>
                   <span className='text-xs text-slate-500 font-medium'>STIKes Budi Luhur</span>

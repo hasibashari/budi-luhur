@@ -27,12 +27,12 @@ export const BottomNav: React.FC<BottomNavProps> = ({ activeMenu, onSelectMenu }
           >
             <Icon
               className={`w-6 h-6 transition-colors duration-200 ${
-                isActive ? 'text-[#219E9A]' : 'text-gray-400'
+                isActive ? 'text-[#005EB8]' : 'text-gray-400'
               }`}
             />
             <span
               className={`text-[11px] font-medium transition-colors duration-200 ${
-                isActive ? 'text-[#219E9A] font-semibold' : 'text-gray-500'
+                isActive ? 'text-[#005EB8] font-semibold' : 'text-gray-500'
               }`}
             >
               {item.label}

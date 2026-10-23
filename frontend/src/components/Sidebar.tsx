@@ -49,11 +49,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeMenu, onSelectMenu }) =>
               onClick={() => onSelectMenu(item.id)}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-sm transition-all duration-200 text-left ${
                 isActive
-                  ? 'bg-teal-50 text-[#149690] font-semibold shadow-2xs'
+                  ? 'bg-blue-50 text-[#005EB8] font-semibold shadow-2xs'
                   : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'
               }`}
             >
-              <Icon className={`w-5 h-5 ${isActive ? 'text-[#149690]' : 'text-gray-400'}`} />
+              <Icon className={`w-5 h-5 ${isActive ? 'text-[#005EB8]' : 'text-gray-400'}`} />
               <span>{item.label}</span>
             </button>
           );

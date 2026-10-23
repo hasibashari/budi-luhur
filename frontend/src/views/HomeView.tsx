@@ -58,15 +58,15 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate }) => {
   return (
     <div className='max-w-3xl mx-auto'>
       {/* =========================================================
-          1. HEADER SECTION (Gradasi Biru-Hijau Lembut Sesuai Gambar)
+          1. HEADER SECTION (Gradasi Biru Lembut Sesuai Gambar)
          ========================================================= */}
-      <div className='relative bg-gradient-to-br from-[#E6F8F6] via-[#D2F4F0] to-white px-6 pt-10 pb-8 md:rounded-b-3xl overflow-hidden'>
+      <div className='relative bg-gradient-to-br from-[#E6F2FB] via-[#D2E8F8] to-white px-6 pt-10 pb-8 md:rounded-b-3xl overflow-hidden'>
         {/* Efek gelombang halus di latar belakang header */}
-        <div className='absolute -right-10 -top-10 w-52 h-52 bg-[#B5ECE6] rounded-full blur-2xl opacity-60 pointer-events-none' />
+        <div className='absolute -right-10 -top-10 w-52 h-52 bg-[#B5D9F0] rounded-full blur-2xl opacity-60 pointer-events-none' />
 
         <div className='relative z-10'>
           <div className='flex items-center gap-3.5 mb-3.5'>
-            <div className='w-13 h-13 rounded-2xl bg-white/95 p-1.5 shadow-xs border border-teal-100 flex items-center justify-center shrink-0'>
+            <div className='w-13 h-13 rounded-2xl bg-white/95 p-1.5 shadow-xs border border-blue-100 flex items-center justify-center shrink-0'>
               <img
                 src='/images/sibiru.png'
                 alt='Logo Aplikasi SIBIRU'
@@ -85,11 +85,11 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate }) => {
 
           <div className='space-y-2 text-sm text-gray-700 font-medium pt-0.5'>
             <div className='flex items-center gap-2.5'>
-              <Building2 className='w-4 h-4 text-[#149690] stroke-[2] shrink-0' />
+              <Building2 className='w-4 h-4 text-[#005EB8] stroke-[2] shrink-0' />
               <span>STIKes Budi Luhur Cimahi</span>
             </div>
             <div className='flex items-center gap-2.5'>
-              <Calendar className='w-4 h-4 text-[#149690] stroke-[2] shrink-0' />
+              <Calendar className='w-4 h-4 text-[#005EB8] stroke-[2] shrink-0' />
               <span>{formattedDate}</span>
             </div>
           </div>
@@ -144,17 +144,17 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate }) => {
             Layanan Lainnya
           </h3>
 
-          <div className='relative rounded-2xl bg-gradient-to-r from-[#218380] via-[#34A09B] to-[#68C3BE] p-5 text-white overflow-hidden shadow-md flex items-center justify-between min-h-[155px]'>
+          <div className='relative rounded-2xl bg-gradient-to-r from-[#004B87] via-[#005EB8] to-[#00A3E0] p-5 text-white overflow-hidden shadow-md flex items-center justify-between min-h-[155px]'>
             {/* Konten Kiri (Teks & Tombol) */}
             <div className='z-10 max-w-[62%] sm:max-w-[60%] space-y-2'>
               <h4 className='text-lg font-bold tracking-wide leading-tight'>Tentang SIBIRU</h4>
-              <p className='text-xs text-teal-50 leading-relaxed'>
+              <p className='text-xs text-blue-50 leading-relaxed'>
                 Kenali SIBIRU dan layanan kesehatan perempuan di setiap tahap kehidupan.
               </p>
               <div className='pt-2'>
                 <button
                   onClick={() => onNavigate('panduan')}
-                  className='bg-white text-[#218380] px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-xs hover:bg-teal-50 active:scale-95 transition-all cursor-pointer'
+                  className='bg-white text-[#004B87] px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-xs hover:bg-blue-50 active:scale-95 transition-all cursor-pointer'
                 >
                   <span>Lihat informasi</span>
                   <ChevronRight className='w-4 h-4 stroke-[2.5]' />
@@ -169,11 +169,11 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate }) => {
                 <circle cx='35' cy='42' r='9' fill='#FED7AA' />
                 <path d='M22 110 C22 70, 48 70, 48 110 Z' fill='#FFFFFF' />
                 <circle cx='62' cy='46' r='8' fill='#FED7AA' />
-                <path d='M50 110 C50 75, 74 75, 74 110 Z' fill='#0F766E' />
+                <path d='M50 110 C50 75, 74 75, 74 110 Z' fill='#005EB8' />
                 <circle cx='90' cy='36' r='10' fill='#FED7AA' />
-                <path d='M75 110 C75 65, 105 65, 105 110 Z' fill='#134E4A' />
+                <path d='M75 110 C75 65, 105 65, 105 110 Z' fill='#004B87' />
                 <circle cx='116' cy='44' r='9' fill='#FED7AA' />
-                <path d='M102 110 C102 72, 130 72, 130 110 Z' fill='#0D9488' />
+                <path d='M102 110 C102 72, 130 72, 130 110 Z' fill='#00A3E0' />
               </svg>
             </div>
 
