@@ -1,67 +1,120 @@
+import { randomUUID } from 'crypto';
 import db from '../../config/database.js';
-import { UserScheduleData } from '../../types/index.js';
-import { calculateNextSchedule } from '../../utils/scheduleHelpers.js';
+
+// ─── Types ────────────────────────────────────────────────────────────────────
+
+export interface DailyScheduleRow {
+  id: string;
+  patientId: string;
+  title: string;
+  time: string;
+  isEnabled: boolean;
+  notes: string | null;
+  remind15MinBefore: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateScheduleInput {
+  title: string;
+  timeSlot: string;
+  isEnabled?: boolean;
+  notes?: string;
+  remind15MinBefore?: boolean;
+  frequency?: string;
+}
+
+export interface UpdateScheduleInput {
+  title?: string;
+  time?: string;
+  timeSlot?: string;
+  isEnabled?: boolean;
+  notes?: string;
+  remind15MinBefore?: boolean;
+  dayOfWeek?: string;
+  frequency?: string;
+}
+
+// ─── Helper ───────────────────────────────────────────────────────────────────
+
+function mapRow(row: any): DailyScheduleRow {
+  return {
+    id: row.id,
+    patientId: row.user_id,
+    title: row.tablet_name || row.title || 'Jadwal Harian',
+    time: row.time_slot || '20:00',
+    isEnabled: row.is_enabled ?? true,
+    notes: row.instructions || null,
+    remind15MinBefore: row.remind_15min_before ?? true,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  };
+}
+
+// ─── Service ──────────────────────────────────────────────────────────────────
 
 export class ScheduleService {
-  static async getUserSchedule(userId: string): Promise<UserScheduleData | null> {
-    const res = await db.query<{
-      id: string;
-      tablet_name: string;
-      dosage: string;
-      frequency: string;
-      day_of_week: string;
-      time_slot: string;
-      is_enabled: boolean;
-      remind_15min_before: boolean;
-      instructions: string | null;
-    }>(
-      `SELECT id, tablet_name, dosage, frequency, day_of_week, time_slot, is_enabled, remind_15min_before, instructions
+  /**
+   * Ambil semua jadwal harian milik user (status Aktif).
+   */
+  static async getDailySchedules(userId: string): Promise<DailyScheduleRow[]> {
+    const res = await db.query<any>(
+      `SELECT id, user_id, tablet_name, time_slot, is_enabled, remind_15min_before, instructions, created_at, updated_at
        FROM reminder_schedules
        WHERE user_id = $1 AND status = 'Aktif'
-       ORDER BY created_at DESC LIMIT 1`,
+       ORDER BY created_at ASC`,
       [userId],
     );
-
-    if (res.rows.length === 0) return null;
-    const sch = res.rows[0];
-    const dayOfWeek = sch.day_of_week || 'Sabtu';
-    const timeSlot = sch.time_slot || '20:00';
-    const { nextDate, daysRemaining } = calculateNextSchedule(dayOfWeek, timeSlot);
-
-    return {
-      id: sch.id,
-      patientId: userId,
-      tabletName: sch.tablet_name || 'Tablet Tambah Darah (TTD)',
-      dosage: sch.dosage || '1 tablet, 1x seminggu',
-      frequency: sch.frequency === 'daily' ? 'Harian' : 'Mingguan',
-      category: sch.frequency === 'daily' ? 'Terapi Anemia' : 'TTD Rutin',
-      dayOfWeek,
-      time: timeSlot,
-      isEnabled: sch.is_enabled,
-      remind15MinBefore: sch.remind_15min_before,
-      instructions: sch.instructions || 'Minum setelah makan malam atau sebelum tidur dengan air putih.',
-      nextDate,
-      daysRemaining,
-    };
+    return res.rows.map(mapRow);
   }
 
-  static async updateScheduleSettings(scheduleId: string, data: any) {
+  /**
+   * Buat jadwal harian baru.
+   */
+  static async createSchedule(userId: string, input: CreateScheduleInput): Promise<DailyScheduleRow> {
+    const id = randomUUID();
+    const {
+      title,
+      timeSlot,
+      isEnabled = true,
+      notes = '',
+      remind15MinBefore = true,
+      frequency = 'daily',
+    } = input;
+
+    await db.query(
+      `INSERT INTO reminder_schedules
+         (id, user_id, tablet_name, dosage, frequency, day_of_week, time_slot, is_enabled, remind_15min_before, instructions, status)
+       VALUES ($1, $2, $3, '1 unit', $4, 'Setiap Hari', $5, $6, $7, $8, 'Aktif')`,
+      [id, userId, title, frequency, timeSlot, isEnabled, remind15MinBefore, notes || ''],
+    );
+
+    const res = await db.query<any>(
+      `SELECT id, user_id, tablet_name, time_slot, is_enabled, remind_15min_before, instructions, created_at, updated_at
+       FROM reminder_schedules WHERE id = $1`,
+      [id],
+    );
+    return mapRow(res.rows[0]);
+  }
+
+  /**
+   * Perbarui jadwal berdasarkan ID.
+   */
+  static async updateSchedule(scheduleId: string, data: UpdateScheduleInput) {
     const updates: string[] = [];
     const params: any[] = [];
     let idx = 1;
 
-    if (data.dayOfWeek !== undefined) {
-      updates.push(`day_of_week = $${idx++}`);
-      params.push(data.dayOfWeek);
+    // Support both `title` and `tablet_name`
+    if (data.title !== undefined) {
+      updates.push(`tablet_name = $${idx++}`);
+      params.push(data.title);
     }
-    if (data.time !== undefined) {
+    // Support both `time` and `timeSlot`
+    const newTime = data.time ?? data.timeSlot;
+    if (newTime !== undefined) {
       updates.push(`time_slot = $${idx++}`);
-      params.push(data.time);
-    }
-    if (data.frequency !== undefined) {
-      const freq = data.frequency.includes('Hari') ? 'daily' : 'weekly';
-      updates.push(`frequency = $${idx++}`);
-      params.push(freq);
+      params.push(newTime);
     }
     if (data.isEnabled !== undefined) {
       updates.push(`is_enabled = $${idx++}`);
@@ -71,8 +124,21 @@ export class ScheduleService {
       updates.push(`remind_15min_before = $${idx++}`);
       params.push(data.remind15MinBefore);
     }
+    if (data.notes !== undefined) {
+      updates.push(`instructions = $${idx++}`);
+      params.push(data.notes);
+    }
+    if (data.dayOfWeek !== undefined) {
+      updates.push(`day_of_week = $${idx++}`);
+      params.push(data.dayOfWeek);
+    }
+    if (data.frequency !== undefined) {
+      const freq = data.frequency.toLowerCase().includes('hari') ? 'daily' : data.frequency;
+      updates.push(`frequency = $${idx++}`);
+      params.push(freq);
+    }
 
-    if (updates.length === 0) return { success: true };
+    if (updates.length === 0) return { success: true, message: 'Tidak ada perubahan.' };
 
     updates.push(`updated_at = CURRENT_TIMESTAMP`);
     params.push(scheduleId);
@@ -82,8 +148,37 @@ export class ScheduleService {
       params,
     );
 
-    return { success: true, message: 'Jadwal berhasil diperbarui.' };
+    // Return updated row
+    const res = await db.query<any>(
+      `SELECT id, user_id, tablet_name, time_slot, is_enabled, remind_15min_before, instructions, created_at, updated_at
+       FROM reminder_schedules WHERE id = $1`,
+      [scheduleId],
+    );
+
+    if (res.rows.length === 0) {
+      return { success: false, error: 'Jadwal tidak ditemukan.' };
+    }
+
+    return { success: true, data: mapRow(res.rows[0]) };
   }
+
+  /**
+   * Hapus jadwal secara soft delete (set status = 'Diberhentikan').
+   */
+  static async deleteSchedule(scheduleId: string, userId: string) {
+    const res = await db.query(
+      `UPDATE reminder_schedules SET status = 'Diberhentikan', updated_at = CURRENT_TIMESTAMP
+       WHERE id = $1 AND user_id = $2`,
+      [scheduleId, userId],
+    );
+    const affected = (res as any).rowCount ?? 0;
+    if (affected === 0) {
+      return { success: false, error: 'Jadwal tidak ditemukan atau tidak bisa dihapus.' };
+    }
+    return { success: true };
+  }
+
+  // ─── Admin Nudge ────────────────────────────────────────────────────────────
 
   static async getActiveNudge(userId: string) {
     const res = await db.query<{

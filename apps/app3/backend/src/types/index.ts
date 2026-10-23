@@ -73,7 +73,15 @@ export interface UserDashboardData {
     faskesName: string;
     batchNumber?: string;
     notes?: string;
+    infoSource: 'self_reported' | 'faskes_record' | 'health_worker';
+    datePrecision: 'exact' | 'month' | 'year';
+    attachmentUrl?: string;
     verificationStatus: 'PENDING' | 'VERIFIED' | 'REJECTED';
+    verifiedBy?: string;
+    verifiedAt?: string;
+    verificationNote?: string;
+    createdAt?: string;
+    updatedAt?: string;
   }[];
   todayStatus: 'recorded' | 'missed' | 'pending';
   todayRecordedTime?: string;

@@ -102,7 +102,7 @@ export default function ArticleDetailView({
       try {
         if (navigator.share) {
           await navigator.share({
-            title: article?.title || 'Edukasi Imunisasi TT - PRELUNA',
+            title: article?.title || 'Edukasi Imunisasi TT - TEMANI',
             text: article?.summary || 'Panduan kesehatan pranikah resmi Kemenkes RI.',
             url: window.location.href,
           });

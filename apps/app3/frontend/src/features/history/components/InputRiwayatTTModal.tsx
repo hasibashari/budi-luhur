@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { X } from 'lucide-react';
-import { Button } from '@/src/shared/components/ui/Button';
+import type { ImmunizationRecord, TTDatePrecision, TTInfoSource } from '@/src/features/user/types';
 
 export interface NewTTRiwayatData {
   doseLevel: string;
@@ -8,14 +8,27 @@ export interface NewTTRiwayatData {
   faskesName: string;
   batchNumber?: string;
   notes?: string;
-  fileName?: string;
+  infoSource: TTInfoSource;
+  datePrecision: TTDatePrecision;
 }
+
+export type SubmitTTRiwayatResult = {
+  success: boolean;
+  error?: string;
+  warnings?: string[];
+};
 
 export interface InputRiwayatTTModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: NewTTRiwayatData) => void;
+  onSubmit: (data: NewTTRiwayatData) => Promise<SubmitTTRiwayatResult>;
   defaultDose?: string;
+  /** Diisi saat mode perbaikan data (edit). */
+  initialData?: ImmunizationRecord | null;
+}
+
+function todayInputValue() {
+  return new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Jakarta' });
 }
 
 export function InputRiwayatTTModal({
@@ -23,56 +36,82 @@ export function InputRiwayatTTModal({
   onClose,
   onSubmit,
   defaultDose = 'TT1',
+  initialData = null,
 }: InputRiwayatTTModalProps) {
   const [doseLevel, setDoseLevel] = useState(defaultDose);
-  const [vaccineDate, setVaccineDate] = useState(new Date().toISOString().split('T')[0]);
+  const [vaccineDate, setVaccineDate] = useState(todayInputValue);
   const [faskesName, setFaskesName] = useState('');
   const [batchNumber, setBatchNumber] = useState('');
   const [notes, setNotes] = useState('');
-  const [selectedFile, setSelectedFile] = useState<{ name: string; size: string } | null>(null);
+  const [infoSource, setInfoSource] = useState<TTInfoSource>('self_reported');
+  const [datePrecision, setDatePrecision] = useState<TTDatePrecision>('exact');
+  const [formError, setFormError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Sinkronkan isi form setiap kali modal dibuka (baru / edit).
+  useEffect(() => {
+    if (!isOpen) return;
+    setFormError(null);
+    setIsSubmitting(false);
+    if (initialData) {
+      setDoseLevel(initialData.doseLevel);
+      setVaccineDate(
+        initialData.vaccineDate ? String(initialData.vaccineDate).slice(0, 10) : todayInputValue(),
+      );
+      setFaskesName(initialData.faskesName || '');
+      setBatchNumber(initialData.batchNumber || '');
+      setNotes(initialData.notes || '');
+      setInfoSource(initialData.infoSource || 'self_reported');
+      setDatePrecision(initialData.datePrecision || 'exact');
+    } else {
+      setDoseLevel(defaultDose);
+      setVaccineDate(todayInputValue());
+      setFaskesName('');
+      setBatchNumber('');
+      setNotes('');
+      setInfoSource('self_reported');
+      setDatePrecision('exact');
+    }
+  }, [isOpen, initialData, defaultDose]);
 
   if (!isOpen) return null;
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const sizeMb = (file.size / (1024 * 1024)).toFixed(1);
-      setSelectedFile({
-        name: file.name,
-        size: `${sizeMb} MB`,
-      });
-    }
-  };
-
-  const handleRemoveFile = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setSelectedFile(null);
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!faskesName.trim()) {
+      setFormError('Nama fasilitas kesehatan wajib diisi.');
+      return;
+    }
+    setFormError(null);
     setIsSubmitting(true);
-    setTimeout(() => {
-      onSubmit({
+    try {
+      const result = await onSubmit({
         doseLevel,
         vaccineDate,
-        faskesName,
+        faskesName: faskesName.trim(),
         batchNumber: batchNumber || undefined,
         notes: notes || undefined,
-        fileName: selectedFile?.name,
+        infoSource,
+        datePrecision,
       });
-      setIsSubmitting(false);
+      if (!result.success) {
+        setFormError(result.error || 'Gagal menyimpan riwayat imunisasi.');
+        return;
+      }
       onClose();
-    }, 400);
+    } catch {
+      setFormError('Terjadi kendala sistem saat menyimpan data.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
     <div className='fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-950/60 backdrop-blur-xs animate-fade-in'>
       <div className='relative w-full max-w-lg bg-white rounded-t-[28px] sm:rounded-3xl shadow-2xl border border-stone-200 overflow-hidden flex flex-col max-h-[90dvh] sm:max-h-[92vh]'>
         {/* Mobile Pull Drag Indicator Bar */}
-        <div className="sm:hidden w-full pt-2.5 pb-1 flex justify-center bg-gradient-to-r from-[#aa294d] to-[#cb4364]">
-          <div className="w-12 h-1.5 rounded-full bg-white/40" />
+        <div className='sm:hidden w-full pt-2.5 pb-1 flex justify-center bg-gradient-to-r from-[#aa294d] to-[#cb4364]'>
+          <div className='w-12 h-1.5 rounded-full bg-white/40' />
         </div>
 
         {/* Modal Header */}
@@ -83,7 +122,7 @@ export function InputRiwayatTTModal({
             </div>
             <div>
               <h3 className='text-sm sm:text-base font-bold leading-tight'>
-                Pencatatan Dosis Mandiri
+                {initialData ? 'Perbaiki Riwayat Dosis' : 'Pencatatan Dosis Mandiri'}
               </h3>
               <p className='text-[11px] text-rose-100'>Riwayat Imunisasi Tetanus Toxoid (TT)</p>
             </div>
@@ -110,10 +149,15 @@ export function InputRiwayatTTModal({
                 <span className='material-symbols-outlined text-[20px]'>health_and_safety</span>
               </div>
               <div className='min-w-0 flex-1'>
-                <h4 className='text-xs font-bold text-[#121c2a]'>Catat Riwayat Faskes Terdahulu</h4>
+                <h4 className='text-xs font-bold text-[#121c2a]'>
+                  {initialData
+                    ? 'Perbaiki Data yang Sudah Tercatat'
+                    : 'Catat Riwayat Faskes Terdahulu'}
+                </h4>
                 <p className='text-[11px] text-[#574144] mt-0.5 leading-relaxed'>
                   Catat riwayat suntik TT yang sudah pernah kamu dapatkan di Puskesmas, Klinik, atau
-                  Rumah Sakit untuk melengkapi status perlindunganmu.
+                  Rumah Sakit. Data tersimpan sebagai menunggu validasi hingga diperiksa tenaga
+                  kesehatan.
                 </p>
               </div>
             </div>
@@ -231,69 +275,61 @@ export function InputRiwayatTTModal({
             </div>
           </div>
 
-          {/* Field 5: Unggah Bukti / Buku KIA */}
+          {/* Field 5: Sumber Data */}
           <div className='flex flex-col gap-1.5'>
-            <div className='flex items-center justify-between'>
-              <label className='text-xs font-bold text-[#121c2a]'>
-                Unggah Bukti Vaksin / Buku KIA
-              </label>
-              <span className='text-[10px] text-[#574144] bg-stone-100 px-2 py-0.5 rounded-full font-semibold'>
-                Maks. 5MB
-              </span>
+            <label htmlFor='sumberData' className='text-xs font-bold text-[#121c2a]'>
+              Sumber Data <span className='text-[#aa294d]'>*</span>
+            </label>
+            <div className='relative'>
+              <div className='absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-[#aa294d]'>
+                <span className='material-symbols-outlined text-[20px]'>source</span>
+              </div>
+              <select
+                id='sumberData'
+                value={infoSource}
+                onChange={e => setInfoSource(e.target.value as TTInfoSource)}
+                className='w-full h-11 pl-11 pr-10 rounded-xl bg-stone-50 border border-stone-200 text-[#121c2a] text-xs sm:text-sm font-semibold shadow-xs appearance-none focus:outline-none focus:border-[#aa294d] transition-all'
+              >
+                <option value='self_reported'>Diisi mandiri (ingat sendiri)</option>
+                <option value='faskes_record'>Disalin dari Buku KIA / KMS</option>
+                <option value='health_worker'>Dicatat tenaga kesehatan</option>
+              </select>
+              <div className='absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-[#574144]'>
+                <span className='material-symbols-outlined text-[20px]'>keyboard_arrow_down</span>
+              </div>
             </div>
+            <p className='text-[11px] text-[#574144] px-1'>
+              Sumber data membantu bidan menilai seberapa kuat bukti riwayat ini.
+            </p>
+          </div>
 
-            <div
-              onClick={() => document.getElementById('buktiVaksinInput')?.click()}
-              className='relative w-full rounded-2xl bg-stone-50 border-2 border-dashed border-stone-200 hover:border-[#aa294d] p-4 flex flex-col items-center justify-center text-center cursor-pointer transition-all group'
-            >
-              <input
-                id='buktiVaksinInput'
-                type='file'
-                accept='image/*,.pdf'
-                onChange={handleFileChange}
-                className='hidden'
-              />
-
-              {!selectedFile ? (
-                <div className='flex flex-col items-center py-2'>
-                  <div className='w-12 h-12 rounded-full bg-[#ffd9de] flex items-center justify-center text-[#aa294d] mb-2 group-hover:scale-105 transition-transform'>
-                    <span className='material-symbols-outlined text-[24px]'>add_a_photo</span>
-                  </div>
-                  <p className='text-xs font-bold text-[#121c2a]'>
-                    Ketuk untuk mengambil foto / unggah dokumen
-                  </p>
-                  <p className='text-[11px] text-[#574144] mt-0.5 max-w-[280px]'>
-                    Foto halaman cap TT pada Buku KIA atau Kartu Vaksin Calon Pengantin
-                  </p>
-                  <div className='flex items-center gap-1.5 mt-2 text-[#aa294d] text-[11px] font-semibold'>
-                    <span className='material-symbols-outlined text-[14px]'>image</span> JPG, PNG,
-                    atau PDF
-                  </div>
-                </div>
-              ) : (
-                <div className='w-full flex items-center justify-between bg-white p-3 rounded-xl border border-stone-200'>
-                  <div className='flex items-center gap-2.5 overflow-hidden'>
-                    <div className='w-9 h-9 rounded-lg bg-[#aff1d0] text-[#0a5139] flex items-center justify-center shrink-0'>
-                      <span className='material-symbols-outlined text-[18px]'>check_circle</span>
-                    </div>
-                    <div className='text-left truncate'>
-                      <p className='text-xs font-bold text-[#121c2a] truncate'>
-                        {selectedFile.name}
-                      </p>
-                      <p className='text-[11px] text-[#574144]'>{selectedFile.size} • Terlampir</p>
-                    </div>
-                  </div>
-                  <button
-                    type='button'
-                    onClick={handleRemoveFile}
-                    className='w-8 h-8 rounded-full flex items-center justify-center text-rose-600 hover:bg-rose-50 transition-colors shrink-0'
-                    title='Hapus file'
-                  >
-                    <span className='material-symbols-outlined text-[18px]'>delete</span>
-                  </button>
-                </div>
-              )}
+          {/* Field 6: Presisi Tanggal */}
+          <div className='flex flex-col gap-1.5'>
+            <label htmlFor='presisiTanggal' className='text-xs font-bold text-[#121c2a]'>
+              Ketepatan Tanggal
+            </label>
+            <div className='relative'>
+              <div className='absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-[#574144]'>
+                <span className='material-symbols-outlined text-[20px]'>event_available</span>
+              </div>
+              <select
+                id='presisiTanggal'
+                value={datePrecision}
+                onChange={e => setDatePrecision(e.target.value as TTDatePrecision)}
+                className='w-full h-11 pl-11 pr-10 rounded-xl bg-stone-50 border border-stone-200 text-[#121c2a] text-xs sm:text-sm font-semibold shadow-xs appearance-none focus:outline-none focus:border-[#aa294d] transition-all'
+              >
+                <option value='exact'>Tanggal pasti (sesuai catatan)</option>
+                <option value='month'>Hanya ingat bulan & tahun</option>
+                <option value='year'>Hanya ingat tahun</option>
+              </select>
+              <div className='absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-[#574144]'>
+                <span className='material-symbols-outlined text-[20px]'>keyboard_arrow_down</span>
+              </div>
             </div>
+            <p className='text-[11px] text-[#574144] px-1'>
+              Isi apa adanya — sistem tidak akan menampilkan tanggal seolah-olah presisi bila kamu
+              hanya mengingat bulannya.
+            </p>
           </div>
 
           {/* Field 6: Keterangan Tambahan */}
@@ -316,16 +352,26 @@ export function InputRiwayatTTModal({
             />
           </div>
 
-          {/* Reassurance Micro-Card (Stitch Screen 5) */}
+          {/* Reassurance Micro-Card */}
           <div className='rounded-xl bg-[#aff1d0]/30 p-3 flex items-center gap-2.5 border border-[#aff1d0]/50'>
             <div className='w-7 h-7 rounded-full bg-[#aff1d0] flex items-center justify-center text-[#0a5139] shrink-0'>
               <span className='material-symbols-outlined text-[16px]'>verified_user</span>
             </div>
             <p className='text-[11px] text-[#0a5139] flex-1 leading-snug'>
-              Data yang kamu simpan akan diverifikasi oleh Bidan atau Tenaga Medis saat pemeriksaan
-              pra-nikah di Puskesmas.
+              Data tersimpan dengan status <strong>Menunggu Validasi</strong>. Status baru berubah
+              menjadi <strong>Terverifikasi</strong> setelah diperiksa Bidan atau Tenaga Medis di
+              Puskesmas.
             </p>
           </div>
+
+          {formError && (
+            <div
+              role='alert'
+              className='rounded-xl bg-[#ffe1e6] border border-[#ffc9d4] px-3.5 py-2.5 text-[11px] font-semibold text-[#a4163a]'
+            >
+              {formError}
+            </div>
+          )}
 
           {/* Submit Action */}
           <div className='pt-2 pb-[calc(1.25rem+env(safe-area-inset-bottom,0px))] sm:pb-2'>
@@ -335,7 +381,13 @@ export function InputRiwayatTTModal({
               className='w-full h-12 min-h-[48px] rounded-full bg-[#aa294d] text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-[0_4px_14px_0_rgba(170,41,77,0.3)] hover:bg-[#cb4364] active:scale-[0.98] transition-all cursor-pointer disabled:opacity-50'
             >
               <span className='material-symbols-outlined text-[18px]'>save</span>
-              <span>{isSubmitting ? 'Menyimpan...' : 'Simpan Riwayat Imunisasi'}</span>
+              <span>
+                {isSubmitting
+                  ? 'Menyimpan...'
+                  : initialData
+                    ? 'Simpan Perbaikan'
+                    : 'Simpan Riwayat Imunisasi'}
+              </span>
             </button>
           </div>
         </form>

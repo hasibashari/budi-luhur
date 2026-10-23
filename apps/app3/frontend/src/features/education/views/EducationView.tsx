@@ -13,9 +13,7 @@ import {
 } from 'lucide-react';
 import { getArticlesAction } from '../api/educationRepository';
 import { Article } from '../types';
-import {
-  normalizeArticleCategory,
-} from '../constants/education.constants';
+import { normalizeArticleCategory } from '../constants/education.constants';
 
 export default function EducationView() {
   const navigate = useNavigate();
@@ -25,7 +23,7 @@ export default function EducationView() {
   const [loading, setLoading] = useState(true);
 
   // Stitch authentic premarital articles
-  const defaultPrelunaArticles = [
+  const defaultTemaniArticles = [
     {
       id: 'art_1',
       title: 'Kesehatan Pranikah & Skrining Dasar',
@@ -98,14 +96,14 @@ export default function EducationView() {
             // merge with authentic stitch articles if needed
             setArticles(data);
           } else {
-            setArticles(defaultPrelunaArticles as any);
+            setArticles(defaultTemaniArticles as any);
           }
           setLoading(false);
         }
       } catch (err) {
         console.error('Failed to load articles:', err);
         if (isMounted) {
-          setArticles(defaultPrelunaArticles as any);
+          setArticles(defaultTemaniArticles as any);
           setLoading(false);
         }
       }
@@ -116,20 +114,20 @@ export default function EducationView() {
     };
   }, []);
 
-  const articleList = articles.length > 0 ? articles : defaultPrelunaArticles;
+  const articleList = articles.length > 0 ? articles : defaultTemaniArticles;
   const categories = [
     'Semua',
     ...Array.from(
-      new Set(articleList.map(article => normalizeArticleCategory(article.category)).filter(Boolean)),
+      new Set(
+        articleList.map(article => normalizeArticleCategory(article.category)).filter(Boolean),
+      ),
     ).sort((a, b) => a.localeCompare(b, 'id')),
   ];
 
   const filteredArticles = useMemo(() => {
     return articleList.filter(art => {
       const category = normalizeArticleCategory(art.category);
-      const matchCategory =
-        selectedCategory === 'Semua' ||
-        category === selectedCategory;
+      const matchCategory = selectedCategory === 'Semua' || category === selectedCategory;
       const matchSearch =
         searchQuery === '' ||
         art.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -205,7 +203,7 @@ export default function EducationView() {
                 <span
                   className={`text-[10px] px-1.5 py-0.2 rounded-full ${isActive ? 'bg-white/20' : 'bg-[#eff4ff]'}`}
                 >
-                  {articles.length || defaultPrelunaArticles.length}
+                  {articles.length || defaultTemaniArticles.length}
                 </span>
               )}
             </button>

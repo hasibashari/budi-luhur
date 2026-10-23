@@ -20,12 +20,107 @@ export class ScheduleController {
 
   static async updateSchedule(req: AuthRequest, res: Response) {
     try {
+      const userId = req.user?.id;
+      if (!userId) {
+        res.status(401).json({ success: false, error: 'Sesi tidak valid.' });
+        return;
+      }
+
       const id = String(req.params.id);
-      const result = await ScheduleService.updateScheduleSettings(id, req.body);
+      const body = req.body || {};
+      const isTTUpdate = ['stage', 'scheduledDate', 'status', 'dosage', 'notes'].some(
+        key => body[key] !== undefined,
+      );
+
+      const result = isTTUpdate
+        ? await ScheduleService.updateTTSchedule(id, userId, body)
+        : await ScheduleService.updateScheduleSettings(id, {
+          ...body,
+          time: body.time ?? body.timeSlot,
+        });
+
+      if (!result.success) {
+        res.status(404).json(result);
+        return;
+      }
       res.json(result);
     } catch (error: any) {
       console.error('ScheduleController.updateSchedule error:', error);
       res.status(500).json({ success: false, error: 'Gagal memperbarui jadwal.' });
+    }
+  }
+
+  /** GET /schedules/list — Ambil seluruh jadwal TT milik user. */
+  static async getSchedules(req: AuthRequest, res: Response) {
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        res.status(401).json({ success: false, error: 'Sesi tidak valid.' });
+        return;
+      }
+      const data = await ScheduleService.getSchedules(userId);
+      res.json(data);
+    } catch (error: any) {
+      console.error('ScheduleController.getSchedules error:', error);
+      res.status(500).json({ success: false, error: 'Gagal memuat daftar jadwal TT.' });
+    }
+  }
+
+  /** POST /schedules — Buat jadwal imunisasi TT baru. */
+  static async createSchedule(req: AuthRequest, res: Response) {
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        res.status(401).json({ success: false, error: 'Sesi tidak valid.' });
+        return;
+      }
+
+      const { stage, scheduledDate, timeSlot, dosage, notes, remind15MinBefore, isEnabled } =
+        req.body || {};
+
+      if (!stage || !scheduledDate || !timeSlot) {
+        res.status(400).json({
+          success: false,
+          error: 'Field stage, scheduledDate, dan timeSlot wajib diisi.',
+        });
+        return;
+      }
+
+      const schedule = await ScheduleService.createSchedule(userId, {
+        stage,
+        scheduledDate,
+        timeSlot,
+        dosage,
+        notes,
+        remind15MinBefore,
+        isEnabled,
+      });
+
+      res.status(201).json(schedule);
+    } catch (error: any) {
+      console.error('ScheduleController.createSchedule error:', error);
+      res.status(500).json({ success: false, error: 'Gagal membuat jadwal TT.' });
+    }
+  }
+
+  /** DELETE /schedules/:id — Hapus (soft delete) jadwal TT. */
+  static async deleteSchedule(req: AuthRequest, res: Response) {
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        res.status(401).json({ success: false, error: 'Sesi tidak valid.' });
+        return;
+      }
+
+      const result = await ScheduleService.deleteSchedule(String(req.params.id), userId);
+      if (!result.success) {
+        res.status(404).json(result);
+        return;
+      }
+      res.json(result);
+    } catch (error: any) {
+      console.error('ScheduleController.deleteSchedule error:', error);
+      res.status(500).json({ success: false, error: 'Gagal menghapus jadwal TT.' });
     }
   }
 

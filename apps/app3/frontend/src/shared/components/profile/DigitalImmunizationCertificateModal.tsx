@@ -1,7 +1,18 @@
 'use client';
 
 import React, { useRef } from 'react';
-import { ShieldCheck, Award, X, Printer, CheckCircle2, QrCode, Building2, Calendar, User, Heart } from 'lucide-react';
+import {
+  ShieldCheck,
+  Award,
+  X,
+  Printer,
+  CheckCircle2,
+  QrCode,
+  Building2,
+  Calendar,
+  User,
+  Heart,
+} from 'lucide-react';
 import { Button } from '@/src/shared/components/ui/Button';
 import { TT_DOSAGE_LIST } from '@/src/shared/constants/domain.constants';
 
@@ -24,7 +35,11 @@ export function DigitalImmunizationCertificateModal({
   partnerName,
   faskesName,
   ttLevel = 2,
-  issueDate = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }),
+  issueDate = new Date().toLocaleDateString('id-ID', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  }),
 }: DigitalImmunizationCertificateModalProps) {
   const printRef = useRef<HTMLDivElement>(null);
 
@@ -34,7 +49,7 @@ export function DigitalImmunizationCertificateModal({
     window.print();
   };
 
-  const certificateNumber = `PRELUNA-TT/${new Date().getFullYear()}/${catinId.replace(/\D/g, '').padStart(6, '0') || '082194'}`;
+  const certificateNumber = `TEMANI-TT/${new Date().getFullYear()}/${catinId.replace(/\D/g, '').padStart(6, '0') || '082194'}`;
 
   return (
     <div className='fixed inset-0 z-60 flex items-center justify-center p-3 sm:p-6 bg-slate-950/60 backdrop-blur-sm animate-fade-in'>
@@ -51,7 +66,9 @@ export function DigitalImmunizationCertificateModal({
               <h3 className='text-sm sm:text-base font-bold text-slate-900 leading-tight'>
                 E-Sertifikat Imunisasi TT Catin
               </h3>
-              <span className='text-[10px] text-slate-500'>Dokumen Resmi Administrasi KUA / Catatan Sipil</span>
+              <span className='text-[10px] text-slate-500'>
+                Dokumen Resmi Administrasi KUA / Catatan Sipil
+              </span>
             </div>
           </div>
 
@@ -151,7 +168,9 @@ export function DigitalImmunizationCertificateModal({
                     return (
                       <tr key={dose.level} className={isReceived ? 'bg-emerald-50/20' : ''}>
                         <td className='py-2.5 px-3 font-bold text-slate-900'>{dose.level}</td>
-                        <td className='py-2.5 px-3 text-slate-600'>{dose.protectionDuration.split(' (')[0]}</td>
+                        <td className='py-2.5 px-3 text-slate-600'>
+                          {dose.protectionDuration.split(' (')[0]}
+                        </td>
                         <td className='py-2.5 px-3'>
                           {isReceived ? (
                             <span className='inline-flex items-center gap-1 text-[11px] font-bold text-emerald-800 bg-emerald-100/70 px-2.5 py-0.5 rounded-full'>
@@ -160,7 +179,8 @@ export function DigitalImmunizationCertificateModal({
                             </span>
                           ) : (
                             <span className='text-[11px] font-medium text-slate-400'>
-                              Belum Waktunya ({dose.interval.split(' ')[0]} {dose.interval.split(' ')[1] || ''})
+                              Belum Waktunya ({dose.interval.split(' ')[0]}{' '}
+                              {dose.interval.split(' ')[1] || ''})
                             </span>
                           )}
                         </td>
@@ -189,7 +209,9 @@ export function DigitalImmunizationCertificateModal({
             </div>
 
             <div className='text-center sm:text-right text-xs'>
-              <span className='text-slate-500 block text-[11px]'>Penanggung Jawab Medis / Bidan Faskes:</span>
+              <span className='text-slate-500 block text-[11px]'>
+                Penanggung Jawab Medis / Bidan Faskes:
+              </span>
               <span className='font-bold text-slate-900 block mt-4 underline decoration-emerald-600'>
                 dr. Siti Rahma, Sp.KKLP / Bdn. Kartika, S.Tr.Keb
               </span>

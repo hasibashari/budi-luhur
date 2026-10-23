@@ -1,6 +1,6 @@
 /**
  * Education Constants
- * Centralized static categories, tags, and fallback metadata for PRELUNA.
+ * Centralized static categories, tags, and fallback metadata for TEMANI.
  * (Premarital Health, Tetanus Toxoid Immunization, & Maternal Wellness)
  */
 

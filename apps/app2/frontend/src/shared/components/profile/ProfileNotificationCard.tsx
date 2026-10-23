@@ -6,6 +6,7 @@ import {
   requestNotificationPermission,
   getNotificationPermission,
   isNotificationSupported,
+  subscribeToPush,
 } from '@/src/shared/utils/notifications';
 
 export interface ProfileNotificationCardProps {
@@ -92,6 +93,10 @@ export function ProfileNotificationCard({
         return;
       }
     }
+
+    // Daftarkan Web Push subscription agar pengingat tetap terkirim dari
+    // backend meskipun aplikasi sedang tertutup.
+    await subscribeToPush();
 
     // Hanya jika izin granted, aktifkan switch
     await onToggleEnabled(true);

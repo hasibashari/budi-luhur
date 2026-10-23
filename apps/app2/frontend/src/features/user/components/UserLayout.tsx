@@ -4,6 +4,7 @@ import MobileTopBar from '@/src/shared/components/MobileTopBar';
 import MobileBottomBar from '@/src/shared/components/MobileBottomBar';
 import UserSidebar from './UserSidebar';
 import { AuthGuard, useAuth } from '@/src/features/auth';
+import { useDailyScheduleReminders } from '@/src/features/schedule/hooks/useDailyScheduleReminders';
 
 export interface UserLayoutProps {
   children?: React.ReactNode;
@@ -17,12 +18,15 @@ export default function UserLayout({ children }: UserLayoutProps) {
   const firstName = user?.name ? user.name.split(' ')[0] : 'Akseptor';
   const avatarUrl = user?.avatarUrl || null;
 
+  // Pengingat jadwal harian aktif di seluruh halaman portal user (bukan hanya
+  // di halaman Jadwal), agar notifikasi tetap muncul saat jam jadwal tiba.
+  useDailyScheduleReminders({
+    userId: user?.id,
+    enabled: Boolean(user?.id) && pathname !== '/user/setup',
+  });
+
   if (pathname === '/user/setup') {
-    return (
-      <AuthGuard requiredRole='user'>
-        {children || <Outlet />}
-      </AuthGuard>
-    );
+    return <AuthGuard requiredRole='user'>{children || <Outlet />}</AuthGuard>;
   }
 
   return (

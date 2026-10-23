@@ -7,7 +7,7 @@ import { OnboardingView, OnboardingScreenView } from '@/src/features/onboarding'
 // User Portal Views
 import { UserLayout, DashboardView, SetupProfileView, ProfileView } from '@/src/features/user';
 import { ScheduleView } from '@/src/features/schedule';
-import { HistoryView } from '@/src/features/consumption';
+import { HistoryView } from '@/src/features/history';
 import { EducationView, ArticleDetailView } from '@/src/features/education';
 
 // Admin Portal Views
@@ -25,7 +25,7 @@ function RootEntry() {
   const { isInitializing, isAuthenticated, user, hasCompletedOnboarding } = useAuth();
 
   if (isInitializing) {
-    return <OnboardingScreenView statusText='Memuat aplikasi PRELUNA...' />;
+    return <OnboardingScreenView statusText='Memuat aplikasi TEMANI...' />;
   }
 
   if (isAuthenticated) {

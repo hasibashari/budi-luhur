@@ -1,5 +1,12 @@
 import { useState, useEffect } from 'react';
-import { Printer, TrendingUp, CheckCircle2, AlertCircle, FileSpreadsheet, ShieldCheck } from 'lucide-react';
+import {
+  Printer,
+  TrendingUp,
+  CheckCircle2,
+  AlertCircle,
+  FileSpreadsheet,
+  ShieldCheck,
+} from 'lucide-react';
 import AdminHeader from '../components/AdminHeader';
 import { getComplianceReportsAction } from '../api/complianceRepository';
 import { getUsersAction } from '../api/userManagementRepository';
@@ -40,7 +47,7 @@ export default function ReportAnalyticsView() {
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
     link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `Laporan_Cakupan_Imunisasi_TT_PRELUNA_${period}.csv`);
+    link.setAttribute('download', `Laporan_Cakupan_Imunisasi_TT_TEMANI_${period}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -58,7 +65,10 @@ export default function ReportAnalyticsView() {
         <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-4'>
           <div className='flex items-center gap-3 flex-wrap'>
             <div className='flex items-center gap-2'>
-              <label htmlFor='report-period' className='text-xs font-bold text-[#574144] uppercase tracking-wider hidden sm:inline'>
+              <label
+                htmlFor='report-period'
+                className='text-xs font-bold text-[#574144] uppercase tracking-wider hidden sm:inline'
+              >
                 Periode:
               </label>
               <select
@@ -138,9 +148,7 @@ export default function ReportAnalyticsView() {
               Cakupan Proteksi Pranikah
             </h3>
           </div>
-          <div className='text-xl sm:text-2xl font-black text-[#2a6950] mb-1'>
-            Sangat Baik (A)
-          </div>
+          <div className='text-xl sm:text-2xl font-black text-[#2a6950] mb-1'>Sangat Baik (A)</div>
           <p className='text-xs font-medium text-[#8b7074]'>
             Berdasarkan Pedoman Imunisasi TT Kemenkes RI
           </p>

@@ -7,8 +7,8 @@ interface ChatHistoryItem {
 
 const GEMINI_MODEL = 'gemini-3.8-flash';
 
-const PRELUNA_SYSTEM_PROMPT = `
-Kamu adalah "Luna — Konselor AI Kesehatan Pranikah & Imunisasi TT" (Aplikasi PRELUNA - Program Kesehatan Pranikah Kemenkes RI).
+const TEMANI_SYSTEM_PROMPT = `
+Kamu adalah "Teman — Konselor AI Kesehatan Pranikah & Imunisasi TT" (Aplikasi TEMANI — Teknologi Edukasi Pranikah dan Pemantauan Imunisasi Tetanus, Program Kesehatan Pranikah Kemenkes RI).
 Tugas utamamu adalah:
 1. Menjawab pertanyaan calon pengantin (catin wanita maupun pria) seputar Imunisasi Tetanus Toxoid (TT), jadwal 5 dosis TT (TT1 hingga TT5), masa perlindungan imunisasi, dan persiapan kesehatan reproduksi pranikah.
 2. Menjelaskan secara akurat aturan klinis Kemenkes RI: TT1 (skrining awal), TT2 (min. 4 minggu setelah TT1, proteksi 3 tahun, wajib min. 1 bulan sebelum nikah), TT3 (min. 6 bulan pasca TT2, proteksi 5 tahun), TT4 (min. 1 tahun pasca TT3, proteksi 10 tahun), TT5 (min. 1 tahun pasca TT4, proteksi seumur hidup >25 tahun / Status T Lengkap).
@@ -56,7 +56,7 @@ export class ConsultationService {
         contextDetails.push(`Kadar Hb lab terakhir: ${userContext.hbLevel} g/dL.`);
       }
 
-      const dynamicSystemPrompt = `${PRELUNA_SYSTEM_PROMPT}\n6. ${contextDetails.join(' ')}`;
+      const dynamicSystemPrompt = `${TEMANI_SYSTEM_PROMPT}\n6. ${contextDetails.join(' ')}`;
       const contents: ChatHistoryItem[] = [];
 
       for (const h of history.slice(-6)) {

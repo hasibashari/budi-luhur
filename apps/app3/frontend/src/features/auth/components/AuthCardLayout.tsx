@@ -36,7 +36,7 @@ export function AuthCardLayout({ children }: AuthCardLayoutProps) {
 
       {/* SISI KANAN: Visual Showcase Banner (Desktop & Tablet >= md) */}
       <div className='hidden md:flex md:w-[48%] lg:w-1/2 min-h-[100dvh] relative bg-gradient-to-b from-[#fafaf9] via-[#fff5f6] to-[#fafaf9] overflow-hidden flex-col justify-center items-center p-8 lg:p-12'>
-        {/* Layered Organic Background Shapes in PRELUNA Ruby and Sage */}
+        {/* Layered Organic Background Shapes in TEMANI Ruby and Sage */}
         <div className='absolute top-1/2 right-[-15%] -translate-y-1/2 w-[130%] h-[130%] rounded-full bg-[radial-gradient(circle,rgba(170,41,77,0.08)_0%,rgba(42,105,80,0.05)_50%,transparent_75%)] pointer-events-none' />
         <div className='absolute top-[20%] right-[-10%] w-[550px] h-[550px] rounded-full border border-[#ffd9de]/60 pointer-events-none' />
         <div className='absolute top-[10%] right-[-20%] w-[700px] h-[700px] rounded-full border border-dashed border-[#aff1d0]/50 pointer-events-none' />
@@ -52,7 +52,7 @@ export function AuthCardLayout({ children }: AuthCardLayoutProps) {
                 </div>
                 <div>
                   <h4 className='text-sm font-black text-[#121c2a] leading-tight uppercase tracking-wider'>
-                    PRELUNA Catin
+                    TEMANI Catin
                   </h4>
                   <span className='text-[11px] text-[#574144] font-medium'>
                     Kesehatan Pranikah &amp; TT
@@ -98,11 +98,12 @@ export function AuthCardLayout({ children }: AuthCardLayoutProps) {
           {/* Inspirational Description */}
           <div className='text-center px-3'>
             <h3 className='text-base font-extrabold text-[#121c2a] mb-1'>
-              Langkah Suci Menuju Keluarga Bahagia
+              Persiapankan Pernikahan Sehat dengan Edukasi &amp; Pemantauan Imunisasi TT
             </h3>
             <p className='text-xs text-[#574144] leading-relaxed'>
-              Pantau jadwal imunisasi Tetanus Toxoid, simpan e-sertifikat kesehatan nikah, dan
-              dapatkan bimbingan kesehatan reproduksi terpercaya.
+              Dapatkan informasi kesehatan pranikah, pantau status imunisasi TT, dan dapatkan
+              pengingat jadwal imunisasi tetanus toxoid agar jadwal imunisasi tetap terpantau dan
+              tidak terlewat.
             </p>
           </div>
         </div>

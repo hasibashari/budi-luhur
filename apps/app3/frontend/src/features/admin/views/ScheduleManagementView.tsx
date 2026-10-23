@@ -312,7 +312,7 @@ export default function ScheduleManagementView() {
       await sendReminderNudgeAction({
         userId: reminderData.userId,
         patientId: reminderData.userId,
-        senderName: 'Petugas Faskes PRELUNA',
+        senderName: 'Petugas Faskes TEMANI',
         senderRole: 'Petugas Faskes & KUA',
         scheduleId: reminderData.scheduleId,
         medicationName: reminderData.medicationName,
@@ -567,7 +567,8 @@ export default function ScheduleManagementView() {
           const user = userMap.get(targetUserId);
           const name = schedule.userName || schedule.patientName || user?.name || 'Calon Pengantin';
           const cat = schedule.category || 'Imunisasi TT';
-          const catStyle = SCHEDULE_CATEGORY_COLORS[cat] || SCHEDULE_CATEGORY_COLORS['Imunisasi TT'];
+          const catStyle =
+            SCHEDULE_CATEGORY_COLORS[cat] || SCHEDULE_CATEGORY_COLORS['Imunisasi TT'];
 
           return (
             <div className='p-4 rounded-2xl border border-[#eff4ff] bg-white shadow-xs flex flex-col gap-3.5'>
@@ -623,9 +624,7 @@ export default function ScheduleManagementView() {
                     <Syringe size={10} />
                     <span>{cat}</span>
                   </span>
-                  <span className='font-bold text-[#8c0f39] text-[11px]'>
-                    {schedule.dosage}
-                  </span>
+                  <span className='font-bold text-[#8c0f39] text-[11px]'>{schedule.dosage}</span>
                 </div>
 
                 <div>

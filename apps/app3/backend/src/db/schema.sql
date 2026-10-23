@@ -73,11 +73,21 @@ CREATE TABLE immunization_records (
     faskes_name VARCHAR(255) NOT NULL,
     batch_number VARCHAR(100),
     notes TEXT,
+    -- Asal data: diisi mandiri, disalin dari buku KIA, atau dicatat nakes.
+    info_source VARCHAR(30) NOT NULL DEFAULT 'self_reported'
+      CHECK (info_source IN ('self_reported', 'faskes_record', 'health_worker')),
+    -- Tingkat presisi tanggal yang diketahui pengguna.
+    date_precision VARCHAR(20) NOT NULL DEFAULT 'exact'
+      CHECK (date_precision IN ('exact', 'month', 'year')),
+    attachment_url TEXT,
     verification_status VARCHAR(30) NOT NULL DEFAULT 'PENDING'
       CHECK (verification_status IN ('PENDING', 'VERIFIED', 'REJECTED')),
+    verified_by VARCHAR(255),
+    verified_at TIMESTAMP WITH TIME ZONE,
+    verification_note TEXT,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE (user_id, dose_level)
+    deleted_at TIMESTAMP WITH TIME ZONE
 );
 
 -- 3. PRODUCTS (SUPPLEMENTS & TTD INVENTORY)
@@ -111,6 +121,9 @@ CREATE TABLE reminder_schedules (
     channel_push BOOLEAN NOT NULL DEFAULT TRUE,
     channel_whatsapp BOOLEAN NOT NULL DEFAULT TRUE,
     channel_email BOOLEAN NOT NULL DEFAULT FALSE,
+    tt_level VARCHAR(3) DEFAULT NULL CHECK (tt_level IN ('TT1', 'TT2', 'TT3', 'TT4', 'TT5')),
+    scheduled_date DATE DEFAULT NULL,
+    completed_at TIMESTAMP WITH TIME ZONE DEFAULT NULL,
     instructions TEXT DEFAULT 'Minum setelah makan malam atau sebelum tidur dengan air putih.',
     status VARCHAR(50) NOT NULL DEFAULT 'Aktif' CHECK(status IN ('Aktif', 'Selesai', 'Diberhentikan')),
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -284,7 +297,9 @@ CREATE INDEX idx_users_role ON users(role);
 CREATE INDEX idx_profiles_friend_code ON user_profiles(friend_code);
 CREATE INDEX idx_profiles_school ON user_profiles(school_or_org);
 CREATE INDEX idx_immunization_records_user ON immunization_records(user_id, vaccine_date);
+CREATE INDEX idx_immunization_records_user_dose ON immunization_records(user_id, dose_level);
 CREATE INDEX idx_schedules_user_status ON reminder_schedules(user_id, status);
+CREATE INDEX idx_schedules_user_date ON reminder_schedules(user_id, scheduled_date);
 CREATE INDEX idx_logs_user_date ON consumption_logs(user_id, scheduled_date);
 CREATE INDEX idx_buddy_user ON buddy_connections(user_id, status);
 CREATE INDEX idx_buddy_pair ON buddy_connections(buddy_user_id, status);

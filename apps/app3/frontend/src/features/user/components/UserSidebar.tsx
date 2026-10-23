@@ -35,7 +35,7 @@ export default function UserSidebar() {
           <div className='min-w-0'>
             <div className='flex items-center gap-1'>
               <span className='text-base font-extrabold text-[#121c2a] tracking-tight truncate'>
-                PRELUNA
+                TEMANI
               </span>
             </div>
             <span className='text-[11px] font-semibold text-[#aa294d] truncate block'>

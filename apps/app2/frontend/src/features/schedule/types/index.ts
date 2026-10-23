@@ -1,44 +1,55 @@
-export type ReminderStatus = 'PENDING' | 'COMPLETED' | 'MISSED'
-export type ReminderType = 'MEDICATION' | 'CHECKUP' | 'EXERCISE' | 'OTHER'
-
-export interface Reminder {
-  id: string
-  title: string
-  description?: string
-  time: string // Format HH:mm
-  date: string // Format YYYY-MM-DD
-  status: ReminderStatus
-  type: ReminderType
-}
-
-// Untuk daily progress tracker
-export interface DailyProgressStats {
-  total: number
-  completed: number
-  pending: number
-  missed: number
-  percentage: number
-}
+// ─── Admin Nudge Types (tetap digunakan oleh DashboardView) ──────────────────
 
 export interface AdminNudge {
-  id: string
-  patientId: string
-  senderName: string
-  senderRole: string
-  scheduleId?: string
-  medicationName?: string
-  dosage?: string
-  timeSlot?: string
-  message: string
-  channel: 'app' | 'whatsapp'
-  status: 'UNREAD' | 'READ' | 'DISMISSED'
-  sentAt: string
+  id: string;
+  patientId: string;
+  senderName: string;
+  senderRole: string;
+  scheduleId?: string;
+  medicationName?: string;
+  dosage?: string;
+  timeSlot?: string;
+  message: string;
+  channel: 'app' | 'whatsapp';
+  status: 'UNREAD' | 'READ' | 'DISMISSED';
+  sentAt: string;
 }
 
-export interface AdherenceTrendPoint {
-  day: string
-  date: string
-  adherence: number
-  totalReminders: number
-  completedReminders: number
+// ─── Daily Schedule type definition untuk App 2 (jadwal harian - bukan mingguan)
+export interface DailySchedule {
+  id: string;
+  patientId: string;
+  title: string;         // Nama kegiatan / pengingat
+  time: string;          // Format HH:mm (24 jam)
+  isEnabled: boolean;    // Status aktif/nonaktif
+  notes?: string;        // Catatan opsional
+  remind15MinBefore: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+// Payload untuk membuat jadwal baru
+export interface CreateDailySchedulePayload {
+  title: string;
+  timeSlot: string;      // Format HH:mm
+  isEnabled?: boolean;
+  notes?: string;
+  remind15MinBefore?: boolean;
+}
+
+// Payload untuk memperbarui jadwal
+export interface UpdateDailySchedulePayload {
+  title?: string;
+  time?: string;     // Field dari DB (time_slot)
+  timeSlot?: string; // Alias yang dikirim dari frontend
+  isEnabled?: boolean;
+  notes?: string;
+  remind15MinBefore?: boolean;
+}
+
+// Response dari API action
+export interface ScheduleActionResult {
+  success: boolean;
+  data?: DailySchedule;
+  error?: string;
 }

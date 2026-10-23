@@ -1,6 +1,14 @@
 'use client';
 
-import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import {
+  Area,
+  AreaChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts';
 import { Card } from '../ui/Card';
 
 export interface ConsumptionTrendItem {
@@ -17,11 +25,18 @@ export interface ConsumptionChartProps {
   loading?: boolean;
 }
 
-export function ConsumptionChart({ data, totalCount, compliancePercent, loading = false }: ConsumptionChartProps) {
+export function ConsumptionChart({
+  data,
+  totalCount,
+  compliancePercent,
+  loading = false,
+}: ConsumptionChartProps) {
   return (
     <Card padding='md' className='w-full border-stone-200'>
       <div className='mb-4'>
-        <h4 className='text-sm sm:text-base font-bold text-slate-900'>Grafik Kepatuhan Imunisasi & Suplementasi</h4>
+        <h4 className='text-sm sm:text-base font-bold text-slate-900'>
+          Grafik Kepatuhan Imunisasi & Suplementasi
+        </h4>
         <p className='text-xs text-slate-500'>Kepatuhan berdasarkan catatan aktual</p>
       </div>
       {loading ? (
@@ -35,23 +50,36 @@ export function ConsumptionChart({ data, totalCount, compliancePercent, loading 
           <ResponsiveContainer width='100%' height='100%'>
             <AreaChart data={data} margin={{ top: 8, right: 8, left: -20, bottom: 0 }}>
               <defs>
-                <linearGradient id='consumption-fill-preluna' x1='0' y1='0' x2='0' y2='1'>
+                <linearGradient id='consumption-fill-temani' x1='0' y1='0' x2='0' y2='1'>
                   <stop offset='5%' stopColor='#059669' stopOpacity={0.3} />
                   <stop offset='95%' stopColor='#059669' stopOpacity={0.03} />
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray='3 3' stroke='#d1fae5' />
               <XAxis dataKey='label' tick={{ fontSize: 10, fill: '#64748b' }} />
-              <YAxis domain={[0, 100]} tickFormatter={value => `${value}%`} tick={{ fontSize: 10, fill: '#64748b' }} />
+              <YAxis
+                domain={[0, 100]}
+                tickFormatter={value => `${value}%`}
+                tick={{ fontSize: 10, fill: '#64748b' }}
+              />
               <Tooltip
                 formatter={value => {
-                  const numericValue = Array.isArray(value) ? Number(value[0] ?? 0) : Number(value ?? 0);
+                  const numericValue = Array.isArray(value)
+                    ? Number(value[0] ?? 0)
+                    : Number(value ?? 0);
                   return [`${Number.isFinite(numericValue) ? numericValue : 0}%`, 'Kepatuhan'];
                 }}
                 labelFormatter={label => `Tanggal ${label}`}
                 contentStyle={{ borderRadius: 12, borderColor: '#d1fae5', fontSize: 12 }}
               />
-              <Area type='monotone' dataKey='completionRate' name='Kepatuhan' stroke='#059669' strokeWidth={2} fill='url(#consumption-fill-preluna)' />
+              <Area
+                type='monotone'
+                dataKey='completionRate'
+                name='Kepatuhan'
+                stroke='#059669'
+                strokeWidth={2}
+                fill='url(#consumption-fill-temani)'
+              />
             </AreaChart>
           </ResponsiveContainer>
         </div>

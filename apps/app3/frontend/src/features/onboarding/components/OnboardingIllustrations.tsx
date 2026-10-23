@@ -25,7 +25,14 @@ export const ReminderIllustration: React.FC<IllustrationProps> = ({
         className='w-full h-full drop-shadow-xl overflow-visible'
       >
         <defs>
-          <linearGradient id='shieldGradOnboard' x1='20' y1='20' x2='140' y2='140' gradientUnits='userSpaceOnUse'>
+          <linearGradient
+            id='shieldGradOnboard'
+            x1='20'
+            y1='20'
+            x2='140'
+            y2='140'
+            gradientUnits='userSpaceOnUse'
+          >
             <stop offset='0%' stopColor='#cb4364' />
             <stop offset='50%' stopColor='#aa294d' />
             <stop offset='100%' stopColor='#8c0f39' />
@@ -58,14 +65,44 @@ export const ReminderIllustration: React.FC<IllustrationProps> = ({
 
         {/* Stylized Vaccine Syringe Badge (Right Bottom) */}
         <g transform='translate(92, 80)'>
-          <circle cx='24' cy='24' r='24' fill='#ffffff' filter='drop-shadow(0 4px 12px rgba(140,15,57,0.22))' />
+          <circle
+            cx='24'
+            cy='24'
+            r='24'
+            fill='#ffffff'
+            filter='drop-shadow(0 4px 12px rgba(140,15,57,0.22))'
+          />
           <circle cx='24' cy='24' r='21' fill='#fff0f2' stroke='#ffd9de' strokeWidth='2' />
 
           {/* Syringe Needle & Body */}
           <path d='M30 14 L34 18 L22 30 L18 26 Z' fill='url(#goldBadgeGradOnboard)' />
-          <line x1='18' y1='26' x2='12' y2='32' stroke='#aa294d' strokeWidth='2.5' strokeLinecap='round' />
-          <line x1='12' y1='32' x2='9' y2='35' stroke='#64748b' strokeWidth='1.5' strokeLinecap='round' />
-          <line x1='32' y1='12' x2='38' y2='6' stroke='#d97706' strokeWidth='2' strokeLinecap='round' />
+          <line
+            x1='18'
+            y1='26'
+            x2='12'
+            y2='32'
+            stroke='#aa294d'
+            strokeWidth='2.5'
+            strokeLinecap='round'
+          />
+          <line
+            x1='12'
+            y1='32'
+            x2='9'
+            y2='35'
+            stroke='#64748b'
+            strokeWidth='1.5'
+            strokeLinecap='round'
+          />
+          <line
+            x1='32'
+            y1='12'
+            x2='38'
+            y2='6'
+            stroke='#d97706'
+            strokeWidth='2'
+            strokeLinecap='round'
+          />
           <circle cx='24' cy='24' r='2' fill='#aa294d' />
         </g>
 
@@ -117,10 +154,22 @@ export const TrackingIllustration: React.FC<IllustrationProps> = ({
         <ellipse cx='78' cy='144' rx='44' ry='7' fill='#400014' fillOpacity='0.15' />
 
         {/* Calendar Body Card */}
-        <rect x='34' y='32' width='88' height='98' rx='18' fill='url(#calGrad)' stroke='#ffd9de' strokeWidth='1.5' />
-        
-        {/* Calendar Top Header in PRELUNA Ruby */}
-        <path d='M34 46 C34 38.27 40.27 32 48 32 L108 32 C115.73 32 122 38.27 122 46 L122 58 L34 58 Z' fill='url(#calHeaderGrad)' />
+        <rect
+          x='34'
+          y='32'
+          width='88'
+          height='98'
+          rx='18'
+          fill='url(#calGrad)'
+          stroke='#ffd9de'
+          strokeWidth='1.5'
+        />
+
+        {/* Calendar Top Header in TEMANI Ruby */}
+        <path
+          d='M34 46 C34 38.27 40.27 32 48 32 L108 32 C115.73 32 122 38.27 122 46 L122 58 L34 58 Z'
+          fill='url(#calHeaderGrad)'
+        />
 
         {/* Calendar Ring Binders */}
         <rect x='52' y='24' width='6' height='14' rx='3' fill='#400014' />
@@ -145,12 +194,32 @@ export const TrackingIllustration: React.FC<IllustrationProps> = ({
 
         {/* Interlocking Wedding Rings Badge (Right Bottom) */}
         <g transform='translate(90, 84)'>
-          <circle cx='24' cy='24' r='24' fill='#ffffff' filter='drop-shadow(0 4px 12px rgba(180,83,9,0.25))' />
+          <circle
+            cx='24'
+            cy='24'
+            r='24'
+            fill='#ffffff'
+            filter='drop-shadow(0 4px 12px rgba(180,83,9,0.25))'
+          />
           <circle cx='24' cy='24' r='21' fill='#fffbeb' stroke='#fde68a' strokeWidth='2' />
 
           {/* Interlocking Golden Rings */}
-          <circle cx='18' cy='24' r='9' stroke='url(#goldRingGradOnboard)' strokeWidth='2.8' fill='none' />
-          <circle cx='28' cy='24' r='9' stroke='url(#goldRingGradOnboard)' strokeWidth='2.8' fill='none' />
+          <circle
+            cx='18'
+            cy='24'
+            r='9'
+            stroke='url(#goldRingGradOnboard)'
+            strokeWidth='2.8'
+            fill='none'
+          />
+          <circle
+            cx='28'
+            cy='24'
+            r='9'
+            stroke='url(#goldRingGradOnboard)'
+            strokeWidth='2.8'
+            fill='none'
+          />
           <path d='M22 17 L25 14 L27 16' stroke='#ffffff' strokeWidth='1.2' strokeLinecap='round' />
         </g>
       </svg>
@@ -161,10 +230,7 @@ export const TrackingIllustration: React.FC<IllustrationProps> = ({
 /**
  * Slide 3: Kesiapan Fisik & Konsultasi Pranikah (Health Book & Luna Health Heart)
  */
-export const BuddyIllustration: React.FC<IllustrationProps> = ({
-  className = '',
-  size = 150,
-}) => {
+export const BuddyIllustration: React.FC<IllustrationProps> = ({ className = '', size = 150 }) => {
   return (
     <div
       className={`relative flex items-center justify-center select-none ${className}`}
@@ -188,7 +254,16 @@ export const BuddyIllustration: React.FC<IllustrationProps> = ({
         <ellipse cx='80' cy='144' rx='44' ry='7' fill='#400014' fillOpacity='0.15' />
 
         {/* Premarital Health Handbook */}
-        <rect x='36' y='32' width='88' height='102' rx='16' fill='#ffffff' stroke='#ffd9de' strokeWidth='1.5' />
+        <rect
+          x='36'
+          y='32'
+          width='88'
+          height='102'
+          rx='16'
+          fill='#ffffff'
+          stroke='#ffd9de'
+          strokeWidth='1.5'
+        />
         {/* Book Spine */}
         <path d='M36 32 L48 32 L48 134 L36 134 Z' fill='url(#bookCoverGradOnboard)' />
 
@@ -206,7 +281,13 @@ export const BuddyIllustration: React.FC<IllustrationProps> = ({
 
         {/* Floating Chat / Consultation Bubble Badge (Right Bottom in Deep Sage) */}
         <g transform='translate(92, 82)'>
-          <circle cx='24' cy='24' r='24' fill='#ffffff' filter='drop-shadow(0 4px 12px rgba(42,105,80,0.25))' />
+          <circle
+            cx='24'
+            cy='24'
+            r='24'
+            fill='#ffffff'
+            filter='drop-shadow(0 4px 12px rgba(42,105,80,0.25))'
+          />
           <circle cx='24' cy='24' r='21' fill='#ecfdf5' stroke='#aff1d0' strokeWidth='2' />
 
           {/* Stethoscope / Consultation Icon in Deep Sage */}
@@ -219,7 +300,13 @@ export const BuddyIllustration: React.FC<IllustrationProps> = ({
           />
           <circle cx='17' cy='20' r='2.2' fill='#2a6950' />
           <circle cx='31' cy='20' r='2.2' fill='#2a6950' />
-          <path d='M24 25 L24 30 A3 3 0 0 1 21 33' stroke='#2a6950' strokeWidth='2' strokeLinecap='round' fill='none' />
+          <path
+            d='M24 25 L24 30 A3 3 0 0 1 21 33'
+            stroke='#2a6950'
+            strokeWidth='2'
+            strokeLinecap='round'
+            fill='none'
+          />
         </g>
       </svg>
     </div>

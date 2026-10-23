@@ -48,7 +48,7 @@ app.get(
     res.json({
       status: 'ok',
       timestamp: new Date().toISOString(),
-      service: 'PRELUNA Backend API',
+      service: 'TEMANI Backend API',
     });
   },
 );

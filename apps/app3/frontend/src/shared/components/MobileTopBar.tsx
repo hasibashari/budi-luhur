@@ -46,7 +46,10 @@ export default function MobileTopBar({
             </button>
           )}
 
-          <Link to={brandHref} className='flex items-center gap-2 text-inherit no-underline py-1 group'>
+          <Link
+            to={brandHref}
+            className='flex items-center gap-2 text-inherit no-underline py-1 group'
+          >
             <div className='w-8 h-8 rounded-xl bg-gradient-to-tr from-[#aa294d] to-[#cb4364] text-white flex items-center justify-center shadow-xs shadow-rose-900/20 group-active:scale-95 transition-transform shrink-0'>
               <ShieldCheck size={18} className='text-white' />
             </div>
@@ -64,7 +67,7 @@ export default function MobileTopBar({
                 </span>
               ) : (
                 <span className='text-[10px] sm:text-[11px] text-[#aa294d] font-semibold leading-none'>
-                  PRELUNA Pranikah
+                  TEMANI Pranikah
                 </span>
               )}
             </div>
@@ -85,7 +88,9 @@ export default function MobileTopBar({
               title={isDenied ? 'Notifikasi diblokir. Izinkan dari pengaturan browser.' : undefined}
             >
               <Bell size={18} />
-              <span className={`absolute top-2.5 right-2.5 w-2 h-2 rounded-full ring-2 ring-white ${isGranted ? 'bg-emerald-500' : 'bg-[#aa294d]'}`} />
+              <span
+                className={`absolute top-2.5 right-2.5 w-2 h-2 rounded-full ring-2 ring-white ${isGranted ? 'bg-emerald-500' : 'bg-[#aa294d]'}`}
+              />
             </button>
 
             {/* Profile Avatar (44px touch target) */}

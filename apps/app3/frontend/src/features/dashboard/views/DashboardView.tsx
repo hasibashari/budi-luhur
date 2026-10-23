@@ -156,9 +156,12 @@ export default function DashboardView() {
   // Extract meta from notes if available
   const partnerName = dashboardData?.user.partnerName;
   const weddingDate = dashboardData?.user.weddingDate;
+  // Hanya dosis terverifikasi yang boleh menaikkan status TT.
   const ttLevel = Math.max(
     0,
-    ...(dashboardData?.immunizationRecords || []).map(record => Number(record.doseLevel.slice(2))),
+    ...(dashboardData?.immunizationRecords || [])
+      .filter(record => record.verificationStatus === 'VERIFIED')
+      .map(record => Number(record.doseLevel.slice(2))),
     Number(dashboardData?.user.ttStatus?.slice(2) || 0),
   );
 
@@ -346,7 +349,7 @@ export default function DashboardView() {
                       Jadwal Kunjungan Faskes Belum Dikonfigurasi
                     </h4>
                     <p className='text-[11px] sm:text-xs text-amber-800 mt-0.5 leading-relaxed'>
-                      Tentukan hari dan jam kunjungan ke Puskesmas agar PRELUNA dapat mengingatkan
+                      Tentukan hari dan jam kunjungan ke Puskesmas agar TEMANI dapat mengingatkan
                       jadwal imunisasi TT tepat waktu.
                     </p>
                   </div>
@@ -373,10 +376,7 @@ export default function DashboardView() {
 
           {/* 2. Streak Progress Card */}
           <section aria-label='Progres Kepatuhan Suplementasi'>
-            <StreakProgressCard
-              streakCount={currentUser.streakCount}
-              streakUnit={streakUnit}
-            />
+            <StreakProgressCard streakCount={currentUser.streakCount} streakUnit={streakUnit} />
           </section>
 
           {/* 3. Featured Article Banner */}
@@ -476,7 +476,7 @@ export default function DashboardView() {
       <footer className='pt-2 pb-4 text-center'>
         <div className='inline-flex items-center gap-1.5 text-[11px] text-slate-400'>
           <ShieldCheck size={14} className='text-[#2a6950]' />
-          <span>Program Imunisasi Tetanus Toxoid Pranikah • PRELUNA Kemenkes RI</span>
+          <span>Program Imunisasi Tetanus Toxoid Pranikah • TEMANI Kemenkes RI</span>
         </div>
       </footer>
     </div>

@@ -39,7 +39,7 @@ function SendReminderModalContent({
   const getTemplateContent = (templateKey: string) => {
     switch (templateKey) {
       case 'standard':
-        return `Halo ${displayName}, ini pengingat resmi dari Petugas Faskes & KUA (PRELUNA) untuk jadwal imunisasi ${medicationName} (${dosage}) pada jam ${timeSlot}. Jangan lupa hadir membawa KTP dan dokumen skrining pranikah ya!`;
+        return `Halo ${displayName}, ini pengingat resmi dari Petugas Faskes & KUA (TEMANI) untuk jadwal imunisasi ${medicationName} (${dosage}) pada jam ${timeSlot}. Jangan lupa hadir membawa KTP dan dokumen skrining pranikah ya!`;
       case 'friendly':
         return `Halo ${displayName}, cegah tetanus maternal & neonatal dan lindungi calon buah hati kelak! Jangan lupa jadwal imunisasi TT (${medicationName}) kamu hari ini ya. Semoga persiapan hari bahagia lancar selalu!`;
       case 'urgent':
@@ -288,10 +288,5 @@ function SendReminderModalContent({
 export default function SendReminderModal(props: SendReminderModalProps) {
   if (!props.open) return null;
   const keyId = props.userId || props.userName || props.patientId || props.patientName;
-  return (
-    <SendReminderModalContent
-      key={`${keyId}_${props.medicationName || ''}`}
-      {...props}
-    />
-  );
+  return <SendReminderModalContent key={`${keyId}_${props.medicationName || ''}`} {...props} />;
 }

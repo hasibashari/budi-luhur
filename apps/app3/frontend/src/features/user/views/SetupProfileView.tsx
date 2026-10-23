@@ -3,12 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import {
   Building2,
   Calendar,
-  Clock,
   Droplets,
   ArrowRight,
   ArrowLeft,
   Check,
-  Bell,
   AlertCircle,
   Loader2,
   ShieldCheck,
@@ -19,22 +17,6 @@ import {
 import { useAuth } from '@/src/features/auth/context/AuthContext';
 import { saveUserInitialSetupAction } from '../api/userRepository';
 import { Button } from '@/src/shared/components/ui/Button';
-
-const DAYS_OPTIONS = [
-  { day: 'Sabtu', desc: 'Rekomendasi Catin (Akhir Pekan)', isRecommended: true },
-  { day: 'Minggu', desc: 'Waktu santai persiapan', isRecommended: false },
-  { day: 'Jumat', desc: 'Jadwal Poli Pranikah Puskesmas', isRecommended: false },
-  { day: 'Senin', desc: 'Awal pekan bugar', isRecommended: false },
-  { day: 'Selasa', desc: 'Konsultasi klinik', isRecommended: false },
-  { day: 'Rabu', desc: 'Tengah pekan', isRecommended: false },
-  { day: 'Kamis', desc: 'Pemeriksaan rutin KUA', isRecommended: false },
-];
-
-const TIME_PRESETS = [
-  { time: '08:00', label: '08:00 Pagi', desc: 'Jam Buka Faskes / Puskesmas' },
-  { time: '13:00', label: '13:00 Siang', desc: 'Istirahat & Edukasi' },
-  { time: '19:00', label: '19:00 Malam', desc: 'Waktu Santai Bersama Pasangan' },
-];
 
 const TT_HISTORY_PRESETS = [
   { code: 'TT0', label: 'Belum Pernah TT', desc: 'Perlu skrining awal TT1' },
@@ -63,13 +45,10 @@ export function SetupProfileView() {
   const [weight, setWeight] = useState<string>('');
   const [hbLevel, setHbLevel] = useState<string>('');
 
-  // Step 2 Form States (Rencana Pranikah & Jadwal TT)
+  // Step 2 Form States (Rencana Pranikah & Riwayat TT)
   const [partnerName, setPartnerName] = useState('');
   const [weddingDate, setWeddingDate] = useState('');
   const [lastTTStatus, setLastTTStatus] = useState<string>('TT0');
-  const [selectedDay, setSelectedDay] = useState('Sabtu');
-  const [selectedTime, setSelectedTime] = useState('08:00');
-  const [remind15Min, setRemind15Min] = useState(true);
 
   const handleNextStep = (e: React.FormEvent) => {
     e.preventDefault();
@@ -97,16 +76,6 @@ export function SetupProfileView() {
         partnerName: partnerName.trim() || undefined,
         weddingDate: weddingDate || undefined,
         ttStatus: lastTTStatus || 'TT0',
-        schedule: {
-          dayOfWeek: selectedDay,
-          timeSlot: selectedTime,
-          remind15MinBefore: remind15Min,
-          frequency: 'weekly',
-          tabletName: 'Imunisasi TT / Suplementasi Pranikah',
-          dosage: '1 dosis / edukasi berkala',
-          instructions:
-            'Kunjungi Puskesmas/Faskes sesuai jadwal untuk imunisasi TT dan verifikasi surat keterangan sehat pranikah.',
-        },
       });
 
       if (res.success) {
@@ -142,7 +111,7 @@ export function SetupProfileView() {
                   <ShieldCheck size={18} />
                 </div>
                 <span className='font-black text-lg sm:text-xl tracking-tight text-[#8c0f39] uppercase'>
-                  PRELUNA
+                  TEMANI
                 </span>
                 <span className='text-[10px] uppercase font-bold tracking-widest text-[#8c0f39] bg-[#ffd9de] px-2 py-0.5 rounded-md border border-[#ffb3c0]'>
                   Catin Care
@@ -168,13 +137,13 @@ export function SetupProfileView() {
           <div className='mb-4 sm:mb-5 text-left'>
             <h1 className='text-xl sm:text-2xl font-bold text-[#121c2a] tracking-tight flex items-center gap-2'>
               <span>
-                {step === 1 ? 'Lengkapi Data Kesehatan Catin' : 'Rencana Pranikah & Jadwal Faskes'}
+                {step === 1 ? 'Lengkapi Data Kesehatan Catin' : 'Rencana Pranikah & Riwayat TT'}
               </span>
             </h1>
             <p className='text-xs sm:text-sm text-[#574144] mt-1 leading-relaxed'>
               {step === 1
                 ? `Selamat datang, ${authUser?.name || 'Calon Pengantin'}! Lengkapi faskes rujukan dan parameter kesehatan awal untuk sertifikasi kesehatan pranikah.`
-                : 'Atur rencana tanggal pernikahan, riwayat status imunisasi TT Anda saat ini, dan waktu pengingat kunjungan faskes.'}
+                : 'Atur rencana tanggal pernikahan dan riwayat status imunisasi TT Anda saat ini.'}
             </p>
           </div>
 
@@ -198,10 +167,10 @@ export function SetupProfileView() {
             className='flex-1 flex flex-col justify-between animate-fade-in'
           >
             <div className='space-y-4'>
-              {/* Puskesmas / KUA / Faskes Field (Required) */}
+              {/* Puskesmas / PMB / Faskes Field (Required) */}
               <div>
                 <label className='block text-xs font-bold text-[#121c2a] mb-1.5'>
-                  Puskesmas Rujukan / KUA / Domisili <span className='text-[#aa294d]'>*</span>
+                  Puskesmas Rujukan / PMB / Domisili <span className='text-[#aa294d]'>*</span>
                 </label>
                 <div className='relative flex items-center'>
                   <div className='absolute left-3.5 w-8 h-8 rounded-full bg-[#ffd9de]/50 flex items-center justify-center text-[#aa294d]'>
@@ -416,101 +385,7 @@ export function SetupProfileView() {
                 </div>
               </div>
 
-              {/* Day Selector */}
-              <div>
-                <label className='block text-xs font-bold text-[#121c2a] mb-1.5'>
-                  Pilih Hari Konsultasi / Kunjungan Rutin
-                </label>
-                <div className='grid grid-cols-4 sm:grid-cols-7 gap-1.5'>
-                  {DAYS_OPTIONS.map(opt => (
-                    <button
-                      key={opt.day}
-                      type='button'
-                      onClick={() => setSelectedDay(opt.day)}
-                      className={`min-h-[44px] py-2 px-1 rounded-xl border text-center transition-all cursor-pointer active:scale-95 relative ${
-                        selectedDay === opt.day
-                          ? 'bg-[#ffd9de]/60 border-[#aa294d] text-[#8c0f39] font-bold shadow-2xs ring-1 ring-[#aa294d]'
-                          : 'bg-white border-stone-200 text-[#574144] hover:bg-stone-50 font-medium'
-                      }`}
-                    >
-                      {opt.isRecommended && (
-                        <span className='absolute -top-1.5 -right-1 px-1 py-0.2 bg-amber-500 text-[7px] font-bold text-white rounded-full shadow-2xs'>
-                          Kemenkes
-                        </span>
-                      )}
-                      <span className='block text-xs'>{opt.day}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Time Presets & Custom Time */}
-              <div>
-                <label className='block text-xs font-bold text-[#121c2a] mb-1.5'>
-                  Pilih Jam Kunjungan / Notifikasi
-                </label>
-                <div className='grid grid-cols-3 gap-2 mb-2'>
-                  {TIME_PRESETS.map(preset => (
-                    <button
-                      key={preset.time}
-                      type='button'
-                      onClick={() => setSelectedTime(preset.time)}
-                      className={`min-h-[44px] py-2 px-2 rounded-xl border text-center transition-all cursor-pointer active:scale-95 ${
-                        selectedTime === preset.time
-                          ? 'bg-[#ffd9de]/60 border-[#aa294d] text-[#8c0f39] font-bold shadow-2xs ring-1 ring-[#aa294d]'
-                          : 'bg-white border-stone-200 text-[#574144] hover:bg-stone-50'
-                      }`}
-                    >
-                      <span className='block text-xs font-bold'>{preset.time}</span>
-                      <span className='block text-[10px] text-[#64748b] leading-none mt-0.5'>
-                        {preset.label.split(' ')[1]}
-                      </span>
-                    </button>
-                  ))}
-                </div>
-
-                <div className='flex items-center justify-between gap-2 bg-[#fff0f2]/60 px-3.5 py-2.5 rounded-xl border border-[#ffd9de]'>
-                  <div className='flex items-center gap-2 text-xs text-[#574144] font-medium'>
-                    <Clock size={15} className='text-[#aa294d]' />
-                    <span>Jam kustom:</span>
-                  </div>
-                  <input
-                    type='time'
-                    value={selectedTime}
-                    onChange={e => setSelectedTime(e.target.value)}
-                    className='bg-white min-h-[36px] px-2.5 py-1 rounded-lg border border-stone-200 text-xs font-bold text-[#121c2a] outline-none focus:border-[#aa294d]'
-                  />
-                </div>
-              </div>
-
-              {/* Notification Toggle (Card-Clickable) */}
-              <div
-                onClick={() => setRemind15Min(!remind15Min)}
-                className='p-3.5 rounded-2xl bg-[#fff0f2] border border-[#ffd9de] flex items-center justify-between cursor-pointer active:scale-[0.99] transition-transform select-none'
-              >
-                <div className='flex items-center gap-2.5'>
-                  <div className='w-8 h-8 rounded-full bg-white flex items-center justify-center text-[#aa294d] shadow-2xs shrink-0'>
-                    <Bell size={15} />
-                  </div>
-                  <div>
-                    <span className='block text-xs font-bold text-[#121c2a] leading-tight'>
-                      Pengingat 15 Menit Sebelumnya
-                    </span>
-                    <span className='block text-[10px] sm:text-[11px] text-[#574144] leading-tight mt-0.5'>
-                      Notifikasi pengingat jadwal imunisasi TT &amp; cek laboratorium
-                    </span>
-                  </div>
-                </div>
-                <input
-                  type='checkbox'
-                  checked={remind15Min}
-                  onChange={e => {
-                    e.stopPropagation();
-                    setRemind15Min(e.target.checked);
-                  }}
-                  className='w-5 h-5 accent-[#aa294d] rounded cursor-pointer shrink-0 ml-2'
-                />
-              </div>
+              {/* Riwayat TT disimpan sebagai data profil; jadwal imunisasi dikelola di halaman Jadwal TT */}
             </div>
 
             {/* Step 2 Bottom Action Row */}

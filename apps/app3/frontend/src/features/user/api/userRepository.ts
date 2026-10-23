@@ -1,8 +1,8 @@
 import apiClient from '@/src/shared/api/client';
-import { UserProfile, UserScheduleData, UserDashboardData, StreakResult, ImmunizationRecord } from '../types';
+import { UserProfile, UserScheduleData, UserDashboardData, StreakResult, ImmunizationRecord, ImmunizationInput, ImmunizationMutationResult } from '../types';
 
 export type { UserProfile, UserScheduleData, UserDashboardData, StreakResult };
-export type { ImmunizationRecord };
+export type { ImmunizationRecord, ImmunizationInput, ImmunizationMutationResult };
 
 export async function getImmunizationRecordsAction(): Promise<ImmunizationRecord[]> {
   const response = await apiClient.get<ImmunizationRecord[]>('/users/immunizations');
@@ -10,9 +10,29 @@ export async function getImmunizationRecordsAction(): Promise<ImmunizationRecord
 }
 
 export async function saveImmunizationRecordAction(
-  data: Omit<ImmunizationRecord, 'id' | 'verificationStatus'>,
-): Promise<ImmunizationRecord> {
-  const response = await apiClient.post<ImmunizationRecord>('/users/immunizations', data);
+  data: ImmunizationInput,
+): Promise<ImmunizationMutationResult> {
+  const response = await apiClient.post<ImmunizationMutationResult>('/users/immunizations', data);
+  return response.data;
+}
+
+export async function updateImmunizationRecordAction(
+  id: string,
+  data: Partial<ImmunizationInput>,
+): Promise<ImmunizationMutationResult> {
+  const response = await apiClient.put<ImmunizationMutationResult>(
+    `/users/immunizations/${id}`,
+    data,
+  );
+  return response.data;
+}
+
+export async function deleteImmunizationRecordAction(
+  id: string,
+): Promise<{ success: boolean; ttStatus: string }> {
+  const response = await apiClient.delete<{ success: boolean; ttStatus: string }>(
+    `/users/immunizations/${id}`,
+  );
   return response.data;
 }
 

@@ -17,7 +17,7 @@ export default function AdminLayout() {
         {/* Mobile Top App Bar (< md) */}
         <div className='block md:hidden shrink-0'>
           <MobileTopBar
-            brandTitle='PRELUNA'
+            brandTitle='TEMANI'
             brandSubtitle='Portal Faskes & KUA'
             brandHref='/admin/dashboard'
             badge={adminBadge}

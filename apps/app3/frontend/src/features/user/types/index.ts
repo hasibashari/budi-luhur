@@ -19,6 +19,10 @@ export interface UserProfile {
   notes?: string;
 }
 
+export type TTInfoSource = 'self_reported' | 'faskes_record' | 'health_worker';
+export type TTDatePrecision = 'exact' | 'month' | 'year';
+export type TTVerificationStatus = 'PENDING' | 'VERIFIED' | 'REJECTED';
+
 export interface ImmunizationRecord {
   id: string;
   doseLevel: 'TT1' | 'TT2' | 'TT3' | 'TT4' | 'TT5';
@@ -26,7 +30,31 @@ export interface ImmunizationRecord {
   faskesName: string;
   batchNumber?: string;
   notes?: string;
-  verificationStatus: 'PENDING' | 'VERIFIED' | 'REJECTED';
+  infoSource: TTInfoSource;
+  datePrecision: TTDatePrecision;
+  attachmentUrl?: string;
+  verificationStatus: TTVerificationStatus;
+  verifiedBy?: string;
+  verifiedAt?: string;
+  verificationNote?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface ImmunizationInput {
+  doseLevel: ImmunizationRecord['doseLevel'];
+  vaccineDate: string;
+  faskesName: string;
+  batchNumber?: string;
+  notes?: string;
+  infoSource?: TTInfoSource;
+  datePrecision?: TTDatePrecision;
+  attachmentUrl?: string;
+}
+
+export interface ImmunizationMutationResult {
+  record: ImmunizationRecord;
+  warnings: string[];
 }
 
 export interface StreakResult {

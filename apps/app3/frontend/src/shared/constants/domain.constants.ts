@@ -1,6 +1,6 @@
 /**
  * Domain Constants
- * Centralized static domain rules, enumerations, and metadata for PRELUNA.
+ * Centralized static domain rules, enumerations, and metadata for TEMANI.
  * (Premarital Health & Tetanus Toxoid Immunization Standards - Kemenkes RI)
  */
 

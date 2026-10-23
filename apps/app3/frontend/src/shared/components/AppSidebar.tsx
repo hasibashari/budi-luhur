@@ -28,7 +28,7 @@ export interface AppSidebarProps {
 
 export default function AppSidebar({
   navItems,
-  brandTitle = 'PRELUNA',
+  brandTitle = 'TEMANI',
   brandSubtitle = 'Portal Faskes & KUA',
   brandIcon: BrandIcon,
   brandHref = '/admin/dashboard',

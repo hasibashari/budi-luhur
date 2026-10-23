@@ -1,3 +1,4 @@
+import { PoolClient } from 'pg';
 import db from '../../config/database.js';
 import {
   UserProfile,
@@ -7,16 +8,84 @@ import {
 } from '../../types/index.js';
 import { calculateNextSchedule } from '../../utils/scheduleHelpers.js';
 import { calculateChronologicalStreak } from '../../utils/streakCalculator.js';
+import {
+  TTValidationResult,
+  TTDoseLevel,
+  isTTDoseLevel,
+  toDateKey,
+  validateTTRecord,
+} from '../../utils/ttIntervalValidator.js';
+
+export type ImmunizationInfoSource = 'self_reported' | 'faskes_record' | 'health_worker';
+export type ImmunizationDatePrecision = 'exact' | 'month' | 'year';
 
 export interface ImmunizationRecord {
   id: string;
-  doseLevel: 'TT1' | 'TT2' | 'TT3' | 'TT4' | 'TT5';
+  doseLevel: TTDoseLevel;
   vaccineDate: string;
   faskesName: string;
   batchNumber?: string;
   notes?: string;
+  infoSource: ImmunizationInfoSource;
+  datePrecision: ImmunizationDatePrecision;
+  attachmentUrl?: string;
   verificationStatus: 'PENDING' | 'VERIFIED' | 'REJECTED';
+  verifiedBy?: string;
+  verifiedAt?: string;
+  verificationNote?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
+
+export interface SaveImmunizationResult {
+  record: ImmunizationRecord;
+  warnings: string[];
+}
+
+const IMMUNIZATION_SELECT = `
+  SELECT id,
+         dose_level AS "doseLevel",
+         vaccine_date AS "vaccineDate",
+         faskes_name AS "faskesName",
+         batch_number AS "batchNumber",
+         notes,
+         info_source AS "infoSource",
+         date_precision AS "datePrecision",
+         attachment_url AS "attachmentUrl",
+         verification_status AS "verificationStatus",
+         verified_by AS "verifiedBy",
+         verified_at AS "verifiedAt",
+         verification_note AS "verificationNote",
+         created_at AS "createdAt",
+         updated_at AS "updatedAt"
+  FROM immunization_records`;
+
+const IMMUNIZATION_SELECT_INSERT = `
+  INSERT INTO immunization_records
+    (id, user_id, dose_level, vaccine_date, faskes_name, batch_number, notes,
+     info_source, date_precision, attachment_url, verification_status)`;
+
+
+/** Status TT hanya boleh diturunkan dari dosis yang sudah diverifikasi. */
+async function syncTTStatusFromVerified(client: PoolClient, userId: string) {
+  const res = await client.query<{ dose_level: string }>(
+    `SELECT dose_level
+     FROM immunization_records
+     WHERE user_id = $1 AND verification_status = 'VERIFIED' AND deleted_at IS NULL
+     ORDER BY dose_level DESC
+     LIMIT 1`,
+    [userId],
+  );
+  const ttStatus = res.rows[0]?.dose_level || 'TT0';
+  await client.query(
+    `UPDATE user_profiles
+     SET tt_status = $1, last_active_at = CURRENT_TIMESTAMP
+     WHERE user_id = $2`,
+    [ttStatus, userId],
+  );
+  return ttStatus as TTDoseLevel | 'TT0';
+}
+
 
 export class UserService {
   static async calculateAndSyncUserStreak(
@@ -73,11 +142,8 @@ export class UserService {
         [userId],
       ),
       db.query<ImmunizationRecord>(
-        `SELECT id, dose_level AS "doseLevel", vaccine_date AS "vaccineDate",
-                faskes_name AS "faskesName", batch_number AS "batchNumber",
-                notes, verification_status AS "verificationStatus"
-         FROM immunization_records
-         WHERE user_id = $1 AND verification_status <> 'REJECTED'
+        `${IMMUNIZATION_SELECT}
+         WHERE user_id = $1 AND verification_status <> 'REJECTED' AND deleted_at IS NULL
          ORDER BY vaccine_date ASC, dose_level ASC`,
         [userId],
       ),
@@ -281,56 +347,294 @@ export class UserService {
     };
   }
 
+  /**
+   * Riwayat lengkap milik pengguna (termasuk yang masih PENDING & REJECTED)
+   * agar UI bisa menampilkan status verifikasi secara jujur.
+   */
   static async getImmunizationRecords(userId: string): Promise<ImmunizationRecord[]> {
     const result = await db.query<ImmunizationRecord>(
-      `SELECT id, dose_level AS "doseLevel", vaccine_date AS "vaccineDate",
-              faskes_name AS "faskesName", batch_number AS "batchNumber",
-              notes, verification_status AS "verificationStatus"
-       FROM immunization_records
-       WHERE user_id = $1 AND verification_status <> 'REJECTED'
-       ORDER BY vaccine_date ASC, dose_level ASC`,
+      `${IMMUNIZATION_SELECT}
+       WHERE user_id = $1 AND deleted_at IS NULL
+       ORDER BY vaccine_date DESC, dose_level DESC`,
       [userId],
     );
     return result.rows;
   }
 
-  static async saveImmunizationRecord(userId: string, data: {
-    doseLevel: ImmunizationRecord['doseLevel'];
-    vaccineDate: string;
-    faskesName: string;
-    batchNumber?: string;
-    notes?: string;
-  }) {
-    const id = `imm_${Date.now().toString().slice(-8)}`;
-    const doseLevel = String(data.doseLevel).toUpperCase();
-    if (!/^TT[1-5]$/.test(doseLevel) || !data.vaccineDate || !data.faskesName?.trim()) {
-      throw new Error('Dosis, tanggal vaksin, dan faskes wajib diisi.');
+  /** Kumpulan tanggal dosis yang sudah tercatat, untuk validasi interval. */
+  private static async loadValidationContext(userId: string) {
+    const [profileRes, doseRes] = await Promise.all([
+      db.query<{ date_of_birth: string | null; wedding_date: string | null }>(
+        `SELECT u.date_of_birth, p.wedding_date
+         FROM users u
+         LEFT JOIN user_profiles p ON u.id = p.user_id
+         WHERE u.id = $1`,
+        [userId],
+      ),
+      db.query<{ dose_level: string; vaccine_date: string }>(
+        `SELECT dose_level, vaccine_date
+         FROM immunization_records
+         WHERE user_id = $1 AND deleted_at IS NULL AND verification_status <> 'REJECTED'`,
+        [userId],
+      ),
+    ]);
+
+    const existingDates: Partial<Record<TTDoseLevel, string>> = {};
+    for (const row of doseRes.rows) {
+      if (!isTTDoseLevel(row.dose_level)) continue;
+      const key = toDateKey(row.vaccine_date);
+      if (key) existingDates[row.dose_level] = key;
     }
 
-    return db.transaction(async client => {
-      const result = await client.query<ImmunizationRecord>(
-        `INSERT INTO immunization_records
-          (id, user_id, dose_level, vaccine_date, faskes_name, batch_number, notes, verification_status)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, 'VERIFIED')
-         ON CONFLICT (user_id, dose_level) DO UPDATE SET
-           vaccine_date = EXCLUDED.vaccine_date,
-           faskes_name = EXCLUDED.faskes_name,
-           batch_number = EXCLUDED.batch_number,
-           notes = EXCLUDED.notes,
-           verification_status = 'VERIFIED',
-           updated_at = CURRENT_TIMESTAMP
-         RETURNING id, dose_level AS "doseLevel", vaccine_date AS "vaccineDate",
-                   faskes_name AS "faskesName", batch_number AS "batchNumber",
-                   notes, verification_status AS "verificationStatus"`,
-        [id, userId, doseLevel, data.vaccineDate, data.faskesName.trim(), data.batchNumber || null, data.notes || null],
+    return {
+      dateOfBirth: profileRes.rows[0]?.date_of_birth ?? null,
+      weddingDate: profileRes.rows[0]?.wedding_date ?? null,
+      existingDates,
+    };
+  }
+
+  static async saveImmunizationRecord(
+    userId: string,
+    data: {
+      doseLevel: TTDoseLevel;
+      vaccineDate: string;
+      faskesName: string;
+      batchNumber?: string;
+      notes?: string;
+      infoSource?: ImmunizationInfoSource;
+      datePrecision?: ImmunizationDatePrecision;
+      attachmentUrl?: string;
+    },
+  ): Promise<SaveImmunizationResult> {
+    const doseLevel = String(data.doseLevel || '').toUpperCase();
+    if (!isTTDoseLevel(doseLevel)) {
+      throw new Error('Dosis TT tidak valid. Pilih antara TT1 sampai TT5.');
+    }
+    if (!data.vaccineDate || !data.faskesName?.trim()) {
+      throw new Error('Tanggal pemberian dan faskes wajib diisi.');
+    }
+
+    const context = await this.loadValidationContext(userId);
+    const validation: TTValidationResult = validateTTRecord({
+      doseLevel,
+      vaccineDate: data.vaccineDate,
+      existingDates: context.existingDates,
+      dateOfBirth: context.dateOfBirth,
+      weddingDate: context.weddingDate,
+    });
+    if (validation.errors.length > 0) {
+      throw new Error(validation.errors[0]);
+    }
+
+    const record = await db.transaction(async client => {
+      const duplicate = await client.query<{ id: string }>(
+        `SELECT id FROM immunization_records
+         WHERE user_id = $1 AND dose_level = $2
+           AND deleted_at IS NULL AND verification_status <> 'REJECTED'
+         LIMIT 1`,
+        [userId, doseLevel],
       );
+      if (duplicate.rows.length > 0) {
+        throw new Error(
+          `Riwayat ${doseLevel} sudah tercatat. Perbaiki melalui tombol edit pada riwayat tersebut.`,
+        );
+      }
+
+      const id = `imm_${Date.now().toString().slice(-8)}${Math.floor(Math.random() * 900 + 100)}`;
+      const inserted = await client.query<ImmunizationRecord>(
+        `${IMMUNIZATION_SELECT_INSERT}
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, 'PENDING')
+         RETURNING id,
+                   dose_level AS "doseLevel",
+                   vaccine_date AS "vaccineDate",
+                   faskes_name AS "faskesName",
+                   batch_number AS "batchNumber",
+                   notes,
+                   info_source AS "infoSource",
+                   date_precision AS "datePrecision",
+                   attachment_url AS "attachmentUrl",
+                   verification_status AS "verificationStatus",
+                   verified_by AS "verifiedBy",
+                   verified_at AS "verifiedAt",
+                   verification_note AS "verificationNote",
+                   created_at AS "createdAt",
+                   updated_at AS "updatedAt"`,
+        [
+          id,
+          userId,
+          doseLevel,
+          data.vaccineDate,
+          data.faskesName.trim(),
+          data.batchNumber || null,
+          data.notes || null,
+          data.infoSource || 'self_reported',
+          data.datePrecision || 'exact',
+          data.attachmentUrl || null,
+        ],
+      );
+
+      // Jadwal adalah proyeksi riwayat: dosis yang baru dicatat menutup jadwal terkait.
       await client.query(
-        `UPDATE user_profiles
-         SET tt_status = $1, last_active_at = CURRENT_TIMESTAMP
-         WHERE user_id = $2`,
-        [doseLevel, userId],
+        `UPDATE reminder_schedules
+         SET status = 'Selesai', completed_at = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP
+         WHERE user_id = $1 AND tt_level = $2 AND status = 'Aktif'`,
+        [userId, doseLevel],
       );
-      return result.rows[0];
+
+      return inserted.rows[0];
+    });
+
+    return { record, warnings: validation.warnings };
+  }
+
+  static async updateImmunizationRecord(
+    userId: string,
+    recordId: string,
+    data: {
+      doseLevel?: TTDoseLevel;
+      vaccineDate?: string;
+      faskesName?: string;
+      batchNumber?: string | null;
+      notes?: string | null;
+      infoSource?: ImmunizationInfoSource;
+      datePrecision?: ImmunizationDatePrecision;
+      attachmentUrl?: string | null;
+    },
+  ): Promise<SaveImmunizationResult> {
+    const current = await db.query<ImmunizationRecord>(
+      `${IMMUNIZATION_SELECT} WHERE id = $1 AND user_id = $2 AND deleted_at IS NULL`,
+      [recordId, userId],
+    );
+    if (current.rows.length === 0) {
+      throw new Error('Riwayat imunisasi tidak ditemukan.');
+    }
+
+    const previous = current.rows[0];
+    const doseLevel = (data.doseLevel ? String(data.doseLevel).toUpperCase() : previous.doseLevel) as TTDoseLevel;
+    if (!isTTDoseLevel(doseLevel)) {
+      throw new Error('Dosis TT tidak valid. Pilih antara TT1 sampai TT5.');
+    }
+    const vaccineDate = toDateKey(data.vaccineDate) || toDateKey(previous.vaccineDate) || '';
+    const faskesName = (data.faskesName ?? previous.faskesName ?? '').trim();
+    if (!vaccineDate || !faskesName) {
+      throw new Error('Tanggal pemberian dan faskes wajib diisi.');
+    }
+
+    const context = await this.loadValidationContext(userId);
+    // Saat edit, abaikan tanggal milik record ini agar tidak dibandingkan dengan dirinya sendiri.
+    if (isTTDoseLevel(previous.doseLevel) && context.existingDates[previous.doseLevel]) {
+      delete context.existingDates[previous.doseLevel];
+    }
+    const validation = validateTTRecord({
+      doseLevel,
+      vaccineDate,
+      existingDates: context.existingDates,
+      dateOfBirth: context.dateOfBirth,
+      weddingDate: context.weddingDate,
+    });
+    if (validation.errors.length > 0) {
+      throw new Error(validation.errors[0]);
+    }
+
+    const updated = await db.transaction(async client => {
+      const res = await client.query<ImmunizationRecord>(
+        `UPDATE immunization_records
+         SET dose_level = $1,
+             vaccine_date = $2,
+             faskes_name = $3,
+             batch_number = $4,
+             notes = $5,
+             info_source = $6,
+             date_precision = $7,
+             attachment_url = $8,
+             verification_status = 'PENDING',
+             verified_by = NULL,
+             verified_at = NULL,
+             verification_note = NULL,
+             updated_at = CURRENT_TIMESTAMP
+         WHERE id = $9 AND user_id = $10 AND deleted_at IS NULL
+         RETURNING id,
+                   dose_level AS "doseLevel",
+                   vaccine_date AS "vaccineDate",
+                   faskes_name AS "faskesName",
+                   batch_number AS "batchNumber",
+                   notes,
+                   info_source AS "infoSource",
+                   date_precision AS "datePrecision",
+                   attachment_url AS "attachmentUrl",
+                   verification_status AS "verificationStatus",
+                   verified_by AS "verifiedBy",
+                   verified_at AS "verifiedAt",
+                   verification_note AS "verificationNote",
+                   created_at AS "createdAt",
+                   updated_at AS "updatedAt"`,
+        [
+          doseLevel,
+          vaccineDate,
+          faskesName,
+          data.batchNumber ?? previous.batchNumber ?? null,
+          data.notes ?? previous.notes ?? null,
+          data.infoSource || previous.infoSource || 'self_reported',
+          data.datePrecision || previous.datePrecision || 'exact',
+          data.attachmentUrl ?? previous.attachmentUrl ?? null,
+          recordId,
+          userId,
+        ],
+      );
+
+      // Data berubah → status verifikasi perlu diulang.
+      await syncTTStatusFromVerified(client, userId);
+      return res.rows[0];
+    });
+
+    return { record: updated, warnings: validation.warnings };
+  }
+
+  static async deleteImmunizationRecord(userId: string, recordId: string) {
+    return db.transaction(async client => {
+      const res = await client.query<{ id: string }>(
+        `UPDATE immunization_records
+         SET deleted_at = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP
+         WHERE id = $1 AND user_id = $2 AND deleted_at IS NULL
+         RETURNING id`,
+        [recordId, userId],
+      );
+      if (res.rows.length === 0) {
+        throw new Error('Riwayat imunisasi tidak ditemukan.');
+      }
+      const ttStatus = await syncTTStatusFromVerified(client, userId);
+      return { success: true, ttStatus };
+    });
+  }
+
+  /**
+   * Verifikasi/reject oleh tenaga kesehatan. Hanya memengaruhi status TT
+   * melalui dosis yang benar-benar VERIFIED.
+   */
+  static async verifyImmunizationRecord(
+    recordId: string,
+    status: 'VERIFIED' | 'REJECTED',
+    verifiedBy: string,
+    note?: string | null,
+  ) {
+    return db.transaction(async client => {
+      const res = await client.query<{ id: string; user_id: string }>(
+        `UPDATE immunization_records
+         SET verification_status = $1,
+             verified_by = $2,
+             verified_at = CURRENT_TIMESTAMP,
+             verification_note = $3,
+             updated_at = CURRENT_TIMESTAMP
+         WHERE id = $4 AND deleted_at IS NULL
+         RETURNING id, user_id`,
+        [status, verifiedBy, note || null, recordId],
+      );
+      if (res.rows.length === 0) {
+        throw new Error('Riwayat imunisasi tidak ditemukan.');
+      }
+      const userId = res.rows[0].user_id;
+      const ttStatus = await syncTTStatusFromVerified(client, userId);
+      return { success: true, ttStatus };
     });
   }
 
@@ -488,34 +792,8 @@ export class UserService {
           userId,
         ],
       );
-
-      // 2. Create initial reminder schedule if provided
-      if (data.schedule) {
-        const schedId = `sch_${Date.now().toString().slice(-6)}`;
-        await client.query(
-          `INSERT INTO reminder_schedules (
-            id, user_id, tablet_name, dosage, frequency, day_of_week, time_slot, is_enabled, remind_15min_before, instructions, status
-          ) VALUES ($1, $2, $3, $4, $5, $6, $7, true, $8, $9, 'Aktif')`,
-          [
-            schedId,
-            userId,
-            data.schedule.tabletName || 'Tablet Tambah Darah (TTD)',
-            data.schedule.dosage || '1 tablet',
-            data.schedule.frequency || 'weekly',
-            data.schedule.dayOfWeek || 'Sabtu',
-            data.schedule.timeSlot || '20:00',
-            data.schedule.remind15MinBefore ?? true,
-            'Minum setelah makan malam atau sebelum tidur dengan air putih.',
-          ],
-        );
-
-        await client.query(`INSERT INTO schedule_time_slots (schedule_id, time) VALUES ($1, $2)`, [
-          schedId,
-          data.schedule.timeSlot || '20:00',
-        ]);
-      }
     });
 
-    return { success: true, message: 'Setup profil awal dan jadwal berhasil disimpan.' };
+    return { success: true, message: 'Setup profil awal berhasil disimpan.' };
   }
 }

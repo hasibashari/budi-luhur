@@ -62,7 +62,7 @@ export function LoginForm({ hideHeader = false }: LoginFormProps) {
       {!hideHeader && (
         <div className='mb-6 text-left'>
           <h2 className='text-2xl font-extrabold text-[#121c2a] tracking-tight mb-1'>
-            Masuk ke PRELUNA
+            Masuk ke TEMANI
           </h2>
           <p className='text-xs sm:text-sm text-[#574144]'>
             Masukkan kredensial akun Calon Pengantin atau Petugas Faskes/KUA Anda.
@@ -74,7 +74,8 @@ export function LoginForm({ hideHeader = false }: LoginFormProps) {
         <div className='mb-4 p-3.5 rounded-2xl bg-[#ecfdf5] border border-[#aff1d0] text-[#166534] text-xs sm:text-sm font-semibold flex items-center gap-2 animate-fade-in'>
           <CheckCircle2 size={16} className='text-[#2a6950] shrink-0' />
           <span>
-            Akun Calon Pengantin berhasil dibuat! Silakan masuk menggunakan email dan kata sandi Anda.
+            Akun Calon Pengantin berhasil dibuat! Silakan masuk menggunakan email dan kata sandi
+            Anda.
           </span>
         </div>
       )}
@@ -82,7 +83,11 @@ export function LoginForm({ hideHeader = false }: LoginFormProps) {
       {errorMessage && (
         <div className='mb-4 p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs sm:text-sm font-semibold flex items-center gap-2 animate-fade-in'>
           <AlertCircle size={16} className='text-rose-600 shrink-0' />
-          <span>{typeof errorMessage === 'string' ? errorMessage : (errorMessage as any)?.message || JSON.stringify(errorMessage)}</span>
+          <span>
+            {typeof errorMessage === 'string'
+              ? errorMessage
+              : (errorMessage as any)?.message || JSON.stringify(errorMessage)}
+          </span>
         </div>
       )}
 
@@ -97,9 +102,7 @@ export function LoginForm({ hideHeader = false }: LoginFormProps) {
 
       <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
         <div>
-          <label className='text-xs font-bold text-[#121c2a] mb-1.5 block'>
-            Email Terdaftar
-          </label>
+          <label className='text-xs font-bold text-[#121c2a] mb-1.5 block'>Email Terdaftar</label>
           <div className='relative flex items-center'>
             <div className='absolute left-3.5 w-8 h-8 rounded-full bg-[#ffd9de]/50 flex items-center justify-center text-[#aa294d]'>
               <Mail size={15} />

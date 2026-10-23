@@ -24,22 +24,36 @@ export const OnboardingIllustration: React.FC<OnboardingIllustrationProps> = ({
         className='w-full h-full drop-shadow-2xl overflow-visible'
       >
         <defs>
-          {/* Official PRELUNA Ruby Gradient */}
-          <linearGradient id='prelunaShieldGrad' x1='30' y1='20' x2='130' y2='140' gradientUnits='userSpaceOnUse'>
+          {/* Official TEMANI Ruby Gradient */}
+          <linearGradient
+            id='temaniShieldGrad'
+            x1='30'
+            y1='20'
+            x2='130'
+            y2='140'
+            gradientUnits='userSpaceOnUse'
+          >
             <stop offset='0%' stopColor='#cb4364' />
             <stop offset='50%' stopColor='#aa294d' />
             <stop offset='100%' stopColor='#8c0f39' />
           </linearGradient>
 
           {/* Golden Wedding Rings Gradient */}
-          <linearGradient id='prelunaGoldRing' x1='0' y1='0' x2='1' y2='1'>
+          <linearGradient id='temaniGoldRing' x1='0' y1='0' x2='1' y2='1'>
             <stop offset='0%' stopColor='#fde68a' />
             <stop offset='45%' stopColor='#f59e0b' />
             <stop offset='100%' stopColor='#b45309' />
           </linearGradient>
 
           {/* Top-down Glass Gloss Inset */}
-          <linearGradient id='prelunaGloss' x1='40' y1='25' x2='80' y2='90' gradientUnits='userSpaceOnUse'>
+          <linearGradient
+            id='temaniGloss'
+            x1='40'
+            y1='25'
+            x2='80'
+            y2='90'
+            gradientUnits='userSpaceOnUse'
+          >
             <stop offset='0%' stopColor='#ffffff' stopOpacity='0.55' />
             <stop offset='100%' stopColor='#ffffff' stopOpacity='0' />
           </linearGradient>
@@ -51,13 +65,13 @@ export const OnboardingIllustration: React.FC<OnboardingIllustrationProps> = ({
         {/* Main Ruby Shield */}
         <path
           d='M80 18 L128 36 C128 88 106 126 80 144 C54 126 32 88 32 36 L80 18 Z'
-          fill='url(#prelunaShieldGrad)'
+          fill='url(#temaniShieldGrad)'
         />
 
         {/* Shield Glass Inset */}
         <path
           d='M80 26 L120 42 C120 82 102 116 80 132 C58 116 40 82 40 42 L80 26 Z'
-          fill='url(#prelunaGloss)'
+          fill='url(#temaniGloss)'
         />
 
         {/* Crisp White Medical Cross */}
@@ -66,9 +80,31 @@ export const OnboardingIllustration: React.FC<OnboardingIllustrationProps> = ({
 
         {/* Interlocking Golden Wedding Rings */}
         <g transform='translate(60, 94)'>
-          <circle cx='14' cy='14' r='12' stroke='url(#prelunaGoldRing)' strokeWidth='3.5' fill='none' />
-          <circle cx='26' cy='14' r='12' stroke='url(#prelunaGoldRing)' strokeWidth='3.5' fill='none' />
-          <circle cx='14' cy='14' r='14' stroke='#ffffff' strokeWidth='0.8' strokeDasharray='2 3' fill='none' />
+          <circle
+            cx='14'
+            cy='14'
+            r='12'
+            stroke='url(#temaniGoldRing)'
+            strokeWidth='3.5'
+            fill='none'
+          />
+          <circle
+            cx='26'
+            cy='14'
+            r='12'
+            stroke='url(#temaniGoldRing)'
+            strokeWidth='3.5'
+            fill='none'
+          />
+          <circle
+            cx='14'
+            cy='14'
+            r='14'
+            stroke='#ffffff'
+            strokeWidth='0.8'
+            strokeDasharray='2 3'
+            fill='none'
+          />
         </g>
 
         {/* Sparkles of Hope and Blessings */}

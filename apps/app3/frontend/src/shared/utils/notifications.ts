@@ -136,7 +136,12 @@ export async function showSystemNotification(
   // Preferred: Show notification via active Service Worker (required for mobile background & lockscreen)
   if ('serviceWorker' in navigator) {
     try {
-      const registration = await navigator.serviceWorker.ready
+      // `navigator.serviceWorker.ready` tidak pernah resolve bila belum ada SW
+      // aktif, sehingga fallback di bawah tidak akan pernah dijalankan.
+      const registration = await Promise.race([
+        navigator.serviceWorker.ready,
+        new Promise<null>(resolve => setTimeout(() => resolve(null), 1500)),
+      ])
       if (registration && registration.showNotification) {
         await registration.showNotification(title, defaultOptions)
         return true

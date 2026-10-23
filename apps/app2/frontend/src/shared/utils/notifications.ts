@@ -8,8 +8,54 @@ export interface SystemNotificationOptions extends NotificationOptions {
   vibrate?: number[]
 }
 
-function getServiceWorkerPath() {
-  return '/sw.js'
+/**
+ * Kandidat lokasi Service Worker.
+ *
+ * - Mode normal: `/app2/sw.js` dengan scope `/app2/` (sesuai `base` Vite app2).
+ * - Fallback: `/sw.js` (mis. saat app2 berjalan di bawah domain portal yang
+ *   menyediakan Service Worker di root).
+ */
+function getServiceWorkerCandidates(): Array<{ url: string; scope: string }> {
+  const base = import.meta.env.BASE_URL || '/'
+  const normalizedBase = `/${base}/`.replace(/\/+/g, '/')
+  const candidates = [
+    { url: `${normalizedBase}sw.js`.replace(/\/+/g, '/'), scope: normalizedBase },
+    { url: '/sw.js', scope: '/' },
+  ]
+  return candidates.filter((candidate, index) => candidates.findIndex(c => c.url === candidate.url) === index)
+}
+
+/** Daftarkan Service Worker pertama yang berhasil (dipakai untuk Web Push). */
+async function registerPushServiceWorker(): Promise<ServiceWorkerRegistration | null> {
+  for (const candidate of getServiceWorkerCandidates()) {
+    try {
+      return await navigator.serviceWorker.register(candidate.url, { scope: candidate.scope })
+    } catch (error) {
+      console.warn(`[Push] Gagal mendaftarkan Service Worker ${candidate.url}:`, error)
+    }
+  }
+  return null
+}
+
+/**
+ * Daftarkan Service Worker sedini mungkin saat aplikasi dibuka.
+ * Tanpa SW aktif, notifikasi di mobile tidak bisa tampil di lockscreen dan
+ * `navigator.serviceWorker.ready` tidak akan pernah resolve.
+ */
+export function registerAppServiceWorker(): void {
+  if (typeof window === 'undefined' || !('serviceWorker' in navigator)) return
+
+  const register = () => {
+    registerPushServiceWorker().catch(error => {
+      console.error('[SW] Registrasi Service Worker gagal:', error)
+    })
+  }
+
+  if (document.readyState === 'complete') {
+    register()
+  } else {
+    window.addEventListener('load', register, { once: true })
+  }
 }
 
 function urlBase64ToUint8Array(value: string) {
@@ -21,9 +67,8 @@ function urlBase64ToUint8Array(value: string) {
 export async function subscribeToPush(): Promise<boolean> {
   if (!('serviceWorker' in navigator) || !isNotificationSupported() || Notification.permission !== 'granted') return false
   try {
-    const registrations = await navigator.serviceWorker.getRegistrations()
-    await Promise.all(registrations.filter(registration => /\/app2\/sw\.js$/.test(registration.active?.scriptURL || '')).map(registration => registration.unregister()))
-    const registration = await navigator.serviceWorker.register(getServiceWorkerPath(), { scope: '/' })
+    const registration = await registerPushServiceWorker()
+    if (!registration) return false
     const { data } = await apiClient.get<{ publicKey: string | null }>('/notifications/public-key')
     if (!data.publicKey) return false
     const existing = await registration.pushManager.getSubscription()
@@ -136,7 +181,12 @@ export async function showSystemNotification(
   // Preferred: Show notification via active Service Worker (required for mobile background & lockscreen)
   if ('serviceWorker' in navigator) {
     try {
-      const registration = await navigator.serviceWorker.ready
+      // `navigator.serviceWorker.ready` tidak pernah resolve jika belum ada SW
+      // yang aktif. Beri batas waktu agar fallback di bawah tetap dijalankan.
+      const registration = await Promise.race([
+        navigator.serviceWorker.ready,
+        new Promise<null>(resolve => setTimeout(() => resolve(null), 1500)),
+      ])
       if (registration && registration.showNotification) {
         await registration.showNotification(title, defaultOptions)
         return true

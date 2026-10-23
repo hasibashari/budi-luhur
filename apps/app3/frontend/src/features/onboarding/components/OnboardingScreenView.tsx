@@ -8,7 +8,7 @@ export interface OnboardingScreenViewProps {
 }
 
 export function OnboardingScreenView({
-  statusText = 'Memuat aplikasi PRELUNA...',
+  statusText = 'Memuat aplikasi TEMANI...',
   fullScreen = true,
 }: OnboardingScreenViewProps) {
   return (
@@ -29,7 +29,7 @@ export function OnboardingScreenView({
         </div>
 
         <h1 className='text-3xl sm:text-4xl md:text-5xl font-black text-[#8c0f39] tracking-widest flex items-center justify-center gap-2 mb-2 uppercase'>
-          <span>PRELUNA</span>
+          <span>TEMANI</span>
         </h1>
 
         <div className='mb-2'>
@@ -40,7 +40,7 @@ export function OnboardingScreenView({
         </div>
 
         <p className='text-xs sm:text-sm font-medium text-[#574144] tracking-wide max-w-xs sm:max-w-sm leading-relaxed mt-1'>
-          Perlindungan Tetanus Maternal &amp; Neonatal Calon Pengantin Terpadu
+          Teknologi Edukasi Pranikah &amp; Pemantauan Imunisasi Tetanus
         </p>
       </div>
 
@@ -50,9 +50,7 @@ export function OnboardingScreenView({
           <span className='w-2.5 h-2.5 rounded-full bg-[#cb4364] animate-bounce delay-150' />
           <span className='w-2.5 h-2.5 rounded-full bg-[#2a6950] animate-bounce delay-300' />
         </div>
-        <span className='text-xs text-[#574144] font-semibold tracking-wide'>
-          {statusText}
-        </span>
+        <span className='text-xs text-[#574144] font-semibold tracking-wide'>{statusText}</span>
         <span className='text-[10px] text-[#64748b] tracking-wider uppercase font-medium mt-1 text-center'>
           Standar Pelayanan Calon Pengantin Kemenkes RI
         </span>

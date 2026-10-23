@@ -24,7 +24,7 @@ export class NotificationService {
     return { success: true };
   }
 
-  static async sendToUser(userId: string, payload: { title: string; body: string; url?: string }) {
+  static async sendToUser(userId: string, payload: { title: string; body: string; url?: string; tag?: string }) {
     if (!vapidConfigured) return { sent: 0, configured: false };
     const result = await db.query<{ endpoint: string; subscription: PushSubscription }>(
       `SELECT endpoint, subscription FROM push_subscriptions WHERE user_id = $1`, [userId],

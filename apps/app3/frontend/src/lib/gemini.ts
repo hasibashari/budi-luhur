@@ -14,7 +14,7 @@ export async function generateAiArticleDraftAction(
   error?: string;
 }> {
   try {
-    const prompt = `Buatkan artikel edukasi kesehatan tentang ${topic} (Kategori: ${category}) untuk aplikasi kesehatan pranikah dan imunisasi TT calon pengantin PRELUNA (Kemenkes RI). Berikan format JSON dengan properti title, summary, content (format Markdown), dan readTime.`;
+    const prompt = `Buatkan artikel edukasi kesehatan tentang ${topic} (Kategori: ${category}) untuk aplikasi kesehatan pranikah dan imunisasi TT calon pengantin TEMANI (Teknologi Edukasi Pranikah dan Pemantauan Imunisasi Tetanus, Kemenkes RI). Berikan format JSON dengan properti title, summary, content (format Markdown), dan readTime.`;
     const res = await apiClient.post<{ answer: string }>('/consultation/ask', { prompt });
     let title = topic;
     let summary = `Materi edukasi mengenai ${topic} untuk kesehatan pranikah dan persiapan kehamilan sehat.`;
@@ -31,7 +31,7 @@ export async function generateAiArticleDraftAction(
         if (parsed.content) content = parsed.content;
         if (parsed.readTime) readTime = parsed.readTime;
       }
-    } catch {}
+    } catch { }
 
     return {
       success: true,

@@ -144,7 +144,7 @@ export function RegisterForm({ onSwitchTab, hideHeader = false }: RegisterFormPr
       {!hideHeader && (
         <div className='mb-6 text-left'>
           <h2 className='text-2xl font-extrabold text-[#121c2a] tracking-tight mb-1'>
-            Daftar Akun PRELUNA
+            Daftar Akun TEMANI
           </h2>
           <p className='text-xs sm:text-sm text-[#574144]'>
             Daftarkan akun Calon Pengantin untuk memulai pemantauan imunisasi TT dan kesehatan

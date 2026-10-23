@@ -347,7 +347,7 @@ export default function ProfileView() {
           Profil Calon Pengantin
         </h2>
         <p className='text-xs sm:text-sm text-slate-500 mt-0.5'>
-          Informasi identitas pranikah, status imunisasi TT Kemenkes, dan preferensi layanan PRELUNA
+          Informasi identitas pranikah, status imunisasi TT Kemenkes, dan preferensi layanan TEMANI
         </p>
       </div>
 
@@ -357,7 +357,7 @@ export default function ProfileView() {
         avatarUrl={userProfile.avatarUrl}
         roleBadgeText='Calon Pengantin Wanita (Catin)'
         roleBadgeColor='user'
-        subtitle={`${userProfile.schoolOrOrg || 'Faskes belum dipilih'} • PRELUNA 💍`}
+        subtitle={`${userProfile.schoolOrOrg || 'Faskes belum dipilih'} • TEMANI 💍`}
         verified={true}
         verifiedText='Terverifikasi'
         onEditClick={handleOpenEdit}
@@ -400,7 +400,7 @@ export default function ProfileView() {
       <ProfileSecuritySection
         onLogoutClick={() => setIsLogoutModalOpen(true)}
         onDeleteAccountClick={handleOpenDeleteModal}
-        lastLoginText='Hari ini via Web App PRELUNA'
+        lastLoginText='Hari ini via Web App TEMANI'
       />
 
       {/* Vaccine Card Modal */}
@@ -469,7 +469,7 @@ export default function ProfileView() {
       {isLogoutModalOpen && (
         <div className='fixed inset-0 z-[80] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fade-in'>
           <div className='relative z-10 bg-white rounded-3xl shadow-2xl border border-stone-200 max-w-sm w-full p-6 text-center animate-scale-up'>
-            <h3 className='text-base font-bold text-slate-900'>Keluar dari PRELUNA?</h3>
+            <h3 className='text-base font-bold text-slate-900'>Keluar dari TEMANI?</h3>
             <p className='text-xs text-slate-600 mt-1 mb-5'>
               Anda perlu masuk kembali untuk mengakses kartu vaksin digital dan jadwal kunjungan
               faskes.

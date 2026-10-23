@@ -1,13 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  Mail,
-  Phone,
-  Shield,
-  Building,
-  CheckCircle2,
-  Check,
-} from 'lucide-react';
+import { Mail, Phone, Shield, Building, CheckCircle2, Check } from 'lucide-react';
 import {
   ProfileHeaderCard,
   ProfileContactCard,
@@ -210,14 +203,16 @@ export default function AdminProfileView() {
       {/* 3. Contact Card */}
       <ProfileContactCard
         title='Informasi Kontak Dinas'
-        subtitle='Saluran komunikasi resmi petugas faskes & KUA PRELUNA'
+        subtitle='Saluran komunikasi resmi petugas faskes & KUA TEMANI'
         items={contactItems}
       />
 
       {/* 4. Security & Logout */}
       <ProfileSecuritySection
         onLogoutClick={handleConfirmLogout}
-        onChangePasswordClick={() => showToast('Ubah password admin dapat dilakukan via pengaturan master.')}
+        onChangePasswordClick={() =>
+          showToast('Ubah password admin dapat dilakukan via pengaturan master.')
+        }
       />
 
       {/* 5. Edit Modal */}
@@ -230,7 +225,9 @@ export default function AdminProfileView() {
         isSaving={isSaving}
       >
         <div>
-          <label className='block text-xs font-bold text-[#121c2a] mb-1.5'>Nama Lengkap & Gelar</label>
+          <label className='block text-xs font-bold text-[#121c2a] mb-1.5'>
+            Nama Lengkap & Gelar
+          </label>
           <input
             type='text'
             value={editForm.name}
@@ -252,7 +249,9 @@ export default function AdminProfileView() {
         </div>
 
         <div>
-          <label className='block text-xs font-bold text-[#121c2a] mb-1.5'>Nomor Telepon Dinas</label>
+          <label className='block text-xs font-bold text-[#121c2a] mb-1.5'>
+            Nomor Telepon Dinas
+          </label>
           <input
             type='tel'
             value={editForm.phone}

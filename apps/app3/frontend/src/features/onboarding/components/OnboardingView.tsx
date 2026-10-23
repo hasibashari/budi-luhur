@@ -128,7 +128,7 @@ export function OnboardingView() {
           {/* App Name at top center */}
           <div className='flex items-center gap-1.5'>
             <span className='font-black text-lg sm:text-xl tracking-widest text-[#8c0f39] uppercase'>
-              PRELUNA
+              TEMANI
             </span>
             <span className='text-base sm:text-lg'>💍</span>
           </div>
@@ -154,7 +154,7 @@ export function OnboardingView() {
           key={slide.id}
           className='flex-1 min-h-0 flex flex-col items-center justify-center text-center my-auto py-2 sm:py-4 animate-fade-in w-full max-w-sm mx-auto overflow-hidden'
         >
-          {/* Custom PRELUNA Illustration */}
+          {/* Custom TEMANI Illustration */}
           <div className='mb-4 sm:mb-6 shrink-0 transition-transform duration-300 hover:scale-105'>
             <IllustrationComponent size={145} className='sm:w-[160px] sm:h-[160px]' />
           </div>

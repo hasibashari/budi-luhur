@@ -10,5 +10,12 @@ userRoutes.put('/profile', authMiddleware as any, UserController.updateProfile a
 userRoutes.post('/setup', authMiddleware as any, UserController.saveInitialSetup as any);
 userRoutes.get('/immunizations', authMiddleware as any, UserController.getImmunizationRecords as any);
 userRoutes.post('/immunizations', authMiddleware as any, UserController.saveImmunizationRecord as any);
+userRoutes.put('/immunizations/:id', authMiddleware as any, UserController.updateImmunizationRecord as any);
+userRoutes.delete('/immunizations/:id', authMiddleware as any, UserController.deleteImmunizationRecord as any);
+userRoutes.patch(
+  '/immunizations/:id/verification',
+  authMiddleware as any,
+  UserController.verifyImmunizationRecord as any,
+);
 
 export default userRoutes;

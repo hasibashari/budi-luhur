@@ -1,6 +1,15 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { Menu, X, ShieldCheck, LogOut, LayoutDashboard, Sparkles, ChevronDown, ArrowLeft } from 'lucide-react';
+import {
+  Menu,
+  X,
+  ShieldCheck,
+  LogOut,
+  LayoutDashboard,
+  Sparkles,
+  ChevronDown,
+  ArrowLeft,
+} from 'lucide-react';
 import { Avatar } from './ui/Avatar';
 import { cn } from '../utils/cn';
 import { useAuth } from '@/src/features/auth';
@@ -65,7 +74,7 @@ export default function Navbar() {
               <ShieldCheck size={22} className='text-white' />
             </div>
             <span className='text-xl font-extrabold text-[#0f172a] tracking-tight flex items-center gap-1.5'>
-              <span>PRELUNA</span>
+              <span>TEMANI</span>
             </span>
           </Link>
         </div>

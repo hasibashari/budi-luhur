@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="192" height="192" fill="none">
   <defs>
-    <linearGradient id="prelunaBg" x1="0%" y1="0%" x2="100%" y2="100%">
+    <linearGradient id="temaniBg" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#cb4364"/>
       <stop offset="50%" stop-color="#aa294d"/>
       <stop offset="100%" stop-color="#70102b"/>
@@ -9,13 +9,13 @@
       <stop offset="0%" stop-color="#ffffff"/>
       <stop offset="100%" stop-color="#ffe4e8"/>
     </linearGradient>
-    <filter id="prelunaShadow" x="-10%" y="-10%" width="130%" height="130%">
+    <filter id="temaniShadow" x="-10%" y="-10%" width="130%" height="130%">
       <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#4c0519" flood-opacity="0.38"/>
     </filter>
   </defs>
   
   <!-- Outer Rounded Container -->
-  <rect width="120" height="120" rx="28" fill="url(#prelunaBg)" filter="url(#prelunaShadow)"/>
+  <rect width="120" height="120" rx="28" fill="url(#temaniBg)" filter="url(#temaniShadow)"/>
   
   <!-- Subtle Internal Highlight Ring -->
   <rect x="2" y="2" width="116" height="116" rx="26" stroke="#ffffff" stroke-opacity="0.25" stroke-width="2"/>

@@ -4,6 +4,7 @@ import MobileTopBar from '@/src/shared/components/MobileTopBar';
 import MobileBottomBar from '@/src/shared/components/MobileBottomBar';
 import UserSidebar from './UserSidebar';
 import { AuthGuard, useAuth } from '@/src/features/auth';
+import { useTTScheduleReminders } from '@/src/features/schedule/hooks/useTTScheduleReminders';
 
 export interface UserLayoutProps {
   children?: React.ReactNode;
@@ -13,9 +14,15 @@ export default function UserLayout({ children }: UserLayoutProps) {
   const location = useLocation();
   const pathname = location.pathname;
   const { user } = useAuth();
-  const fullName = user?.name || 'Calon Pengantin PRELUNA';
+  const fullName = user?.name || 'Calon Pengantin TEMANI';
   const firstName = user?.name ? user.name.split(' ')[0] : 'Calon Pengantin';
   const avatarUrl = user?.avatarUrl || null;
+
+  // Pengingat jadwal imunisasi TT aktif di seluruh halaman portal user.
+  useTTScheduleReminders({
+    userId: user?.id,
+    enabled: Boolean(user?.id) && pathname !== '/user/setup',
+  });
 
   if (pathname === '/user/setup') {
     return <AuthGuard requiredRole='user'>{children || <Outlet />}</AuthGuard>;

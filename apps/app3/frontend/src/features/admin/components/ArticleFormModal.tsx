@@ -176,7 +176,7 @@ export default function ArticleFormModal({
           </div>
           <div>
             <div className='font-bold text-[#121c2a] text-xs sm:text-sm'>
-              Asisten Penulis Medis Pranikah PRELUNA AI
+              Asisten Penulis Medis Pranikah TEMANI AI
             </div>
             <div className='text-[11px] text-[#574144]'>
               Susun materi edukasi, ringkasan, dan rujukan klinis TT secara instan

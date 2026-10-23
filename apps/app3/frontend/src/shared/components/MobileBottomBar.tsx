@@ -31,7 +31,7 @@ export default function MobileBottomBar({ items = USER_BOTTOM_NAV_ITEMS }: Mobil
 
   return (
     <nav
-      aria-label='Navigasi Bawah PRELUNA'
+      aria-label='Navigasi Bawah TEMANI'
       className='fixed bottom-0 left-0 right-0 z-50 md:hidden bg-[#ffffff]/94 backdrop-blur-xl border-t border-[#e6eeff] shadow-[0_-4px_20px_rgba(170,41,77,0.06)]'
       style={{ paddingBottom: 'max(0.5rem, env(safe-area-inset-bottom, 0px))' }}
     >
@@ -39,7 +39,8 @@ export default function MobileBottomBar({ items = USER_BOTTOM_NAV_ITEMS }: Mobil
         {items.map(item => {
           const isActive =
             pathname === item.href ||
-            (item.matchPrefixes && item.matchPrefixes.some(prefix => pathname?.startsWith(prefix))) ||
+            (item.matchPrefixes &&
+              item.matchPrefixes.some(prefix => pathname?.startsWith(prefix))) ||
             (item.href !== '/user/dashboard' && pathname?.startsWith(item.href));
           const Icon = item.icon;
 
