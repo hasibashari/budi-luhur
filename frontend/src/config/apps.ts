@@ -11,7 +11,7 @@ export interface AppInfo {
   port: number;
   backendPort: number;
   badge: string;
-  logoType: 'femory' | 'pilluna' | 'preluna';
+  logoType: 'femory' | 'pilluna' | 'temani';
   colorScheme: {
     bgLight: string;
     badgeBg: string;
@@ -35,18 +35,9 @@ const cleanUrl = (url?: string, fallback = ''): string => {
   return (url || fallback).trim().replace(/\/+$/, '');
 };
 
-const app1BaseUrl = cleanUrl(
-  import.meta.env.VITE_APP_1_URL,
-  '/app1'
-);
-const app2BaseUrl = cleanUrl(
-  import.meta.env.VITE_APP_2_URL,
-  '/app2'
-);
-const app3BaseUrl = cleanUrl(
-  import.meta.env.VITE_APP_3_URL,
-  '/app3'
-);
+const app1BaseUrl = cleanUrl(import.meta.env.VITE_APP_1_URL, '/app1');
+const app2BaseUrl = cleanUrl(import.meta.env.VITE_APP_2_URL, '/app2');
+const app3BaseUrl = cleanUrl(import.meta.env.VITE_APP_3_URL, '/app3');
 
 export const APPS: AppInfo[] = [
   {
@@ -54,7 +45,8 @@ export const APPS: AppInfo[] = [
     name: 'FEMORY',
     tagline: 'Pencegahan Anemia & Monitoring TTD Remaja Putri',
     shortTagline: 'Sahabat Sehat Cegah Anemia',
-    description: 'Aplikasi PWA mandiri untuk pemantauan kepatuhan konsumsi Tablet Tambah Darah (TTD), pencatatan siklus menstruasi, dan edukasi anemia siswi SMP/SMA.',
+    description:
+      'Aplikasi PWA mandiri untuk pemantauan kepatuhan konsumsi Tablet Tambah Darah (TTD), pencatatan siklus menstruasi, dan edukasi anemia siswi SMP/SMA.',
     url: app1BaseUrl,
     onboardingUrl: `${app1BaseUrl}/onboarding`,
     loginUrl: `${app1BaseUrl}/auth/login`,
@@ -92,7 +84,8 @@ export const APPS: AppInfo[] = [
     name: 'PILLUNA',
     tagline: 'Sahabat Setia Minum Pil KB & Edukasi Reproduksi',
     shortTagline: 'Sahabat Setia Minum Pil KB',
-    description: 'Aplikasi PWA cerdas untuk pengingat jadwal minum pil harian, asisten konsultasi edukasi reproduksi, dan pemantauan kesehatan wanita terpadu.',
+    description:
+      'Aplikasi PWA cerdas untuk pengingat jadwal minum pil harian, asisten konsultasi edukasi reproduksi, dan pemantauan kesehatan wanita terpadu.',
     url: app2BaseUrl,
     onboardingUrl: `${app2BaseUrl}/onboarding`,
     loginUrl: `${app2BaseUrl}/auth/login`,
@@ -127,10 +120,11 @@ export const APPS: AppInfo[] = [
   },
   {
     id: 'app3',
-    name: 'PRELUNA',
+    name: 'TEMANI',
     tagline: 'Kesehatan Pranikah & Panduan Imunisasi TT',
     shortTagline: 'Kesehatan Pranikah & Imunisasi TT',
-    description: 'Aplikasi PWA panduan jadwal 5 dosis imunisasi Tetanus Toksoid (TT) Kemenkes, skrining kesiapan reproduksi calon pengantin, dan sertifikasi digital.',
+    description:
+      'Aplikasi PWA panduan jadwal 5 dosis imunisasi Tetanus Toksoid (TT) Kemenkes, skrining kesiapan reproduksi calon pengantin, dan sertifikasi digital.',
     url: app3BaseUrl,
     onboardingUrl: `${app3BaseUrl}/onboarding`,
     loginUrl: `${app3BaseUrl}/auth/login`,
@@ -138,7 +132,7 @@ export const APPS: AppInfo[] = [
     port: 5175,
     backendPort: 4003,
     badge: 'DB: fe_tablet_app3',
-    logoType: 'preluna',
+    logoType: 'temani',
     colorScheme: {
       bgLight: 'from-red-50 to-rose-50/40',
       badgeBg: 'bg-rose-100',
