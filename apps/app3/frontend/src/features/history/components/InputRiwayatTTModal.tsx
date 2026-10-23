@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { AlertTriangle, Paperclip, Trash2, X } from 'lucide-react';
+import { AlertTriangle, CalendarCheck2, Paperclip, Trash2, X } from 'lucide-react';
 import type {
   ImmunizationRecord,
   ImmunizationValidationResult,
@@ -39,6 +39,12 @@ export interface InputRiwayatTTModalProps {
   defaultDose?: string;
   /** Diisi saat mode perbaikan data (edit). */
   initialData?: ImmunizationRecord | null;
+  /** Mode menyelesaikan jadwal: bukti kunjungan wajib diunggah. */
+  completionSchedule?: {
+    stage: string;
+    scheduledDate?: string | null;
+    time?: string | null;
+  } | null;
 }
 
 const VACCINE_TYPE_OPTIONS: { value: TTVaccineType; label: string }[] = [
@@ -77,6 +83,7 @@ export function InputRiwayatTTModal({
   onValidate,
   defaultDose = '',
   initialData = null,
+  completionSchedule = null,
 }: InputRiwayatTTModalProps) {
   const [doseLevel, setDoseLevel] = useState(defaultDose);
   const [vaccineType, setVaccineType] = useState<TTVaccineType>('TT');
@@ -115,14 +122,18 @@ export function InputRiwayatTTModal({
     } else {
       setDoseLevel(defaultDose);
       setVaccineType('TT');
-      setVaccineDate(todayInputValue());
+      setVaccineDate(
+        completionSchedule?.scheduledDate
+          ? String(completionSchedule.scheduledDate).slice(0, 10)
+          : todayInputValue(),
+      );
       setFaskesName('');
       setBatchNumber('');
       setNotes('');
       setInfoSource('self_reported');
       setDatePrecision('exact');
     }
-  }, [isOpen, initialData, defaultDose]);
+  }, [isOpen, initialData, defaultDose, completionSchedule]);
 
   if (!isOpen) return null;
 
@@ -161,6 +172,12 @@ export function InputRiwayatTTModal({
     }
     if (!faskesName.trim()) {
       setFormError('Nama fasilitas kesehatan wajib diisi.');
+      return;
+    }
+    if (completionSchedule && !file) {
+      setFormError(
+        'Unggah bukti kunjungan (foto buku KIA/kartu vaksin) untuk menandai jadwal ini selesai.',
+      );
       return;
     }
 
@@ -232,26 +249,21 @@ export function InputRiwayatTTModal({
           onSubmit={handleSubmit}
           className='p-5 overflow-y-auto flex-1 flex flex-col gap-4 text-[#121c2a]'
         >
-          {/* Guidance / Context Micro-Banner (Stitch Screen 5) */}
-          <div className='relative overflow-hidden rounded-2xl bg-[#eff4ff] p-3.5 border border-[#d9e3f6]'>
-            <div className='flex items-start gap-3'>
-              <div className='w-9 h-9 rounded-full bg-[#ffd9de] flex items-center justify-center shrink-0 text-[#aa294d]'>
-                <span className='material-symbols-outlined text-[20px]'>health_and_safety</span>
-              </div>
-              <div className='min-w-0 flex-1'>
-                <h4 className='text-xs font-bold text-[#121c2a]'>
-                  {initialData
-                    ? 'Perbaiki Data yang Sudah Tercatat'
-                    : 'Catat Riwayat Faskes Terdahulu'}
-                </h4>
-                <p className='text-[11px] text-[#574144] mt-0.5 leading-relaxed'>
-                  Catat riwayat suntik TT yang sudah pernah kamu dapatkan di Puskesmas, Klinik, atau
-                  Rumah Sakit. Data tersimpan sebagai menunggu validasi hingga diperiksa tenaga
-                  kesehatan.
+          {/* Konteks: menyelesaikan jadwal kunjungan */}
+          {completionSchedule && (
+            <div className='rounded-2xl bg-[#fff8e6] border border-[#f2d79b] p-3.5 flex items-start gap-2.5'>
+              <CalendarCheck2 size={18} className='text-[#a16207] shrink-0 mt-0.5' />
+              <div>
+                <p className='text-xs font-bold text-[#7a4d00]'>
+                  Menyelesaikan jadwal {completionSchedule.stage}
+                </p>
+                <p className='text-[11px] text-[#7a4d00] leading-relaxed mt-0.5'>
+                  Catat hasil kunjungan dan unggah bukti imunisasi. Jadwal akan otomatis berstatus
+                  selesai setelah data tersimpan.
                 </p>
               </div>
             </div>
-          </div>
+          )}
 
           {/* Field 1: Jenis Vaksin (produk) */}
           <div className='flex flex-col gap-1.5'>
@@ -478,7 +490,7 @@ export function InputRiwayatTTModal({
             <div className='flex items-center justify-between'>
               <label className='text-xs font-bold text-[#121c2a]'>Bukti Imunisasi</label>
               <span className='text-[10px] text-[#574144] bg-stone-100 px-2 py-0.5 rounded-full font-semibold'>
-                Opsional • Maks. 3 MB
+                {completionSchedule ? 'Wajib • Maks. 3 MB' : 'Opsional • Maks. 3 MB'}
               </span>
             </div>
 
@@ -595,9 +607,11 @@ export function InputRiwayatTTModal({
                   ? 'Memproses...'
                   : warnings && warnings.length > 0
                     ? 'Tetap Simpan'
-                    : initialData
-                      ? 'Periksa & Simpan Perbaikan'
-                      : 'Periksa & Simpan Riwayat'}
+                    : completionSchedule
+                      ? 'Selesaikan Jadwal & Simpan'
+                      : initialData
+                        ? 'Periksa & Simpan Perbaikan'
+                        : 'Periksa & Simpan Riwayat'}
               </span>
             </button>
           </div>

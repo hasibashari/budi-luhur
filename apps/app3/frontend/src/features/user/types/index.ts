@@ -53,6 +53,8 @@ export interface ImmunizationInput {
   infoSource?: TTInfoSource;
   datePrecision?: TTDatePrecision;
   attachmentUrl?: string;
+  /** Menandai jadwal tertentu sebagai selesai setelah riwayat tersimpan. */
+  scheduleId?: string;
 }
 
 export interface ImmunizationValidationResult {

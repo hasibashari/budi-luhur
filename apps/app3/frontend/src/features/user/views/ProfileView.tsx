@@ -83,6 +83,8 @@ export default function ProfileView() {
   const [editName, setEditName] = useState(userProfile.name);
   const [editFaskes, setEditFaskes] = useState(userProfile.schoolOrOrg || '');
   const [editPhone, setEditPhone] = useState(userProfile.phone);
+  const [editPartnerName, setEditPartnerName] = useState(userProfile.partnerName || '');
+  const [editWeddingDate, setEditWeddingDate] = useState(userProfile.weddingDate || '');
   const [isSaving, setIsSaving] = useState(false);
 
   // Partner info
@@ -114,6 +116,8 @@ export default function ProfileView() {
             }));
             setEditName(data.user.name || userProfile.name);
             setEditFaskes(data.user.schoolOrOrg || userProfile.schoolOrOrg || '');
+            setEditPartnerName(data.user.partnerName || '');
+            setEditWeddingDate(data.user.weddingDate || '');
             setImmunizationRecords(data.immunizationRecords || []);
           }
         } catch (e) {
@@ -214,6 +218,8 @@ export default function ProfileView() {
     setEditName(userProfile.name);
     setEditFaskes(userProfile.schoolOrOrg || '');
     setEditPhone(userProfile.phone);
+    setEditPartnerName(userProfile.partnerName || '');
+    setEditWeddingDate(userProfile.weddingDate || '');
     setIsEditProfileModalOpen(true);
   };
 
@@ -225,6 +231,8 @@ export default function ProfileView() {
         name: editName,
         schoolOrOrg: editFaskes,
         phone: editPhone,
+        partnerName: editPartnerName.trim(),
+        weddingDate: editWeddingDate,
       });
 
       if (res.success && res.data) {
@@ -233,6 +241,8 @@ export default function ProfileView() {
           name: editName,
           schoolOrOrg: editFaskes,
           phone: editPhone,
+          partnerName: editPartnerName.trim(),
+          weddingDate: editWeddingDate || undefined,
         }));
         updateUser({
           name: editName,
@@ -335,14 +345,26 @@ export default function ProfileView() {
     },
     {
       id: 'partner',
-      label: 'Sinkronisasi Pasangan',
-      value: partnerName || 'Belum diatur',
-      subtitle: `ID Catin: ${catinId} • Terhubung KUA`,
+      label: 'Calon Pasangan',
+      value: partnerName || 'Belum diisi',
+      subtitle: partnerName
+        ? `Rencana akad: ${
+            userProfile.weddingDate
+              ? new Date(userProfile.weddingDate).toLocaleDateString('id-ID', {
+                  day: 'numeric',
+                  month: 'long',
+                  year: 'numeric',
+                })
+              : 'belum diisi'
+          }`
+        : 'Lengkapi nama pasangan melalui tombol ubah profil',
       icon: Heart,
       iconBgColor: 'bg-rose-50 border border-rose-100',
       iconColor: 'text-rose-600',
-      badgeText: 'Terhubung',
-      badgeColor: 'bg-rose-50 text-rose-700 border border-rose-200',
+      badgeText: partnerName ? 'Terisi' : 'Belum diisi',
+      badgeColor: partnerName
+        ? 'bg-rose-50 text-rose-700 border border-rose-200'
+        : 'bg-slate-100 text-slate-600 border border-slate-200',
     },
   ];
 
@@ -488,7 +510,7 @@ export default function ProfileView() {
         onClose={() => setIsEditProfileModalOpen(false)}
         onSave={handleSaveProfile}
         title='Ubah Data Calon Pengantin'
-        subtitle='Perbarui informasi identitas diri, nomor WhatsApp, dan fasilitas kesehatan'
+        subtitle='Perbarui identitas, kontak, faskes, serta data calon pasangan'
         isSaving={isSaving}
       >
         <div className='flex flex-col gap-3.5'>
@@ -529,6 +551,46 @@ export default function ProfileView() {
               className='w-full bg-slate-50 border border-slate-200 focus:border-[#aa294d] focus:ring-1 focus:ring-[#aa294d] rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-slate-800 outline-none'
               required
             />
+          </div>
+
+          <div className='pt-2 mt-1 border-t border-slate-100'>
+            <p className='text-[10px] font-extrabold uppercase tracking-wider text-[#8c0f39] mb-2.5'>
+              Data Calon Pasangan
+            </p>
+
+            <div className='flex flex-col gap-3.5'>
+              <div>
+                <label className='text-xs font-bold text-slate-700 block mb-1'>
+                  Nama Calon Pasangan
+                </label>
+                <input
+                  type='text'
+                  value={editPartnerName}
+                  onChange={e => setEditPartnerName(e.target.value)}
+                  placeholder='Contoh: Rian Pratama'
+                  className='w-full bg-slate-50 border border-slate-200 focus:border-[#aa294d] focus:ring-1 focus:ring-[#aa294d] rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-slate-800 outline-none'
+                />
+                <p className='text-[10px] text-slate-500 mt-1'>
+                  Nama ini juga tampil pada kartu vaksin dan sertifikat imunisasi.
+                </p>
+              </div>
+
+              <div>
+                <label className='text-xs font-bold text-slate-700 block mb-1'>
+                  Rencana Tanggal Akad Nikah
+                </label>
+                <input
+                  type='date'
+                  value={editWeddingDate}
+                  onChange={e => setEditWeddingDate(e.target.value)}
+                  className='w-full bg-slate-50 border border-slate-200 focus:border-[#aa294d] focus:ring-1 focus:ring-[#aa294d] rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-slate-800 outline-none'
+                />
+                <p className='text-[10px] text-slate-500 mt-1'>
+                  Dipakai untuk hitung mundur pernikahan dan pengingat TT2 minimal 30 hari sebelum
+                  akad.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </ProfileEditModal>

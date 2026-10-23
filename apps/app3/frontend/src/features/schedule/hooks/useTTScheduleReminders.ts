@@ -185,7 +185,7 @@ export function useTTScheduleReminders({
             notifyUser(`Waktunya Imunisasi ${schedule.stage}! 💉`, {
               body: `Jadwal ${schedule.title || schedule.stage} hari ini pukul ${schedule.time} WIB. Jangan lupa kunjungi faskes dan catat hasilnya.`,
               tag: `${notificationTag}_exact`,
-              url: `${APP_BASE}/user/schedule`,
+              url: `${APP_BASE}/user/imunisasi?catat=${encodeURIComponent(schedule.stage)}&scheduleId=${encodeURIComponent(schedule.id)}&date=${encodeURIComponent(schedule.scheduledDate)}&time=${encodeURIComponent(schedule.time)}`,
             });
           }
           continue;
@@ -206,7 +206,7 @@ export function useTTScheduleReminders({
             notifyUser(`15 Menit Lagi: Imunisasi ${schedule.stage} ⏰`, {
               body: `Jadwal ${schedule.title || schedule.stage} pukul ${schedule.time} WIB. Siapkan kartu TT dan menuju faskes.`,
               tag: `${notificationTag}_early`,
-              url: `${APP_BASE}/user/schedule`,
+              url: `${APP_BASE}/user/imunisasi?catat=${encodeURIComponent(schedule.stage)}&scheduleId=${encodeURIComponent(schedule.id)}&date=${encodeURIComponent(schedule.scheduledDate)}&time=${encodeURIComponent(schedule.time)}`,
             });
           }
         }

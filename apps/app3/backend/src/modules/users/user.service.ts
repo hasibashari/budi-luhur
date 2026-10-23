@@ -445,6 +445,8 @@ export class UserService {
       infoSource?: ImmunizationInfoSource;
       datePrecision?: ImmunizationDatePrecision;
       attachmentUrl?: string;
+      /** Bila diisi, hanya jadwal ini yang ditandai selesai. */
+      scheduleId?: string;
     },
   ): Promise<SaveImmunizationResult> {
     const doseLevel = String(data.doseLevel || '').toUpperCase();
@@ -517,11 +519,15 @@ export class UserService {
       );
 
       // Jadwal adalah proyeksi riwayat: dosis yang baru dicatat menutup jadwal terkait.
+      // Bila `scheduleId` dikirim, hanya jadwal itu yang ditutup.
       await client.query(
         `UPDATE reminder_schedules
          SET status = 'Selesai', completed_at = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP
-         WHERE user_id = $1 AND tt_level = $2 AND status = 'Aktif'`,
-        [userId, doseLevel],
+         WHERE user_id = $1
+           AND status = 'Aktif'
+           AND ($2::varchar IS NULL OR id = $2)
+           AND ($3::varchar IS NULL OR tt_level = $3)`,
+        [userId, data.scheduleId || null, data.scheduleId ? null : doseLevel],
       );
 
       return inserted.rows[0];

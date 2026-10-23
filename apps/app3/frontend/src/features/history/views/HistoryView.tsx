@@ -57,6 +57,12 @@ export default function HistoryView() {
   const [recordsError, setRecordsError] = useState<string | null>(null);
   const [isInputModalOpen, setIsInputModalOpen] = useState(false);
   const [prefillDose, setPrefillDose] = useState<string | null>(null);
+  const [completionSchedule, setCompletionSchedule] = useState<{
+    id: string;
+    stage: string;
+    scheduledDate?: string | null;
+    time?: string | null;
+  } | null>(null);
   const [editingRecord, setEditingRecord] = useState<ImmunizationRecord | null>(null);
   const [detailRecord, setDetailRecord] = useState<ImmunizationRecord | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<ImmunizationRecord | null>(null);
@@ -90,13 +96,50 @@ export default function HistoryView() {
 
   // Datang dari halaman Jadwal ("Catat Hasil Kunjungan") → buka form dengan dosis terisi.
   useEffect(() => {
-    const state = location.state as { openDose?: string } | null;
+    const state = location.state as {
+      openDose?: string;
+      scheduleId?: string;
+      scheduledDate?: string;
+      time?: string;
+    } | null;
     if (!state?.openDose) return;
     setPrefillDose(state.openDose);
+    setCompletionSchedule(
+      state.scheduleId
+        ? {
+            id: state.scheduleId,
+            stage: state.openDose,
+            scheduledDate: state.scheduledDate ?? null,
+            time: state.time ?? null,
+          }
+        : null,
+    );
     setEditingRecord(null);
     setIsInputModalOpen(true);
     navigate(location.pathname, { replace: true, state: null });
   }, [location.state, location.pathname, navigate]);
+
+  // Klik notifikasi jadwal → buka form pencatatan hasil (query param).
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const dose = params.get('catat');
+    if (!dose) return;
+    const scheduleId = params.get('scheduleId');
+    setPrefillDose(dose);
+    setCompletionSchedule(
+      scheduleId
+        ? {
+            id: scheduleId,
+            stage: dose,
+            scheduledDate: params.get('date'),
+            time: params.get('time'),
+          }
+        : null,
+    );
+    setEditingRecord(null);
+    setIsInputModalOpen(true);
+    navigate(location.pathname, { replace: true });
+  }, [location.search, location.pathname, navigate]);
 
   // Hanya dosis terverifikasi yang boleh menaikkan status TT.
   const verifiedLevel = useMemo(
@@ -152,6 +195,7 @@ export default function HistoryView() {
   const handleOpenCreate = () => {
     setEditingRecord(null);
     setPrefillDose(null);
+    setCompletionSchedule(null);
     setIsInputModalOpen(true);
   };
 
@@ -196,6 +240,7 @@ export default function HistoryView() {
             notes: newData.notes,
             infoSource: newData.infoSource,
             datePrecision: newData.datePrecision,
+            scheduleId: completionSchedule?.id,
           });
 
       // Bukti opsional diunggah setelah record tersimpan (butuh id record).
@@ -220,10 +265,13 @@ export default function HistoryView() {
           ? attachmentError
           : editingRecord
             ? `Perbaikan dosis ${newData.doseLevel} tersimpan dan menunggu validasi ulang.`
-            : `Dosis ${newData.doseLevel} tersimpan dengan status Menunggu Validasi.`,
+            : completionSchedule
+              ? `Jadwal ${completionSchedule.stage} ditandai selesai. Data menunggu validasi petugas faskes.`
+              : `Dosis ${newData.doseLevel} tersimpan dengan status Menunggu Validasi.`,
         details: warnings.length > 0 ? warnings : undefined,
       });
       setEditingRecord(null);
+      setCompletionSchedule(null);
       return { success: true, warnings };
     } catch (error: any) {
       const message =
@@ -333,11 +381,13 @@ export default function HistoryView() {
           setIsInputModalOpen(false);
           setEditingRecord(null);
           setPrefillDose(null);
+          setCompletionSchedule(null);
         }}
         onSubmit={handleSaveRecord}
         onValidate={handleValidateRecord}
         defaultDose={prefillDose || ''}
         initialData={editingRecord}
+        completionSchedule={completionSchedule}
       />
 
       {/* Detail Riwayat */}

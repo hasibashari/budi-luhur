@@ -648,7 +648,14 @@ export default function ScheduleView() {
 
   const handleRecordResult = (schedule: TTSchedule) => {
     // Jadwal tidak bisa "diselesaikan" tanpa bukti: arahkan ke form riwayat.
-    navigate('/user/imunisasi', { state: { openDose: schedule.stage } });
+    navigate('/user/imunisasi', {
+      state: {
+        openDose: schedule.stage,
+        scheduleId: schedule.id,
+        scheduledDate: schedule.scheduledDate,
+        time: schedule.time,
+      },
+    });
   };
 
   const handleDeleteConfirm = async () => {

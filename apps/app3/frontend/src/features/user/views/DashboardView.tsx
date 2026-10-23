@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   BellRing,
   X,
@@ -18,7 +18,6 @@ import { ImmunityStatusBanner } from '@/src/features/dashboard/components/Immuni
 import { QuickAction } from '@/src/shared/components/domain/QuickAction';
 import { WeddingCountdownWidget } from '@/src/features/dashboard/components/WeddingCountdownWidget';
 import { VaccineCardModal } from '@/src/features/dashboard/components/VaccineCardModal';
-import { StatusCard } from '@/src/shared/components/domain/StatusCard';
 import { Button } from '@/src/shared/components/ui/Button';
 import { Card } from '@/src/shared/components/ui/Card';
 import { useAuth } from '@/src/features/auth/context/AuthContext';
@@ -26,7 +25,6 @@ import { publishRealtimeEvent, subscribeRealtimeEvent } from '@/src/shared/utils
 import { playNotificationTone, showSystemNotification } from '@/src/shared/utils/notifications';
 import {
   getUserDashboardDataAction,
-  recordUserConsumptionAction,
   UserDashboardData,
 } from '@/src/features/user/api/userRepository';
 import {
@@ -34,13 +32,14 @@ import {
   dismissNudgeAction,
 } from '@/src/features/schedule/api/scheduleRepository';
 import { AdminNudge } from '@/src/features/schedule/types';
+import { useTTSchedules } from '@/src/features/schedule/hooks/useTTSchedules';
 import { getArticlesAction } from '@/src/features/education/api/educationRepository';
 import { Article } from '@/src/features/education/types';
 
-type DashboardConsumptionStatus = 'recorded' | 'missed' | 'pending';
-
 export default function DashboardView() {
   const { user: authUser } = useAuth();
+  const navigate = useNavigate();
+  const { schedules } = useTTSchedules();
   const [dashboardData, setDashboardData] = useState<UserDashboardData | null>(null);
   const [activeNudge, setActiveNudge] = useState<AdminNudge | null>(null);
   const [featuredArticle, setFeaturedArticle] = useState<Article | null>(null);
@@ -116,25 +115,6 @@ export default function DashboardView() {
     };
   }, [userId]);
 
-  const handleStatusChange = async (newStatus: DashboardConsumptionStatus) => {
-    if (!dashboardData) return;
-    const currentUid = authUser?.id || dashboardData.user.id;
-    const prevStatus = dashboardData.todayStatus;
-
-    setDashboardData(prev => (prev ? { ...prev, todayStatus: newStatus } : null));
-
-    const res = await recordUserConsumptionAction(currentUid, newStatus);
-    if (!res.success) {
-      setDashboardData(prev => (prev ? { ...prev, todayStatus: prevStatus } : null));
-    } else {
-      const freshData = await getUserDashboardDataAction(currentUid);
-      if (freshData) {
-        setDashboardData(freshData);
-      }
-      publishRealtimeEvent('MEDICATION_TAKEN', { patientId: currentUid });
-    }
-  };
-
   const handleDismissNudge = async () => {
     if (!activeNudge) return;
     const nudgeId = activeNudge.id;
@@ -148,8 +128,8 @@ export default function DashboardView() {
   };
 
   const handleTakeFromNudge = async () => {
-    await handleStatusChange('recorded');
     await handleDismissNudge();
+    if (nextTtSchedule) handleRecordScheduledVisit();
   };
 
   const currentUser = dashboardData?.user || {
@@ -175,9 +155,34 @@ export default function DashboardView() {
     Number(dashboardData?.user.ttStatus?.slice(2) || 0),
   );
 
-  const nextAppointmentDate = dashboardData?.activeSchedule
-    ? `${dashboardData.activeSchedule.dayOfWeek}, ${dashboardData.activeSchedule.time}`
+  // Jadwal TT terdekat: sumber tunggal untuk aksi pencatatan hasil.
+  const nextTtSchedule = React.useMemo(() => {
+    return (
+      [...schedules]
+        .filter(schedule => schedule.status !== 'completed' && Boolean(schedule.scheduledDate))
+        .sort(
+          (a, b) =>
+            String(a.scheduledDate).localeCompare(String(b.scheduledDate)) ||
+            (a.time || '').localeCompare(b.time || ''),
+        )[0] ?? null
+    );
+  }, [schedules]);
+
+  const nextAppointmentDate = nextTtSchedule
+    ? `${nextTtSchedule.scheduledDate} • ${nextTtSchedule.time} WIB`
     : undefined;
+
+  function handleRecordScheduledVisit() {
+    if (!nextTtSchedule) return;
+    navigate('/user/imunisasi', {
+      state: {
+        openDose: nextTtSchedule.stage,
+        scheduleId: nextTtSchedule.id,
+        scheduledDate: nextTtSchedule.scheduledDate,
+        time: nextTtSchedule.time,
+      },
+    });
+  }
 
   if (loading && !dashboardData) {
     return (
@@ -315,14 +320,37 @@ export default function DashboardView() {
         </section>
       )}
 
-      {/* Status Kunjungan Hari Ini ditampilkan paling atas agar mudah ditemukan */}
-      <section aria-label='Status Kunjungan Hari Ini'>
-        <StatusCard
-          initialStatus={dashboardData?.todayStatus || 'pending'}
-          initialRecordedTime={dashboardData?.todayRecordedTime}
-          onStatusChange={handleStatusChange}
-        />
-      </section>
+      {/* Jadwal TT Terdekat — satu-satunya aksi pencatatan hasil kunjungan */}
+      {nextTtSchedule && (
+        <section aria-label='Jadwal Imunisasi TT Terdekat'>
+          <div className='rounded-2xl bg-white border border-[#ffd9de] p-4 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3'>
+            <div className='flex items-start gap-3'>
+              <div className='w-9 h-9 rounded-xl bg-[#ffd9de] text-[#aa294d] flex items-center justify-center shrink-0 mt-0.5'>
+                <CalendarClock size={18} />
+              </div>
+              <div>
+                <h4 className='text-xs sm:text-sm font-bold text-[#121c2a]'>
+                  Kunjungan {nextTtSchedule.stage} — {nextTtSchedule.title}
+                </h4>
+                <p className='text-[11px] sm:text-xs text-[#574144] mt-0.5'>
+                  {nextTtSchedule.scheduledDate} • {nextTtSchedule.time} WIB
+                </p>
+                <p className='text-[11px] text-[#8b7074] mt-0.5'>
+                  Sudah dilaksanakan? Catat hasil kunjungan dan unggah bukti imunisasi.
+                </p>
+              </div>
+            </div>
+            <button
+              type='button'
+              onClick={handleRecordScheduledVisit}
+              className='inline-flex items-center justify-center gap-1.5 px-3.5 py-2 bg-[#aa294d] hover:bg-[#cb4364] text-white text-xs font-bold rounded-xl transition-colors shadow-2xs shrink-0 self-start sm:self-auto cursor-pointer'
+            >
+              <span>Catat Hasil</span>
+              <ArrowRight size={13} />
+            </button>
+          </div>
+        </section>
+      )}
 
       {/* Main Responsive Grid: Stitch Core Experience on Left / Countdown & Clinical Context on Right */}
       <div className='grid grid-cols-1 md:grid-cols-12 gap-5 sm:gap-6 items-start'>
