@@ -1,11 +1,22 @@
 import apiClient from '@/src/shared/api/client';
-import { UserProfile, UserScheduleData, UserDashboardData, StreakResult, ImmunizationRecord, ImmunizationInput, ImmunizationMutationResult } from '../types';
+import { UserProfile, UserScheduleData, UserDashboardData, StreakResult, ImmunizationRecord, ImmunizationInput, ImmunizationMutationResult, ImmunizationValidationResult, CertificateVerification } from '../types';
 
 export type { UserProfile, UserScheduleData, UserDashboardData, StreakResult };
-export type { ImmunizationRecord, ImmunizationInput, ImmunizationMutationResult };
+export type { ImmunizationRecord, ImmunizationInput, ImmunizationMutationResult, CertificateVerification };
 
 export async function getImmunizationRecordsAction(): Promise<ImmunizationRecord[]> {
   const response = await apiClient.get<ImmunizationRecord[]>('/users/immunizations');
+  return response.data;
+}
+
+/** Dry-run: cek interval tanggal tanpa menyimpan. */
+export async function validateImmunizationRecordAction(
+  data: Partial<ImmunizationInput> & { excludeRecordId?: string },
+): Promise<ImmunizationValidationResult> {
+  const response = await apiClient.post<ImmunizationValidationResult>(
+    '/users/immunizations/validate',
+    data,
+  );
   return response.data;
 }
 
@@ -32,6 +43,72 @@ export async function deleteImmunizationRecordAction(
 ): Promise<{ success: boolean; ttStatus: string }> {
   const response = await apiClient.delete<{ success: boolean; ttStatus: string }>(
     `/users/immunizations/${id}`,
+  );
+  return response.data;
+}
+
+const ALLOWED_ATTACHMENT_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'];
+export const MAX_ATTACHMENT_BYTES = 3 * 1024 * 1024;
+
+export function validateAttachmentFile(file: File): string | null {
+  if (!ALLOWED_ATTACHMENT_TYPES.includes(file.type)) {
+    return 'Format berkas harus JPG, PNG, WEBP, atau PDF.';
+  }
+  if (file.size > MAX_ATTACHMENT_BYTES) {
+    return 'Ukuran berkas maksimal 3 MB.';
+  }
+  if (file.size === 0) {
+    return 'Berkas kosong tidak dapat diunggah.';
+  }
+  return null;
+}
+
+export async function uploadImmunizationAttachmentAction(
+  recordId: string,
+  file: File,
+): Promise<{ success: boolean; attachmentUrl: string }> {
+  const response = await apiClient.put<{ success: boolean; attachmentUrl: string }>(
+    `/users/immunizations/${recordId}/attachment`,
+    file,
+    {
+      headers: {
+        'Content-Type': file.type,
+        'X-File-Name': encodeURIComponent(file.name),
+      },
+      transformRequest: data => data,
+    },
+  );
+  return response.data;
+}
+
+export async function getImmunizationAttachmentAction(recordId: string): Promise<Blob> {
+  const response = await apiClient.get<Blob>(`/users/immunizations/${recordId}/attachment`, {
+    responseType: 'blob',
+  });
+  return response.data;
+}
+
+export async function deleteImmunizationAttachmentAction(
+  recordId: string,
+): Promise<{ success: boolean }> {
+  const response = await apiClient.delete<{ success: boolean }>(
+    `/users/immunizations/${recordId}/attachment`,
+  );
+  return response.data;
+}
+
+export async function getCertificateVerificationAction(): Promise<CertificateVerification> {
+  const response = await apiClient.get<CertificateVerification>('/users/certificate');
+  return response.data;
+}
+
+/** Pengguna hanya mengajukan; persetujuan dilakukan admin. */
+export async function requestCertificateVerificationAction(
+  note?: string,
+): Promise<{ success: boolean; status: string }> {
+  const response = await apiClient.post<{ success: boolean; status: string }>(
+    '/users/certificate/request',
+    { note },
   );
   return response.data;
 }

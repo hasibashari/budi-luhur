@@ -69,6 +69,7 @@ export interface UserDashboardData {
   immunizationRecords: {
     id: string;
     doseLevel: 'TT1' | 'TT2' | 'TT3' | 'TT4' | 'TT5';
+    vaccineType: 'TT' | 'Td' | 'DPT' | 'Lainnya';
     vaccineDate: string;
     faskesName: string;
     batchNumber?: string;

@@ -15,13 +15,16 @@ import {
   toDateKey,
   validateTTRecord,
 } from '../../utils/ttIntervalValidator.js';
+import { detectAttachmentMime, isAllowedAttachmentSize } from '../../utils/fileValidation.js';
 
 export type ImmunizationInfoSource = 'self_reported' | 'faskes_record' | 'health_worker';
 export type ImmunizationDatePrecision = 'exact' | 'month' | 'year';
+export type ImmunizationVaccineType = 'TT' | 'Td' | 'DPT' | 'Lainnya';
 
 export interface ImmunizationRecord {
   id: string;
   doseLevel: TTDoseLevel;
+  vaccineType: ImmunizationVaccineType;
   vaccineDate: string;
   faskesName: string;
   batchNumber?: string;
@@ -45,6 +48,7 @@ export interface SaveImmunizationResult {
 const IMMUNIZATION_SELECT = `
   SELECT id,
          dose_level AS "doseLevel",
+         vaccine_type AS "vaccineType",
          vaccine_date AS "vaccineDate",
          faskes_name AS "faskesName",
          batch_number AS "batchNumber",
@@ -62,7 +66,7 @@ const IMMUNIZATION_SELECT = `
 
 const IMMUNIZATION_SELECT_INSERT = `
   INSERT INTO immunization_records
-    (id, user_id, dose_level, vaccine_date, faskes_name, batch_number, notes,
+    (id, user_id, dose_level, vaccine_type, vaccine_date, faskes_name, batch_number, notes,
      info_source, date_precision, attachment_url, verification_status)`;
 
 
@@ -393,10 +397,47 @@ export class UserService {
     };
   }
 
+  /** Validasi tanpa menyimpan: dipakai UI untuk memperingatkan sebelum simpan. */
+  static async validateImmunizationRecord(
+    userId: string,
+    data: {
+      doseLevel?: TTDoseLevel;
+      vaccineDate?: string;
+      excludeRecordId?: string;
+    },
+  ): Promise<TTValidationResult> {
+    const doseLevel = String(data.doseLevel || '').toUpperCase();
+    if (!isTTDoseLevel(doseLevel)) {
+      return { errors: ['Dosis TT tidak valid. Pilih antara TT1 sampai TT5.'], warnings: [] };
+    }
+
+    const context = await this.loadValidationContext(userId);
+    if (data.excludeRecordId) {
+      const current = await db.query<{ dose_level: string }>(
+        `SELECT dose_level FROM immunization_records
+         WHERE id = $1 AND user_id = $2 AND deleted_at IS NULL`,
+        [data.excludeRecordId, userId],
+      );
+      const previousDose = current.rows[0]?.dose_level;
+      if (previousDose && isTTDoseLevel(previousDose)) {
+        delete context.existingDates[previousDose];
+      }
+    }
+
+    return validateTTRecord({
+      doseLevel,
+      vaccineDate: data.vaccineDate || '',
+      existingDates: context.existingDates,
+      dateOfBirth: context.dateOfBirth,
+      weddingDate: context.weddingDate,
+    });
+  }
+
   static async saveImmunizationRecord(
     userId: string,
     data: {
       doseLevel: TTDoseLevel;
+      vaccineType?: ImmunizationVaccineType;
       vaccineDate: string;
       faskesName: string;
       batchNumber?: string;
@@ -443,9 +484,10 @@ export class UserService {
       const id = `imm_${Date.now().toString().slice(-8)}${Math.floor(Math.random() * 900 + 100)}`;
       const inserted = await client.query<ImmunizationRecord>(
         `${IMMUNIZATION_SELECT_INSERT}
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, 'PENDING')
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, 'PENDING')
          RETURNING id,
                    dose_level AS "doseLevel",
+                   vaccine_type AS "vaccineType",
                    vaccine_date AS "vaccineDate",
                    faskes_name AS "faskesName",
                    batch_number AS "batchNumber",
@@ -463,6 +505,7 @@ export class UserService {
           id,
           userId,
           doseLevel,
+          data.vaccineType || 'TT',
           data.vaccineDate,
           data.faskesName.trim(),
           data.batchNumber || null,
@@ -492,6 +535,7 @@ export class UserService {
     recordId: string,
     data: {
       doseLevel?: TTDoseLevel;
+      vaccineType?: ImmunizationVaccineType;
       vaccineDate?: string;
       faskesName?: string;
       batchNumber?: string | null;
@@ -540,21 +584,23 @@ export class UserService {
       const res = await client.query<ImmunizationRecord>(
         `UPDATE immunization_records
          SET dose_level = $1,
-             vaccine_date = $2,
-             faskes_name = $3,
-             batch_number = $4,
-             notes = $5,
-             info_source = $6,
-             date_precision = $7,
-             attachment_url = $8,
+             vaccine_type = $2,
+             vaccine_date = $3,
+             faskes_name = $4,
+             batch_number = $5,
+             notes = $6,
+             info_source = $7,
+             date_precision = $8,
+             attachment_url = $9,
              verification_status = 'PENDING',
              verified_by = NULL,
              verified_at = NULL,
              verification_note = NULL,
              updated_at = CURRENT_TIMESTAMP
-         WHERE id = $9 AND user_id = $10 AND deleted_at IS NULL
+         WHERE id = $10 AND user_id = $11 AND deleted_at IS NULL
          RETURNING id,
                    dose_level AS "doseLevel",
+                   vaccine_type AS "vaccineType",
                    vaccine_date AS "vaccineDate",
                    faskes_name AS "faskesName",
                    batch_number AS "batchNumber",
@@ -570,6 +616,7 @@ export class UserService {
                    updated_at AS "updatedAt"`,
         [
           doseLevel,
+          data.vaccineType || previous.vaccineType || 'TT',
           vaccineDate,
           faskesName,
           data.batchNumber ?? previous.batchNumber ?? null,
@@ -636,6 +683,259 @@ export class UserService {
       const ttStatus = await syncTTStatusFromVerified(client, userId);
       return { success: true, ttStatus };
     });
+  }
+
+  private static attachmentPath(recordId: string) {
+    return `/users/immunizations/${recordId}/attachment`;
+  }
+
+  /**
+   * Simpan bukti imunisasi (opsional). Berkas disimpan sebagai BYTEA dan hanya
+   * dapat diambil lewat endpoint ber-autentikasi milik pemilik/admin.
+   */
+  static async saveImmunizationAttachment(
+    userId: string,
+    recordId: string,
+    file: { buffer: Buffer; fileName?: string },
+  ) {
+    const owner = await db.query<{ id: string }>(
+      `SELECT id FROM immunization_records
+       WHERE id = $1 AND user_id = $2 AND deleted_at IS NULL`,
+      [recordId, userId],
+    );
+    if (owner.rows.length === 0) {
+      throw new Error('Riwayat imunisasi tidak ditemukan.');
+    }
+
+    if (!isAllowedAttachmentSize(file.buffer.length)) {
+      throw new Error('Ukuran berkas harus antara 1 byte dan 3 MB.');
+    }
+    const mimeType = detectAttachmentMime(file.buffer);
+    if (!mimeType) {
+      throw new Error('Format berkas tidak didukung. Gunakan JPG, PNG, WEBP, atau PDF.');
+    }
+
+    const id = `att_${Date.now().toString().slice(-8)}${Math.floor(Math.random() * 900 + 100)}`;
+    const attachmentUrl = this.attachmentPath(recordId);
+
+    await db.transaction(async client => {
+      await client.query(`DELETE FROM immunization_attachments WHERE record_id = $1`, [recordId]);
+      await client.query(
+        `INSERT INTO immunization_attachments
+           (id, record_id, user_id, file_name, mime_type, file_size, data)
+         VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+        [id, recordId, userId, file.fileName || null, mimeType, file.buffer.length, file.buffer],
+      );
+      await client.query(
+        `UPDATE immunization_records
+         SET attachment_url = $1, updated_at = CURRENT_TIMESTAMP
+         WHERE id = $2`,
+        [attachmentUrl, recordId],
+      );
+    });
+
+    return { success: true, attachmentUrl, mimeType, size: file.buffer.length };
+  }
+
+  static async getImmunizationAttachment(
+    userId: string,
+    recordId: string,
+    isAdmin: boolean,
+  ) {
+    const res = await db.query<{
+      file_name: string | null;
+      mime_type: string;
+      file_size: number;
+      data: Buffer;
+    }>(
+      `SELECT a.file_name, a.mime_type, a.file_size, a.data
+       FROM immunization_attachments a
+       JOIN immunization_records r ON r.id = a.record_id
+       WHERE a.record_id = $1
+         AND r.deleted_at IS NULL
+         AND ($2::boolean OR r.user_id = $3)`,
+      [recordId, isAdmin, userId],
+    );
+    if (res.rows.length === 0) {
+      throw new Error('Bukti imunisasi tidak ditemukan.');
+    }
+    return res.rows[0];
+  }
+
+  static async deleteImmunizationAttachment(userId: string, recordId: string) {
+    const owner = await db.query<{ id: string }>(
+      `SELECT id FROM immunization_records
+       WHERE id = $1 AND user_id = $2 AND deleted_at IS NULL`,
+      [recordId, userId],
+    );
+    if (owner.rows.length === 0) {
+      throw new Error('Riwayat imunisasi tidak ditemukan.');
+    }
+
+    await db.transaction(async client => {
+      await client.query(`DELETE FROM immunization_attachments WHERE record_id = $1`, [recordId]);
+      await client.query(
+        `UPDATE immunization_records
+         SET attachment_url = NULL, updated_at = CURRENT_TIMESTAMP
+         WHERE id = $1`,
+        [recordId],
+      );
+    });
+
+    return { success: true };
+  }
+
+  // ─── Verifikasi tanda tangan sertifikat (kewenangan admin) ────────────────
+
+  static async getCertificateVerification(userId: string) {
+    const res = await db.query<{
+      status: string;
+      certificate_number: string | null;
+      note: string | null;
+      requested_at: string | null;
+      reviewed_by: string | null;
+      reviewed_at: string | null;
+      signer_name: string | null;
+      signer_sip: string | null;
+    }>(
+      `SELECT status, certificate_number, note, requested_at,
+              reviewed_by, reviewed_at, signer_name, signer_sip
+       FROM certificate_verifications
+       WHERE user_id = $1`,
+      [userId],
+    );
+    const row = res.rows[0];
+    return {
+      status: row?.status || 'DRAFT',
+      certificateNumber: row?.certificate_number || null,
+      note: row?.note || null,
+      requestedAt: row?.requested_at || null,
+      reviewedBy: row?.reviewed_by || null,
+      reviewedAt: row?.reviewed_at || null,
+      signerName: row?.signer_name || null,
+      signerSip: row?.signer_sip || null,
+    };
+  }
+
+  /** Pengguna hanya dapat MENGAJUKAN; persetujuan tetap di admin. */
+  static async requestCertificateVerification(userId: string, note?: string) {
+    const current = await this.getCertificateVerification(userId);
+    if (current.status === 'APPROVED') {
+      return { success: true, status: 'APPROVED' as const, message: 'Sertifikat sudah disetujui.' };
+    }
+
+    const year = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Jakarta' }).slice(0, 4);
+    const code =
+      userId.replace(/[^a-zA-Z0-9]/g, '').slice(-6).toUpperCase() || String(Date.now()).slice(-6);
+    const certificateNumber = current.certificateNumber || `TEMANI-TT/${year}/${code}`;
+
+    await db.query(
+      `INSERT INTO certificate_verifications
+         (user_id, status, certificate_number, note, requested_at, updated_at)
+       VALUES ($1, 'PENDING', $2, $3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+       ON CONFLICT (user_id) DO UPDATE SET
+         status = 'PENDING',
+         certificate_number = COALESCE(certificate_verifications.certificate_number, EXCLUDED.certificate_number),
+         note = EXCLUDED.note,
+         requested_at = CURRENT_TIMESTAMP,
+         reviewed_by = NULL,
+         reviewed_at = NULL,
+         updated_at = CURRENT_TIMESTAMP`,
+      [userId, certificateNumber, note?.trim() || null],
+    );
+
+    return { success: true, status: 'PENDING' as const, certificateNumber };
+  }
+
+  static async listCertificateVerifications(status?: string) {
+    const params: string[] = [];
+    let where = '';
+    if (status) {
+      params.push(status.toUpperCase());
+      where = `WHERE cv.status = $1`;
+    }
+    const res = await db.query<{
+      user_id: string;
+      name: string;
+      school_or_org: string | null;
+      status: string;
+      certificate_number: string | null;
+      note: string | null;
+      requested_at: string | null;
+      reviewed_by: string | null;
+      reviewed_at: string | null;
+      signer_name: string | null;
+      signer_sip: string | null;
+      verified_doses: string;
+      total_records: string;
+    }>(
+      `SELECT cv.user_id, u.name, p.school_or_org,
+              cv.status, cv.certificate_number, cv.note, cv.requested_at,
+              cv.reviewed_by, cv.reviewed_at, cv.signer_name, cv.signer_sip,
+              (SELECT COUNT(*)::text FROM immunization_records r
+                 WHERE r.user_id = cv.user_id AND r.deleted_at IS NULL
+                   AND r.verification_status = 'VERIFIED') AS verified_doses,
+              (SELECT COUNT(*)::text FROM immunization_records r
+                 WHERE r.user_id = cv.user_id AND r.deleted_at IS NULL) AS total_records
+       FROM certificate_verifications cv
+       JOIN users u ON u.id = cv.user_id
+       LEFT JOIN user_profiles p ON p.user_id = cv.user_id
+       ${where}
+       ORDER BY
+         CASE cv.status WHEN 'PENDING' THEN 0 WHEN 'APPROVED' THEN 2 ELSE 1 END,
+         cv.requested_at DESC NULLS LAST
+       LIMIT 200`,
+      params,
+    );
+
+    return res.rows.map(row => ({
+      userId: row.user_id,
+      name: row.name,
+      faskesName: row.school_or_org,
+      status: row.status,
+      certificateNumber: row.certificate_number,
+      note: row.note,
+      requestedAt: row.requested_at,
+      reviewedBy: row.reviewed_by,
+      reviewedAt: row.reviewed_at,
+      signerName: row.signer_name,
+      signerSip: row.signer_sip,
+      verifiedDoses: Number(row.verified_doses) || 0,
+      totalRecords: Number(row.total_records) || 0,
+    }));
+  }
+
+  /** Approve/reject TTD sertifikat. Hanya dipanggil dari endpoint admin. */
+  static async reviewCertificateVerification(
+    userId: string,
+    status: 'APPROVED' | 'REJECTED',
+    reviewer: string,
+    options?: { note?: string | null; signerName?: string | null; signerSip?: string | null },
+  ) {
+    const updated = await db.query<{ user_id: string }>(
+      `UPDATE certificate_verifications
+       SET status = $1,
+           note = COALESCE($2, note),
+           reviewed_by = $3,
+           reviewed_at = CURRENT_TIMESTAMP,
+           signer_name = CASE WHEN $1 = 'APPROVED' THEN COALESCE($4, signer_name) ELSE NULL END,
+           signer_sip = CASE WHEN $1 = 'APPROVED' THEN COALESCE($5, signer_sip) ELSE NULL END,
+           updated_at = CURRENT_TIMESTAMP
+       WHERE user_id = $6
+       RETURNING user_id`,
+      [
+        status,
+        options?.note ?? null,
+        reviewer,
+        options?.signerName ?? null,
+        options?.signerSip ?? null,
+        userId,
+      ],
+    );
+    if (updated.rows.length === 0) {
+      throw new Error('Pengajuan verifikasi sertifikat tidak ditemukan.');
+    }
+    return { success: true, status };
   }
 
   static async updateProfile(userId: string, data: any) {

@@ -5,11 +5,11 @@ export { default as AdminLayout } from './components/AdminLayout';
 export { default as AdminDashboardView } from './views/AdminDashboardView';
 export { default as UserManagementView } from './views/UserManagementView';
 export { default as ScheduleManagementView } from './views/ScheduleManagementView';
+export { default as CertificateVerificationView } from './views/CertificateVerificationView';
 export { default as ArticleManagementView } from './views/ArticleManagementView';
 export { default as ReportAnalyticsView } from './views/ReportAnalyticsView';
 export { default as AdminProfileView } from './views/AdminProfileView';
 
-export { default as ScheduleFormModal } from './components/ScheduleFormModal';
 export { default as UserFormModal } from './components/UserFormModal';
 export { default as ArticleFormModal } from './components/ArticleFormModal';
 export { default as SendReminderModal } from './components/SendReminderModal';

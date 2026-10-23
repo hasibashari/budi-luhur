@@ -3,7 +3,6 @@ import {
   AdminStats,
   ManagedUser,
   MedicationSchedule,
-  ScheduleCategory,
   HealthArticle,
   ComplianceReport,
 } from '../types/admin.types';
@@ -152,53 +151,6 @@ export async function getScheduleByIdAction(
   }
 }
 
-export async function createScheduleAction(data: {
-  userId?: string;
-  patientId?: string;
-  medicationName: string;
-  dosage: string;
-  frequency: string;
-  dayOfWeek?: string;
-  timeSlots: string[];
-  startDate?: string;
-  endDate?: string;
-  category?: ScheduleCategory | string;
-  instructions?: string;
-}): Promise<{ success: boolean; schedule?: MedicationSchedule; error?: string }> {
-  try {
-    const res = await apiClient.post<{ success: boolean; schedule: MedicationSchedule }>(
-      '/admin/schedules',
-      data,
-    );
-    return { success: true, schedule: res.data.schedule };
-  } catch (err: any) {
-    return { success: false, error: err.response?.data?.error || err.message };
-  }
-}
-
-export async function updateScheduleAction(
-  scheduleId: string,
-  data: Partial<MedicationSchedule>,
-): Promise<{ success: boolean; error?: string }> {
-  try {
-    const res = await apiClient.put(`/admin/schedules/${scheduleId}`, data);
-    return { success: true, ...res.data };
-  } catch (err: any) {
-    return { success: false, error: err.response?.data?.error || err.message };
-  }
-}
-
-export async function deleteScheduleAction(
-  scheduleId: string,
-): Promise<{ success: boolean; error?: string }> {
-  try {
-    const res = await apiClient.delete(`/admin/schedules/${scheduleId}`);
-    return { success: true, ...res.data };
-  } catch (err: any) {
-    return { success: false, error: err.response?.data?.error || err.message };
-  }
-}
-
 export async function getAdminArticlesAction(): Promise<HealthArticle[]> {
   try {
     const res = await apiClient.get<HealthArticle[]>('/admin/articles');
@@ -259,6 +211,72 @@ export async function getComplianceReportsAction(): Promise<ComplianceReport[]> 
     return res.data || [];
   } catch (err: any) {
     console.error('getComplianceReportsAction error:', err);
+    return [];
+  }
+}
+
+export interface AdminCertificateRequest {
+  userId: string;
+  name: string;
+  faskesName: string | null;
+  status: 'DRAFT' | 'PENDING' | 'APPROVED' | 'REJECTED';
+  certificateNumber: string | null;
+  note: string | null;
+  requestedAt: string | null;
+  reviewedBy: string | null;
+  reviewedAt: string | null;
+  signerName: string | null;
+  signerSip: string | null;
+  verifiedDoses: number;
+  totalRecords: number;
+}
+
+export interface AdminUserImmunization {
+  id: string;
+  doseLevel: string;
+  vaccineType: string;
+  vaccineDate: string;
+  faskesName: string;
+  verificationStatus: 'PENDING' | 'VERIFIED' | 'REJECTED';
+}
+
+export async function getCertificateRequestsAction(): Promise<AdminCertificateRequest[]> {
+  try {
+    const res = await apiClient.get<AdminCertificateRequest[]>('/admin/certificates');
+    return res.data || [];
+  } catch (err: any) {
+    console.error('getCertificateRequestsAction error:', err);
+    return [];
+  }
+}
+
+export async function reviewCertificateAction(
+  userId: string,
+  payload: {
+    status: 'APPROVED' | 'REJECTED';
+    note?: string;
+    signerName?: string;
+    signerSip?: string;
+  },
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    await apiClient.patch(`/admin/certificates/${userId}`, payload);
+    return { success: true };
+  } catch (err: any) {
+    return { success: false, error: err.response?.data?.error || err.message };
+  }
+}
+
+export async function getUserImmunizationsAction(
+  userId: string,
+): Promise<AdminUserImmunization[]> {
+  try {
+    const res = await apiClient.get<AdminUserImmunization[]>(
+      `/admin/users/${userId}/immunizations`,
+    );
+    return res.data || [];
+  } catch (err: any) {
+    console.error('getUserImmunizationsAction error:', err);
     return [];
   }
 }

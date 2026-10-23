@@ -121,11 +121,15 @@ export default function UserFormModal({
             </label>
             <input
               type='text'
-              placeholder='Contoh: Rian Pratama'
+              readOnly
+              disabled
+              placeholder='Diisi oleh calon pengantin'
               value={formData.partnerName}
-              onChange={e => onUpdateFormData({ partnerName: e.target.value })}
-              className='w-full px-3.5 py-2.5 rounded-xl border border-[#dee9fc] bg-white text-sm text-[#121c2a] focus:outline-none focus:ring-2 focus:ring-[#ffd9de] focus:border-[#aa294d] transition-all'
+              className='w-full px-3.5 py-2.5 rounded-xl border border-[#dee9fc] bg-stone-100 text-sm text-[#574144] cursor-not-allowed'
             />
+            <p className='text-[10px] text-[#8b7074] mt-1'>
+              Disinkronkan dari data yang diisi calon pengantin.
+            </p>
           </div>
           <div>
             <label className='block text-xs font-bold text-[#121c2a] mb-1'>

@@ -1,9 +1,20 @@
-import React, { useEffect, useState } from 'react';
-import { X } from 'lucide-react';
-import type { ImmunizationRecord, TTDatePrecision, TTInfoSource } from '@/src/features/user/types';
+import React, { useEffect, useRef, useState } from 'react';
+import { AlertTriangle, Paperclip, Trash2, X } from 'lucide-react';
+import type {
+  ImmunizationRecord,
+  ImmunizationValidationResult,
+  TTDatePrecision,
+  TTInfoSource,
+  TTVaccineType,
+} from '@/src/features/user/types';
+import {
+  MAX_ATTACHMENT_BYTES,
+  validateAttachmentFile,
+} from '@/src/features/user/api/userRepository';
 
 export interface NewTTRiwayatData {
   doseLevel: string;
+  vaccineType: TTVaccineType;
   vaccineDate: string;
   faskesName: string;
   batchNumber?: string;
@@ -21,11 +32,39 @@ export type SubmitTTRiwayatResult = {
 export interface InputRiwayatTTModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: NewTTRiwayatData) => Promise<SubmitTTRiwayatResult>;
+  /** Dipanggil setelah peringatan (bila ada) dikonfirmasi pengguna. */
+  onSubmit: (data: NewTTRiwayatData, file: File | null) => Promise<SubmitTTRiwayatResult>;
+  /** Dry-run ke server untuk memunculkan peringatan sebelum menyimpan. */
+  onValidate: (data: NewTTRiwayatData) => Promise<ImmunizationValidationResult>;
   defaultDose?: string;
   /** Diisi saat mode perbaikan data (edit). */
   initialData?: ImmunizationRecord | null;
 }
+
+const VACCINE_TYPE_OPTIONS: { value: TTVaccineType; label: string }[] = [
+  { value: 'TT', label: 'TT — Tetanus Toxoid' },
+  { value: 'Td', label: 'Td — Tetanus-diphtheria' },
+  { value: 'DPT', label: 'DPT — Difteri, Pertusis, Tetanus' },
+  { value: 'Lainnya', label: 'Lainnya / tidak diketahui' },
+];
+
+const INFO_SOURCE_OPTIONS: { value: TTInfoSource; label: string; hint: string }[] = [
+  {
+    value: 'self_reported',
+    label: 'Berdasarkan ingatan',
+    hint: 'Tidak ada catatan tertulis, hanya mengingat pernah disuntik.',
+  },
+  {
+    value: 'faskes_record',
+    label: 'Berdasarkan buku/kartu imunisasi',
+    hint: 'Ada Buku KIA, KMS, atau kartu vaksin yang mencatat tanggalnya.',
+  },
+  {
+    value: 'health_worker',
+    label: 'Dicatat tenaga kesehatan',
+    hint: 'Pencatatan dilakukan langsung oleh bidan/dokter. Status verifikasi tetap ditentukan nakes.',
+  },
+];
 
 function todayInputValue() {
   return new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Jakarta' });
@@ -35,26 +74,36 @@ export function InputRiwayatTTModal({
   isOpen,
   onClose,
   onSubmit,
-  defaultDose = 'TT1',
+  onValidate,
+  defaultDose = '',
   initialData = null,
 }: InputRiwayatTTModalProps) {
   const [doseLevel, setDoseLevel] = useState(defaultDose);
+  const [vaccineType, setVaccineType] = useState<TTVaccineType>('TT');
   const [vaccineDate, setVaccineDate] = useState(todayInputValue);
   const [faskesName, setFaskesName] = useState('');
   const [batchNumber, setBatchNumber] = useState('');
   const [notes, setNotes] = useState('');
   const [infoSource, setInfoSource] = useState<TTInfoSource>('self_reported');
   const [datePrecision, setDatePrecision] = useState<TTDatePrecision>('exact');
+  const [file, setFile] = useState<File | null>(null);
+  const [fileError, setFileError] = useState<string | null>(null);
+  const [warnings, setWarnings] = useState<string[] | null>(null);
   const [formError, setFormError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Sinkronkan isi form setiap kali modal dibuka (baru / edit).
   useEffect(() => {
     if (!isOpen) return;
     setFormError(null);
+    setWarnings(null);
+    setFileError(null);
+    setFile(null);
     setIsSubmitting(false);
     if (initialData) {
       setDoseLevel(initialData.doseLevel);
+      setVaccineType(initialData.vaccineType || 'TT');
       setVaccineDate(
         initialData.vaccineDate ? String(initialData.vaccineDate).slice(0, 10) : todayInputValue(),
       );
@@ -65,6 +114,7 @@ export function InputRiwayatTTModal({
       setDatePrecision(initialData.datePrecision || 'exact');
     } else {
       setDoseLevel(defaultDose);
+      setVaccineType('TT');
       setVaccineDate(todayInputValue());
       setFaskesName('');
       setBatchNumber('');
@@ -76,26 +126,66 @@ export function InputRiwayatTTModal({
 
   if (!isOpen) return null;
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const buildPayload = (): NewTTRiwayatData => ({
+    doseLevel,
+    vaccineType,
+    vaccineDate,
+    faskesName: faskesName.trim(),
+    batchNumber: batchNumber || undefined,
+    notes: notes || undefined,
+    infoSource,
+    datePrecision,
+  });
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const selected = event.target.files?.[0] || null;
+    if (!selected) return;
+    const error = validateAttachmentFile(selected);
+    if (error) {
+      setFileError(error);
+      setFile(null);
+      event.target.value = '';
+      return;
+    }
+    setFileError(null);
+    setFile(selected);
+  };
+
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+
+    // Pengguna belum memilih dosis: jangan menebak berdasarkan urutan data.
+    if (!doseLevel) {
+      setFormError('Pilih dosis sesuai yang tertulis pada catatan imunisasi.');
+      return;
+    }
     if (!faskesName.trim()) {
       setFormError('Nama fasilitas kesehatan wajib diisi.');
       return;
     }
+
     setFormError(null);
     setIsSubmitting(true);
     try {
-      const result = await onSubmit({
-        doseLevel,
-        vaccineDate,
-        faskesName: faskesName.trim(),
-        batchNumber: batchNumber || undefined,
-        notes: notes || undefined,
-        infoSource,
-        datePrecision,
-      });
-      if (!result.success) {
-        setFormError(result.error || 'Gagal menyimpan riwayat imunisasi.');
+      const payload = buildPayload();
+
+      // Tahap 1: minta peringatan interval ke server sebelum menyimpan.
+      if (!warnings) {
+        const result = await onValidate(payload);
+        if (result.errors?.length) {
+          setFormError(result.errors[0]);
+          return;
+        }
+        if (result.warnings?.length) {
+          setWarnings(result.warnings);
+          return;
+        }
+      }
+
+      // Tahap 2: simpan (setelah peringatan dikonfirmasi, bila ada).
+      const saved = await onSubmit(payload, file);
+      if (!saved.success) {
+        setFormError(saved.error || 'Gagal menyimpan riwayat imunisasi.');
         return;
       }
       onClose();
@@ -163,31 +253,59 @@ export function InputRiwayatTTModal({
             </div>
           </div>
 
-          {/* Field 1: Jenis Imunisasi (Dropdown Selector) */}
+          {/* Field 1: Jenis Vaksin (produk) */}
           <div className='flex flex-col gap-1.5'>
-            <div className='flex items-center justify-between'>
-              <label
-                htmlFor='jenisImunisasi'
-                className='text-xs font-bold text-[#121c2a] flex items-center gap-1'
-              >
-                Pilih Jenis Imunisasi <span className='text-[#aa294d]'>*</span>
-              </label>
-              <span className='text-[11px] text-[#2a6950] font-semibold flex items-center gap-0.5'>
-                <span className='material-symbols-outlined text-[14px]'>verified</span>{' '}
-                Terstandarisasi Kemenkes
-              </span>
-            </div>
+            <label htmlFor='jenisVaksin' className='text-xs font-bold text-[#121c2a]'>
+              Jenis Vaksin <span className='text-[#aa294d]'>*</span>
+            </label>
             <div className='relative'>
               <div className='absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-[#aa294d]'>
                 <span className='material-symbols-outlined text-[20px]'>vaccines</span>
               </div>
               <select
-                id='jenisImunisasi'
+                id='jenisVaksin'
+                value={vaccineType}
+                onChange={e => setVaccineType(e.target.value as TTVaccineType)}
+                className='w-full h-11 pl-11 pr-10 rounded-xl bg-stone-50 border border-stone-200 text-[#121c2a] text-xs sm:text-sm font-semibold shadow-xs appearance-none focus:outline-none focus:border-[#aa294d] transition-all'
+              >
+                {VACCINE_TYPE_OPTIONS.map(option => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+              <div className='absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-[#574144]'>
+                <span className='material-symbols-outlined text-[20px]'>keyboard_arrow_down</span>
+              </div>
+            </div>
+            <p className='text-[11px] text-[#574144] px-1'>
+              Pilih sesuai yang tertulis pada catatan vaksin. Bila tidak diketahui, pilih “Lainnya”.
+            </p>
+          </div>
+
+          {/* Field 2: Dosis ke-berapa (dipilih manual, tidak ditebak sistem) */}
+          <div className='flex flex-col gap-1.5'>
+            <div className='flex items-center justify-between'>
+              <label
+                htmlFor='dosisKe'
+                className='text-xs font-bold text-[#121c2a] flex items-center gap-1'
+              >
+                Dosis Ke-berapa <span className='text-[#aa294d]'>*</span>
+              </label>
+              <span className='text-[11px] text-[#8a5a00] font-semibold flex items-center gap-0.5'>
+                <span className='material-symbols-outlined text-[14px]'>info</span>
+                Pilih manual
+              </span>
+            </div>
+            <div className='relative'>
+              <select
+                id='dosisKe'
                 value={doseLevel}
                 onChange={e => setDoseLevel(e.target.value)}
-                className='w-full h-11 pl-11 pr-10 rounded-xl bg-stone-50 border border-stone-200 text-[#121c2a] text-xs sm:text-sm font-semibold shadow-xs appearance-none focus:outline-none focus:border-[#aa294d] transition-all'
+                className='w-full h-11 px-3.5 pr-10 rounded-xl bg-stone-50 border border-stone-200 text-[#121c2a] text-xs sm:text-sm font-semibold shadow-xs appearance-none focus:outline-none focus:border-[#aa294d] transition-all'
                 required
               >
+                <option value=''>— Pilih sesuai catatan imunisasi —</option>
                 <option value='TT1'>TT1 - Dosis Pertama (Langkah Awal)</option>
                 <option value='TT2'>TT2 - Dosis Kedua (Interval 4 Minggu dari TT1)</option>
                 <option value='TT3'>TT3 - Dosis Ketiga (Interval 6 Bulan dari TT2)</option>
@@ -199,11 +317,12 @@ export function InputRiwayatTTModal({
               </div>
             </div>
             <p className='text-[11px] text-[#574144] px-1'>
-              Status ini menentukan estimasi masa durasi kekebalan antibodi maternal.
+              Sistem tidak menebak urutan dosis. Isi sesuai buku/kartu imunisasi agar riwayat tidak
+              salah label.
             </p>
           </div>
 
-          {/* Field 2: Tanggal Pemberian */}
+          {/* Field 3: Tanggal Pemberian */}
           <div className='flex flex-col gap-1.5'>
             <label
               htmlFor='tanggalImunisasi'
@@ -290,16 +409,18 @@ export function InputRiwayatTTModal({
                 onChange={e => setInfoSource(e.target.value as TTInfoSource)}
                 className='w-full h-11 pl-11 pr-10 rounded-xl bg-stone-50 border border-stone-200 text-[#121c2a] text-xs sm:text-sm font-semibold shadow-xs appearance-none focus:outline-none focus:border-[#aa294d] transition-all'
               >
-                <option value='self_reported'>Diisi mandiri (ingat sendiri)</option>
-                <option value='faskes_record'>Disalin dari Buku KIA / KMS</option>
-                <option value='health_worker'>Dicatat tenaga kesehatan</option>
+                {INFO_SOURCE_OPTIONS.map(option => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
               </select>
               <div className='absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-[#574144]'>
                 <span className='material-symbols-outlined text-[20px]'>keyboard_arrow_down</span>
               </div>
             </div>
             <p className='text-[11px] text-[#574144] px-1'>
-              Sumber data membantu bidan menilai seberapa kuat bukti riwayat ini.
+              {INFO_SOURCE_OPTIONS.find(option => option.value === infoSource)?.hint}
             </p>
           </div>
 
@@ -352,6 +473,68 @@ export function InputRiwayatTTModal({
             />
           </div>
 
+          {/* Field 8: Bukti Imunisasi (opsional) */}
+          <div className='flex flex-col gap-1.5'>
+            <div className='flex items-center justify-between'>
+              <label className='text-xs font-bold text-[#121c2a]'>Bukti Imunisasi</label>
+              <span className='text-[10px] text-[#574144] bg-stone-100 px-2 py-0.5 rounded-full font-semibold'>
+                Opsional • Maks. 3 MB
+              </span>
+            </div>
+
+            <input
+              ref={fileInputRef}
+              type='file'
+              accept='image/jpeg,image/png,image/webp,application/pdf'
+              onChange={handleFileChange}
+              className='hidden'
+            />
+
+            {file ? (
+              <div className='flex items-center justify-between gap-2 rounded-xl border border-[#d9e3f6] bg-[#eff4ff] px-3 py-2.5'>
+                <div className='flex items-center gap-2 min-w-0'>
+                  <Paperclip size={16} className='text-[#aa294d] shrink-0' />
+                  <div className='min-w-0'>
+                    <p className='text-xs font-semibold text-[#121c2a] truncate'>{file.name}</p>
+                    <p className='text-[10px] text-[#574144]'>
+                      {(file.size / 1024).toFixed(0)} KB • terenkripsi saat dikirim
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type='button'
+                  onClick={() => {
+                    setFile(null);
+                    if (fileInputRef.current) fileInputRef.current.value = '';
+                  }}
+                  aria-label='Hapus berkas bukti'
+                  className='w-8 h-8 rounded-full flex items-center justify-center text-[#a4163a] hover:bg-[#ffe1e6] transition-colors shrink-0 cursor-pointer'
+                >
+                  <Trash2 size={15} />
+                </button>
+              </div>
+            ) : (
+              <button
+                type='button'
+                onClick={() => fileInputRef.current?.click()}
+                className='w-full rounded-xl border-2 border-dashed border-stone-200 hover:border-[#aa294d] bg-stone-50 px-3 py-3 flex items-center justify-center gap-2 text-[11px] font-semibold text-[#574144] transition-colors cursor-pointer'
+              >
+                <Paperclip size={15} />
+                Lampirkan foto buku KIA / kartu vaksin (opsional)
+              </button>
+            )}
+
+            {fileError && (
+              <p role='alert' className='text-[11px] font-semibold text-[#a4163a] px-1'>
+                {fileError}
+              </p>
+            )}
+            <p className='text-[11px] text-[#574144] px-1 leading-relaxed'>
+              Berkas disimpan privat dan hanya bisa dibuka oleh kamu dan tenaga kesehatan yang
+              menangani. Tidak ada tautan publik yang dibagikan.
+            </p>
+          </div>
+
           {/* Reassurance Micro-Card */}
           <div className='rounded-xl bg-[#aff1d0]/30 p-3 flex items-center gap-2.5 border border-[#aff1d0]/50'>
             <div className='w-7 h-7 rounded-full bg-[#aff1d0] flex items-center justify-center text-[#0a5139] shrink-0'>
@@ -363,6 +546,26 @@ export function InputRiwayatTTModal({
               Puskesmas.
             </p>
           </div>
+
+          {warnings && warnings.length > 0 && (
+            <div className='rounded-xl bg-[#fff8e6] border border-[#f2d79b] p-3.5 flex flex-col gap-2'>
+              <div className='flex items-center gap-2 text-[#7a4d00]'>
+                <AlertTriangle size={16} className='shrink-0' />
+                <p className='text-xs font-bold'>Tanggal terlihat tidak konsisten</p>
+              </div>
+              <ul className='list-disc pl-5 flex flex-col gap-1'>
+                {warnings.map((warning, index) => (
+                  <li key={index} className='text-[11px] text-[#7a4d00] leading-relaxed'>
+                    {warning}
+                  </li>
+                ))}
+              </ul>
+              <p className='text-[11px] text-[#7a4d00]'>
+                Periksa kembali catatan imunisasi. Tekan “Tetap Simpan” hanya bila tanggal memang
+                benar.
+              </p>
+            </div>
+          )}
 
           {formError && (
             <div
@@ -378,15 +581,23 @@ export function InputRiwayatTTModal({
             <button
               type='submit'
               disabled={isSubmitting}
-              className='w-full h-12 min-h-[48px] rounded-full bg-[#aa294d] text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-[0_4px_14px_0_rgba(170,41,77,0.3)] hover:bg-[#cb4364] active:scale-[0.98] transition-all cursor-pointer disabled:opacity-50'
+              className={`w-full h-12 min-h-12 rounded-full text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-[0_4px_14px_0_rgba(170,41,77,0.3)] active:scale-[0.98] transition-all cursor-pointer disabled:opacity-50 ${
+                warnings && warnings.length > 0
+                  ? 'bg-[#a16207] hover:bg-[#854d0e]'
+                  : 'bg-[#aa294d] hover:bg-[#cb4364]'
+              }`}
             >
-              <span className='material-symbols-outlined text-[18px]'>save</span>
+              <span className='material-symbols-outlined text-[18px]'>
+                {warnings && warnings.length > 0 ? 'warning' : 'save'}
+              </span>
               <span>
                 {isSubmitting
-                  ? 'Menyimpan...'
-                  : initialData
-                    ? 'Simpan Perbaikan'
-                    : 'Simpan Riwayat Imunisasi'}
+                  ? 'Memproses...'
+                  : warnings && warnings.length > 0
+                    ? 'Tetap Simpan'
+                    : initialData
+                      ? 'Periksa & Simpan Perbaikan'
+                      : 'Periksa & Simpan Riwayat'}
               </span>
             </button>
           </div>

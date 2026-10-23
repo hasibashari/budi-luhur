@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   ShieldCheck,
   Award,
@@ -12,9 +12,16 @@ import {
   Calendar,
   User,
   Heart,
+  Clock,
+  Sparkles,
 } from 'lucide-react';
 import { Button } from '@/src/shared/components/ui/Button';
 import { TT_DOSAGE_LIST } from '@/src/shared/constants/domain.constants';
+import {
+  getCertificateVerificationAction,
+  requestCertificateVerificationAction,
+} from '@/src/features/user/api/userRepository';
+import type { CertificateVerification } from '@/src/features/user/types';
 
 export interface DigitalImmunizationCertificateModalProps {
   isOpen: boolean;
@@ -27,6 +34,13 @@ export interface DigitalImmunizationCertificateModalProps {
   issueDate?: string;
 }
 
+const STATUS_LABEL: Record<CertificateVerification['status'], string> = {
+  DRAFT: 'Belum Diajukan',
+  PENDING: 'Menunggu Verifikasi Admin',
+  APPROVED: 'Terverifikasi Admin',
+  REJECTED: 'Pengajuan Ditolak',
+};
+
 export function DigitalImmunizationCertificateModal({
   isOpen,
   onClose,
@@ -34,14 +48,31 @@ export function DigitalImmunizationCertificateModal({
   catinId,
   partnerName,
   faskesName,
-  ttLevel = 2,
-  issueDate = new Date().toLocaleDateString('id-ID', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  }),
+  ttLevel = 0,
+  issueDate,
 }: DigitalImmunizationCertificateModalProps) {
   const printRef = useRef<HTMLDivElement>(null);
+  const [verification, setVerification] = useState<CertificateVerification | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isRequesting, setIsRequesting] = useState(false);
+  const [feedback, setFeedback] = useState<string | null>(null);
+
+  const loadStatus = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      setVerification(await getCertificateVerificationAction());
+    } catch {
+      setVerification(null);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    setFeedback(null);
+    loadStatus();
+  }, [isOpen, loadStatus]);
 
   if (!isOpen) return null;
 
@@ -49,7 +80,36 @@ export function DigitalImmunizationCertificateModal({
     window.print();
   };
 
-  const certificateNumber = `TEMANI-TT/${new Date().getFullYear()}/${catinId.replace(/\D/g, '').padStart(6, '0') || '082194'}`;
+  const status = verification?.status || 'DRAFT';
+  const isApproved = status === 'APPROVED';
+  const canRequest = status === 'DRAFT' || status === 'REJECTED';
+  const certificateNumber = isApproved
+    ? verification?.certificateNumber || '—'
+    : verification?.certificateNumber || 'Belum diterbitkan';
+
+  const handleRequestVerification = async () => {
+    setIsRequesting(true);
+    setFeedback(null);
+    try {
+      await requestCertificateVerificationAction();
+      await loadStatus();
+      setFeedback('Pengajuan terkirim. Petugas faskes akan memverifikasi sertifikat Anda.');
+    } catch {
+      setFeedback('Gagal mengirim pengajuan verifikasi. Coba lagi.');
+    } finally {
+      setIsRequesting(false);
+    }
+  };
+
+  const issueDateLabel =
+    issueDate ||
+    (verification?.reviewedAt
+      ? new Date(verification.reviewedAt).toLocaleDateString('id-ID', {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric',
+        })
+      : '—');
 
   return (
     <div className='fixed inset-0 z-60 flex items-center justify-center p-3 sm:p-6 bg-slate-950/60 backdrop-blur-sm animate-fade-in'>
@@ -143,7 +203,7 @@ export function DigitalImmunizationCertificateModal({
               <span className='text-slate-500 font-medium'>Tanggal Penerbitan</span>
               <span className='col-span-2 font-semibold text-slate-800 flex items-center gap-1.5'>
                 <Calendar size={13} className='text-emerald-700' />
-                <span>{issueDate}</span>
+                <span>{issueDateLabel}</span>
               </span>
             </div>
           </div>
@@ -192,18 +252,54 @@ export function DigitalImmunizationCertificateModal({
             </div>
           </div>
 
-          {/* Verification Badge & Digital Signature Row */}
+          {/* Ucapan Penyemangat */}
+          <div className='rounded-2xl p-4 bg-gradient-to-r from-[#fff7ed] via-[#fefce8] to-[#f0fdf4] border border-amber-200'>
+            <div className='flex items-start gap-3'>
+              <div className='w-9 h-9 shrink-0 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center'>
+                <Sparkles size={18} />
+              </div>
+              <div>
+                <p className='text-xs sm:text-sm font-bold text-slate-900'>
+                  Terima kasih sudah melengkapi imunisasi TT!
+                </p>
+                <p className='text-[11px] sm:text-xs text-slate-600 leading-relaxed mt-1'>
+                  Setiap dosis yang sudah diselesaikan adalah langkah nyata menjaga kesehatan diri,
+                  pasangan, dan calon buah hati. Tetap dampingi proses ini sampai dosis kelima
+                  sesuai jadwal yang dianjurkan tenaga kesehatan — perjalanan kecil yang hasilnya
+                  bertahan puluhan tahun. Semangat, kamu sudah di jalur yang tepat!
+                </p>
+                {ttLevel < 5 && (
+                  <p className='text-[11px] font-semibold text-emerald-700 mt-1.5'>
+                    Progres saat ini TT{ttLevel} dari TT5 — lanjutkan ke dosis berikutnya sesuai
+                    jadwal.
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Status Verifikasi & Tanda Tangan */}
           <div className='pt-4 border-t border-stone-200 flex flex-col sm:flex-row items-center justify-between gap-4'>
             <div className='flex items-center gap-3'>
               <div className='w-16 h-16 bg-stone-100 border border-stone-200 rounded-xl flex items-center justify-center p-1.5 shadow-2xs'>
-                <QrCode size={48} className='text-slate-800' />
+                <QrCode size={48} className={isApproved ? 'text-slate-800' : 'text-slate-300'} />
               </div>
               <div>
-                <span className='text-[10px] font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200'>
-                  TERVALIDASI DIGITAL
+                <span
+                  className={`text-[10px] font-bold px-2 py-0.5 rounded-md border ${
+                    isApproved
+                      ? 'text-emerald-800 bg-emerald-50 border-emerald-200'
+                      : status === 'REJECTED'
+                        ? 'text-rose-800 bg-rose-50 border-rose-200'
+                        : 'text-amber-800 bg-amber-50 border-amber-200'
+                  }`}
+                >
+                  {isLoading ? 'MEMUAT STATUS…' : STATUS_LABEL[status]}
                 </span>
                 <p className='text-[11px] text-slate-500 mt-1'>
-                  Pindai QR untuk verifikasi keabsahan data di Portal Sistem Kesehatan Pranikah.
+                  {isApproved
+                    ? 'Sertifikat ini telah disetujui petugas faskes dan sah digunakan.'
+                    : 'Sertifikat belum sah sebelum disetujui admin/petugas faskes.'}
                 </p>
               </div>
             </div>
@@ -212,12 +308,47 @@ export function DigitalImmunizationCertificateModal({
               <span className='text-slate-500 block text-[11px]'>
                 Penanggung Jawab Medis / Bidan Faskes:
               </span>
-              <span className='font-bold text-slate-900 block mt-4 underline decoration-emerald-600'>
-                dr. Siti Rahma, Sp.KKLP / Bdn. Kartika, S.Tr.Keb
-              </span>
-              <span className='text-[10px] text-slate-400 block'>SIP. 19840212 201001 2 004</span>
+              {isApproved ? (
+                <>
+                  <span className='font-bold text-slate-900 block mt-4 underline decoration-emerald-600'>
+                    {verification?.signerName || verification?.reviewedBy || 'Petugas Faskes'}
+                  </span>
+                  <span className='text-[10px] text-slate-400 block'>
+                    {verification?.signerSip
+                      ? `SIP. ${verification.signerSip}`
+                      : 'SIP tidak dicantumkan'}
+                  </span>
+                </>
+              ) : (
+                <span className='font-semibold text-slate-400 block mt-4 italic'>
+                  Menunggu tanda tangan admin
+                </span>
+              )}
             </div>
           </div>
+
+          {/* Aksi pengajuan (hanya pengguna; persetujuan tetap di admin) */}
+          {!isApproved && (
+            <div className='flex flex-col gap-2'>
+              {verification?.note && status === 'REJECTED' && (
+                <p className='text-[11px] text-rose-700 bg-rose-50 border border-rose-200 rounded-xl px-3 py-2'>
+                  Catatan admin: {verification.note}
+                </p>
+              )}
+              {canRequest && (
+                <button
+                  type='button'
+                  onClick={handleRequestVerification}
+                  disabled={isRequesting}
+                  className='self-start inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs transition-colors cursor-pointer disabled:opacity-50'
+                >
+                  <Clock size={14} />
+                  {isRequesting ? 'Mengirim…' : 'Ajukan Verifikasi Sertifikat'}
+                </button>
+              )}
+              {feedback && <p className='text-[11px] text-slate-600'>{feedback}</p>}
+            </div>
+          )}
         </div>
 
         {/* Footer Close */}

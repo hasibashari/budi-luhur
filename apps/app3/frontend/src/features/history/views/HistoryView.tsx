@@ -26,10 +26,14 @@ import { VerificationBadge, VerificationLegend } from '../components/Verificatio
 import { VaccineCardModal } from '@/src/features/dashboard/components/VaccineCardModal';
 import { MonthlyEvaluationView } from '../components/MonthlyEvaluationView';
 import {
+  deleteImmunizationAttachmentAction,
   deleteImmunizationRecordAction,
+  getImmunizationAttachmentAction,
   getImmunizationRecordsAction,
   saveImmunizationRecordAction,
   updateImmunizationRecordAction,
+  uploadImmunizationAttachmentAction,
+  validateImmunizationRecordAction,
 } from '@/src/features/user/api/userRepository';
 import { ImmunizationRecord } from '@/src/features/user/types';
 import { useTTSchedules } from '@/src/features/schedule/hooks/useTTSchedules';
@@ -120,13 +124,6 @@ export default function HistoryView() {
     ? doseNumber(nextSchedule.stage)
     : Math.min(5, verifiedLevel + 1);
   const nextDoseLabel = `TT${nextDoseNumber}`;
-  const acceptedDoses = useMemo(() => new Set(records.map(record => record.doseLevel)), [records]);
-  const suggestedDose = useMemo(() => {
-    for (let level = 1; level <= 5; level += 1) {
-      if (!acceptedDoses.has(`TT${level}` as ImmunizationRecord['doseLevel'])) return `TT${level}`;
-    }
-    return 'TT5';
-  }, [acceptedDoses]);
 
   const partnerName = dashboardData?.user.partnerName;
   const faskesName = dashboardData?.user.schoolOrOrg || 'Belum dipilih';
@@ -164,11 +161,25 @@ export default function HistoryView() {
     setIsInputModalOpen(true);
   };
 
-  const handleSaveRecord = async (newData: NewTTRiwayatData) => {
+  const handleValidateRecord = async (newData: NewTTRiwayatData) => {
+    try {
+      return await validateImmunizationRecordAction({
+        doseLevel: newData.doseLevel as ImmunizationRecord['doseLevel'],
+        vaccineDate: newData.vaccineDate,
+        excludeRecordId: editingRecord?.id,
+      });
+    } catch {
+      // Jika pratinjau gagal (mis. offline), jangan blokir simpan; server tetap memvalidasi.
+      return { errors: [], warnings: [] };
+    }
+  };
+
+  const handleSaveRecord = async (newData: NewTTRiwayatData, file: File | null) => {
     try {
       const result = editingRecord
         ? await updateImmunizationRecordAction(editingRecord.id, {
             doseLevel: newData.doseLevel as ImmunizationRecord['doseLevel'],
+            vaccineType: newData.vaccineType,
             vaccineDate: newData.vaccineDate,
             faskesName: newData.faskesName,
             batchNumber: newData.batchNumber,
@@ -178,6 +189,7 @@ export default function HistoryView() {
           })
         : await saveImmunizationRecordAction({
             doseLevel: newData.doseLevel as ImmunizationRecord['doseLevel'],
+            vaccineType: newData.vaccineType,
             vaccineDate: newData.vaccineDate,
             faskesName: newData.faskesName,
             batchNumber: newData.batchNumber,
@@ -186,14 +198,29 @@ export default function HistoryView() {
             datePrecision: newData.datePrecision,
           });
 
+      // Bukti opsional diunggah setelah record tersimpan (butuh id record).
+      let attachmentError: string | null = null;
+      if (file) {
+        try {
+          await uploadImmunizationAttachmentAction(result.record.id, file);
+        } catch (uploadError: any) {
+          attachmentError =
+            uploadError?.response?.data?.error ||
+            uploadError?.message ||
+            'Bukti gagal diunggah, data imunisasi tetap tersimpan.';
+        }
+      }
+
       await Promise.all([loadRecords(), refetchSchedules()]);
 
       const warnings = result.warnings || [];
       showToast({
-        tone: warnings.length > 0 ? 'warning' : 'success',
-        message: editingRecord
-          ? `Perbaikan dosis ${newData.doseLevel} tersimpan dan menunggu validasi ulang.`
-          : `Dosis ${newData.doseLevel} tersimpan dengan status Menunggu Validasi.`,
+        tone: attachmentError || warnings.length > 0 ? 'warning' : 'success',
+        message: attachmentError
+          ? attachmentError
+          : editingRecord
+            ? `Perbaikan dosis ${newData.doseLevel} tersimpan dan menunggu validasi ulang.`
+            : `Dosis ${newData.doseLevel} tersimpan dengan status Menunggu Validasi.`,
         details: warnings.length > 0 ? warnings : undefined,
       });
       setEditingRecord(null);
@@ -204,6 +231,33 @@ export default function HistoryView() {
         error?.message ||
         'Gagal menyimpan riwayat imunisasi. Periksa kembali data yang diisi.';
       return { success: false, error: message };
+    }
+  };
+
+  const handleOpenAttachment = async (record: ImmunizationRecord) => {
+    try {
+      const blob = await getImmunizationAttachmentAction(record.id);
+      const objectUrl = URL.createObjectURL(blob);
+      window.open(objectUrl, '_blank', 'noopener,noreferrer');
+      setTimeout(() => URL.revokeObjectURL(objectUrl), 60_000);
+    } catch {
+      showToast({ tone: 'error', message: 'Lampiran bukti tidak dapat dibuka.' });
+    }
+  };
+
+  const handleDeleteAttachment = async (record: ImmunizationRecord) => {
+    if (!window.confirm('Hapus lampiran bukti imunisasi ini?')) return;
+    try {
+      await deleteImmunizationAttachmentAction(record.id);
+      setDetailRecord(null);
+      await loadRecords();
+      showToast({ tone: 'success', message: 'Lampiran bukti dihapus.' });
+    } catch (error: any) {
+      showToast({
+        tone: 'error',
+        message:
+          error?.response?.data?.error || error?.message || 'Gagal menghapus lampiran bukti.',
+      });
     }
   };
 
@@ -281,7 +335,8 @@ export default function HistoryView() {
           setPrefillDose(null);
         }}
         onSubmit={handleSaveRecord}
-        defaultDose={prefillDose || suggestedDose}
+        onValidate={handleValidateRecord}
+        defaultDose={prefillDose || ''}
         initialData={editingRecord}
       />
 
@@ -291,6 +346,8 @@ export default function HistoryView() {
         onClose={() => setDetailRecord(null)}
         onEdit={handleOpenEdit}
         onDelete={record => setDeleteTarget(record)}
+        onOpenAttachment={handleOpenAttachment}
+        onDeleteAttachment={handleDeleteAttachment}
       />
 
       {/* Konfirmasi Hapus */}
@@ -629,7 +686,7 @@ export default function HistoryView() {
                             {info ? ` — ${info.name}` : ''}
                           </h4>
                           <span className='text-[11px] text-[#574144] truncate block'>
-                            {record.faskesName}
+                            Vaksin {record.vaccineType || 'TT'} • {record.faskesName}
                           </span>
                         </div>
                       </div>

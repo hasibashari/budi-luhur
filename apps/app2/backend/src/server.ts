@@ -18,8 +18,8 @@ async function start() {
     CREATE INDEX IF NOT EXISTS idx_push_subscriptions_user ON push_subscriptions(user_id);
   `);
 
-  // Pengingat jadwal harian (aktif untuk proses long-running; di Vercel
-  // gunakan endpoint cron /api/v1/notifications/cron-reminders).
+  // Pengingat jadwal harian (aktif untuk proses long-running; pada Vercel
+  // serverless pengingat dijalankan oleh hook di sisi frontend).
   ScheduleReminderService.startScheduler();
 
   app.listen(PORT, () => {

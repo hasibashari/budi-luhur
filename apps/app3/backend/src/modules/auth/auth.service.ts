@@ -41,21 +41,11 @@ export class AuthService {
   }
 
   private static async createLoginResult(row: UserDbRow) {
-    // 3. Check active schedule count to determine if user has set up their initial schedule
-    let scheduleCount = 1;
-    try {
-      const schedRes = await db.query<{ count: string }>(
-        `SELECT COUNT(*)::text as count FROM reminder_schedules WHERE user_id = $1 AND status = 'Aktif'`,
-        [row.id],
-      );
-      scheduleCount = Number(schedRes.rows[0]?.count || 0);
-    } catch {
-      // Keep default 1
-    }
-
+    // App 3 (TEMANI) tidak lagi membuat jadwal otomatis saat setup. Setup awal
+    // dianggap selesai ketika profil pranikah (faskes rujukan) sudah tersimpan,
+    // sehingga penjadwalan TT tidak boleh menjadi syarat kelengkapan profil.
     const hasSchool = Boolean(row.school_or_org && row.school_or_org.trim());
-    const hasSchedule = scheduleCount > 0;
-    const isProfileComplete = row.role === 'admin' || (hasSchool && hasSchedule);
+    const isProfileComplete = row.role === 'admin' || hasSchool;
 
     const authUser: AuthUser = {
       id: row.id,
@@ -91,6 +81,32 @@ export class AuthService {
       user: authUser,
       redirectTo,
       isProfileComplete,
+    };
+  }
+
+  /**
+   * Revalidasi sesi saat aplikasi dimuat ulang. Dipakai frontend agar flag
+   * `isProfileComplete` tidak pernah memakai nilai lama dari localStorage.
+   */
+  static async getSession(userId: string) {
+    const res = await db.query<UserDbRow>(
+      `SELECT u.id, u.name, u.email, u.password_hash, u.role, u.phone, u.avatar_url, u.gender,
+              p.friend_code, p.school_or_org, p.hb_level, p.streak_count
+       FROM users u
+       LEFT JOIN user_profiles p ON u.id = p.user_id
+       WHERE u.id = $1`,
+      [userId],
+    );
+    const row = res.rows[0];
+    if (!row) {
+      return { success: false, error: 'Sesi tidak valid.' };
+    }
+    const result = await AuthService.createLoginResult(row);
+    return {
+      success: true,
+      user: result.user,
+      isProfileComplete: result.isProfileComplete,
+      redirectTo: result.redirectTo,
     };
   }
 

@@ -40,7 +40,8 @@ export function LoginForm({ hideHeader = false }: LoginFormProps) {
       });
 
       if (res.success && res.redirectTo) {
-        const isUserIncomplete = res.user?.role === 'user' && !res.isProfileComplete;
+        const isProfileComplete = res.isProfileComplete ?? res.user?.isProfileComplete;
+        const isUserIncomplete = res.user?.role === 'user' && !isProfileComplete;
         const target = isUserIncomplete ? '/user/setup' : redirectParam || res.redirectTo;
         const roleLabel = res.user?.role === 'admin' ? 'Petugas Faskes / KUA' : 'Calon Pengantin';
         setSuccessRole(roleLabel);

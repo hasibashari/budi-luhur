@@ -18,25 +18,26 @@ export interface AdminStats {
 export interface ManagedUser {
   id: string;
   name: string;
-  age: number;
-  gender: string;
-  phone: string;
+  age: number | null;
+  gender: string | null;
+  phone: string | null;
   email: string;
-  avatarUrl: string;
-  riskLevel: 'Tinggi' | 'Sedang' | 'Rendah';
+  avatarUrl: string | null;
+  riskLevel: 'Tinggi' | 'Sedang' | 'Rendah' | null;
   status: 'Aktif' | 'Nonaktif';
-  schoolOrOrg: string;
-  assignedDoctor: string;
+  /** null berarti calon pengantin belum mengisi — jangan diisi nilai karangan. */
+  schoolOrOrg: string | null;
+  assignedDoctor: string | null;
   activeSchedulesCount: number;
-  adherenceRate: number;
-  lastActive: string;
+  adherenceRate: number | null;
+  lastActive: string | null;
   joinDate: string;
-  medicalNotes: string;
-  lastReminderSent: string;
-  weddingDate?: string;
-  ttStatus?: 'TT0' | 'TT1' | 'TT2' | 'TT3' | 'TT4' | 'TT5';
-  kuaStatus?: 'Terverifikasi' | 'Menunggu Skrining' | 'Belum Lengkap';
-  partnerName?: string;
+  medicalNotes: string | null;
+  lastReminderSent: string | null;
+  weddingDate: string | null;
+  ttStatus: 'TT0' | 'TT1' | 'TT2' | 'TT3' | 'TT4' | 'TT5' | null;
+  kuaStatus: 'Terverifikasi' | 'Menunggu Skrining' | 'Belum Lengkap' | null;
+  partnerName: string | null;
 }
 
 export interface HealthArticle {
@@ -59,6 +60,7 @@ export interface MedicationSchedule {
   userName: string;
   patientId?: string;
   patientName?: string;
+  partnerName?: string;
   medicationName: string;
   dosage: string;
   frequency: '1x Seminggu' | 'Harian' | string;
@@ -67,10 +69,14 @@ export interface MedicationSchedule {
   startDate: string;
   endDate: string;
   status: 'Aktif' | 'Selesai' | 'Diberhentikan';
-  category: 'TTD Rutin' | 'Terapi Anemia' | 'Suplemen Tambahan';
+  category: 'TTD Rutin' | 'Terapi Anemia' | 'Suplemen Tambahan' | 'Imunisasi TT';
   instructions: string;
   lastReminderSent?: string;
   todayStatus?: 'COMPLETED' | 'PENDING' | 'NOT_YET_TIME' | 'OFF_SCHEDULE' | 'MISSED';
+  ttLevel?: string;
+  scheduledDate?: string;
+  completedAt?: string;
+  isEnabled?: boolean;
 }
 
 export interface ComplianceReport {
@@ -145,8 +151,7 @@ export class AdminService {
     };
   }
 
-  static async getManagedUsers(): Promise<ManagedUser[]> {
-    const res = await db.query<any>(`
+  private static readonly MANAGED_USER_SELECT = `
       SELECT 
         u.id, u.name, u.gender, u.phone, u.email, u.avatar_url, u.date_of_birth, u.created_at,
         p.risk_level, p.status, p.notes, p.school_or_org, p.hb_level, p.friend_code, p.streak_count, p.last_active_at,
@@ -155,163 +160,70 @@ export class AdminService {
         (SELECT count(*) FROM consumption_logs WHERE user_id = u.id) as total_logs,
         (SELECT count(*) FROM consumption_logs WHERE user_id = u.id AND status IN ('ON_TIME', 'LATE')) as completed_logs
       FROM users u
-      LEFT JOIN user_profiles p ON u.id = p.user_id
-      WHERE u.role = 'user'
-      ORDER BY u.created_at DESC, u.name ASC
-    `);
+      LEFT JOIN user_profiles p ON u.id = p.user_id`;
 
-    return res.rows.map((r: any) => {
-      const totalLogs = Number(r.total_logs) || 0;
-      const completedLogs = Number(r.completed_logs) || 0;
-      const adherenceRate = totalLogs > 0 ? Math.round((completedLogs / totalLogs) * 100) : 85;
-
-      const d = r.last_active_at ? new Date(r.last_active_at) : new Date();
-      const lastActiveStr = !isNaN(d.getTime())
-        ? d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })
-        : 'Hari ini';
-
-      const schoolOrOrg = r.school_or_org || 'Puskesmas Gambir - KUA Gambir';
-
-      let age = 24;
-      if (r.date_of_birth) {
-        const birthDate = new Date(r.date_of_birth);
-        if (!isNaN(birthDate.getTime())) {
-          const diff = Date.now() - birthDate.getTime();
-          age = Math.floor(diff / (365.25 * 24 * 60 * 60 * 1000));
-        }
-      }
-
-      const weddingDate = r.wedding_date
-        ? new Date(r.wedding_date).toISOString().split('T')[0]
-        : '2026-11-20';
-      const ttStatus =
-        r.tt_status || (r.risk_level === 'Tinggi' ? 'TT0' : r.risk_level === 'Sedang' ? 'TT1' : 'TT2');
-      const kuaStatus =
-        r.kua_status ||
-        (r.risk_level === 'Rendah'
-          ? 'Terverifikasi'
-          : r.risk_level === 'Sedang'
-            ? 'Menunggu Skrining'
-            : 'Belum Lengkap');
-      const partnerName =
-        r.partner_name ||
-        (r.name.includes('Sarah')
-          ? 'Rian Pratama'
-          : r.name.includes('Alya')
-            ? 'Dimas Anggara'
-            : r.name.includes('Nadia')
-              ? 'Bayu Setiawan'
-              : 'Fajar Hidayat');
-
-      return {
-        id: r.id,
-        name: r.name,
-        age,
-        gender: r.gender || 'Perempuan',
-        phone: r.phone || '-',
-        email: r.email,
-        avatarUrl: r.avatar_url || null,
-        riskLevel: r.risk_level || 'Rendah',
-        status: r.status || 'Aktif',
-        schoolOrOrg,
-        assignedDoctor: schoolOrOrg,
-        activeSchedulesCount: Number(r.active_schedules_count) || 1,
-        adherenceRate,
-        lastActive: lastActiveStr,
-        joinDate: r.created_at ? new Date(r.created_at).toISOString().split('T')[0] : '2026-09-01',
-        medicalNotes: r.notes || `Kadar Hb: ${r.hb_level || 12.4} g/dL • Skrining Pranikah Faskes`,
-        lastReminderSent: 'Hari ini, 20:00 WIB',
-        weddingDate,
-        ttStatus,
-        kuaStatus,
-        partnerName,
-      };
-    });
-  }
-
-  static async getManagedUserById(userId: string): Promise<ManagedUser | null> {
-    const res = await db.query<any>(
-      `SELECT 
-        u.id, u.name, u.gender, u.phone, u.email, u.avatar_url, u.date_of_birth, u.created_at,
-        p.risk_level, p.status, p.notes, p.school_or_org, p.hb_level, p.friend_code, p.streak_count, p.last_active_at,
-        p.wedding_date, p.tt_status, p.kua_status, p.partner_name,
-        (SELECT count(*) FROM reminder_schedules WHERE user_id = u.id AND status = 'Aktif') as active_schedules_count,
-        (SELECT count(*) FROM consumption_logs WHERE user_id = u.id) as total_logs,
-        (SELECT count(*) FROM consumption_logs WHERE user_id = u.id AND status IN ('ON_TIME', 'LATE')) as completed_logs
-      FROM users u
-      LEFT JOIN user_profiles p ON u.id = p.user_id
-      WHERE u.id = $1
-      LIMIT 1`,
-      [userId],
-    );
-
-    if (res.rows.length === 0) return null;
-    const r = res.rows[0];
+  /**
+   * Pemetaan apa adanya. Field yang belum diisi pengguna dikembalikan null
+   * supaya UI menampilkan "Belum diisi", bukan nilai karangan.
+   */
+  private static mapManagedUserRow(r: any): ManagedUser {
     const totalLogs = Number(r.total_logs) || 0;
     const completedLogs = Number(r.completed_logs) || 0;
-    const adherenceRate = totalLogs > 0 ? Math.round((completedLogs / totalLogs) * 100) : 85;
 
-    const d = r.last_active_at ? new Date(r.last_active_at) : new Date();
-    const lastActiveStr = !isNaN(d.getTime())
-      ? d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })
-      : 'Hari ini';
-
-    const schoolOrOrg = r.school_or_org || 'Puskesmas Gambir - KUA Gambir';
-
-    let age = 24;
+    let age: number | null = null;
     if (r.date_of_birth) {
       const birthDate = new Date(r.date_of_birth);
-      if (!isNaN(birthDate.getTime())) {
-        const diff = Date.now() - birthDate.getTime();
-        age = Math.floor(diff / (365.25 * 24 * 60 * 60 * 1000));
+      if (!Number.isNaN(birthDate.getTime())) {
+        age = Math.floor((Date.now() - birthDate.getTime()) / (365.25 * 24 * 60 * 60 * 1000));
       }
     }
 
-    const weddingDate = r.wedding_date
-      ? new Date(r.wedding_date).toISOString().split('T')[0]
-      : '2026-11-20';
-    const ttStatus =
-      r.tt_status || (r.risk_level === 'Tinggi' ? 'TT0' : r.risk_level === 'Sedang' ? 'TT1' : 'TT2');
-    const kuaStatus =
-      r.kua_status ||
-      (r.risk_level === 'Rendah'
-        ? 'Terverifikasi'
-        : r.risk_level === 'Sedang'
-          ? 'Menunggu Skrining'
-          : 'Belum Lengkap');
-    const partnerName =
-      r.partner_name ||
-      (r.name.includes('Sarah')
-        ? 'Rian Pratama'
-        : r.name.includes('Alya')
-          ? 'Dimas Anggara'
-          : r.name.includes('Nadia')
-            ? 'Bayu Setiawan'
-            : 'Fajar Hidayat');
+    const toDateKey = (value: any) =>
+      value ? new Date(value).toISOString().split('T')[0] : null;
 
     return {
       id: r.id,
       name: r.name,
       age,
-      gender: r.gender || 'Perempuan',
-      phone: r.phone || '-',
+      gender: r.gender || null,
+      phone: r.phone || null,
       email: r.email,
       avatarUrl: r.avatar_url || null,
-      riskLevel: r.risk_level || 'Rendah',
+      riskLevel: r.risk_level || null,
       status: r.status || 'Aktif',
-      schoolOrOrg,
-      assignedDoctor: schoolOrOrg,
-      activeSchedulesCount: Number(r.active_schedules_count) || 1,
-      adherenceRate,
-      lastActive: lastActiveStr,
-      joinDate: r.created_at ? new Date(r.created_at).toISOString().split('T')[0] : '2026-09-01',
-      medicalNotes: r.notes || `Kadar Hb: ${r.hb_level || 12.4} g/dL • Skrining Pranikah Faskes`,
-      lastReminderSent: 'Hari ini, 20:00 WIB',
-      weddingDate,
-      ttStatus,
-      kuaStatus,
-      partnerName,
+      schoolOrOrg: r.school_or_org || null,
+      assignedDoctor: r.school_or_org || null,
+      activeSchedulesCount: Number(r.active_schedules_count) || 0,
+      adherenceRate: totalLogs > 0 ? Math.round((completedLogs / totalLogs) * 100) : null,
+      lastActive: r.last_active_at ? String(r.last_active_at) : null,
+      joinDate: toDateKey(r.created_at) || '',
+      medicalNotes: r.notes || null,
+      lastReminderSent: null,
+      weddingDate: toDateKey(r.wedding_date),
+      ttStatus: r.tt_status || null,
+      kuaStatus: r.kua_status || null,
+      partnerName: r.partner_name || null,
     };
+  }
+
+  static async getManagedUsers(): Promise<ManagedUser[]> {
+    const res = await db.query<any>(
+      `${AdminService.MANAGED_USER_SELECT}
+       WHERE u.role = 'user'
+       ORDER BY u.created_at DESC, u.name ASC`,
+    );
+    return res.rows.map(row => AdminService.mapManagedUserRow(row));
+  }
+
+  static async getManagedUserById(userId: string): Promise<ManagedUser | null> {
+    const res = await db.query<any>(
+      `${AdminService.MANAGED_USER_SELECT}
+       WHERE u.id = $1
+       LIMIT 1`,
+      [userId],
+    );
+    if (res.rows.length === 0) return null;
+    return AdminService.mapManagedUserRow(res.rows[0]);
   }
 
   static async createUser(data: {
@@ -387,8 +299,8 @@ export class AdminService {
     await db.transaction(async (client) => {
       const birthDate = data.age
         ? new Date(new Date().getFullYear() - (parseInt(data.age, 10) || 24), 5, 15)
-            .toISOString()
-            .split('T')[0]
+          .toISOString()
+          .split('T')[0]
         : null;
 
       if (data.name || data.email || data.phone || data.gender || birthDate) {
@@ -503,7 +415,7 @@ export class AdminService {
             }
             sectionsByArticle.get(s.article_id)!.push(...parsed);
           }
-        } catch {}
+        } catch { }
       }
     }
 
@@ -675,13 +587,18 @@ export class AdminService {
   }
 
   static async getSchedules(): Promise<MedicationSchedule[]> {
+    // Admin hanya memonitor: sumber data sama dengan yang dibuat pengguna.
     const res = await db.query<any>(`
       SELECT 
-        s.id, s.user_id, s.tablet_name, s.dosage, s.frequency, s.day_of_week, s.time_slot, s.status, s.instructions, s.created_at,
-        u.name as user_name
+        s.id, s.user_id, s.tablet_name, s.dosage, s.frequency, s.day_of_week, s.time_slot,
+        s.status, s.instructions, s.created_at, s.tt_level, s.scheduled_date, s.completed_at,
+        s.is_enabled, s.remind_15min_before,
+        u.name as user_name, p.partner_name
       FROM reminder_schedules s
       JOIN users u ON s.user_id = u.id
-      ORDER BY s.created_at DESC
+      LEFT JOIN user_profiles p ON p.user_id = s.user_id
+      WHERE s.status <> 'Diberhentikan'
+      ORDER BY s.scheduled_date ASC NULLS LAST, s.created_at DESC
     `);
     const rows = res.rows;
 
@@ -730,39 +647,47 @@ export class AdminService {
 
       const log = isDaily
         ? recentLogs.find(
-            (l: any) =>
-              l.user_id === r.user_id &&
-              (l.schedule_id === r.id || !l.schedule_id) &&
-              (typeof l.scheduled_date === 'string'
-                ? l.scheduled_date.startsWith(todayStr)
-                : new Date(l.scheduled_date).toISOString().split('T')[0] === todayStr),
-          )
+          (l: any) =>
+            l.user_id === r.user_id &&
+            (l.schedule_id === r.id || !l.schedule_id) &&
+            (typeof l.scheduled_date === 'string'
+              ? l.scheduled_date.startsWith(todayStr)
+              : new Date(l.scheduled_date).toISOString().split('T')[0] === todayStr),
+        )
         : recentLogs.find(
-            (l: any) => l.user_id === r.user_id && (l.schedule_id === r.id || !l.schedule_id),
-          );
+          (l: any) => l.user_id === r.user_id && (l.schedule_id === r.id || !l.schedule_id),
+        );
 
       const isCompleted = log && (log.status === 'ON_TIME' || log.status === 'LATE');
       const todayStatus: 'COMPLETED' | 'PENDING' = isCompleted ? 'COMPLETED' : 'PENDING';
+      const isTtSchedule = Boolean(r.tt_level);
 
       result.push({
         id: r.id,
         userId: r.user_id,
-        userName: r.user_name || 'Siswi FEMORY',
+        userName: r.user_name || 'Calon Pengantin',
         patientId: r.user_id,
-        patientName: r.user_name || 'Siswi FEMORY',
+        patientName: r.user_name || 'Calon Pengantin',
+        partnerName: r.partner_name || undefined,
         medicationName: r.tablet_name || 'Tablet Tambah Darah (TTD)',
         dosage: r.dosage || '1 tablet',
-        frequency: isDaily ? 'Harian' : '1x Seminggu',
+        frequency: isTtSchedule ? '1x Sesuai Dosis' : isDaily ? 'Harian' : '1x Seminggu',
         dayOfWeek: r.day_of_week || 'Sabtu',
         timeSlots: slots,
         startDate: r.created_at ? new Date(r.created_at).toISOString().split('T')[0] : '2026-09-01',
         endDate: '2026-12-31',
         status: r.status,
-        category,
+        category: isTtSchedule ? 'Imunisasi TT' : category,
         instructions:
           r.instructions || 'Minum setelah makan malam atau sebelum tidur dengan air putih.',
         lastReminderSent: `${r.day_of_week || 'Sabtu'}, ${r.time_slot || '20:00'} WIB`,
-        todayStatus,
+        todayStatus: r.status === 'Selesai' ? 'COMPLETED' : todayStatus,
+        ttLevel: r.tt_level || undefined,
+        scheduledDate: r.scheduled_date
+          ? String(r.scheduled_date).slice(0, 10)
+          : undefined,
+        completedAt: r.completed_at ? new Date(r.completed_at).toISOString() : undefined,
+        isEnabled: r.is_enabled ?? true,
       });
     }
 
@@ -772,10 +697,13 @@ export class AdminService {
   static async getScheduleById(scheduleId: string): Promise<MedicationSchedule | null> {
     const res = await db.query<any>(
       `SELECT 
-        s.id, s.user_id, s.tablet_name, s.dosage, s.frequency, s.day_of_week, s.time_slot, s.status, s.instructions, s.created_at,
-        u.name as user_name
+        s.id, s.user_id, s.tablet_name, s.dosage, s.frequency, s.day_of_week, s.time_slot,
+        s.status, s.instructions, s.created_at, s.tt_level, s.scheduled_date, s.completed_at,
+        s.is_enabled,
+        u.name as user_name, p.partner_name
       FROM reminder_schedules s
       JOIN users u ON s.user_id = u.id
+      LEFT JOIN user_profiles p ON p.user_id = s.user_id
       WHERE s.id = $1
       LIMIT 1`,
       [scheduleId],
@@ -803,133 +731,32 @@ export class AdminService {
       : isDaily
         ? 'Terapi Anemia'
         : 'TTD Rutin';
+    const isTtSchedule = Boolean(r.tt_level);
 
     return {
       id: r.id,
       userId: r.user_id,
-      userName: r.user_name || 'Siswi FEMORY',
+      userName: r.user_name || 'Calon Pengantin',
       patientId: r.user_id,
-      patientName: r.user_name || 'Siswi FEMORY',
+      patientName: r.user_name || 'Calon Pengantin',
+      partnerName: r.partner_name || undefined,
       medicationName: r.tablet_name || 'Tablet Tambah Darah (TTD)',
       dosage: r.dosage || '1 tablet',
-      frequency: isDaily ? 'Harian' : '1x Seminggu',
+      frequency: isTtSchedule ? '1x Sesuai Dosis' : isDaily ? 'Harian' : '1x Seminggu',
       dayOfWeek: r.day_of_week || 'Sabtu',
       timeSlots: slots,
       startDate: r.created_at ? new Date(r.created_at).toISOString().split('T')[0] : '2026-09-01',
       endDate: '2026-12-31',
       status: r.status,
-      category,
+      category: isTtSchedule ? 'Imunisasi TT' : category,
       instructions:
         r.instructions || 'Minum setelah makan malam atau sebelum tidur dengan air putih.',
       lastReminderSent: `${r.day_of_week || 'Sabtu'}, ${r.time_slot || '20:00'} WIB`,
+      ttLevel: r.tt_level || undefined,
+      scheduledDate: r.scheduled_date ? String(r.scheduled_date).slice(0, 10) : undefined,
+      completedAt: r.completed_at ? new Date(r.completed_at).toISOString() : undefined,
+      isEnabled: r.is_enabled ?? true,
     };
-  }
-
-  static async createSchedule(data: {
-    userId?: string;
-    patientId?: string;
-    medicationName: string;
-    dosage: string;
-    frequency: string;
-    dayOfWeek?: string;
-    timeSlots: string[];
-    category?: 'TTD Rutin' | 'Terapi Anemia' | 'Suplemen Tambahan';
-    instructions?: string;
-  }) {
-    const targetUserId = data.userId || data.patientId;
-    if (!targetUserId) throw new Error('User tujuan wajib dipilih.');
-    const newId = `sch_${Date.now().toString().slice(-6)}`;
-    const mainSlot = (data.timeSlots && data.timeSlots[0]) || '20:00';
-    const dayOfWeek = data.dayOfWeek || 'Sabtu';
-    const dbFrequency =
-      data.frequency === 'Harian' || data.category === 'Terapi Anemia' ? 'daily' : 'weekly';
-
-    await db.transaction(async (client) => {
-      await client.query(
-        `INSERT INTO reminder_schedules (
-          id, user_id, tablet_name, dosage, frequency, day_of_week, time_slot, status, instructions
-        ) VALUES ($1, $2, $3, $4, $5, $6, $7, 'Aktif', $8)`,
-        [
-          newId,
-          targetUserId,
-          data.medicationName || 'Tablet Tambah Darah (TTD)',
-          data.dosage || '1 tablet',
-          dbFrequency,
-          dayOfWeek,
-          mainSlot,
-          data.instructions ||
-            'Minum 1 tablet setelah sarapan atau sebelum tidur dengan air putih.',
-        ],
-      );
-
-      if (data.timeSlots && Array.isArray(data.timeSlots)) {
-        for (const slot of data.timeSlots) {
-          await client.query(`INSERT INTO schedule_time_slots (schedule_id, time) VALUES ($1, $2)`, [
-            newId,
-            slot,
-          ]);
-        }
-      }
-    });
-
-    const created = await this.getScheduleById(newId);
-    return created;
-  }
-
-  static async updateSchedule(scheduleId: string, data: any) {
-    const dbFrequency = data.frequency
-      ? data.frequency === 'Harian' || data.category === 'Terapi Anemia'
-        ? 'daily'
-        : 'weekly'
-      : null;
-
-    const mainSlot = data.timeSlots && data.timeSlots.length > 0 ? data.timeSlots[0] : null;
-
-    await db.transaction(async (client) => {
-      await client.query(
-        `UPDATE reminder_schedules
-         SET
-           tablet_name = COALESCE($1, tablet_name),
-           dosage = COALESCE($2, dosage),
-           status = COALESCE($3, status),
-           instructions = COALESCE($4, instructions),
-           day_of_week = COALESCE($5, day_of_week),
-           frequency = COALESCE($6, frequency),
-           time_slot = COALESCE($7, time_slot),
-           updated_at = CURRENT_TIMESTAMP
-         WHERE id = $8`,
-        [
-          data.medicationName ?? null,
-          data.dosage ?? null,
-          data.status ?? null,
-          data.instructions ?? null,
-          data.dayOfWeek ?? null,
-          dbFrequency,
-          mainSlot,
-          scheduleId,
-        ],
-      );
-
-      if (data.timeSlots && Array.isArray(data.timeSlots)) {
-        await client.query(`DELETE FROM schedule_time_slots WHERE schedule_id = $1`, [scheduleId]);
-        for (const slot of data.timeSlots) {
-          await client.query(
-            `INSERT INTO schedule_time_slots (schedule_id, time) VALUES ($1, $2)`,
-            [scheduleId, slot],
-          );
-        }
-      }
-    });
-
-    return { success: true };
-  }
-
-  static async deleteSchedule(scheduleId: string) {
-    await db.transaction(async (client) => {
-      await client.query(`DELETE FROM schedule_time_slots WHERE schedule_id = $1`, [scheduleId]);
-      await client.query(`DELETE FROM reminder_schedules WHERE id = $1`, [scheduleId]);
-    });
-    return { success: true };
   }
 
   static async getComplianceReports(): Promise<ComplianceReport[]> {

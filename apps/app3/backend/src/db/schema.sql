@@ -23,6 +23,8 @@ DROP TABLE IF EXISTS reminders CASCADE;
 DROP TABLE IF EXISTS health_program_enrollments CASCADE;
 DROP TABLE IF EXISTS health_programs CASCADE;
 DROP TABLE IF EXISTS patient_profiles CASCADE;
+DROP TABLE IF EXISTS certificate_verifications CASCADE;
+DROP TABLE IF EXISTS immunization_attachments CASCADE;
 DROP TABLE IF EXISTS immunization_records CASCADE;
 DROP TABLE IF EXISTS user_profiles CASCADE;
 DROP TABLE IF EXISTS products CASCADE;
@@ -69,6 +71,9 @@ CREATE TABLE immunization_records (
     id VARCHAR(255) PRIMARY KEY,
     user_id VARCHAR(255) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     dose_level VARCHAR(3) NOT NULL CHECK (dose_level IN ('TT1', 'TT2', 'TT3', 'TT4', 'TT5')),
+    -- Jenis produk vaksin (bukan urutan dosis).
+    vaccine_type VARCHAR(30) NOT NULL DEFAULT 'TT'
+      CHECK (vaccine_type IN ('TT', 'Td', 'DPT', 'Lainnya')),
     vaccine_date DATE NOT NULL,
     faskes_name VARCHAR(255) NOT NULL,
     batch_number VARCHAR(100),
@@ -88,6 +93,19 @@ CREATE TABLE immunization_records (
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP WITH TIME ZONE
+);
+
+-- Bukti imunisasi opsional. Disimpan sebagai BYTEA dan hanya bisa diakses
+-- pemilik data / admin melalui endpoint ber-autentikasi (tidak ada URL publik).
+CREATE TABLE immunization_attachments (
+    id VARCHAR(255) PRIMARY KEY,
+    record_id VARCHAR(255) NOT NULL REFERENCES immunization_records(id) ON DELETE CASCADE,
+    user_id VARCHAR(255) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    file_name VARCHAR(255),
+    mime_type VARCHAR(100) NOT NULL,
+    file_size INTEGER NOT NULL,
+    data BYTEA NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 -- 3. PRODUCTS (SUPPLEMENTS & TTD INVENTORY)
@@ -298,6 +316,25 @@ CREATE INDEX idx_profiles_friend_code ON user_profiles(friend_code);
 CREATE INDEX idx_profiles_school ON user_profiles(school_or_org);
 CREATE INDEX idx_immunization_records_user ON immunization_records(user_id, vaccine_date);
 CREATE INDEX idx_immunization_records_user_dose ON immunization_records(user_id, dose_level);
+CREATE INDEX idx_immunization_attachments_record ON immunization_attachments(record_id);
+
+-- Verifikasi tanda tangan sertifikat imunisasi. Hanya admin (tenaga kesehatan)
+-- yang boleh menyetujui; pengguna hanya dapat mengajukan.
+CREATE TABLE certificate_verifications (
+    user_id VARCHAR(255) PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+    status VARCHAR(20) NOT NULL DEFAULT 'DRAFT'
+      CHECK (status IN ('DRAFT', 'PENDING', 'APPROVED', 'REJECTED')),
+    certificate_number VARCHAR(100),
+    note TEXT,
+    requested_at TIMESTAMP WITH TIME ZONE,
+    reviewed_by VARCHAR(255),
+    reviewed_at TIMESTAMP WITH TIME ZONE,
+    signer_name VARCHAR(255),
+    signer_sip VARCHAR(100),
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+CREATE INDEX idx_certificate_verifications_status ON certificate_verifications(status);
 CREATE INDEX idx_schedules_user_status ON reminder_schedules(user_id, status);
 CREATE INDEX idx_schedules_user_date ON reminder_schedules(user_id, scheduled_date);
 CREATE INDEX idx_logs_user_date ON consumption_logs(user_id, scheduled_date);

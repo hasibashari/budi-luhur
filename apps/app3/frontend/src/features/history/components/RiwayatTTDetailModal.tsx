@@ -2,6 +2,7 @@ import {
   CalendarDays,
   FileText,
   Info,
+  Paperclip,
   Pencil,
   ShieldCheck,
   Stethoscope,
@@ -22,6 +23,8 @@ interface RiwayatTTDetailModalProps {
   onClose: () => void;
   onEdit: (record: ImmunizationRecord) => void;
   onDelete: (record: ImmunizationRecord) => void;
+  onOpenAttachment: (record: ImmunizationRecord) => void;
+  onDeleteAttachment: (record: ImmunizationRecord) => void;
 }
 
 function DetailRow({
@@ -54,6 +57,8 @@ export function RiwayatTTDetailModal({
   onClose,
   onEdit,
   onDelete,
+  onOpenAttachment,
+  onDeleteAttachment,
 }: RiwayatTTDetailModalProps) {
   if (!record) return null;
 
@@ -94,6 +99,11 @@ export function RiwayatTTDetailModal({
               hint={DATE_PRECISION_LABEL[record.datePrecision]}
             />
             <DetailRow
+              icon={<ShieldCheck size={16} />}
+              label='Jenis vaksin'
+              value={record.vaccineType || 'TT'}
+            />
+            <DetailRow
               icon={<Stethoscope size={16} />}
               label='Fasilitas kesehatan'
               value={record.faskesName || '-'}
@@ -118,14 +128,23 @@ export function RiwayatTTDetailModal({
               label='Bukti pendukung'
               value={
                 record.attachmentUrl ? (
-                  <a
-                    href={record.attachmentUrl}
-                    target='_blank'
-                    rel='noreferrer'
-                    className='text-[#aa294d] underline underline-offset-2'
-                  >
-                    Lihat lampiran
-                  </a>
+                  <span className='flex items-center gap-2'>
+                    <button
+                      type='button'
+                      onClick={() => onOpenAttachment(record)}
+                      className='inline-flex items-center gap-1 text-[#aa294d] underline underline-offset-2 cursor-pointer'
+                    >
+                      <Paperclip size={13} />
+                      Lihat lampiran
+                    </button>
+                    <button
+                      type='button'
+                      onClick={() => onDeleteAttachment(record)}
+                      className='inline-flex items-center gap-1 text-[#a4163a] text-[11px] font-semibold cursor-pointer'
+                    >
+                      <Trash2 size={12} /> Hapus
+                    </button>
+                  </span>
                 ) : (
                   'Belum ada lampiran'
                 )

@@ -216,8 +216,8 @@ export default function ReportAnalyticsView() {
           </div>
           <div className='space-y-2.5'>
             {users.slice(0, 5).map(u => {
-              const isGood = u.adherenceRate >= 90;
-              const org = u.schoolOrOrg || u.assignedDoctor || 'Puskesmas Gambir - KUA Gambir';
+              const isGood = (u.adherenceRate ?? 0) >= 90;
+              const org = u.schoolOrOrg || u.assignedDoctor || 'Faskes belum diisi';
               return (
                 <div
                   key={u.id}
@@ -241,12 +241,14 @@ export default function ReportAnalyticsView() {
                   </div>
                   <span
                     className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-extrabold flex-shrink-0 border ${
-                      isGood
-                        ? 'bg-[#aff1d0] text-[#0a5139] border-[#6ee7b7]'
-                        : 'bg-[#ffd9de] text-[#8c0f39] border-[#fca5a5]'
+                      u.adherenceRate === null
+                        ? 'bg-slate-100 text-slate-600 border-slate-200'
+                        : isGood
+                          ? 'bg-[#aff1d0] text-[#0a5139] border-[#6ee7b7]'
+                          : 'bg-[#ffd9de] text-[#8c0f39] border-[#fca5a5]'
                     }`}
                   >
-                    {u.adherenceRate}%
+                    {u.adherenceRate === null ? 'Tanpa data' : `${u.adherenceRate}%`}
                   </span>
                 </div>
               );

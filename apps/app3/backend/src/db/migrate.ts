@@ -14,6 +14,8 @@ async function migrate() {
       id VARCHAR(255) PRIMARY KEY,
       user_id VARCHAR(255) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
       dose_level VARCHAR(3) NOT NULL CHECK (dose_level IN ('TT1', 'TT2', 'TT3', 'TT4', 'TT5')),
+      vaccine_type VARCHAR(30) NOT NULL DEFAULT 'TT'
+        CHECK (vaccine_type IN ('TT', 'Td', 'DPT', 'Lainnya')),
       vaccine_date DATE NOT NULL,
       faskes_name VARCHAR(255) NOT NULL,
       batch_number VARCHAR(100),
@@ -40,6 +42,7 @@ async function migrate() {
   await db.query(`
     ALTER TABLE immunization_records
       ADD COLUMN IF NOT EXISTS info_source VARCHAR(30) NOT NULL DEFAULT 'self_reported',
+      ADD COLUMN IF NOT EXISTS vaccine_type VARCHAR(30) NOT NULL DEFAULT 'TT',
       ADD COLUMN IF NOT EXISTS date_precision VARCHAR(20) NOT NULL DEFAULT 'exact',
       ADD COLUMN IF NOT EXISTS attachment_url TEXT,
       ADD COLUMN IF NOT EXISTS verified_by VARCHAR(255),
@@ -54,6 +57,40 @@ async function migrate() {
       DROP CONSTRAINT IF EXISTS immunization_records_user_id_dose_level_key;
     CREATE INDEX IF NOT EXISTS idx_immunization_records_user_dose
       ON immunization_records(user_id, dose_level);
+  `);
+
+  await db.query(`
+    CREATE TABLE IF NOT EXISTS immunization_attachments (
+      id VARCHAR(255) PRIMARY KEY,
+      record_id VARCHAR(255) NOT NULL REFERENCES immunization_records(id) ON DELETE CASCADE,
+      user_id VARCHAR(255) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      file_name VARCHAR(255),
+      mime_type VARCHAR(100) NOT NULL,
+      file_size INTEGER NOT NULL,
+      data BYTEA NOT NULL,
+      created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE INDEX IF NOT EXISTS idx_immunization_attachments_record
+      ON immunization_attachments(record_id);
+  `);
+
+  await db.query(`
+    CREATE TABLE IF NOT EXISTS certificate_verifications (
+      user_id VARCHAR(255) PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+      status VARCHAR(20) NOT NULL DEFAULT 'DRAFT'
+        CHECK (status IN ('DRAFT', 'PENDING', 'APPROVED', 'REJECTED')),
+      certificate_number VARCHAR(100),
+      note TEXT,
+      requested_at TIMESTAMP WITH TIME ZONE,
+      reviewed_by VARCHAR(255),
+      reviewed_at TIMESTAMP WITH TIME ZONE,
+      signer_name VARCHAR(255),
+      signer_sip VARCHAR(100),
+      created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE INDEX IF NOT EXISTS idx_certificate_verifications_status
+      ON certificate_verifications(status);
   `);
 
   console.log('✅ App 3 database migrations completed successfully.');

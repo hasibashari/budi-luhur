@@ -1,5 +1,14 @@
 import React, { useRef } from 'react';
-import { X, ShieldCheck, Download, Printer, QrCode, Building2, CheckCircle2 } from 'lucide-react';
+import {
+  X,
+  ShieldCheck,
+  Download,
+  Printer,
+  QrCode,
+  Building2,
+  CheckCircle2,
+  Sparkles,
+} from 'lucide-react';
 import { Button } from '@/src/shared/components/ui/Button';
 import { ImmunizationRecord } from '@/src/features/user/types';
 
@@ -142,7 +151,7 @@ export function VaccineCardModal({
                 Status Proteksi
               </span>
               <span className='text-xs font-bold text-[#2a6950] block'>
-                TT{currentTTLevel} Tercapai (Terlindungi)
+                {currentTTLevel > 0 ? `TT${currentTTLevel} Tercatat` : 'Belum ada dosis tercatat'}
               </span>
             </div>
           </div>
@@ -169,18 +178,46 @@ export function VaccineCardModal({
                       <td className='p-2 text-slate-600'>{dose.date}</td>
                       <td className='p-2 text-slate-600'>{dose.duration}</td>
                       <td className='p-2 text-right'>
-                        {dose.status === 'Selesai' ? (
-                          <span className='inline-flex items-center gap-0.5 text-[#2a6950] font-bold'>
-                            <CheckCircle2 size={12} /> Selesai
-                          </span>
-                        ) : (
+                        {dose.status === 'Belum' ? (
                           <span className='text-slate-400'>{dose.status}</span>
+                        ) : (
+                          <span
+                            className={`inline-flex items-center gap-0.5 font-bold ${
+                              dose.status === 'Terverifikasi' ? 'text-[#2a6950]' : 'text-amber-700'
+                            }`}
+                          >
+                            <CheckCircle2 size={12} /> {dose.status}
+                          </span>
                         )}
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
+            </div>
+          </div>
+
+          {/* Ucapan Penyemangat */}
+          <div className='rounded-2xl p-3.5 bg-gradient-to-r from-[#fff7ed] via-[#fefce8] to-[#f0fdf4] border border-amber-200'>
+            <div className='flex items-start gap-2.5'>
+              <div className='w-8 h-8 shrink-0 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center'>
+                <Sparkles size={16} />
+              </div>
+              <div>
+                <p className='text-[11px] sm:text-xs font-bold text-slate-900'>
+                  {currentTTLevel >= 5
+                    ? 'Luar biasa — imunisasi TT kamu sudah lengkap sampai TT5!'
+                    : 'Terima kasih sudah melangkah sejauh ini!'}
+                </p>
+                <p className='text-[10px] sm:text-[11px] text-slate-600 leading-relaxed mt-1'>
+                  {currentTTLevel >= 5
+                    ? 'Perlindungan seumur hidup sudah terbentuk. Tetap jaga kesehatan dan lakukan pemeriksaan pranikah secara berkala bersama pasangan.'
+                    : `Setiap dosis yang diselesaikan adalah perlindungan nyata bagi dirimu, pasangan, dan calon buah hati. Lanjutkan sampai TT5 sesuai jadwal dari tenaga kesehatan — sedikit lagi, manfaatnya bertahan puluhan tahun.`}
+                </p>
+                <p className='text-[10px] font-semibold text-emerald-700 mt-1.5'>
+                  Progres: TT{Math.min(currentTTLevel, 5)} dari TT5
+                </p>
+              </div>
             </div>
           </div>
 

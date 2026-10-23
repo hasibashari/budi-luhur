@@ -127,7 +127,7 @@ export default function UserManagementView() {
     const matchesSearch =
       u.name.toLowerCase().includes(q) ||
       u.id.toLowerCase().includes(q) ||
-      u.phone.includes(q) ||
+      (u.phone || '').includes(q) ||
       (u.partnerName && u.partnerName.toLowerCase().includes(q)) ||
       (u.schoolOrOrg && u.schoolOrOrg.toLowerCase().includes(q));
 
@@ -147,15 +147,15 @@ export default function UserManagementView() {
   const onOpenEdit = (user: ManagedUser) => {
     handleOpenEdit(user.id, {
       name: user.name,
-      age: String(user.age || 24),
+      age: user.age ? String(user.age) : '',
       gender: (user.gender as UserGender) || 'Perempuan',
-      phone: user.phone,
+      phone: user.phone || '',
       email: user.email || '',
       riskLevel: (user.riskLevel as RiskLevel) || 'Rendah',
-      schoolOrOrg: user.schoolOrOrg || 'Puskesmas Gambir - KUA Gambir',
-      assignedDoctor: user.schoolOrOrg || 'Puskesmas Gambir - KUA Gambir',
+      schoolOrOrg: user.schoolOrOrg || '',
+      assignedDoctor: user.schoolOrOrg || '',
       medicalNotes: user.medicalNotes || '',
-      weddingDate: user.weddingDate || '2026-11-20',
+      weddingDate: user.weddingDate || '',
       ttStatus: (user.ttStatus as TTStatus) || 'TT1',
       kuaStatus: (user.kuaStatus as KUAStatus) || 'Menunggu Skrining',
       partnerName: user.partnerName || '',
@@ -183,7 +183,6 @@ export default function UserManagementView() {
           weddingDate: formData.weddingDate,
           ttStatus: formData.ttStatus,
           kuaStatus: formData.kuaStatus,
-          partnerName: formData.partnerName,
         });
 
         if (res.success) {
@@ -201,12 +200,11 @@ export default function UserManagementView() {
           phone: formData.phone,
           email: formData.email || `${formData.name.toLowerCase().replace(/\s+/g, '')}@catin.id`,
           riskLevel: formData.riskLevel,
-          schoolOrOrg: formData.schoolOrOrg || formData.assignedDoctor || 'Puskesmas Gambir - KUA Gambir',
+          schoolOrOrg: formData.schoolOrOrg || formData.assignedDoctor || '',
           medicalNotes: formData.medicalNotes,
           weddingDate: formData.weddingDate,
           ttStatus: formData.ttStatus,
           kuaStatus: formData.kuaStatus,
-          partnerName: formData.partnerName,
         });
 
         if (res.success) {
@@ -239,7 +237,7 @@ export default function UserManagementView() {
     setReminderData({
       userId: user.id,
       userName: user.name,
-      userPhone: user.phone,
+      userPhone: user.phone || undefined,
     });
     setReminderModalOpen(true);
   };
@@ -271,7 +269,7 @@ export default function UserManagementView() {
           <div className='min-w-0'>
             <div className='font-bold text-[#121c2a] text-sm truncate'>{user.name}</div>
             <div className='text-xs text-[#574144] truncate'>
-              {user.age} th • {user.gender}
+              {user.age ? `${user.age} th` : 'Umur belum diisi'} • {user.gender || '—'}
             </div>
             {user.partnerName && (
               <div className='text-[11px] text-[#aa294d] font-semibold flex items-center gap-1 mt-0.5 truncate'>
@@ -294,7 +292,7 @@ export default function UserManagementView() {
               month: 'short',
               year: 'numeric',
             })
-          : '20 Nov 2026';
+          : 'Belum diisi';
 
         return (
           <div>
@@ -303,11 +301,11 @@ export default function UserManagementView() {
               <span>{weddingDateStr}</span>
             </div>
             <div className='text-xs text-[#574144] truncate mt-0.5'>
-              {user.schoolOrOrg || 'Puskesmas Gambir - KUA Gambir'}
+              {user.schoolOrOrg || 'Faskes belum diisi'}
             </div>
             <div className='text-[11px] text-[#8b7074] flex items-center gap-1 mt-0.5'>
               <Phone size={10} className='text-[#aa294d] shrink-0' />
-              <span>{user.phone}</span>
+              <span>{user.phone || 'Belum diisi'}</span>
             </div>
           </div>
         );
@@ -318,9 +316,9 @@ export default function UserManagementView() {
       label: 'Status Dosis TT',
       width: '20%',
       renderCell: user => {
-        const tt = user.ttStatus || 'TT1';
+        const tt = user.ttStatus || 'TT0';
         const ttStyle = TT_STATUS_COLORS[tt] || TT_STATUS_COLORS.TT1;
-        const rate = user.adherenceRate ?? 100;
+        const rate = user.adherenceRate;
 
         const ttLabels: Record<string, string> = {
           TT0: 'Belum Vaksin',
@@ -352,12 +350,18 @@ export default function UserManagementView() {
               <div className='w-20 bg-[#dee9fc] rounded-full h-1.5 overflow-hidden'>
                 <div
                   className={`h-full rounded-full ${
-                    rate >= 90 ? 'bg-[#2a6950]' : rate >= 80 ? 'bg-amber-500' : 'bg-[#aa294d]'
+                    (rate ?? 0) >= 90
+                      ? 'bg-[#2a6950]'
+                      : (rate ?? 0) >= 80
+                        ? 'bg-amber-500'
+                        : 'bg-[#aa294d]'
                   }`}
-                  style={{ width: `${Math.min(100, Math.max(0, rate))}%` }}
+                  style={{ width: `${Math.min(100, Math.max(0, rate ?? 0))}%` }}
                 />
               </div>
-              <span className='text-[10px] font-bold text-[#574144]'>{rate}%</span>
+              <span className='text-[10px] font-bold text-[#574144]'>
+                {rate === null ? 'Belum ada data' : `${rate}%`}
+              </span>
             </div>
           </div>
         );
@@ -516,7 +520,7 @@ export default function UserManagementView() {
         data={filteredUsers}
         emptyMessage='Tidak ada calon pengantin yang sesuai dengan filter pencarian.'
         renderMobileCard={user => {
-          const tt = user.ttStatus || 'TT1';
+          const tt = user.ttStatus || 'TT0';
           const ttStyle = TT_STATUS_COLORS[tt] || TT_STATUS_COLORS.TT1;
           const kua = user.kuaStatus || 'Menunggu Skrining';
           const kuaStyle = KUA_STATUS_COLORS[kua] || KUA_STATUS_COLORS['Menunggu Skrining'];
@@ -527,7 +531,7 @@ export default function UserManagementView() {
                 month: 'short',
                 year: 'numeric',
               })
-            : '20 Nov 2026';
+            : 'Belum diisi';
 
           const Icon =
             kua === 'Terverifikasi'
@@ -552,7 +556,7 @@ export default function UserManagementView() {
                       {user.name}
                     </h4>
                     <p className='text-xs text-[#574144] mt-0.5 truncate'>
-                      {user.age} th • {user.gender}
+                      {user.age ? `${user.age} th` : 'Umur belum diisi'} • {user.gender || '—'}
                     </p>
                     {user.partnerName && (
                       <p className='text-[11px] text-[#aa294d] font-semibold flex items-center gap-1 mt-0.5 truncate'>
@@ -609,7 +613,7 @@ export default function UserManagementView() {
                     Faskes / KUA Rujukan
                   </span>
                   <span className='font-bold text-[#121c2a] truncate block mt-0.5'>
-                    {user.schoolOrOrg || 'Puskesmas Gambir - KUA Gambir'}
+                    {user.schoolOrOrg || 'Faskes belum diisi'}
                   </span>
                 </div>
               </div>

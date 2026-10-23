@@ -92,7 +92,10 @@ export default function AdminDashboardView() {
   const handleSendSuccess = async (channel: 'app' | 'whatsapp', messageSent: string) => {
     if (reminderData.userId) {
       await sendUserReminderAction(reminderData.userId, messageSent, channel);
-      publishRealtimeEvent('NUDGE_SENT', { userId: reminderData.userId, patientId: reminderData.userId });
+      publishRealtimeEvent('NUDGE_SENT', {
+        userId: reminderData.userId,
+        patientId: reminderData.userId,
+      });
     }
     const channelName = channel === 'whatsapp' ? 'WhatsApp' : 'Notifikasi App';
     setToastMsg(
@@ -119,7 +122,8 @@ export default function AdminDashboardView() {
               Pengelolaan Jadwal Imunisasi TT & Skrining Pranikah
             </h3>
             <p className='text-xs sm:text-sm text-[#574144] mt-1 leading-relaxed'>
-              Akses konfigurasi dosis vaksin TT1–TT5, jadwal kunjungan faskes, dan pemantauan kepatuhan catin.
+              Akses konfigurasi dosis vaksin TT1–TT5, jadwal kunjungan faskes, dan pemantauan
+              kepatuhan catin.
             </p>
           </div>
         </div>
@@ -192,7 +196,9 @@ export default function AdminDashboardView() {
         <div className='lg:col-span-7 xl:col-span-8 p-5 sm:p-6 rounded-3xl border border-[#eff4ff] bg-white shadow-xs flex flex-col justify-between'>
           <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4'>
             <div>
-              <h3 className='font-bold text-[#121c2a] text-base'>Tren Kepatuhan Vaksinasi & Konseling TT</h3>
+              <h3 className='font-bold text-[#121c2a] text-base'>
+                Tren Kepatuhan Vaksinasi & Konseling TT
+              </h3>
               <p className='text-xs text-[#574144] mt-0.5'>
                 Persentase pemenuhan jadwal imunisasi TT calon pengantin tepat waktu
               </p>
@@ -300,12 +306,14 @@ export default function AdminDashboardView() {
 
                   <div className='flex items-center gap-2 shrink-0'>
                     <span className='px-2.5 py-1 rounded-full bg-[#ffd9de] text-[#8c0f39] font-extrabold text-[11px]'>
-                      {user.adherenceRate}%
+                      {user.adherenceRate === null ? '—' : `${user.adherenceRate}%`}
                     </span>
                     <button
                       type='button'
                       title='Kirim Pengingat'
-                      onClick={() => handleOpenReminder(user.name, user.phone, user.id)}
+                      onClick={() =>
+                        handleOpenReminder(user.name, user.phone || undefined, user.id)
+                      }
                       className='w-10 h-10 rounded-xl bg-[#aa294d] text-white hover:bg-[#cb4364] flex items-center justify-center transition-colors shadow-xs cursor-pointer'
                     >
                       <BellRing size={16} />

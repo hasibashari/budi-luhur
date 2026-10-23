@@ -5,7 +5,7 @@ const TIMEZONE = 'Asia/Jakarta';
 
 /** Notifikasi tepat waktu ditoleransi selama 5 menit. */
 const EXACT_WINDOW_MINUTES = 5;
-/** Pengingat awal 15 menit sebelumnya (cron tiap 1 menit). */
+/** Pengingat awal 15 menit sebelumnya (dicek tiap 1 menit). */
 const EARLY_MIN_MINUTES = 15;
 const EARLY_MAX_MINUTES = 12;
 
@@ -37,8 +37,8 @@ interface CronResult {
  * Scheduler pengingat jadwal harian App 2 (Pilluna).
  *
  * - `startScheduler()` dipakai pada proses long-running (dev / server biasa).
- * - Pada Vercel (serverless) scheduler tidak bisa memakai `setInterval`,
- *   jadi gunakan endpoint cron `GET /api/v1/notifications/cron-reminders`.
+ * - Pada Vercel (serverless) proses tidak berjalan terus-menerus, sehingga
+ *   pengingat ditangani hook `useDailyScheduleReminders` di frontend.
  */
 export class ScheduleReminderService {
   private static intervalHandle: NodeJS.Timeout | null = null;

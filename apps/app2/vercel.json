@@ -7,12 +7,6 @@
   "regions": [
     "sin1"
   ],
-  "crons": [
-    {
-      "path": "/app2/api/v1/notifications/cron-reminders",
-      "schedule": "* * * * *"
-    }
-  ],
   "rewrites": [
     {
       "source": "/app2/api/(.*)",

@@ -1,5 +1,6 @@
 import { Response } from 'express';
 import { AdminService } from './admin.service.js';
+import { UserService } from '../users/user.service.js';
 import { AuthRequest } from '../../middlewares/auth.middleware.js';
 
 export class AdminController {
@@ -95,6 +96,54 @@ export class AdminController {
     }
   }
 
+  /** Riwayat imunisasi milik satu pengguna — sumber data sama dengan sisi pengguna. */
+  static async getUserImmunizations(req: AuthRequest, res: Response) {
+    try {
+      const userId = String(req.params.id);
+      res.json(await UserService.getImmunizationRecords(userId));
+    } catch (error: any) {
+      console.error('AdminController.getUserImmunizations error:', error);
+      res.status(500).json({ success: false, error: 'Gagal memuat riwayat imunisasi pengguna.' });
+    }
+  }
+
+  static async getCertificates(req: AuthRequest, res: Response) {
+    try {
+      const status = typeof req.query.status === 'string' ? req.query.status : undefined;
+      res.json(await UserService.listCertificateVerifications(status));
+    } catch (error: any) {
+      console.error('AdminController.getCertificates error:', error);
+      res.status(500).json({ success: false, error: 'Gagal memuat pengajuan sertifikat.' });
+    }
+  }
+
+  static async reviewCertificate(req: AuthRequest, res: Response) {
+    try {
+      const status = String(req.body?.status || '').toUpperCase();
+      if (status !== 'APPROVED' && status !== 'REJECTED') {
+        res.status(400).json({ success: false, error: 'Status verifikasi tidak valid.' });
+        return;
+      }
+      const reviewer = req.user?.name || req.user?.email || 'Petugas Faskes';
+      const result = await UserService.reviewCertificateVerification(
+        String(req.params.userId),
+        status,
+        reviewer,
+        {
+          note: req.body?.note || null,
+          signerName: req.body?.signerName || null,
+          signerSip: req.body?.signerSip || null,
+        },
+      );
+      res.json(result);
+    } catch (error: any) {
+      console.error('AdminController.reviewCertificate error:', error);
+      res
+        .status(400)
+        .json({ success: false, error: error.message || 'Gagal memproses verifikasi sertifikat.' });
+    }
+  }
+
   static async createArticle(req: AuthRequest, res: Response) {
     try {
       const article = await AdminService.createAdminArticle(req.body);
@@ -152,37 +201,8 @@ export class AdminController {
     }
   }
 
-  static async createSchedule(req: AuthRequest, res: Response) {
-    try {
-      const schedule = await AdminService.createSchedule(req.body);
-      res.status(201).json({ success: true, schedule });
-    } catch (error: any) {
-      console.error('AdminController.createSchedule error:', error);
-      res.status(500).json({ success: false, error: 'Gagal membuat jadwal.' });
-    }
-  }
-
-  static async updateSchedule(req: AuthRequest, res: Response) {
-    try {
-      const id = String(req.params.id);
-      const result = await AdminService.updateSchedule(id, req.body);
-      res.json(result);
-    } catch (error: any) {
-      console.error('AdminController.updateSchedule error:', error);
-      res.status(500).json({ success: false, error: 'Gagal memperbarui jadwal.' });
-    }
-  }
-
-  static async deleteSchedule(req: AuthRequest, res: Response) {
-    try {
-      const id = String(req.params.id);
-      const result = await AdminService.deleteSchedule(id);
-      res.json(result);
-    } catch (error: any) {
-      console.error('AdminController.deleteSchedule error:', error);
-      res.status(500).json({ success: false, error: 'Gagal menghapus jadwal.' });
-    }
-  }
+  // Admin tidak membuat/mengubah/menghapus jadwal: jadwal bersumber dari pengguna.
+  // Admin hanya memonitor lewat getSchedules & getScheduleById.
 
   static async getComplianceReports(_req: AuthRequest, res: Response) {
     try {

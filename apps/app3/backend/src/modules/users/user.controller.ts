@@ -106,6 +106,127 @@ export class UserController {
     }
   }
 
+  /** Dry-run: peringatan interval sebelum data benar-benar disimpan. */
+  static async validateImmunizationRecord(req: AuthRequest, res: Response) {
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        res.status(401).json({ success: false, error: 'Sesi tidak valid.' });
+        return;
+      }
+      res.json(await UserService.validateImmunizationRecord(userId, req.body));
+    } catch (error: any) {
+      console.error('UserController.validateImmunizationRecord error:', error);
+      res
+        .status(400)
+        .json({ success: false, error: error.message || 'Gagal memeriksa data imunisasi.' });
+    }
+  }
+
+  static async uploadImmunizationAttachment(req: AuthRequest, res: Response) {
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        res.status(401).json({ success: false, error: 'Sesi tidak valid.' });
+        return;
+      }
+      if (!Buffer.isBuffer(req.body) || req.body.length === 0) {
+        res.status(400).json({
+          success: false,
+          error: 'Berkas bukti tidak terbaca. Gunakan JPG, PNG, WEBP, atau PDF.',
+        });
+        return;
+      }
+      const fileName = (req.header('x-file-name') || '').slice(0, 255) || undefined;
+      const result = await UserService.saveImmunizationAttachment(
+        userId,
+        String(req.params.id),
+        { buffer: req.body, fileName },
+      );
+      res.status(201).json(result);
+    } catch (error: any) {
+      console.error('UserController.uploadImmunizationAttachment error:', error);
+      res
+        .status(400)
+        .json({ success: false, error: error.message || 'Gagal mengunggah bukti imunisasi.' });
+    }
+  }
+
+  static async getImmunizationAttachment(req: AuthRequest, res: Response) {
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        res.status(401).json({ success: false, error: 'Sesi tidak valid.' });
+        return;
+      }
+      const file = await UserService.getImmunizationAttachment(
+        userId,
+        String(req.params.id),
+        req.user?.role === 'admin',
+      );
+      res.setHeader('Content-Type', file.mime_type);
+      res.setHeader(
+        'Content-Disposition',
+        `inline; filename="${encodeURIComponent(file.file_name || 'bukti-imunisasi')}"`,
+      );
+      res.setHeader('Cache-Control', 'private, no-store');
+      res.setHeader('X-Content-Type-Options', 'nosniff');
+      res.send(file.data);
+    } catch (error: any) {
+      console.error('UserController.getImmunizationAttachment error:', error);
+      res
+        .status(404)
+        .json({ success: false, error: error.message || 'Bukti imunisasi tidak ditemukan.' });
+    }
+  }
+
+  static async deleteImmunizationAttachment(req: AuthRequest, res: Response) {
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        res.status(401).json({ success: false, error: 'Sesi tidak valid.' });
+        return;
+      }
+      res.json(
+        await UserService.deleteImmunizationAttachment(userId, String(req.params.id)),
+      );
+    } catch (error: any) {
+      console.error('UserController.deleteImmunizationAttachment error:', error);
+      res
+        .status(400)
+        .json({ success: false, error: error.message || 'Gagal menghapus bukti imunisasi.' });
+    }
+  }
+
+  static async getCertificateVerification(req: AuthRequest, res: Response) {
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        res.status(401).json({ success: false, error: 'Sesi tidak valid.' });
+        return;
+      }
+      res.json(await UserService.getCertificateVerification(userId));
+    } catch (error: any) {
+      console.error('UserController.getCertificateVerification error:', error);
+      res.status(500).json({ success: false, error: 'Gagal memuat status sertifikat.' });
+    }
+  }
+
+  /** Pengguna mengajukan; keputusan tetap di admin. */
+  static async requestCertificateVerification(req: AuthRequest, res: Response) {
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        res.status(401).json({ success: false, error: 'Sesi tidak valid.' });
+        return;
+      }
+      res.json(await UserService.requestCertificateVerification(userId, req.body?.note));
+    } catch (error: any) {
+      console.error('UserController.requestCertificateVerification error:', error);
+      res.status(400).json({ success: false, error: 'Gagal mengajukan verifikasi sertifikat.' });
+    }
+  }
+
   static async updateImmunizationRecord(req: AuthRequest, res: Response) {
     try {
       const userId = req.user?.id;

@@ -9,25 +9,26 @@ export interface AdminStats {
 export interface ManagedUser {
   id: string;
   name: string;
-  age: number;
-  gender: 'Laki-laki' | 'Perempuan';
-  phone: string;
+  age: number | null;
+  gender: 'Laki-laki' | 'Perempuan' | null;
+  phone: string | null;
   email: string;
-  avatarUrl?: string;
-  riskLevel: 'Tinggi' | 'Sedang' | 'Rendah';
+  avatarUrl?: string | null;
+  riskLevel: 'Tinggi' | 'Sedang' | 'Rendah' | null;
   status: 'Aktif' | 'Nonaktif';
-  schoolOrOrg: string;
-  assignedDoctor?: string;
+  /** null = belum diisi calon pengantin (jangan diisi nilai karangan). */
+  schoolOrOrg: string | null;
+  assignedDoctor?: string | null;
   activeSchedulesCount: number;
-  adherenceRate: number;
-  lastActive: string;
+  adherenceRate: number | null;
+  lastActive: string | null;
   joinDate: string;
-  medicalNotes?: string;
-  lastReminderSent?: string;
-  weddingDate?: string;
-  ttStatus?: 'TT0' | 'TT1' | 'TT2' | 'TT3' | 'TT4' | 'TT5';
-  kuaStatus?: 'Terverifikasi' | 'Menunggu Skrining' | 'Belum Lengkap';
-  partnerName?: string;
+  medicalNotes?: string | null;
+  lastReminderSent?: string | null;
+  weddingDate?: string | null;
+  ttStatus?: 'TT0' | 'TT1' | 'TT2' | 'TT3' | 'TT4' | 'TT5' | null;
+  kuaStatus?: 'Terverifikasi' | 'Menunggu Skrining' | 'Belum Lengkap' | null;
+  partnerName?: string | null;
 }
 
 import type { ScheduleCategory } from '../constants/schedule.constants';
@@ -39,6 +40,7 @@ export interface MedicationSchedule {
   userName: string;
   patientId?: string;
   patientName?: string;
+  partnerName?: string;
   medicationName: string;
   dosage: string;
   frequency: '1x Seminggu' | 'Harian' | string;
@@ -51,6 +53,12 @@ export interface MedicationSchedule {
   instructions: string;
   lastReminderSent?: string;
   todayStatus?: 'COMPLETED' | 'PENDING' | 'NOT_YET_TIME' | 'OFF_SCHEDULE' | 'MISSED';
+  /** Dosis TT (TT1–TT5) bila jadwal berasal dari modul imunisasi. */
+  ttLevel?: string;
+  /** Tanggal kunjungan imunisasi (YYYY-MM-DD). */
+  scheduledDate?: string;
+  completedAt?: string;
+  isEnabled?: boolean;
 }
 
 export type ArticleCategory = string;

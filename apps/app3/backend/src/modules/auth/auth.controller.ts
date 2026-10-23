@@ -17,6 +17,25 @@ export class AuthController {
     }
   }
 
+  static async getSession(req: AuthRequest, res: Response) {
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        res.status(401).json({ success: false, error: 'Sesi tidak valid.' });
+        return;
+      }
+      const result = await AuthService.getSession(userId);
+      if (!result.success) {
+        res.status(401).json(result);
+        return;
+      }
+      res.json(result);
+    } catch (error: any) {
+      console.error('AuthController.getSession error:', error);
+      res.status(500).json({ success: false, error: 'Gagal memverifikasi sesi.' });
+    }
+  }
+
   static async register(req: Request, res: Response) {
     try {
       const result = await AuthService.register(req.body);

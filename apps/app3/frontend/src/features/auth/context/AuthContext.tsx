@@ -26,12 +26,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     let isMounted = true;
 
-    const initAppAuth = () => {
+    const initAppAuth = async () => {
       try {
         const onboardVal = localStorage.getItem(ONBOARDING_STORAGE_KEY);
         const hasCompletedOnboarding = onboardVal === 'true';
 
-        const token = localStorage.getItem(AUTH_STORAGE_KEY);
+        let token = localStorage.getItem(AUTH_STORAGE_KEY);
         const storedUser = localStorage.getItem(USER_STORAGE_KEY);
         let parsedUser: AuthUser | null = null;
 
@@ -43,10 +43,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           }
         }
 
+        // Revalidasi ke server: `isProfileComplete` di localStorage bisa basi
+        // sehingga pengguna yang sudah setup tetap dilempar ke /user/setup.
+        if (token && parsedUser) {
+          try {
+            const res = await apiClient.get('/auth/session');
+            if (res.data?.user) {
+              parsedUser = { ...parsedUser, ...res.data.user };
+              localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(parsedUser));
+            }
+          } catch (err: any) {
+            if (err?.response?.status === 401) {
+              localStorage.removeItem(AUTH_STORAGE_KEY);
+              localStorage.removeItem(USER_STORAGE_KEY);
+              token = null;
+              parsedUser = null;
+            }
+            // Gagal jaringan: pertahankan sesi lokal agar aplikasi tetap bisa dibuka.
+          }
+        }
+
         if (isMounted) {
           setState({
             user: parsedUser,
-            isAuthenticated: !!(token && parsedUser),
+            isAuthenticated: Boolean(token && parsedUser),
             isLoading: false,
             isInitializing: false,
             hasCompletedOnboarding,

@@ -16,6 +16,7 @@ import {
   AdminDashboardView,
   UserManagementView,
   ScheduleManagementView,
+  CertificateVerificationView,
   ArticleManagementView,
   ReportAnalyticsView,
   AdminProfileView,
@@ -125,6 +126,7 @@ export function AppRoutes() {
         <Route path='dashboard' element={<AdminDashboardView />} />
         <Route path='users' element={<UserManagementView />} />
         <Route path='schedules' element={<ScheduleManagementView />} />
+        <Route path='certificates' element={<CertificateVerificationView />} />
         <Route path='articles' element={<ArticleManagementView />} />
         <Route path='articles/:id' element={<ArticleDetailView backHref='/admin/articles' />} />
         <Route path='reports' element={<ReportAnalyticsView />} />

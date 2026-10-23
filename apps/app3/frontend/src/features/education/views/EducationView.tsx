@@ -21,89 +21,25 @@ export default function EducationView() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('Semua');
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
-  // Stitch authentic premarital articles
-  const defaultTemaniArticles = [
-    {
-      id: 'art_1',
-      title: 'Kesehatan Pranikah & Skrining Dasar',
-      category: 'Catin',
-      badge: 'Wajib Catin',
-      badgeColor: 'bg-[#ffd9de] text-[#8c0f39]',
-      readTime: '4 mnt',
-      summary:
-        'Pemeriksaan fisik lengkap, cek golongan darah & rhesus, skrining anemia, dan fondasi awal kehamilan optimal.',
-      imageUrl:
-        'https://lh3.googleusercontent.com/aida-public/AB6AXuD9aGOCMgqlVbEiuBDlxt2RiNMk4ShJGqKNvdm0dHiFb7gP2ZkE8iaaZN0w1ENZCw7jC7R-UvsdtNJoqeAik6vtNdiY2NyblVI351LbjPz5hLHFzUaoVdqp2uQJzRxZWibyP9MOUl2HSvIe-Pj7nE11ci7putSf2dSicF7r3LFYXUy1tIpO7PiZhNmGe2fqKSBXgsW8XC6IS2BcTMwrn7waGNnWcHRGicfBEJhu-lN3ibBgLsssaeWw',
-    },
-    {
-      id: 'art_2',
-      title: 'Imunisasi Tetanus Toxoid (TT)',
-      category: 'Imunisasi TT',
-      badge: 'Imunisasi',
-      badgeColor: 'bg-[#aff1d0] text-[#0a5139]',
-      readTime: '6 mnt',
-      summary:
-        'Panduan runtut 5 interval dosis TT menuju kekebalan seumur hidup (25+ tahun) bagi calon ibu dan calon buah hati.',
-      imageUrl:
-        'https://lh3.googleusercontent.com/aida-public/AB6AXuAaq2jEstQcuWjQSmYoesn2BgXTcm-4JJH2Bn8ofAMrwzSkSPnqO3r01VtDOT5SfRf88KW9rIDB4wSk9h7qCumugDdSEela51-z1_3RwDcRHiMHJHMdrGps7KUxS2C6eV-_OyqS2Gw96m6kHnSUeCL8ZiA7xF5DAYgCW9H6FCuwQAR0JITDbaOk_c_gfkje8yq3UFUudkIbH6kAfCqeCVbApM40im20DvjFy2Uk4ab2fgkx5DJJdxIp',
-    },
-    {
-      id: 'art_3',
-      title: 'Mencegah Tetanus Maternal & Neonatal',
-      category: 'Imunisasi TT',
-      badge: 'Pencegahan',
-      badgeColor: 'bg-[#ffd9dd] text-[#8f0737]',
-      readTime: '5 mnt',
-      summary:
-        'Pahami bahaya infeksi spora clostridium saat proses persalinan dan langkah preventif medis paling teruji.',
-      imageUrl:
-        'https://lh3.googleusercontent.com/aida-public/AB6AXuDlHoynUXI6NuOtJAVcG0XMU-X_YRY3VEP8Izvum0y6IAxGFu6_j4kyknkaljhnmsGTFai3JOC4f3bndhwOwLOTWGUUlx_4U_tJAUnGHQRvMNiQaWtmkEvY43oKTdUCQ8LrAs_F4-alrCfC3jdSNc99VgRyhdKv-T0GLVW0N1Iw5Liv0QW0hbN3pOcvIEoOMFXTVWz2XfppJ_SswLf1rKgc7TqOP1JZUz8lEDWxe2LoFi9QC4WTR1vu',
-    },
-    {
-      id: 'art_4',
-      title: 'Gaya Hidup & Nutrisi Sehat Catin',
-      category: 'Catin',
-      badge: 'Pola Hidup',
-      badgeColor: 'bg-[#aff1d0] text-[#0a5139]',
-      readTime: '3 mnt',
-      summary:
-        'Pentingnya asupan asam folat, tablet tambah darah (TTD), serta kebiasaan gizi mikro optimal bagi calon pengantin.',
-      imageUrl:
-        'https://lh3.googleusercontent.com/aida-public/AB6AXuCD4ma-Qccx9ZRKqaxWqP_nDEZ5ueYpw5M3hrmzVz5_xN6m-wcbGpL7fiidM9HkhDjEnTHVaFACv5CBMw02dW6O9tapAoRrvZPCfoU2HDPfcGvaxS8tRi59Bf_ng02c-H7YMAQrOMUo8_IdgM_RW-YDFF1IMgWMZyGM9CEelP7-NV_uO-Ab86VlHcXIBWw1QagqiUH8Yoib012znqSzIrNQwyfPIgMwxtu7pBAeyGvX8qeSpYJc6DHT',
-    },
-    {
-      id: 'art_5',
-      title: 'Kesehatan Mental & Harmoni Pasangan',
-      category: 'Catin',
-      badge: 'Wellness',
-      badgeColor: 'bg-[#dee9fc] text-[#121c2a]',
-      readTime: '5 mnt',
-      summary:
-        'Manajemen stres pra-nikah, resolusi konflik konstruktif, dan persiapan psikologis memasuki mahligai rumah tangga.',
-      imageUrl:
-        'https://lh3.googleusercontent.com/aida-public/AB6AXuCtqP7j-jD_5VoQfCOaG3eeEB7td82_jrLkn2aTL0Sr5B1roezEOEwt5xK0xehgRu8BJ1BDA-cWOp5S-E2kpmkkmo0uqS6KeVLGMsCiUqXxtTL8svtD1rQFpANySyAtiNorSD1fWoUeAME8fZxys3HrNN1JZye1DinumB76Sp-COmDN0xqtGl4WoFih9E_v1X-AqaArkZDMIgKXNRmFT7bcY9Z2OJTb6Q1xNRrlgRHHDVNmUptrwOQm',
-    },
-  ];
+  // Seluruh artikel berasal dari backend (dikelola admin). Tidak ada data contoh.
 
   useEffect(() => {
     let isMounted = true;
     async function loadArticles() {
+      setLoadError(null);
       try {
         const data = await getArticlesAction();
         if (isMounted) {
-          if (data && data.length > 0) {
-            // merge with authentic stitch articles if needed
-            setArticles(data);
-          } else {
-            setArticles(defaultTemaniArticles as any);
-          }
+          setArticles(Array.isArray(data) ? data : []);
           setLoading(false);
         }
       } catch (err) {
         console.error('Failed to load articles:', err);
         if (isMounted) {
-          setArticles(defaultTemaniArticles as any);
+          setArticles([]);
+          setLoadError('Artikel gagal dimuat. Periksa koneksi lalu coba lagi.');
           setLoading(false);
         }
       }
@@ -114,7 +50,7 @@ export default function EducationView() {
     };
   }, []);
 
-  const articleList = articles.length > 0 ? articles : defaultTemaniArticles;
+  const articleList = articles;
   const categories = [
     'Semua',
     ...Array.from(
@@ -203,7 +139,7 @@ export default function EducationView() {
                 <span
                   className={`text-[10px] px-1.5 py-0.2 rounded-full ${isActive ? 'bg-white/20' : 'bg-[#eff4ff]'}`}
                 >
-                  {articles.length || defaultTemaniArticles.length}
+                  {articles.length}
                 </span>
               )}
             </button>
@@ -242,6 +178,26 @@ export default function EducationView() {
         <div className='flex items-center justify-center py-16 w-full'>
           <div className='animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#aa294d]' />
         </div>
+      ) : loadError ? (
+        <div className='text-center py-16 bg-white rounded-3xl border border-[#ffc9d4] p-8'>
+          <div className='w-14 h-14 rounded-2xl bg-[#ffe1e6] text-[#a4163a] flex items-center justify-center mx-auto mb-3 shadow-2xs'>
+            <BookOpen size={28} />
+          </div>
+          <h3 className='text-base font-bold text-[#121c2a]'>Artikel Tidak Dapat Dimuat</h3>
+          <p className='text-xs text-[#574144] mt-1 max-w-xs mx-auto'>{loadError}</p>
+        </div>
+      ) : articleList.length === 0 ? (
+        /* Kondisi kosong: belum ada artikel yang diterbitkan admin */
+        <div className='text-center py-16 bg-white rounded-3xl border border-[#eff4ff] p-8'>
+          <div className='w-14 h-14 rounded-2xl bg-[#eff4ff] text-[#aa294d] flex items-center justify-center mx-auto mb-3 shadow-2xs'>
+            <BookOpen size={28} />
+          </div>
+          <h3 className='text-base font-bold text-[#121c2a]'>Belum Ada Artikel Edukasi</h3>
+          <p className='text-xs text-[#574144] mt-1 max-w-sm mx-auto leading-relaxed'>
+            Artikel edukasi kesehatan pranikah belum diterbitkan oleh petugas faskes. Materi akan
+            muncul otomatis di sini setelah admin menerbitkannya melalui portal faskes.
+          </p>
+        </div>
       ) : filteredArticles.length > 0 ? (
         <div className='flex flex-col gap-3.5'>
           {filteredArticles.map((art: any) => (
@@ -250,15 +206,18 @@ export default function EducationView() {
               to={`/user/education/${art.id}`}
               className='group bg-white rounded-2xl p-3.5 sm:p-4 shadow-[0_2px_10px_-2px_rgba(31,41,55,0.04),0_4px_16px_-2px_rgba(217,78,111,0.03)] border border-[#eff4ff] hover:shadow-md active:scale-[0.98] transition-all flex gap-3.5 items-start cursor-pointer'
             >
-              <div className='relative w-20 h-20 sm:w-24 sm:h-24 rounded-xl overflow-hidden shrink-0 bg-stone-100'>
-                <img
-                  src={
-                    art.imageUrl ||
-                    'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&auto=format&fit=crop&q=80'
-                  }
-                  alt={art.title}
-                  className='w-full h-full object-cover group-hover:scale-105 transition-transform duration-300'
-                />
+              <div className='relative w-20 h-20 sm:w-24 sm:h-24 rounded-xl overflow-hidden shrink-0 bg-[#eff4ff]'>
+                {art.imageUrl ? (
+                  <img
+                    src={art.imageUrl}
+                    alt={art.title}
+                    className='w-full h-full object-cover group-hover:scale-105 transition-transform duration-300'
+                  />
+                ) : (
+                  <div className='w-full h-full flex items-center justify-center text-[#aa294d]'>
+                    <BookOpen size={26} />
+                  </div>
+                )}
                 <div className='absolute inset-0 bg-linear-to-t from-black/30 via-transparent to-transparent' />
               </div>
 

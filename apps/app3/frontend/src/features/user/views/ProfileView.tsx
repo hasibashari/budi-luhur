@@ -23,14 +23,16 @@ import {
 import { FaskesRujukanCard } from '@/src/shared/components/domain/FaskesRujukanCard';
 import { useAuth } from '@/src/features/auth/context/AuthContext';
 import { VaccineCardModal } from '@/src/features/dashboard/components/VaccineCardModal';
+import { DigitalImmunizationCertificateModal } from '@/src/shared/components/profile/DigitalImmunizationCertificateModal';
 import {
+  getCertificateVerificationAction,
   getUserDashboardDataAction,
   getUserScheduleAction,
   updateUserProfileAction,
   updateUserScheduleSettingsAction,
   UserScheduleData,
 } from '../api/userRepository';
-import { ImmunizationRecord } from '../types';
+import { CertificateVerification, ImmunizationRecord } from '../types';
 
 interface UserProfileState {
   id: string;
@@ -67,6 +69,8 @@ export default function ProfileView() {
   const [immunizationRecords, setImmunizationRecords] = useState<ImmunizationRecord[]>([]);
   const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
   const [isCertificateModalOpen, setIsCertificateModalOpen] = useState(false);
+  const [isECertificateOpen, setIsECertificateOpen] = useState(false);
+  const [certificate, setCertificate] = useState<CertificateVerification | null>(null);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -123,6 +127,13 @@ export default function ProfileView() {
           }
         } catch (error) {
           console.error('Failed to load schedule:', error);
+        }
+
+        try {
+          const cert = await getCertificateVerificationAction();
+          if (isMounted) setCertificate(cert);
+        } catch (error) {
+          console.error('Failed to load certificate status:', error);
         }
       }
     }
@@ -292,13 +303,35 @@ export default function ProfileView() {
     {
       id: 'certificate',
       label: 'Sertifikat Vaksin Catin',
-      value: 'Siap Unduh',
-      subtitle: 'Surat Keterangan Imunisasi Kemenkes RI',
+      value:
+        certificate?.status === 'APPROVED'
+          ? 'Sah & Terverifikasi'
+          : certificate?.status === 'PENDING'
+            ? 'Menunggu Verifikasi'
+            : certificate?.status === 'REJECTED'
+              ? 'Perlu Perbaikan'
+              : 'Belum Diajukan',
+      subtitle:
+        certificate?.status === 'APPROVED'
+          ? `Ditandatangani ${certificate.signerName || certificate.reviewedBy || 'petugas faskes'}`
+          : 'Surat Keterangan Imunisasi Kemenkes RI',
       icon: Award,
       iconBgColor: 'bg-emerald-50 border border-emerald-100',
       iconColor: 'text-emerald-700',
-      badgeText: 'Terverifikasi',
-      badgeColor: 'bg-emerald-50 text-emerald-800 border border-emerald-200',
+      badgeText:
+        certificate?.status === 'APPROVED'
+          ? 'Terverifikasi'
+          : certificate?.status === 'PENDING'
+            ? 'Menunggu'
+            : certificate?.status === 'REJECTED'
+              ? 'Ditolak'
+              : 'Belum diajukan',
+      badgeColor:
+        certificate?.status === 'APPROVED'
+          ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
+          : certificate?.status === 'REJECTED'
+            ? 'bg-rose-50 text-rose-700 border border-rose-200'
+            : 'bg-amber-50 text-amber-800 border border-amber-200',
     },
     {
       id: 'partner',
@@ -382,6 +415,30 @@ export default function ProfileView() {
       {/* 4. Faskes Rujukan Terpilih */}
       <FaskesRujukanCard faskesName={userProfile.schoolOrOrg || undefined} />
 
+      {/* 4b. E-Sertifikat Imunisasi (status verifikasi dikelola admin) */}
+      <button
+        type='button'
+        onClick={() => setIsECertificateOpen(true)}
+        className='w-full flex items-center gap-3 rounded-2xl border border-[#eff4ff] bg-white p-4 text-left shadow-xs hover:shadow-md transition-all active:scale-[0.99] cursor-pointer'
+      >
+        <span className='w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-100 flex items-center justify-center shrink-0'>
+          <Award size={18} />
+        </span>
+        <span className='flex-1 min-w-0'>
+          <span className='block text-xs sm:text-sm font-bold text-[#121c2a]'>
+            Lihat E-Sertifikat Imunisasi
+          </span>
+          <span className='block text-[11px] text-[#574144]'>
+            {certificate?.status === 'APPROVED'
+              ? 'Sudah ditandatangani petugas faskes'
+              : certificate?.status === 'PENDING'
+                ? 'Menunggu verifikasi petugas faskes'
+                : 'Ajukan verifikasi ke petugas faskes'}
+          </span>
+        </span>
+        <span className='text-[11px] font-bold text-[#aa294d] shrink-0'>Buka</span>
+      </button>
+
       {/* 5. Notification & Reminder Settings Card (Burgundy Theme) */}
       <ProfileNotificationCard
         theme='burgundy'
@@ -412,6 +469,17 @@ export default function ProfileView() {
         partnerName={partnerName}
         currentTTLevel={currentTTLevel}
         records={immunizationRecords}
+      />
+
+      {/* E-Sertifikat dengan tanda tangan admin */}
+      <DigitalImmunizationCertificateModal
+        isOpen={isECertificateOpen}
+        onClose={() => setIsECertificateOpen(false)}
+        catinName={userProfile.name}
+        catinId={catinId}
+        partnerName={partnerName}
+        faskesName={userProfile.schoolOrOrg || ''}
+        ttLevel={currentTTLevel}
       />
 
       {/* Edit Profile Modal */}

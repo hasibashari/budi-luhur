@@ -82,7 +82,7 @@ export const INITIAL_USER_FORM_DATA: UserFormData = {
   schoolOrOrg: DEFAULT_SCHOOL_ORG,
   assignedDoctor: DEFAULT_SCHOOL_ORG,
   medicalNotes: '',
-  weddingDate: '2026-11-20',
+  weddingDate: '',
   ttStatus: 'TT1',
   kuaStatus: 'Menunggu Skrining',
   partnerName: '',

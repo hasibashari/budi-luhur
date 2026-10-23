@@ -332,66 +332,11 @@ export default function ArticleDetailView({
               ))}
             </div>
           ) : (
-            /* Fallback Authentic Benefits Section (Stitch Screen 4) */
-            <div className='flex flex-col mb-5'>
-              <div className='flex items-center justify-between mb-3 px-1'>
-                <h3 className='text-sm sm:text-base font-bold text-[#121c2a]'>
-                  Manfaat Utama Imunisasi TT
-                </h3>
-                <span className='text-[10px] font-bold text-[#0a5139] bg-[#aff1d0] px-2.5 py-0.5 rounded-full'>
-                  3 Proteksi Inti
-                </span>
-              </div>
-
-              <div className='flex flex-col gap-3'>
-                {/* Benefit 1 */}
-                <div className='flex items-start gap-3.5 p-3.5 sm:p-4 rounded-2xl bg-white border border-[#eff4ff] shadow-xs'>
-                  <div className='w-11 h-11 shrink-0 rounded-xl bg-[#ffd9de] text-[#aa294d] flex items-center justify-center'>
-                    <Heart size={20} className='fill-[#aa294d]' />
-                  </div>
-                  <div className='flex flex-col'>
-                    <h4 className='text-xs sm:text-sm font-bold text-[#121c2a] mb-0.5'>
-                      Melindungi Ibu dari Infeksi Tetanus
-                    </h4>
-                    <p className='text-[11px] text-[#574144] leading-relaxed'>
-                      Memberikan kekebalan aktif terhadap bakteri <i>Clostridium tetani</i> selama
-                      fase reproduksi dan kehamilan yang sehat.
-                    </p>
-                  </div>
-                </div>
-
-                {/* Benefit 2 */}
-                <div className='flex items-start gap-3.5 p-3.5 sm:p-4 rounded-2xl bg-white border border-[#eff4ff] shadow-xs'>
-                  <div className='w-11 h-11 shrink-0 rounded-xl bg-[#aff1d0] text-[#2a6950] flex items-center justify-center'>
-                    <Baby size={20} />
-                  </div>
-                  <div className='flex flex-col'>
-                    <h4 className='text-xs sm:text-sm font-bold text-[#121c2a] mb-0.5'>
-                      Mencegah Tetanus Neonatorum
-                    </h4>
-                    <p className='text-[11px] text-[#574144] leading-relaxed'>
-                      Antibodi ditransfer alami ke janin melalui plasenta, melindungi bayi baru
-                      lahir dari komplikasi fatal saat persalinan.
-                    </p>
-                  </div>
-                </div>
-
-                {/* Benefit 3 */}
-                <div className='flex items-start gap-3.5 p-3.5 sm:p-4 rounded-2xl bg-white border border-[#eff4ff] shadow-xs'>
-                  <div className='w-11 h-11 shrink-0 rounded-xl bg-[#eff4ff] text-[#aa294d] flex items-center justify-center'>
-                    <ShieldCheck size={20} />
-                  </div>
-                  <div className='flex flex-col'>
-                    <h4 className='text-xs sm:text-sm font-bold text-[#121c2a] mb-0.5'>
-                      Kekebalan Jangka Panjang (25+ Tahun)
-                    </h4>
-                    <p className='text-[11px] text-[#574144] leading-relaxed'>
-                      Rangkaian TT lengkap (TT1 hingga TT5) memberikan perlindungan kumulatif seumur
-                      hidup untuk seluruh rencana kehamilan Anda.
-                    </p>
-                  </div>
-                </div>
-              </div>
+            /* Tidak ada konten statis: isi artikel sepenuhnya berasal dari admin. */
+            <div className='rounded-2xl p-4 bg-white border border-dashed border-[#d9e3f6] text-center mb-5'>
+              <p className='text-xs font-semibold text-[#574144]'>
+                Artikel ini belum memiliki bagian isi tambahan dari pengelola.
+              </p>
             </div>
           )}
 
