@@ -131,10 +131,10 @@ export class UserProfileService {
       activeSchedule = {
         id: sch.id,
         patientId: userId,
-        tabletName: sch.tablet_name || 'Tablet Tambah Darah (TTD)',
-        dosage: sch.dosage || '1 tablet, 1x seminggu',
-        frequency: sch.frequency === 'daily' ? 'Harian' : 'Mingguan',
-        category: sch.frequency === 'daily' ? 'Suplemen TTD' : 'TTD Rutin',
+        tabletName: sch.tablet_name || 'Vaksin Tetanus Toxoid (TT)',
+        dosage: sch.dosage || '1 dosis (0.5 mL)',
+        frequency: sch.frequency === 'daily' ? 'Harian' : 'Sesuai Jadwal',
+        category: 'Imunisasi TT',
         dayOfWeek,
         time: timeSlot,
         isEnabled: sch.is_enabled,
@@ -145,7 +145,7 @@ export class UserProfileService {
         channelEmail: sch.channel_email,
         instructions:
           sch.instructions ||
-          'Minum 1 tablet seminggu sekali setelah makan malam atau sebelum tidur.',
+          'Kunjungi fasilitas kesehatan (Puskesmas/Klinik) untuk penyuntikan vaksin TT.',
         nextDate,
         daysRemaining,
       };

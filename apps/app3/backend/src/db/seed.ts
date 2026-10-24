@@ -8,7 +8,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export async function seedDatabase() {
-  console.log('🌱 Starting PostgreSQL database seeding for FEMORY (2-Role & Buddy Streak)...');
+  console.log('🌱 Starting PostgreSQL database seeding for TEMANI (Imunisasi TT & Pranikah)...');
 
   // Ensure schema exists
   await initializeDatabase();
@@ -451,7 +451,7 @@ export async function seedDatabase() {
     }
 
     await client.query('COMMIT');
-    console.log('✅ FEMORY Database seeding completed successfully with 2-Role & Buddy Streak!');
+    console.log('✅ TEMANI Database seeding completed successfully (Imunisasi TT & Pranikah)!');
   } catch (error) {
     await client.query('ROLLBACK');
     console.error('❌ Error seeding database:', error);

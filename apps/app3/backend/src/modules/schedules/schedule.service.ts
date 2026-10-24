@@ -262,9 +262,10 @@ export class ScheduleService {
       channel_whatsapp: boolean;
       channel_email: boolean;
       instructions: string | null;
+      tt_level: string | null;
     }>(
       `SELECT id, tablet_name, dosage, frequency, day_of_week, time_slot, is_enabled, remind_15min_before,
-              reminder_timing, channel_push, channel_whatsapp, channel_email, instructions
+              reminder_timing, channel_push, channel_whatsapp, channel_email, instructions, tt_level
        FROM reminder_schedules
        WHERE user_id = $1 AND status = 'Aktif'
        ORDER BY created_at DESC LIMIT 1`,
@@ -280,10 +281,10 @@ export class ScheduleService {
     return {
       id: sch.id,
       patientId: userId,
-      tabletName: sch.tablet_name || 'Tablet Tambah Darah (TTD)',
-      dosage: sch.dosage || '1 tablet, 1x seminggu',
-      frequency: sch.frequency === 'daily' ? 'Harian' : 'Mingguan',
-      category: sch.frequency === 'daily' ? 'Suplemen TTD' : 'TTD Rutin',
+      tabletName: sch.tablet_name || 'Vaksin Tetanus Toxoid (TT)',
+      dosage: sch.dosage || '1 dosis (0.5 mL)',
+      frequency: sch.frequency === 'daily' ? 'Harian' : 'Sesuai Jadwal',
+      category: sch.tt_level ? `Imunisasi ${sch.tt_level}` : 'Imunisasi TT',
       dayOfWeek,
       time: timeSlot,
       isEnabled: sch.is_enabled,
@@ -293,7 +294,8 @@ export class ScheduleService {
       channelWhatsapp: sch.channel_whatsapp,
       channelEmail: sch.channel_email,
       instructions:
-        sch.instructions || 'Minum setelah makan malam atau sebelum tidur dengan air putih.',
+        sch.instructions ||
+        'Kunjungi fasilitas kesehatan (Puskesmas/Klinik) untuk penyuntikan vaksin TT.',
       nextDate,
       daysRemaining,
     };
@@ -383,12 +385,12 @@ export class ScheduleService {
     return {
       id: row.id,
       patientId: row.user_id,
-      senderName: row.sender_name || 'Fasilitator Medis FEMORY',
-      senderRole: 'Fasilitator Kesehatan UKS',
+      senderName: row.sender_name || 'Petugas Faskes / KUA',
+      senderRole: 'Tenaga Kesehatan / Petugas KUA',
       scheduleId: row.schedule_id || undefined,
-      medicationName: 'Tablet Tambah Darah (TTD)',
-      dosage: '1 tablet',
-      timeSlot: '20:00',
+      medicationName: 'Imunisasi Tetanus Toxoid (TT)',
+      dosage: '1 dosis (0.5 mL)',
+      timeSlot: '09:00',
       message: row.message,
       channel: (row.channel as 'app' | 'whatsapp') || 'app',
       status: row.status as 'UNREAD' | 'READ' | 'DISMISSED',

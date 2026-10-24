@@ -373,11 +373,11 @@ export class AdminService {
 
   static async sendUserReminder(userId: string, message?: string, channel: string = 'app') {
     const nudgeId = `ndg_${Date.now().toString().slice(-6)}`;
-    const msg = message || 'Halo! Jangan lupa minum Tablet Tambah Darah (TTD) minggu ini ya 🌸';
+    const msg = message || 'Halo! Pengingat jadwal Imunisasi Tetanus Toxoid (TT) pranikah di fasilitas kesehatan terdekat 🌸';
 
     await db.query(
       `INSERT INTO admin_nudges (id, user_id, title, message, channel, status)
-       VALUES ($1, $2, 'Pengingat Minum TTD', $3, $4, 'UNREAD')`,
+       VALUES ($1, $2, 'Pengingat Imunisasi TT', $3, $4, 'UNREAD')`,
       [nudgeId, userId, msg, channel],
     );
 
@@ -482,7 +482,7 @@ export class AdminService {
           canonicalCategory,
           data.status || 'Terbit',
           today,
-          data.author || 'Tim Ahli Gizi UKS',
+          data.author || 'Tim Medis Faskes / KUA',
         ],
       );
 
@@ -503,7 +503,7 @@ export class AdminService {
       id: newId,
       title: data.title,
       category: canonicalCategory,
-      author: data.author || 'Tim Ahli Gizi UKS',
+      author: data.author || 'Tim Medis Faskes / KUA',
       publishDate: today,
       status: (data.status || 'Terbit') as HealthArticle['status'],
       views: 0,
@@ -668,8 +668,8 @@ export class AdminService {
         patientId: r.user_id,
         patientName: r.user_name || 'Calon Pengantin',
         partnerName: r.partner_name || undefined,
-        medicationName: r.tablet_name || 'Tablet Tambah Darah (TTD)',
-        dosage: r.dosage || '1 tablet',
+        medicationName: r.tablet_name || (r.tt_level ? `Imunisasi ${r.tt_level}` : 'Imunisasi Tetanus Toxoid (TT)'),
+        dosage: r.dosage || (isTtSchedule ? '1 dosis (0.5 mL)' : '1 dosis'),
         frequency: isTtSchedule ? '1x Sesuai Dosis' : isDaily ? 'Harian' : '1x Seminggu',
         dayOfWeek: r.day_of_week || 'Sabtu',
         timeSlots: slots,
@@ -739,8 +739,8 @@ export class AdminService {
       patientId: r.user_id,
       patientName: r.user_name || 'Calon Pengantin',
       partnerName: r.partner_name || undefined,
-      medicationName: r.tablet_name || 'Tablet Tambah Darah (TTD)',
-      dosage: r.dosage || '1 tablet',
+      medicationName: r.tablet_name || (r.tt_level ? `Imunisasi ${r.tt_level}` : 'Imunisasi Tetanus Toxoid (TT)'),
+      dosage: r.dosage || (isTtSchedule ? '1 dosis (0.5 mL)' : '1 dosis'),
       frequency: isTtSchedule ? '1x Sesuai Dosis' : isDaily ? 'Harian' : '1x Seminggu',
       dayOfWeek: r.day_of_week || 'Sabtu',
       timeSlots: slots,

@@ -25,8 +25,8 @@ export class ConsumptionService {
     );
     const activeSched = schedRes.rows[0];
     const schedId = activeSched?.id || null;
-    const title = activeSched?.tablet_name || 'Tablet Tambah Darah (TTD)';
-    const dosage = activeSched?.dosage || '1 Tablet';
+    const title = activeSched?.tablet_name || 'Vaksin Tetanus Toxoid (TT)';
+    const dosage = activeSched?.dosage || '1 dosis (0.5 mL)';
     const schedFreq = (activeSched?.frequency as 'daily' | 'weekly') || 'weekly';
 
     if (status === 'pending') {

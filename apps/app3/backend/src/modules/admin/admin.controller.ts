@@ -10,7 +10,7 @@ export class AdminController {
       res.json(stats);
     } catch (error: any) {
       console.error('AdminController.getStats error:', error);
-      res.status(500).json({ success: false, error: 'Gagal memuat statistik UKS.' });
+      res.status(500).json({ success: false, error: 'Gagal memuat statistik imunisasi TT.' });
     }
   }
 
@@ -20,7 +20,7 @@ export class AdminController {
       res.json(users);
     } catch (error: any) {
       console.error('AdminController.getUsers error:', error);
-      res.status(500).json({ success: false, error: 'Gagal memuat daftar siswi.' });
+      res.status(500).json({ success: false, error: 'Gagal memuat daftar calon pengantin.' });
     }
   }
 

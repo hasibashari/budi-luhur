@@ -100,7 +100,7 @@ export class ConsultationService {
         return {
           success: true,
           answer:
-            'Halo! 🌸 Konsumsi Tablet Tambah Darah (TTD) sangat penting untuk mencegah anemia. Pastikan minum teratur seminggu sekali setelah makan, dan konsumsi makanan kaya vitamin C seperti jeruk untuk membantu penyerapan zat besi. Hubungi fasilitas kesehatan terdekat jika membutuhkan pemeriksaan lanjutan!',
+            'Halo! 🌸 Imunisasi Tetanus Toxoid (TT) sangat penting bagi calon pengantin untuk mencegah infeksi tetanus pada ibu dan bayi kelak. Kunjungi Puskesmas atau fasilitas kesehatan terdekat untuk mendapatkan skrining status TT (TT1–TT5) serta sertifikat imunisasi pranikah!',
         };
       }
 
@@ -123,7 +123,7 @@ export class ConsultationService {
       return {
         success: true,
         answer:
-          'Halo! 🌸 Terjadi kendala koneksi ke server AI, namun ingat pesan penting ini: Minum Tablet Tambah Darah (TTD) teratur 1 tablet setiap minggu dengan air putih atau jus jeruk, dan hindari minum bersama teh atau susu. Tetap semangat menjaga kesehatan tubuhmu ya!',
+          'Halo! 🌸 Terjadi kendala koneksi ke server AI, namun ingat pesan penting ini: Lengkapi status imunisasi Tetanus Toxoid (TT1–TT5) di fasilitas kesehatan terdekat untuk perlindungan optimal dan syarat administrasi pernikahan di KUA. Tetap semangat mempersiapkan pernikahan sehatmu ya!',
       };
     }
   }
@@ -143,7 +143,7 @@ export class ConsultationService {
 
     try {
       const prompt = `
-Buatkan draf artikel edukasi kesehatan lengkap dan menarik untuk aplikasi TEMANI (Program Tablet Tambah Darah & Imunisasi Tetanus Toxoid Calon Pengantin).
+Buatkan draf artikel edukasi kesehatan lengkap dan menarik untuk aplikasi TEMANI (Program Imunisasi Tetanus Toxoid & Kesehatan Calon Pengantin).
 Topik: "${topic}"
 Kategori: "${category}"
 Target Pembaca: Calon pengantin (catin) wanita dan pria, kader posyandu/Puskesmas, serta konselor KUA.
@@ -194,8 +194,8 @@ Berikan output dalam format JSON valid persis seperti ini:
         success: true,
         data: {
           title: `Edukasi: ${topic}`,
-          summary: `Tips dan panduan penting seputar ${topic} bagi remaja putri.`,
-          content: `## Mengenal ${topic}\nInformasi komprehensif mengenai pentingnya pemenuhan zat besi bagi siswi sekolah.`,
+          summary: `Tips dan panduan penting seputar ${topic} bagi calon pengantin.`,
+          content: `## Mengenal ${topic}\nInformasi komprehensif mengenai pentingnya imunisasi Tetanus Toxoid (TT) dan kesehatan reproduksi bagi calon pengantin.`,
           readTime: '3 min read',
         },
       };
@@ -211,7 +211,7 @@ Berikan output dalam format JSON valid persis seperti ini:
     tone?: 'friendly' | 'urgent' | 'motivational';
   }) {
     const name = params.userName || 'Sahabat';
-    const fallbackMessage = `Halo ${name}! 🌸 Jangan lupa minum ${params.medicationName} (${params.dosage}) jam ${params.timeSlot} ya. Badan fit, bebas anemia! ✨`;
+    const fallbackMessage = `Halo ${name}! 🌸 Pengingat jadwal ${params.medicationName} (${params.dosage}) jam ${params.timeSlot}. Mari lengkapi imunisasi TT pranikah! ✨`;
 
     if (!config.geminiApiKey) {
       return { success: true, message: fallbackMessage };
@@ -219,14 +219,14 @@ Berikan output dalam format JSON valid persis seperti ini:
 
     try {
       const prompt = `
-Tuliskan 1 pesan pengingat WhatsApp singkat (2-3 kalimat) dari Pembina UKS / Tim FEMORY untuk siswi berikut:
-- Nama Siswi: ${name}
-- Nama Tablet: ${params.medicationName} (${params.dosage})
-- Waktu Minum: ${params.timeSlot}
+Tuliskan 1 pesan pengingat WhatsApp singkat (2-3 kalimat) dari Petugas Faskes / KUA TEMANI untuk calon pengantin berikut:
+- Nama Calon Pengantin: ${name}
+- Layanan/Imunisasi: ${params.medicationName} (${params.dosage})
+- Waktu Kunjungan: ${params.timeSlot}
 - Tingkat Kepatuhan: ${params.adherenceRate || 80}%
 - Nada Pesan: ${params.tone || 'motivational'}
 
-Pesan harus ramah, menyemangati, ada emotikon hangat, dan mengingatkan pentingnya minum TTD tepat waktu. Berikan hanya teks pesannya saja.
+Pesan harus ramah, menyemangati, ada emotikon hangat, dan mengingatkan pentingnya melengkapi dosis imunisasi TT pranikah tepat waktu. Berikan hanya teks pesannya saja.
 `;
 
       const response = await fetch(

@@ -82,9 +82,9 @@ export default function AdminDashboardView() {
       userId: userId || '',
       userName: name,
       userPhone: phone || '',
-      medicationName: medicationName || 'Tablet Tambah Darah (TTD)',
-      dosage: dosage || '1 Tablet (Setelah makan)',
-      timeSlot: timeSlot || '20:00 WIB',
+      medicationName: medicationName || 'Imunisasi Tetanus Toxoid (TT)',
+      dosage: dosage || '1 Dosis (0.5 mL)',
+      timeSlot: timeSlot || '09:00 WIB',
     });
     setReminderModalOpen(true);
   };

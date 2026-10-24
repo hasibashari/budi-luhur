@@ -1,5 +1,5 @@
 -- ============================================================
--- FEMORY CLEAN RELATIONAL SCHEMA (2-ROLE ARCHITECTURE)
+-- TEMANI CLEAN RELATIONAL SCHEMA (IMUNISASI TT & PRANIKAH)
 -- PostgreSQL 15+ Schema Definition
 -- ============================================================
 
