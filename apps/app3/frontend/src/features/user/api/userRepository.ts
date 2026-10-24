@@ -1,8 +1,23 @@
 import apiClient from '@/src/shared/api/client';
-import { UserProfile, UserScheduleData, UserDashboardData, StreakResult, ImmunizationRecord, ImmunizationInput, ImmunizationMutationResult, ImmunizationValidationResult, CertificateVerification } from '../types';
+import {
+  UserProfile,
+  UserScheduleData,
+  UserDashboardData,
+  StreakResult,
+  ImmunizationRecord,
+  ImmunizationInput,
+  ImmunizationMutationResult,
+  ImmunizationValidationResult,
+  CertificateVerification,
+} from '../types';
 
 export type { UserProfile, UserScheduleData, UserDashboardData, StreakResult };
-export type { ImmunizationRecord, ImmunizationInput, ImmunizationMutationResult, CertificateVerification };
+export type {
+  ImmunizationRecord,
+  ImmunizationInput,
+  ImmunizationMutationResult,
+  CertificateVerification,
+};
 
 export async function getImmunizationRecordsAction(): Promise<ImmunizationRecord[]> {
   const response = await apiClient.get<ImmunizationRecord[]>('/users/immunizations');

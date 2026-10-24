@@ -45,7 +45,7 @@ export class ConsultationController {
         return;
       }
 
-      const result = await ConsultationService.generateArticleDraft(topic, category || 'Anemia & TTD');
+      const result = await ConsultationService.generateArticleDraft(topic, category || 'TTD & Imunisasi TT');
       res.json(result);
     } catch (error: any) {
       console.error('ConsultationController.generateArticleDraft error:', error);

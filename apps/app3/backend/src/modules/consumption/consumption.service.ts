@@ -1,7 +1,6 @@
 import db from '../../config/database.js';
 import { UserService } from '../users/user.service.js';
 import { calculateChronologicalStreak } from '../../utils/streakCalculator.js';
-import { BuddyService } from '../buddy/buddy.service.js';
 
 export class ConsumptionService {
   static async recordConsumption(
@@ -73,15 +72,6 @@ export class ConsumptionService {
 
     // Recalculate streak
     const streakResult = await UserService.calculateAndSyncUserStreak(userId, schedFreq);
-
-    // Sync group streaks
-    const userGroupsRes = await db.query<{ group_id: string }>(
-      `SELECT group_id FROM buddy_group_members WHERE user_id = $1`,
-      [userId],
-    );
-    for (const row of userGroupsRes.rows) {
-      await BuddyService.calculateAndSyncGroupStreak(row.group_id);
-    }
 
     return {
       success: true,

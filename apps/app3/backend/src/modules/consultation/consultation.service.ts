@@ -45,7 +45,9 @@ export class ConsultationService {
           `Calon pengantin yang sedang berkonsultasi bernama "${userContext.name.trim()}". Sapalah dengan nama depannya secara hangat (misal: "Halo ${userContext.name.trim().split(' ')[0]}").`,
         );
       } else {
-        contextDetails.push(`Sapalah pasien dengan ramah dan sopan menggunakan panggilan "Calon Pengantin".`);
+        contextDetails.push(
+          `Sapalah pasien dengan ramah dan sopan menggunakan panggilan "Calon Pengantin".`,
+        );
       }
 
       if (userContext?.schoolOrOrg?.trim()) {
@@ -132,8 +134,8 @@ export class ConsultationService {
         success: true,
         data: {
           title: `Panduan Sehat: ${topic}`,
-          summary: `Edukasi penting seputar ${topic} untuk remaja putri dan pencegahan anemia.`,
-          content: `## Pendahuluan\n${topic} merupakan hal krusial dalam menjaga kebugaran siswi sehari-hari.\n\n## Langkah Pencegahan\n- Rutin konsumsi Tablet Tambah Darah (TTD)\n- Perbanyak sayuran hijau dan protein hewani\n- Istirahat cukup`,
+          summary: `Edukasi penting seputar ${topic} untuk calon pengantin dan persiapan kehamilan sehat.`,
+          content: `## Pendahuluan\n${topic} merupakan hal krusial dalam menjaga kebugaran calon pengantin sehari-hari.\n\n## Langkah Pencegahan\n- Rutin konsumsi Tablet Tambah Darah (TTD)\n- Pastikan status imunisasi Tetanus Toxoid (TT) lengkap\n- Istirahat cukup dan jaga asupan gizi seimbang`,
           readTime: '3 min read',
         },
       };
@@ -141,16 +143,16 @@ export class ConsultationService {
 
     try {
       const prompt = `
-Buatkan draf artikel edukasi kesehatan lengkap dan menarik untuk aplikasi FEMORY (Program Tablet Tambah Darah & Pencegahan Anemia Remaja Putri).
+Buatkan draf artikel edukasi kesehatan lengkap dan menarik untuk aplikasi TEMANI (Program Tablet Tambah Darah & Imunisasi Tetanus Toxoid Calon Pengantin).
 Topik: "${topic}"
 Kategori: "${category}"
-Target Pembaca: Siswi sekolah, remaja putri, dan pembina UKS.
+Target Pembaca: Calon pengantin (catin) wanita dan pria, kader posyandu/Puskesmas, serta konselor KUA.
 
 Berikan output dalam format JSON valid persis seperti ini:
 {
   "title": "Judul artikel yang menarik dan edukatif",
   "summary": "Ringkasan 1-2 kalimat pengantar untuk kartu artikel",
-  "content": "Isi artikel lengkap dalam format Markdown standar. Gunakan ## untuk Sub-Judul, - untuk Poin/List, dan > Tips UKS: untuk highlight kotak tips penting.",
+  "content": "Isi artikel lengkap dalam format Markdown standar. Gunakan ## untuk Sub-Judul, - untuk Poin/List, dan > Tips Catin: untuk highlight kotak tips penting.",
   "readTime": "3 min read"
 }
 `;

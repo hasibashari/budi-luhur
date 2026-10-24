@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 import {
   Search,
   UserPlus,
@@ -11,6 +12,7 @@ import {
   CheckCircle2,
   Clock,
   AlertCircle,
+  Award,
 } from 'lucide-react';
 import AdminHeader from '../components/AdminHeader';
 import SendReminderModal from '../components/SendReminderModal';
@@ -404,6 +406,13 @@ export default function UserManagementView() {
       width: '12%',
       renderCell: user => (
         <div className='flex items-center justify-end gap-1'>
+          <Link
+            to='/admin/certificates'
+            title='Verifikasi Imunisasi & Sertifikat'
+            className='p-1.5 rounded-lg text-emerald-700 hover:bg-emerald-50 transition-colors cursor-pointer'
+          >
+            <Award size={16} />
+          </Link>
           <button
             type='button'
             title='Kirim Pengingat TT'
@@ -630,6 +639,13 @@ export default function UserManagementView() {
                 </button>
 
                 <div className='flex gap-1.5'>
+                  <Link
+                    to='/admin/certificates'
+                    title='Verifikasi Imunisasi & Sertifikat'
+                    className='w-11 h-11 rounded-xl bg-emerald-50 text-emerald-700 hover:bg-emerald-100 flex items-center justify-center transition-colors cursor-pointer'
+                  >
+                    <Award size={16} />
+                  </Link>
                   <button
                     type='button'
                     title='Edit Data Catin'

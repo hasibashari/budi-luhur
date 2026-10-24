@@ -283,7 +283,7 @@ export class ScheduleService {
       tabletName: sch.tablet_name || 'Tablet Tambah Darah (TTD)',
       dosage: sch.dosage || '1 tablet, 1x seminggu',
       frequency: sch.frequency === 'daily' ? 'Harian' : 'Mingguan',
-      category: sch.frequency === 'daily' ? 'Terapi Anemia' : 'TTD Rutin',
+      category: sch.frequency === 'daily' ? 'Suplemen TTD' : 'TTD Rutin',
       dayOfWeek,
       time: timeSlot,
       isEnabled: sch.is_enabled,
@@ -292,7 +292,8 @@ export class ScheduleService {
       channelPush: sch.channel_push,
       channelWhatsapp: sch.channel_whatsapp,
       channelEmail: sch.channel_email,
-      instructions: sch.instructions || 'Minum setelah makan malam atau sebelum tidur dengan air putih.',
+      instructions:
+        sch.instructions || 'Minum setelah makan malam atau sebelum tidur dengan air putih.',
       nextDate,
       daysRemaining,
     };
@@ -391,7 +392,8 @@ export class ScheduleService {
       message: row.message,
       channel: (row.channel as 'app' | 'whatsapp') || 'app',
       status: row.status as 'UNREAD' | 'READ' | 'DISMISSED',
-      sentAt: row.created_at.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB',
+      sentAt:
+        row.created_at.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB',
     };
   }
 

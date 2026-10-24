@@ -3,6 +3,8 @@ import { AdminController } from './admin.controller.js';
 import { authMiddleware } from '../../middlewares/auth.middleware.js';
 import { roleMiddleware } from '../../middlewares/role.middleware.js';
 
+import { UserController } from '../users/user.controller.js';
+
 export const adminRoutes = Router();
 
 // Protect all admin routes with auth and admin role
@@ -17,6 +19,13 @@ adminRoutes.post('/users', AdminController.createUser as any);
 adminRoutes.put('/users/:id', AdminController.updateUser as any);
 adminRoutes.delete('/users/:id', AdminController.deleteUser as any);
 adminRoutes.post('/reminders/send', AdminController.sendReminder as any);
+
+// Verifikasi dosis imunisasi & akses lampiran bukti (khusus admin).
+adminRoutes.patch(
+  '/immunizations/:id/verification',
+  UserController.verifyImmunizationRecord as any,
+);
+adminRoutes.get('/immunizations/:id/attachment', UserController.getImmunizationAttachment as any);
 
 // Verifikasi tanda tangan sertifikat imunisasi (khusus admin).
 adminRoutes.get('/certificates', AdminController.getCertificates as any);

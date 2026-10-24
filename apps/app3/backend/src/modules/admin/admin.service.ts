@@ -69,7 +69,7 @@ export interface MedicationSchedule {
   startDate: string;
   endDate: string;
   status: 'Aktif' | 'Selesai' | 'Diberhentikan';
-  category: 'TTD Rutin' | 'Terapi Anemia' | 'Suplemen Tambahan' | 'Imunisasi TT';
+  category: 'TTD Rutin' | 'Suplemen TTD' | 'Suplemen Tambahan' | 'Imunisasi TT';
   instructions: string;
   lastReminderSent?: string;
   todayStatus?: 'COMPLETED' | 'PENDING' | 'NOT_YET_TIME' | 'OFF_SCHEDULE' | 'MISSED';
@@ -118,7 +118,7 @@ export class AdminService {
   }
 
   static async getOverviewStats(): Promise<AdminStats> {
-    const [usersRes, schedulesRes, adherenceRes, articlesRes, buddyRes] = await Promise.all([
+    const [usersRes, schedulesRes, adherenceRes, articlesRes] = await Promise.all([
       db.query<{ c: string }>(`SELECT count(*) as c FROM users WHERE role = 'user'`),
       db.query<{ c: string }>(`SELECT count(*) as c FROM reminder_schedules WHERE status = 'Aktif'`),
       db.query<{ total: string; completed: string }>(`
@@ -128,7 +128,6 @@ export class AdminService {
         FROM consumption_logs
       `),
       db.query<{ c: string }>(`SELECT count(*) as c FROM articles WHERE status = 'Terbit'`),
-      db.query<{ c: string }>(`SELECT count(*) as c FROM buddy_groups`),
     ]);
 
     const totalUsers = Number(usersRes.rows[0]?.c) || 0;
@@ -140,7 +139,7 @@ export class AdminService {
     const adherenceRate = totalLogs > 0 ? +((completedLogs / totalLogs) * 100).toFixed(1) : 92.5;
 
     const publishedArticles = Number(articlesRes.rows[0]?.c) || 0;
-    const activePrograms = Number(buddyRes.rows[0]?.c) || 0;
+    const activePrograms = 0;
 
     return {
       totalUsers,
@@ -642,7 +641,7 @@ export class AdminService {
       const category: MedicationSchedule['category'] = isSupplement
         ? 'Suplemen Tambahan'
         : isDaily
-          ? 'Terapi Anemia'
+          ? 'Suplemen TTD'
           : 'TTD Rutin';
 
       const log = isDaily
@@ -729,7 +728,7 @@ export class AdminService {
     const category: MedicationSchedule['category'] = isSupplement
       ? 'Suplemen Tambahan'
       : isDaily
-        ? 'Terapi Anemia'
+        ? 'Suplemen TTD'
         : 'TTD Rutin';
     const isTtSchedule = Boolean(r.tt_level);
 

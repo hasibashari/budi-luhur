@@ -55,7 +55,7 @@ export default function ProfileView() {
 
   const [userProfile, setUserProfile] = useState<UserProfileState>({
     id: authUser?.id || '',
-    name: authUser?.name || '',
+    name: authUser?.name || 'Calon Pengantin',
     email: authUser?.email || '',
     phone: authUser?.phone || '',
     avatarUrl: authUser?.avatarUrl || '',

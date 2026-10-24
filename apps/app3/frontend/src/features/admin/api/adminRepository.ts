@@ -237,7 +237,15 @@ export interface AdminUserImmunization {
   vaccineType: string;
   vaccineDate: string;
   faskesName: string;
+  batchNumber?: string;
+  notes?: string;
+  infoSource?: string;
+  datePrecision?: string;
+  attachmentUrl?: string | null;
   verificationStatus: 'PENDING' | 'VERIFIED' | 'REJECTED';
+  verifiedBy?: string | null;
+  verifiedAt?: string | null;
+  verificationNote?: string | null;
 }
 
 export async function getCertificateRequestsAction(): Promise<AdminCertificateRequest[]> {
@@ -267,9 +275,7 @@ export async function reviewCertificateAction(
   }
 }
 
-export async function getUserImmunizationsAction(
-  userId: string,
-): Promise<AdminUserImmunization[]> {
+export async function getUserImmunizationsAction(userId: string): Promise<AdminUserImmunization[]> {
   try {
     const res = await apiClient.get<AdminUserImmunization[]>(
       `/admin/users/${userId}/immunizations`,
@@ -279,4 +285,29 @@ export async function getUserImmunizationsAction(
     console.error('getUserImmunizationsAction error:', err);
     return [];
   }
+}
+
+export async function verifyUserImmunizationAction(
+  immunizationId: string,
+  payload: {
+    status: 'VERIFIED' | 'REJECTED';
+    note?: string;
+  },
+): Promise<{ success: boolean; ttStatus?: string; error?: string }> {
+  try {
+    const res = await apiClient.patch(
+      `/admin/immunizations/${immunizationId}/verification`,
+      payload,
+    );
+    return { success: true, ...res.data };
+  } catch (err: any) {
+    return { success: false, error: err.response?.data?.error || err.message };
+  }
+}
+
+export async function getAdminImmunizationAttachmentAction(recordId: string): Promise<Blob> {
+  const response = await apiClient.get<Blob>(`/admin/immunizations/${recordId}/attachment`, {
+    responseType: 'blob',
+  });
+  return response.data;
 }
