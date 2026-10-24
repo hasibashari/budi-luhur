@@ -1,5 +1,5 @@
 // STIKes Budi Luhur unified PWA Service Worker v2
-const CACHE_NAME = 'budi-luhur-portal-v1';
+const CACHE_NAME = 'budi-luhur-portal-v2';
 const OFFLINE_URL = '/offline.html';
 
 const PRECACHE_ASSETS = [
@@ -126,7 +126,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // 2. Static Assets (Icons, Images, Manifest) -> Cache first, fallback to network
+  // 2. Static Assets (Icons, Images, Manifest) -> Network first (always fresh after deploy), fallback to cache
   if (
     url.pathname.startsWith('/icons/') ||
     url.pathname.startsWith('/images/') ||
@@ -137,18 +137,15 @@ self.addEventListener('fetch', (event) => {
     url.pathname.endsWith('.woff2')
   ) {
     event.respondWith(
-      caches.match(event.request).then((cachedResponse) => {
-        if (cachedResponse) {
-          return cachedResponse;
-        }
-        return fetch(event.request).then((networkResponse) => {
+      fetch(event.request)
+        .then((networkResponse) => {
           if (networkResponse && networkResponse.status === 200) {
             const copy = networkResponse.clone();
             caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
           }
           return networkResponse;
-        });
-      })
+        })
+        .catch(() => caches.match(event.request))
     );
     return;
   }

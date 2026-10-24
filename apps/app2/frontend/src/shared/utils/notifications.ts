@@ -167,9 +167,10 @@ export async function showSystemNotification(
   // Play audio chime
   playNotificationTone()
 
+  const icon = `${import.meta.env.BASE_URL}icons/icon-192x192.png`
   const defaultOptions: SystemNotificationOptions = {
-    icon: '/icons/icon-192x192.svg',
-    badge: '/icons/icon-192x192.svg',
+    icon,
+    badge: icon,
     vibrate: [200, 100, 200, 100, 200],
     data: {
       url: options.url || '/user/dashboard',
