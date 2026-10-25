@@ -18,14 +18,22 @@ import {
   MOOD_OPTIONS,
   PAIN_OPTIONS,
   BLEEDING_OPTIONS,
-} from './symptomHealth.types';
+} from './notes.types';
 
-export interface SymptomHistoryTabProps {
+export interface NoteHistoryViewProps {
   logs: DailyHealthLog[];
   onEditLog: (logDate: string) => void;
+  onAddNewLog?: () => void;
 }
 
-export const SymptomHistoryTab: React.FC<SymptomHistoryTabProps> = ({ logs, onEditLog }) => {
+// Backward compatibility alias
+export type SymptomHistoryTabProps = NoteHistoryViewProps;
+
+export const NoteHistoryView: React.FC<NoteHistoryViewProps> = ({
+  logs,
+  onEditLog,
+  onAddNewLog,
+}) => {
   // Format data langsung agar siap dikonsumsi oleh Recharts
   const chartData = useMemo(
     () =>
@@ -55,18 +63,32 @@ export const SymptomHistoryTab: React.FC<SymptomHistoryTabProps> = ({ logs, onEd
 
   if (logs.length === 0) {
     return (
-      <div className='text-center py-10 px-4'>
-        <History className='w-10 h-10 text-slate-300 mx-auto mb-2' />
-        <p className='text-sm font-bold text-slate-700'>Belum Ada Riwayat Catatan</p>
-        <p className='text-xs text-slate-500 mt-1'>
-          Catatan harian yang Anda simpan akan muncul di sini.
+      <div className='text-center py-12 px-4 rounded-2xl border border-dashed border-border bg-surface-soft/40'>
+        <div className='w-12 h-12 rounded-full bg-primary-subtle text-primary flex items-center justify-center mx-auto mb-3 shadow-xs'>
+          <History className='w-6 h-6' />
+        </div>
+        <p className='text-sm sm:text-base font-extrabold text-ink'>Belum Ada Riwayat Catatan</p>
+        <p className='text-xs text-muted mt-1 max-w-sm mx-auto'>
+          Catat kondisi tubuh, adaptasi pil KB, atau gejala efek samping Anda untuk mulai melihat grafik tren kesehatan.
         </p>
+        {onAddNewLog && (
+          <Button
+            type='button'
+            variant='primary'
+            size='sm'
+            shape='pill'
+            onClick={onAddNewLog}
+            className='mt-4 font-bold'
+          >
+            Mulai Catat Hari Ini
+          </Button>
+        )}
       </div>
     );
   }
 
   return (
-    <div className='space-y-3'>
+    <div className='space-y-4'>
       {/* GRAFIK TREN KONDISI HARIAN (AREA CHART) */}
       <section
         aria-label='Grafik tren kondisi kesehatan'
@@ -168,67 +190,85 @@ export const SymptomHistoryTab: React.FC<SymptomHistoryTabProps> = ({ logs, onEd
       </section>
 
       {/* DAFTAR RIWAYAT CATATAN */}
-      {logs.map(log => {
-        const moodLabel = MOOD_OPTIONS.find(m => m.id === log.mood)?.label;
-        const painLabel = PAIN_OPTIONS.find(p => p.id === log.pain)?.label;
-        const bleedLabel = BLEEDING_OPTIONS.find(b => b.id === log.bleeding)?.label;
+      <div className='pt-1'>
+        <div className='flex items-center justify-between mb-3 px-1'>
+          <h3 className='text-sm sm:text-base font-extrabold text-ink flex items-center gap-2'>
+            <span>Riwayat Catatan Harian</span>
+            <span className='rounded-full bg-primary-subtle px-2 py-0.5 text-[11px] font-bold text-primary border border-primary-soft'>
+              {logs.length}
+            </span>
+          </h3>
+        </div>
 
-        return (
-          <div
-            key={log.id}
-            className='flex flex-col justify-between gap-3 rounded-2xl border border-border bg-surface p-3.5 transition-all hover:border-primary-soft sm:flex-row sm:items-center sm:p-4'
-          >
-            <div className='space-y-2 flex-1 min-w-0'>
-              {/* Tanggal & Jam Simpan */}
-              <div className='flex items-center justify-between sm:justify-start gap-3'>
-                <span className='text-xs sm:text-sm font-extrabold text-slate-900'>
-                  {formatIndonesianDate(log.logDate)}
-                </span>
-                <span className='text-[11px] text-slate-400 flex items-center gap-1'>
-                  <Clock className='w-3 h-3' />
-                  {log.updatedAt}
-                </span>
+        <div className='space-y-3'>
+          {logs.map(log => {
+            const moodLabel = MOOD_OPTIONS.find(m => m.id === log.mood)?.label;
+            const painLabel = PAIN_OPTIONS.find(p => p.id === log.pain)?.label;
+            const bleedLabel = BLEEDING_OPTIONS.find(b => b.id === log.bleeding)?.label;
+
+            return (
+              <div
+                key={log.id}
+                className='flex flex-col justify-between gap-3 rounded-2xl border border-border bg-surface p-3.5 transition-all hover:border-primary-soft sm:flex-row sm:items-center sm:p-4'
+              >
+                <div className='space-y-2 flex-1 min-w-0'>
+                  {/* Tanggal & Jam Simpan */}
+                  <div className='flex items-center justify-between sm:justify-start gap-3'>
+                    <span className='text-xs sm:text-sm font-extrabold text-slate-900'>
+                      {formatIndonesianDate(log.logDate)}
+                    </span>
+                    <span className='text-[11px] text-slate-400 flex items-center gap-1'>
+                      <Clock className='w-3 h-3' />
+                      {log.updatedAt}
+                    </span>
+                  </div>
+
+                  {/* Ringkasan Badge Kondisi */}
+                  <div className='flex flex-wrap gap-1.5'>
+                    <Badge variant='primary' size='sm'>
+                      Mood: {moodLabel}
+                    </Badge>
+                    <Badge variant='neutral' size='sm'>
+                      Nyeri: {painLabel}
+                    </Badge>
+                    <Badge variant='primary' size='sm'>
+                      Pendarahan: {bleedLabel}
+                    </Badge>
+                    <span className='px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-800 border border-amber-200'>
+                      BB: {log.weightKg} kg ({log.weightStatus})
+                    </span>
+                  </div>
+
+                  {/* Catatan Tambahan */}
+                  {log.notes && (
+                    <p className='text-xs text-slate-600 italic bg-slate-50 px-3 py-2 rounded-xl border border-slate-100'>
+                      "{log.notes}"
+                    </p>
+                  )}
+                </div>
+
+                {/* Tombol Lihat / Edit */}
+                <Button
+                  type='button'
+                  variant='soft'
+                  size='sm'
+                  shape='rounded'
+                  icon={<Edit3 className='w-3.5 h-3.5' />}
+                  onClick={() => onEditLog(log.logDate)}
+                  className='shrink-0 self-end sm:self-center font-bold text-xs'
+                >
+                  Detail / Ubah
+                </Button>
               </div>
-
-              {/* Ringkasan Badge Kondisi */}
-              <div className='flex flex-wrap gap-1.5'>
-                <Badge variant='primary' size='sm'>
-                  Mood: {moodLabel}
-                </Badge>
-                <Badge variant='neutral' size='sm'>
-                  Nyeri: {painLabel}
-                </Badge>
-                <Badge variant='primary' size='sm'>
-                  Pendarahan: {bleedLabel}
-                </Badge>
-                <span className='px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-800 border border-amber-200'>
-                  BB: {log.weightKg} kg ({log.weightStatus})
-                </span>
-              </div>
-
-              {/* Catatan Tambahan */}
-              {log.notes && (
-                <p className='text-xs text-slate-600 italic bg-slate-50 px-3 py-2 rounded-xl border border-slate-100'>
-                  "{log.notes}"
-                </p>
-              )}
-            </div>
-
-            {/* Tombol Lihat / Edit */}
-            <Button
-              type='button'
-              variant='soft'
-              size='sm'
-              shape='rounded'
-              icon={<Edit3 className='w-3.5 h-3.5' />}
-              onClick={() => onEditLog(log.logDate)}
-              className='shrink-0 self-end sm:self-center font-bold text-xs'
-            >
-              Detail / Ubah
-            </Button>
-          </div>
-        );
-      })}
+            );
+          })}
+        </div>
+      </div>
     </div>
   );
 };
+
+// Backward compatibility alias
+export const SymptomHistoryTab = NoteHistoryView;
+
+export default NoteHistoryView;

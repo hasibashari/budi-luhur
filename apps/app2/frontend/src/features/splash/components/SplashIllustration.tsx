@@ -14,119 +14,126 @@ export const SplashIllustration: React.FC<SplashIllustrationProps> = ({
       className={`relative flex items-center justify-center select-none ${className}`}
       style={{ width: size, height: size }}
     >
-      {/* Soft Ambient Glow */}
+      {/* Soft Ambient Radial Glow */}
       <div className='absolute inset-0 rounded-full bg-[#0D9488]/20 blur-2xl animate-pulse pointer-events-none' />
 
       <svg
         viewBox='0 0 160 160'
         fill='none'
         xmlns='http://www.w3.org/2000/svg'
-        className='w-full h-full drop-shadow-xl overflow-visible'
+        className='w-full h-full drop-shadow-2xl overflow-visible'
       >
         <defs>
-          {/* Main Teal Capsule Gradient */}
-          <linearGradient id='pillunaTeal' x1='20' y1='20' x2='90' y2='90' gradientUnits='userSpaceOnUse'>
+          {/* Medical Teal Gradient - Upper Half */}
+          <linearGradient id='splashPillTeal' x1='15' y1='10' x2='48' y2='48' gradientUnits='userSpaceOnUse'>
             <stop offset='0%' stopColor='#2DD4BF' />
-            <stop offset='60%' stopColor='#0D9488' />
+            <stop offset='45%' stopColor='#0D9488' />
             <stop offset='100%' stopColor='#0F766E' />
           </linearGradient>
 
-          {/* Clean White Capsule Half Gradient */}
-          <linearGradient id='pillunaWhite' x1='70' y1='70' x2='140' y2='140' gradientUnits='userSpaceOnUse'>
+          {/* Pearl White Gradient - Lower Half */}
+          <linearGradient id='splashPillPearl' x1='24' y1='48' x2='48' y2='96' gradientUnits='userSpaceOnUse'>
             <stop offset='0%' stopColor='#FFFFFF' />
-            <stop offset='100%' stopColor='#F0FDFA' />
+            <stop offset='65%' stopColor='#F0FDFA' />
+            <stop offset='100%' stopColor='#E2E8F0' />
           </linearGradient>
 
-          {/* Capsule Gloss / Highlight */}
-          <linearGradient id='pillunaGloss' x1='40' y1='30' x2='60' y2='70' gradientUnits='userSpaceOnUse'>
-            <stop offset='0%' stopColor='#FFFFFF' stopOpacity='0.8' />
-            <stop offset='100%' stopColor='#FFFFFF' stopOpacity='0' />
+          {/* Specular Gloss - Upper Highlight */}
+          <linearGradient id='splashPillGlossUp' x1='6' y1='8' x2='18' y2='48' gradientUnits='userSpaceOnUse'>
+            <stop offset='0%' stopColor='#FFFFFF' stopOpacity='0.85' />
+            <stop offset='50%' stopColor='#FFFFFF' stopOpacity='0.35' />
+            <stop offset='100%' stopColor='#FFFFFF' stopOpacity='0.0' />
           </linearGradient>
 
-          {/* Warm Coral Sparkle Gradient */}
-          <linearGradient id='coralSparkle' x1='0' y1='0' x2='1' y2='1'>
+          {/* Specular Gloss - Lower Highlight */}
+          <linearGradient id='splashPillGlossLow' x1='6' y1='48' x2='18' y2='88' gradientUnits='userSpaceOnUse'>
+            <stop offset='0%' stopColor='#FFFFFF' stopOpacity='0.5' />
+            <stop offset='100%' stopColor='#FFFFFF' stopOpacity='0.05' />
+          </linearGradient>
+
+          {/* Coral Sparkle Accent Gradient */}
+          <linearGradient id='splashPillCoral' x1='0' y1='0' x2='1' y2='1'>
             <stop offset='0%' stopColor='#FB923C' />
             <stop offset='100%' stopColor='#EA580C' />
           </linearGradient>
+
+          {/* Teal Sparkle Accent Gradient */}
+          <linearGradient id='splashPillTealSpark' x1='0' y1='0' x2='1' y2='1'>
+            <stop offset='0%' stopColor='#5EEAD4' />
+            <stop offset='100%' stopColor='#0D9488' />
+          </linearGradient>
+
+          {/* Floor Shadow Radial Gradient */}
+          <radialGradient id='splashFloorShadow' cx='50%' cy='50%' r='50%'>
+            <stop offset='0%' stopColor='#0F172A' stopOpacity='0.20' />
+            <stop offset='60%' stopColor='#0D9488' stopOpacity='0.12' />
+            <stop offset='100%' stopColor='#0D9488' stopOpacity='0' />
+          </radialGradient>
         </defs>
 
-        {/* Soft shadow below mascot */}
-        <ellipse cx='80' cy='146' rx='44' ry='10' fill='#0D9488' fillOpacity='0.12' />
+        {/* Soft Floating Shadow Beneath Pill */}
+        <ellipse cx='80' cy='144' rx='42' ry='8' fill='url(#splashFloorShadow)' />
 
-        {/* Diagonal Rotated Capsule Mascot Container */}
-        <g transform='translate(80, 78) rotate(-28) translate(-80, -78)'>
-          {/* Capsule Left/Top Half: Medical Teal */}
+        {/* Diagonal Rotated 3D Pill Capsule Container */}
+        <g transform='translate(80, 72) rotate(-35) translate(-24, -48)'>
+          {/* Capsule Outer Shell Backdrop */}
+          <rect x='-1' y='-1' width='50' height='98' rx='25' fill='#0F766E' fillOpacity='0.15' />
+
+          {/* 1. TOP HALF: Medical Teal Cap */}
           <path
-            d='M44 80 C44 54 60 38 80 38 L80 118 C60 118 44 102 44 80 Z'
-            fill='url(#pillunaTeal)'
+            d='M 0,24 C 0,10.75 10.75,0 24,0 C 37.25,0 48,10.75 48,24 L 48,48 L 0,48 Z'
+            fill='url(#splashPillTeal)'
           />
 
-          {/* Capsule Right/Bottom Half: Pure White with Soft Slate Border */}
+          {/* 2. BOTTOM HALF: Pearl White Body */}
           <path
-            d='M80 38 C100 38 116 54 116 80 C116 102 100 118 80 118 Z'
-            fill='url(#pillunaWhite)'
+            d='M 0,48 L 48,48 L 48,72 C 48,85.25 37.25,96 24,96 C 10.75,96 0,85.25 0,72 Z'
+            fill='url(#splashPillPearl)'
             stroke='#E2E8F0'
             strokeWidth='1'
           />
 
-          {/* Dividing Ring */}
-          <line x1='80' y1='38' x2='80' y2='118' stroke='#CCFBF1' strokeWidth='2' strokeOpacity='0.8' />
+          {/* 3. CAPSULE CENTER JOINT / WAIST SEAM */}
+          <line x1='0' y1='48' x2='48' y2='48' stroke='#0F766E' strokeWidth='1.5' strokeOpacity='0.35' />
+          <line x1='0' y1='49' x2='48' y2='49' stroke='#FFFFFF' strokeWidth='1' strokeOpacity='0.9' />
 
-          {/* Curved Glossy Highlight on Top */}
+          {/* 4. SPECULAR GLOSS HIGHLIGHTS (Curved 3D Glass Surface) */}
           <path
-            d='M52 64 C56 50 68 44 80 44 C84 44 88 45 92 46 C80 48 64 54 58 66 Z'
-            fill='url(#pillunaGloss)'
+            d='M 6,16 C 6,9 10,6 16,6 L 16,48 L 6,48 Z'
+            fill='url(#splashPillGlossUp)'
+          />
+          <path
+            d='M 6,48 L 16,48 L 16,80 C 10,80 6,76 6,70 Z'
+            fill='url(#splashPillGlossLow)'
           />
 
-          {/* Mascot Eyes */}
-          <ellipse cx='70' cy='72' rx='3.5' ry='5' fill='#0F172A' />
-          <circle cx='69' cy='70' r='1.5' fill='#FFFFFF' />
-
-          <ellipse cx='90' cy='72' rx='3.5' ry='5' fill='#0F172A' />
-          <circle cx='89' cy='70' r='1.5' fill='#FFFFFF' />
-
-          {/* Mascot Cheeks: Warm Coral Blush */}
-          <ellipse cx='62' cy='78' rx='4.5' ry='2.5' fill='#FED7AA' fillOpacity='0.9' />
-          <ellipse cx='98' cy='78' rx='4.5' ry='2.5' fill='#FED7AA' fillOpacity='0.9' />
-
-          {/* Mascot Smile */}
-          <path
-            d='M75 78 Q80 84 85 78'
-            stroke='#0F172A'
-            strokeWidth='2.2'
-            strokeLinecap='round'
-            fill='none'
-          />
-
-          {/* Mini Cute Protection Cross/Shield in White Half */}
-          <circle cx='103' cy='94' r='6' fill='#0D9488' fillOpacity='0.15' />
-          <path
-            d='M103 91 L103 97 M100 94 L106 94'
-            stroke='#0D9488'
-            strokeWidth='1.75'
-            strokeLinecap='round'
-          />
+          {/* 5. MEDICAL CROSS EMBLEM ON TEAL HALF */}
+          <g transform='translate(24, 24)'>
+            <circle cx='0' cy='0' r='12' fill='#FFFFFF' fillOpacity='0.12' />
+            <rect x='-3' y='-8' width='6' height='16' rx='2' fill='#FFFFFF' fillOpacity='0.95' />
+            <rect x='-8' y='-3' width='16' height='6' rx='2' fill='#FFFFFF' fillOpacity='0.95' />
+          </g>
         </g>
 
-        {/* Ambient Sparkles around mascot */}
-        {/* Top-Right Coral Sparkle */}
+        {/* SPARKLING ACCENT ELEMENTS */}
+        {/* Top Right Coral Sparkle */}
         <path
-          d='M132 40 L134 46 L140 48 L134 50 L132 56 L130 50 L124 48 L130 46 Z'
-          fill='url(#coralSparkle)'
+          d='M134 32 L136.5 40 L144.5 42.5 L136.5 45 L134 53 L131.5 45 L123.5 42.5 L131.5 40 Z'
+          fill='url(#splashPillCoral)'
           className='animate-pulse'
         />
 
-        {/* Bottom-Left Teal Sparkle */}
+        {/* Bottom Left Teal Sparkle */}
         <path
-          d='M26 68 L27.5 72 L32 73.5 L27.5 75 L26 79 L24.5 75 L20 73.5 L24.5 72 Z'
-          fill='#14B8A6'
+          d='M26 88 L28 94 L34 96 L28 98 L26 104 L24 98 L18 96 L24 94 Z'
+          fill='url(#splashPillTealSpark)'
           className='animate-pulse'
         />
 
-        {/* Small soft dot sparkles */}
-        <circle cx='138' cy='74' r='2' fill='#F97316' />
-        <circle cx='34' cy='46' r='2.5' fill='#0D9488' />
-        <circle cx='122' cy='112' r='2' fill='#0D9488' fillOpacity='0.5' />
+        {/* Ambient Halo Spheres */}
+        <circle cx='138' cy='86' r='3' fill='#14B8A6' fillOpacity='0.75' />
+        <circle cx='34' cy='42' r='2.5' fill='#FB923C' fillOpacity='0.85' />
+        <circle cx='122' cy='118' r='2' fill='#0D9488' fillOpacity='0.5' />
       </svg>
     </div>
   );

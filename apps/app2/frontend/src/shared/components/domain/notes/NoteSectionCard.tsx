@@ -3,7 +3,7 @@ import { ChevronRight } from 'lucide-react';
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
-export interface SymptomSectionCardProps {
+export interface NoteSectionCardProps {
   icon: React.ReactNode;
   iconColorClassName?: string;
   title: string;
@@ -12,7 +12,7 @@ export interface SymptomSectionCardProps {
   children: React.ReactNode;
 }
 
-export const SymptomSectionCard: React.FC<SymptomSectionCardProps> = ({
+export const NoteSectionCard: React.FC<NoteSectionCardProps> = ({
   icon,
   iconColorClassName = 'text-primary',
   title,
@@ -54,3 +54,5 @@ export const SymptomSectionCard: React.FC<SymptomSectionCardProps> = ({
     </div>
   );
 };
+
+export default NoteSectionCard;

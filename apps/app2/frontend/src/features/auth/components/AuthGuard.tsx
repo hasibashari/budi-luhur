@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { UserRole } from '../types/auth.types';
-import { OnboardingScreenView } from '../../onboarding';
+import { SplashScreenView } from '../../splash';
 
 export interface AuthGuardProps {
   children: React.ReactNode;
@@ -55,7 +55,7 @@ export function AuthGuard({ children, requiredRole, allowedRoles }: AuthGuardPro
   ]);
 
   if (isInitializing) {
-    return <OnboardingScreenView statusText='Memverifikasi sesi...' />;
+    return <SplashScreenView statusText='Memverifikasi sesi...' />;
   }
 
   if (!isAuthenticated) {

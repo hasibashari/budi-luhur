@@ -33,20 +33,20 @@ export function AppRoutes() {
   return (
     <Routes>
       {/* Public / Entry Routes */}
-      <Route path='/' element={<Navigate to='/onboarding' replace />} />
-      <Route
-        path='/onboarding'
-        element={
-          <GuestGuard>
-            <OnboardingView />
-          </GuestGuard>
-        }
-      />
+      <Route path='/' element={<Navigate to='/splash' replace />} />
       <Route
         path='/splash'
         element={
           <GuestGuard>
             <SplashView />
+          </GuestGuard>
+        }
+      />
+      <Route
+        path='/onboarding'
+        element={
+          <GuestGuard>
+            <OnboardingView />
           </GuestGuard>
         }
       />

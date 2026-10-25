@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowRight, ArrowLeft, Check, Sparkles } from 'lucide-react';
-import { Button } from '@/shared/components/ui/Button';
+import { ArrowRight, ArrowLeft, Check, Sparkles, Pill } from 'lucide-react';
+import { Button } from '@/src/shared/components/ui/Button';
 import { ONBOARDING_SLIDES } from '../constants/slides';
-import { useAuth } from '@/features/auth';
+import { useAuth } from '@/src/features/auth';
 
 export function OnboardingView() {
   const navigate = useNavigate();
@@ -33,7 +33,7 @@ export function OnboardingView() {
 
   const handleFinish = useCallback(() => {
     completeOnboarding();
-    navigate('/splash', { replace: true });
+    navigate('/auth/login', { replace: true });
   }, [completeOnboarding, navigate]);
 
   const handleNext = useCallback(() => {
@@ -90,25 +90,25 @@ export function OnboardingView() {
   };
 
   return (
-    <div className='h-[100dvh] max-h-[100dvh] bg-gradient-to-b from-[#fff5f7] via-[#ffe4e6]/30 to-[#fff5f7] flex items-center justify-center p-0 sm:p-4 md:p-6 select-none overflow-hidden box-border'>
+    <div className='h-[100dvh] max-h-[100dvh] bg-gradient-to-b from-[#F8FAFC] via-[#F0FDFA]/50 to-[#F8FAFC] flex items-center justify-center p-0 sm:p-4 md:p-6 select-none overflow-hidden box-border'>
       {/* Account Deletion Confirmation Toast */}
       {deletedBanner && (
-        <div className='fixed top-6 left-1/2 -translate-x-1/2 z-50 bg-slate-900 text-white text-xs font-bold px-4 py-2.5 rounded-full shadow-2xl flex items-center gap-2 animate-fade-in border border-slate-700 max-w-[90vw]'>
-          <Check size={14} className='text-rose-400 shrink-0' />
+        <div className='fixed top-6 left-1/2 -translate-x-1/2 z-50 bg-[#0F172A] text-white text-xs font-bold px-4 py-2.5 rounded-full shadow-2xl flex items-center gap-2 animate-fade-in border border-[#334155] max-w-[90vw]'>
+          <Check size={14} className='text-[#0D9488] shrink-0' />
           <span>Akun dan data Anda telah berhasil dihapus secara permanen.</span>
         </div>
       )}
 
       {/* Decorative desktop ambient bubbles */}
-      <div className='hidden md:block absolute top-12 left-12 w-64 h-64 bg-rose-300/20 rounded-full blur-3xl pointer-events-none' />
-      <div className='hidden md:block absolute bottom-12 right-12 w-80 h-80 bg-rose-400/20 rounded-full blur-3xl pointer-events-none' />
+      <div className='hidden md:block absolute top-12 left-12 w-64 h-64 bg-[#0D9488]/10 rounded-full blur-3xl pointer-events-none' />
+      <div className='hidden md:block absolute bottom-12 right-12 w-80 h-80 bg-[#F97316]/10 rounded-full blur-3xl pointer-events-none' />
 
       {/* Main Container: 100dvh for mobile/PWA, Elevated Card for tablet/desktop */}
       <div
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
-        className='w-full h-[100dvh] max-h-[100dvh] sm:h-auto sm:min-h-[580px] sm:max-h-[680px] max-w-full sm:max-w-md md:max-w-lg bg-white/95 sm:bg-white backdrop-blur-md sm:rounded-3xl sm:border sm:border-rose-100 sm:shadow-2xl sm:shadow-rose-500/10 flex flex-col justify-between p-5 sm:p-7 transition-all duration-300 relative z-10 box-border overflow-hidden'
+        className='w-full h-[100dvh] max-h-[100dvh] sm:h-auto sm:min-h-[580px] sm:max-h-[680px] max-w-full sm:max-w-md md:max-w-lg bg-white/95 sm:bg-white backdrop-blur-md sm:rounded-3xl sm:border sm:border-border sm:shadow-2xl sm:shadow-teal-900/10 flex flex-col justify-between p-5 sm:p-7 transition-all duration-300 relative z-10 box-border overflow-hidden'
       >
         {/* Top Header: Navigation Back, App Name/Logo at top, and Skip Button */}
         <div className='shrink-0 w-full flex items-center justify-between pt-safe pb-2'>
@@ -119,7 +119,7 @@ export function OnboardingView() {
                 type='button'
                 onClick={handlePrev}
                 aria-label='Kembali ke slide sebelumnya'
-                className='w-8 h-8 rounded-full bg-rose-50 hover:bg-rose-100 text-[#e11d48] flex items-center justify-center transition-all active:scale-95 cursor-pointer shadow-2xs'
+                className='w-8 h-8 rounded-full bg-primary-subtle hover:bg-primary-soft text-primary flex items-center justify-center transition-all active:scale-95 cursor-pointer shadow-2xs border border-primary-soft'
               >
                 <ArrowLeft size={16} />
               </button>
@@ -129,11 +129,13 @@ export function OnboardingView() {
           </div>
 
           {/* App Name at top center */}
-          <div className='flex items-center gap-1.5'>
-            <span className='font-black text-lg sm:text-xl tracking-tight text-slate-800'>
+          <div className='flex items-center gap-2'>
+            <div className='w-7 h-7 rounded-xl bg-gradient-to-tr from-[#0D9488] to-[#14B8A6] text-white flex items-center justify-center shadow-xs'>
+              <Pill size={14} className='rotate-45' />
+            </div>
+            <span className='font-black text-lg sm:text-xl tracking-tight text-ink'>
               Pilluna
             </span>
-            <span className='text-base sm:text-lg'>🌸</span>
           </div>
 
           {/* Skip Button */}
@@ -142,7 +144,7 @@ export function OnboardingView() {
               <button
                 type='button'
                 onClick={handleFinish}
-                className='text-xs sm:text-sm font-semibold text-slate-400 hover:text-rose-600 px-2 py-1 transition-colors cursor-pointer rounded-lg hover:bg-rose-50/60'
+                className='text-xs sm:text-sm font-semibold text-muted hover:text-primary px-2 py-1 transition-colors cursor-pointer rounded-lg hover:bg-primary-subtle'
               >
                 Lewati
               </button>
@@ -157,26 +159,26 @@ export function OnboardingView() {
           key={slide.id}
           className='flex-1 min-h-0 flex flex-col items-center justify-center text-center my-auto py-2 sm:py-4 animate-fade-in w-full max-w-sm mx-auto overflow-hidden'
         >
-          {/* Cheerful Vector Mascot Illustration */}
+          {/* 3D Medical Vector Mascot / Icon Illustration */}
           <div className='mb-4 sm:mb-6 shrink-0 transition-transform duration-300 hover:scale-105'>
             <IllustrationComponent size={145} className='sm:w-[160px] sm:h-[160px]' />
           </div>
 
           {/* Tagline Badge */}
           <div className='mb-2.5'>
-            <span className='inline-flex items-center gap-1 px-3 py-1 rounded-full bg-rose-50 border border-rose-200/80 text-[11px] sm:text-xs font-bold text-rose-700 shadow-2xs'>
-              <Sparkles size={12} className='text-rose-500' />
+            <span className='inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary-subtle border border-primary-soft text-[11px] sm:text-xs font-bold text-primary shadow-2xs'>
+              <Sparkles size={12} className='text-primary' />
               <span>{slide.tagline}</span>
             </span>
           </div>
 
           {/* Punchy Title */}
-          <h2 className='text-xl sm:text-2xl md:text-[26px] font-black text-slate-900 tracking-tight mb-2 leading-snug'>
+          <h2 className='text-xl sm:text-2xl md:text-[26px] font-black text-ink tracking-tight mb-2 leading-snug'>
             {slide.title}
           </h2>
 
           {/* Short 1-Sentence Description */}
-          <p className='text-xs sm:text-sm text-slate-600 leading-relaxed max-w-xs font-medium'>
+          <p className='text-xs sm:text-sm text-muted leading-relaxed max-w-xs font-medium'>
             {slide.description}
           </p>
         </div>
@@ -192,8 +194,8 @@ export function OnboardingView() {
                 onClick={() => setCurrentSlide(idx)}
                 className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
                   idx === currentSlide
-                    ? 'w-8 bg-[#e11d48] shadow-xs'
-                    : 'w-2 bg-rose-100 hover:bg-rose-200'
+                    ? 'w-8 bg-primary shadow-xs'
+                    : 'w-2 bg-primary-soft hover:bg-primary-light'
                 }`}
                 aria-label={`Ke slide ${idx + 1}`}
               />
@@ -208,7 +210,7 @@ export function OnboardingView() {
             fullWidth
             icon={isLast ? <Check size={18} /> : <ArrowRight size={18} />}
             onClick={handleNext}
-            className='shadow-lg shadow-rose-500/25 py-3 sm:py-3.5 text-sm sm:text-base font-bold transition-all hover:shadow-xl hover:shadow-rose-500/35 cursor-pointer active:scale-[0.99]'
+            className='shadow-lg shadow-teal-700/20 py-3 sm:py-3.5 text-sm sm:text-base font-bold transition-all cursor-pointer active:scale-[0.99]'
           >
             {isLast ? 'Mulai Sekarang' : 'Lanjutkan'}
           </Button>

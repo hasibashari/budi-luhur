@@ -6,7 +6,7 @@ import { Card } from '@/src/shared/components/ui/Card';
 import { ActivityDateInfo } from '../api/consumptionRepository';
 import { formatShortDate } from '../utils/dateHelpers';
 
-export type DateFilterPreset = 'ALL' | 'TODAY' | '7_DAYS' | '30_DAYS' | 'CUSTOM';
+export type DateFilterPreset = 'ALL' | '30_DAYS' | 'CUSTOM';
 export type StatusFilterOption = 'ALL' | 'ON_TIME' | 'MISSED';
 
 export interface DateFilterBarProps {
@@ -104,7 +104,10 @@ export function DateFilterBar({
   };
 
   return (
-    <Card padding='md' className='relative z-30 overflow-visible border border-slate-200/80 shadow-xs'>
+    <Card
+      padding='md'
+      className='relative z-30 overflow-visible border border-slate-200/80 shadow-xs'
+    >
       <div className='flex flex-col lg:flex-row lg:items-center justify-between gap-3'>
         {/* Left Side: Calendar Dropdown Button & Preset Chips */}
         <div className='flex items-center gap-2 flex-wrap'>
@@ -125,9 +128,7 @@ export function DateFilterBar({
               <span className='hidden sm:inline'>
                 {dateFilterPreset === 'CUSTOM'
                   ? formatShortDate(selectedDate)
-                  : dateFilterPreset === 'TODAY'
-                    ? `Hari Ini (${formatShortDate(todayStr)})`
-                    : 'Pilih dari Kalender'}
+                  : 'Pilih dari Kalender'}
               </span>
               <ChevronDown
                 size={14}
@@ -154,8 +155,8 @@ export function DateFilterBar({
                           new Date(
                             calendarViewDate.getFullYear(),
                             calendarViewDate.getMonth() - 1,
-                            1
-                          )
+                            1,
+                          ),
                         )
                       }
                       className='p-1 rounded-lg text-slate-500 hover:bg-slate-100 cursor-pointer'
@@ -170,8 +171,8 @@ export function DateFilterBar({
                           new Date(
                             calendarViewDate.getFullYear(),
                             calendarViewDate.getMonth() + 1,
-                            1
-                          )
+                            1,
+                          ),
                         )
                       }
                       className='p-1 rounded-lg text-slate-500 hover:bg-slate-100 cursor-pointer'
@@ -281,31 +282,6 @@ export function DateFilterBar({
               }`}
             >
               Semua
-            </button>
-            <button
-              type='button'
-              onClick={() => {
-                onDateFilterPresetChange('TODAY');
-                onSelectDate(todayStr);
-              }}
-              className={`text-xs font-bold px-3 py-1.5 rounded-xl transition-all cursor-pointer shrink-0 ${
-                dateFilterPreset === 'TODAY'
-                  ? 'bg-teal-600 text-white shadow-2xs'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-              }`}
-            >
-              Hari Ini
-            </button>
-            <button
-              type='button'
-              onClick={() => onDateFilterPresetChange('7_DAYS')}
-              className={`text-xs font-bold px-3 py-1.5 rounded-xl transition-all cursor-pointer shrink-0 ${
-                dateFilterPreset === '7_DAYS'
-                  ? 'bg-teal-600 text-white shadow-2xs'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-              }`}
-            >
-              7 Hari
             </button>
             <button
               type='button'

@@ -1,4 +1,4 @@
-// --- TIPE DATA & INTERFACES ---
+// --- TIPE DATA & INTERFACES CATATAN HARIAN ---
 export type MoodType = 'sedih' | 'murung' | 'biasa_saja' | 'bahagia';
 export type PainLevel = 'tidak_ada' | 'ringan' | 'sedang' | 'berat';
 export type BleedingType = 'haid_normal' | 'haid_banyak' | 'flek' | 'tidak_ada';
@@ -17,10 +17,16 @@ export interface DailyHealthLog {
   updatedAt: string;
 }
 
-export interface SymptomHealthCardProps {
+// Alias untuk nama yang lebih deskriptif
+export type DailyNoteLog = DailyHealthLog;
+
+export interface DailyNotesCardProps {
   initialLogs?: DailyHealthLog[];
   onSaveLog?: (log: DailyHealthLog) => void | Promise<void>;
 }
+
+// Alias backward compatibility
+export type SymptomHealthCardProps = DailyNotesCardProps;
 
 export interface ClinicalAdvice {
   category: string;

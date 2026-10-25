@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { AlertCircle } from 'lucide-react';
 import {
-  SymptomHealthCard,
+  DailyNotesCard,
   DailyHealthLog,
-} from '@/src/shared/components/domain/SymptomHealthCard';
+} from '@/src/shared/components/domain/notes';
 import { getHealthLogsAction, saveHealthLogAction } from '../api/notesRepository';
 
 export default function NotesView() {
@@ -34,9 +34,9 @@ export default function NotesView() {
           <span>{error}</span>
         </div>
       )}
-      <SymptomHealthCard
+      <DailyNotesCard
         initialLogs={logs}
-        onSaveLog={async log => {
+        onSaveLog={async (log: DailyHealthLog) => {
           const result = await saveHealthLogAction(log);
           if (!result.success || !result.log) {
             throw new Error(result.error || 'Gagal menyimpan catatan kesehatan.');

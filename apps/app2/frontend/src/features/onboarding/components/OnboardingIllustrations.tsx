@@ -6,7 +6,7 @@ interface IllustrationProps {
 }
 
 /**
- * Slide 1: Pengingat Minum Pil Tepat Waktu (Pilluna Capsule with Clock & Sparkles)
+ * Slide 1: Pengingat Minum Pil Tepat Waktu (Pilluna 3D Capsule with Elegant Alarm Clock & Sparkles)
  */
 export const ReminderIllustration: React.FC<IllustrationProps> = ({
   className = '',
@@ -17,7 +17,7 @@ export const ReminderIllustration: React.FC<IllustrationProps> = ({
       className={`relative flex items-center justify-center select-none ${className}`}
       style={{ width: size, height: size }}
     >
-      <div className='absolute inset-0 rounded-full bg-[#E94383]/15 blur-2xl animate-pulse pointer-events-none' />
+      <div className='absolute inset-0 rounded-full bg-[#0D9488]/15 blur-2xl animate-pulse pointer-events-none' />
       <svg
         viewBox='0 0 160 160'
         fill='none'
@@ -25,94 +25,87 @@ export const ReminderIllustration: React.FC<IllustrationProps> = ({
         className='w-full h-full drop-shadow-xl overflow-visible'
       >
         <defs>
-          <linearGradient id='pillTopGrad1' x1='40' y1='25' x2='95' y2='80' gradientUnits='userSpaceOnUse'>
-            <stop offset='0%' stopColor='#F58CB4' />
-            <stop offset='70%' stopColor='#E94383' />
-            <stop offset='100%' stopColor='#D83272' />
+          <linearGradient id='remindPillTeal' x1='15' y1='10' x2='48' y2='48' gradientUnits='userSpaceOnUse'>
+            <stop offset='0%' stopColor='#2DD4BF' />
+            <stop offset='50%' stopColor='#0D9488' />
+            <stop offset='100%' stopColor='#0F766E' />
           </linearGradient>
-          <linearGradient id='pillBotGrad1' x1='40' y1='80' x2='95' y2='135' gradientUnits='userSpaceOnUse'>
+          <linearGradient id='remindPillWhite' x1='24' y1='48' x2='48' y2='96' gradientUnits='userSpaceOnUse'>
             <stop offset='0%' stopColor='#FFFFFF' />
-            <stop offset='100%' stopColor='#FFF1F5' />
+            <stop offset='70%' stopColor='#F0FDFA' />
+            <stop offset='100%' stopColor='#E2E8F0' />
           </linearGradient>
-          <linearGradient id='clockGrad1' x1='0' y1='0' x2='1' y2='1'>
+          <linearGradient id='remindClockFace' x1='0' y1='0' x2='1' y2='1'>
             <stop offset='0%' stopColor='#FFFFFF' />
             <stop offset='100%' stopColor='#F0FDFA' />
           </linearGradient>
+          <linearGradient id='remindCoralAccent' x1='0' y1='0' x2='1' y2='1'>
+            <stop offset='0%' stopColor='#FB923C' />
+            <stop offset='100%' stopColor='#EA580C' />
+          </linearGradient>
         </defs>
 
-        {/* Soft Shadow */}
-        <ellipse cx='72' cy='146' rx='34' ry='6' fill='#24354D' fillOpacity='0.12' />
+        {/* Soft Floor Shadow */}
+        <ellipse cx='76' cy='144' rx='38' ry='8' fill='#0F172A' fillOpacity='0.10' />
 
-        {/* Capsule Pill Body */}
-        <g transform='rotate(-8 72 80)'>
-          {/* Top Half of Capsule */}
+        {/* 3D Capsule Pill Body (Left Side) */}
+        <g transform='translate(60, 72) rotate(-22) translate(-22, -44)'>
+          {/* Top Half: Medical Teal */}
           <path
-            d='M44 80 L44 52 C44 34.3 58.3 20 76 20 C93.7 20 108 34.3 108 52 L108 80 Z'
-            fill='url(#pillTopGrad1)'
+            d='M 0,22 C 0,9.85 9.85,0 22,0 C 34.15,0 44,9.85 44,22 L 44,44 L 0,44 Z'
+            fill='url(#remindPillTeal)'
           />
-          {/* Bottom Half of Capsule */}
+          {/* Bottom Half: Pearl White */}
           <path
-            d='M44 80 L44 108 C44 125.7 58.3 140 76 140 C93.7 140 108 125.7 108 108 L108 80 Z'
-            fill='url(#pillBotGrad1)'
-            stroke='#FCE7F3'
-            strokeWidth='1.5'
+            d='M 0,44 L 44,44 L 44,66 C 44,78.15 34.15,88 22,88 C 9.85,88 0,78.15 0,66 Z'
+            fill='url(#remindPillWhite)'
+            stroke='#E2E8F0'
+            strokeWidth='1'
           />
-          {/* Capsule Center Joint Line */}
-          <line x1='44' y1='80' x2='108' y2='80' stroke='#E94383' strokeWidth='1.5' strokeOpacity='0.4' />
+          {/* Waist Joint Seam */}
+          <line x1='0' y1='44' x2='44' y2='44' stroke='#0F766E' strokeWidth='1.5' strokeOpacity='0.3' />
+          <line x1='0' y1='45' x2='44' y2='45' stroke='#FFFFFF' strokeWidth='1' strokeOpacity='0.8' />
 
-          {/* Gloss Highlight */}
-          <path
-            d='M52 35 C52 35 50 60 50 80'
-            stroke='#FFFFFF'
-            strokeWidth='4'
-            strokeLinecap='round'
-            strokeOpacity='0.7'
-          />
+          {/* Specular 3D Gloss Highlight */}
+          <path d='M 5,14 C 5,8 9,5 14,5 L 14,44 L 5,44 Z' fill='#FFFFFF' fillOpacity='0.45' />
+          <path d='M 5,44 L 14,44 L 14,74 C 9,74 5,70 5,64 Z' fill='#FFFFFF' fillOpacity='0.25' />
 
-          {/* Cheerful Cute Face on Top Half */}
-          <ellipse cx='64' cy='56' rx='4' ry='5.5' fill='#24354D' />
-          <circle cx='62.5' cy='54' r='1.8' fill='#FFFFFF' />
-          <ellipse cx='86' cy='56' rx='4' ry='5.5' fill='#24354D' />
-          <circle cx='84.5' cy='54' r='1.8' fill='#FFFFFF' />
-
-          {/* Blushing Cheeks */}
-          <ellipse cx='55' cy='63' rx='4.5' ry='2.5' fill='#F58CB4' fillOpacity='0.9' />
-          <ellipse cx='95' cy='63' rx='4.5' ry='2.5' fill='#F58CB4' fillOpacity='0.9' />
-
-          {/* Smile */}
-          <path d='M70 63 Q75 70 80 63' stroke='#24354D' strokeWidth='2.2' strokeLinecap='round' fill='none' />
+          {/* Medical Cross on Teal Half */}
+          <rect x='19' y='14' width='6' height='14' rx='1.5' fill='#FFFFFF' fillOpacity='0.95' />
+          <rect x='15' y='18' width='14' height='6' rx='1.5' fill='#FFFFFF' fillOpacity='0.95' />
         </g>
 
-        {/* Floating Ringing Alarm Clock (Right Bottom) */}
-        <g transform='translate(94, 86)'>
-          {/* Outer glow ring */}
-          <circle cx='22' cy='22' r='22' fill='#FFFFFF' filter='drop-shadow(0 4px 10px rgba(233,67,131,0.22))' />
-          <circle cx='22' cy='22' r='19' fill='url(#clockGrad1)' stroke='#58AA96' strokeWidth='2.2' />
+        {/* Floating Elegant Alarm Clock (Right Side) */}
+        <g transform='translate(92, 72)'>
+          {/* Clock Outer Rim & Shadow */}
+          <circle cx='24' cy='24' r='24' fill='#FFFFFF' filter='drop-shadow(0 6px 14px rgba(13,148,136,0.22))' />
+          <circle cx='24' cy='24' r='21' fill='url(#remindClockFace)' stroke='#0D9488' strokeWidth='2.5' />
 
-          {/* Clock Bells */}
-          <ellipse cx='10' cy='8' rx='4' ry='2.5' transform='rotate(-30 10 8)' fill='#58AA96' />
-          <ellipse cx='34' cy='8' rx='4' ry='2.5' transform='rotate(30 34 8)' fill='#58AA96' />
+          {/* Alarm Bells */}
+          <ellipse cx='11' cy='8' rx='4.5' ry='3' transform='rotate(-30 11 8)' fill='#0D9488' />
+          <ellipse cx='37' cy='8' rx='4.5' ry='3' transform='rotate(30 37 8)' fill='#0D9488' />
 
-          {/* Clock Hands pointing to 20:00 (daily pill time) */}
-          <line x1='22' y1='22' x2='22' y2='13' stroke='#24354D' strokeWidth='2' strokeLinecap='round' />
-          <line x1='22' y1='22' x2='28' y2='22' stroke='#E94383' strokeWidth='2' strokeLinecap='round' />
-          <circle cx='22' cy='22' r='2' fill='#E94383' />
+          {/* Clock Hands pointing to 20:00 (Daily Pill Time) */}
+          <line x1='24' y1='24' x2='24' y2='14' stroke='#0F172A' strokeWidth='2.2' strokeLinecap='round' />
+          <line x1='24' y1='24' x2='32' y2='24' stroke='#F97316' strokeWidth='2.2' strokeLinecap='round' />
+          <circle cx='24' cy='24' r='2.5' fill='#F97316' />
 
-          {/* Ring sound wave ripples */}
-          <path d='M3 8 C-1 12 -1 18 3 22' stroke='#58AA96' strokeWidth='1.8' strokeLinecap='round' fill='none' />
-          <path d='M41 8 C45 12 45 18 41 22' stroke='#58AA96' strokeWidth='1.8' strokeLinecap='round' fill='none' />
+          {/* Clock Ringing Wave Ripples */}
+          <path d='M2 9 C-3 14 -3 22 2 27' stroke='#0D9488' strokeWidth='2' strokeLinecap='round' fill='none' />
+          <path d='M46 9 C51 14 51 22 46 27' stroke='#0D9488' strokeWidth='2' strokeLinecap='round' fill='none' />
         </g>
 
-        {/* Sparkles */}
-        <path d='M126 30 L128 36 L134 38 L128 40 L126 46 L124 40 L118 38 L124 36 Z' fill='#E94383' />
-        <circle cx='22' cy='62' r='2.5' fill='#58AA96' />
+        {/* Floating Sparkle Stars */}
+        <path d='M134 26 L136 32 L142 34 L136 36 L134 42 L132 36 L126 34 L132 32 Z' fill='url(#remindCoralAccent)' />
+        <circle cx='22' cy='54' r='2.5' fill='#14B8A6' />
+        <circle cx='138' cy='118' r='2' fill='#0D9488' fillOpacity='0.5' />
       </svg>
     </div>
   );
 };
 
 /**
- * Slide 2: Kalender & Laporan Kepatuhan (Pilluna with Contraceptive Calendar Card)
+ * Slide 2: Kalender Blister & Status Siklus (Pilluna Blister Pack Strip Card)
  */
 export const TrackingIllustration: React.FC<IllustrationProps> = ({
   className = '',
@@ -123,7 +116,7 @@ export const TrackingIllustration: React.FC<IllustrationProps> = ({
       className={`relative flex items-center justify-center select-none ${className}`}
       style={{ width: size, height: size }}
     >
-      <div className='absolute inset-0 rounded-full bg-[#58AA96]/15 blur-2xl animate-pulse pointer-events-none' />
+      <div className='absolute inset-0 rounded-full bg-[#0D9488]/15 blur-2xl animate-pulse pointer-events-none' />
       <svg
         viewBox='0 0 160 160'
         fill='none'
@@ -131,102 +124,95 @@ export const TrackingIllustration: React.FC<IllustrationProps> = ({
         className='w-full h-full drop-shadow-xl overflow-visible'
       >
         <defs>
-          <linearGradient id='pillTopGrad2' x1='35' y1='25' x2='85' y2='80' gradientUnits='userSpaceOnUse'>
-            <stop offset='0%' stopColor='#F58CB4' />
-            <stop offset='70%' stopColor='#E94383' />
-            <stop offset='100%' stopColor='#D83272' />
-          </linearGradient>
-          <linearGradient id='pillBotGrad2' x1='35' y1='80' x2='85' y2='135' gradientUnits='userSpaceOnUse'>
+          <linearGradient id='blisterCardGrad' x1='0' y1='0' x2='1' y2='1'>
             <stop offset='0%' stopColor='#FFFFFF' />
-            <stop offset='100%' stopColor='#FFF1F5' />
+            <stop offset='60%' stopColor='#F8FAFC' />
+            <stop offset='100%' stopColor='#F1F5F9' />
           </linearGradient>
-          <linearGradient id='calCardGrad' x1='0' y1='0' x2='1' y2='1'>
-            <stop offset='0%' stopColor='#FFFFFF' />
-            <stop offset='100%' stopColor='#F9FAFB' />
+          <linearGradient id='blisterHeaderGrad' x1='0' y1='0' x2='1' y2='0'>
+            <stop offset='0%' stopColor='#0D9488' />
+            <stop offset='100%' stopColor='#14B8A6' />
+          </linearGradient>
+          <linearGradient id='activePillGrad' x1='0' y1='0' x2='1' y2='1'>
+            <stop offset='0%' stopColor='#2DD4BF' />
+            <stop offset='100%' stopColor='#0D9488' />
           </linearGradient>
         </defs>
 
-        {/* Shadow */}
-        <ellipse cx='65' cy='146' rx='34' ry='6' fill='#24354D' fillOpacity='0.12' />
+        {/* Soft Floor Shadow */}
+        <ellipse cx='80' cy='144' rx='44' ry='8' fill='#0F172A' fillOpacity='0.10' />
 
-        {/* Capsule Pill Mascot */}
-        <g transform='rotate(-4 65 80)'>
-          <path
-            d='M38 80 L38 52 C38 34.3 52.3 20 70 20 C87.7 20 102 34.3 102 52 L102 80 Z'
-            fill='url(#pillTopGrad2)'
-          />
-          <path
-            d='M38 80 L38 108 C38 125.7 52.3 140 70 140 C87.7 140 102 125.7 102 108 L102 80 Z'
-            fill='url(#pillBotGrad2)'
-            stroke='#FCE7F3'
-            strokeWidth='1.5'
-          />
-          <line x1='38' y1='80' x2='102' y2='80' stroke='#E94383' strokeWidth='1.5' strokeOpacity='0.4' />
-
-          {/* Gloss */}
-          <path d='M45 35 C45 35 44 60 44 80' stroke='#FFFFFF' strokeWidth='3.5' strokeLinecap='round' strokeOpacity='0.7' />
-
-          {/* Wink Eyes */}
-          <path d='M53 56 Q58 50 63 56' stroke='#24354D' strokeWidth='2.5' strokeLinecap='round' fill='none' />
-          <ellipse cx='79' cy='55' rx='3.8' ry='5.2' fill='#24354D' />
-          <circle cx='77.8' cy='53' r='1.6' fill='#FFFFFF' />
-
-          {/* Cheeks */}
-          <ellipse cx='48' cy='62' rx='4.2' ry='2.4' fill='#F58CB4' fillOpacity='0.9' />
-          <ellipse cx='86' cy='62' rx='4.2' ry='2.4' fill='#F58CB4' fillOpacity='0.9' />
-
-          {/* Happy smile */}
-          <path d='M63 62 Q69 69 75 62' stroke='#24354D' strokeWidth='2.2' strokeLinecap='round' fill='none' />
-        </g>
-
-        {/* Floating Calendar & Report Card (Right Bottom) */}
-        <g transform='translate(86, 74)'>
+        {/* Contraceptive Blister Pack Card (Centered Perspective) */}
+        <g transform='translate(38, 28)'>
+          {/* Foil Blister Pack Card Outer Shell */}
           <rect
             x='0'
             y='0'
-            width='52'
-            height='52'
-            rx='12'
-            fill='url(#calCardGrad)'
-            stroke='#58AA96'
+            width='84'
+            height='104'
+            rx='16'
+            fill='url(#blisterCardGrad)'
+            stroke='#CCFBF1'
             strokeWidth='2'
-            filter='drop-shadow(0 4px 12px rgba(88,170,150,0.22))'
+            filter='drop-shadow(0 8px 20px rgba(13,148,136,0.18))'
           />
 
-          {/* Card Top Header */}
-          <rect x='0' y='0' width='52' height='14' rx='12' fill='#58AA96' />
-          <rect x='0' y='8' width='52' height='6' fill='#58AA96' />
-          <circle cx='12' cy='7' r='2' fill='#FFFFFF' />
-          <circle cx='40' cy='7' r='2' fill='#FFFFFF' />
+          {/* Blister Card Metallic Header Strip */}
+          <rect x='0' y='0' width='84' height='24' rx='16' fill='url(#blisterHeaderGrad)' />
+          <rect x='0' y='12' width='84' height='12' fill='url(#blisterHeaderGrad)' />
 
-          {/* Calendar Dots Grid */}
-          <circle cx='12' cy='22' r='3.5' fill='#58AA96' />
-          <circle cx='26' cy='22' r='3.5' fill='#58AA96' />
-          <circle cx='40' cy='22' r='3.5' fill='#58AA96' />
+          {/* Header Brand Indicator */}
+          <circle cx='14' cy='12' r='3' fill='#FFFFFF' />
+          <rect x='22' y='10' width='32' height='4' rx='2' fill='#FFFFFF' fillOpacity='0.9' />
 
-          <circle cx='12' cy='34' r='3.5' fill='#58AA96' />
-          <circle cx='26' cy='34' r='3.5' fill='#58AA96' />
-          <circle cx='40' cy='34' r='3.5' fill='#E94383' />
+          {/* Active Pills Grid - Row 1 (Consumed Pills with Checkmarks) */}
+          <circle cx='20' cy='38' r='6.5' fill='url(#activePillGrad)' />
+          <circle cx='18.5' cy='36.5' r='2' fill='#FFFFFF' fillOpacity='0.6' />
 
-          <circle cx='12' cy='44' r='2.5' fill='#FCE7F3' />
-          <circle cx='26' cy='44' r='2.5' fill='#FCE7F3' />
-          <circle cx='40' cy='44' r='2.5' fill='#FCE7F3' />
+          <circle cx='42' cy='38' r='6.5' fill='url(#activePillGrad)' />
+          <circle cx='40.5' cy='36.5' r='2' fill='#FFFFFF' fillOpacity='0.6' />
 
-          {/* Verified Check Badge */}
-          <circle cx='46' cy='6' r='7' fill='#FFFFFF' stroke='#58AA96' strokeWidth='1.5' />
-          <path d='M43 6 L45 8 L49 4' stroke='#58AA96' strokeWidth='1.6' strokeLinecap='round' strokeLinejoin='round' fill='none' />
+          <circle cx='64' cy='38' r='6.5' fill='url(#activePillGrad)' />
+          <circle cx='62.5' cy='36.5' r='2' fill='#FFFFFF' fillOpacity='0.6' />
+
+          {/* Active Pills Grid - Row 2 (Today's Pill Highlighted) */}
+          <circle cx='20' cy='56' r='6.5' fill='url(#activePillGrad)' />
+          <circle cx='18.5' cy='54.5' r='2' fill='#FFFFFF' fillOpacity='0.6' />
+
+          {/* Today's Target Pill (Golden Pulse Ring) */}
+          <circle cx='42' cy='56' r='8.5' fill='none' stroke='#F97316' strokeWidth='2' strokeDasharray='2 2' />
+          <circle cx='42' cy='56' r='6.5' fill='url(#activePillGrad)' />
+          <circle cx='40.5' cy='54.5' r='2' fill='#FFFFFF' fillOpacity='0.8' />
+
+          <circle cx='64' cy='56' r='6.5' fill='url(#activePillGrad)' />
+          <circle cx='62.5' cy='54.5' r='2' fill='#FFFFFF' fillOpacity='0.6' />
+
+          {/* Active Pills Grid - Row 3 */}
+          <circle cx='20' cy='74' r='6.5' fill='url(#activePillGrad)' />
+          <circle cx='42' cy='74' r='6.5' fill='url(#activePillGrad)' />
+          <circle cx='64' cy='74' r='6.5' fill='url(#activePillGrad)' />
+
+          {/* Placebo Pills Grid - Row 4 (Iron/Placebo Pilluna Slate) */}
+          <circle cx='20' cy='90' r='5' fill='#94A3B8' />
+          <circle cx='42' cy='90' r='5' fill='#94A3B8' />
+          <circle cx='64' cy='90' r='5' fill='#94A3B8' />
+
+          {/* Verified Success Badge floating in top right */}
+          <circle cx='76' cy='12' r='8' fill='#FFFFFF' stroke='#0D9488' strokeWidth='2' />
+          <path d='M72.5 12 L75 14.5 L79.5 9.5' stroke='#0D9488' strokeWidth='1.8' strokeLinecap='round' strokeLinejoin='round' fill='none' />
         </g>
 
-        {/* Sparkles */}
-        <path d='M128 28 L129.5 33 L135 34.5 L129.5 36 L128 41 L126.5 36 L121 34.5 L126.5 33 Z' fill='#58AA96' />
-        <circle cx='18' cy='52' r='2.5' fill='#F58CB4' />
+        {/* Ambient Sparkles */}
+        <path d='M134 32 L136 38 L142 40 L136 42 L134 48 L132 42 L126 40 L132 38 Z' fill='#F97316' />
+        <circle cx='24' cy='46' r='2.5' fill='#0D9488' />
+        <circle cx='136' cy='108' r='2' fill='#14B8A6' />
       </svg>
     </div>
   );
 };
 
 /**
- * Slide 3: Catatan Kesehatan & Panduan SADARI (Pilluna with Health Shield & Ribbon)
+ * Slide 3: Kesehatan Holistik & Panduan SADARI (Breast Health Ribbon & Heart Shield)
  */
 export const BuddyIllustration: React.FC<IllustrationProps> = ({
   className = '',
@@ -237,7 +223,7 @@ export const BuddyIllustration: React.FC<IllustrationProps> = ({
       className={`relative flex items-center justify-center select-none ${className}`}
       style={{ width: size, height: size }}
     >
-      <div className='absolute inset-0 rounded-full bg-[#E94383]/15 blur-2xl animate-pulse pointer-events-none' />
+      <div className='absolute inset-0 rounded-full bg-[#0D9488]/15 blur-2xl animate-pulse pointer-events-none' />
       <svg
         viewBox='0 0 160 160'
         fill='none'
@@ -245,83 +231,78 @@ export const BuddyIllustration: React.FC<IllustrationProps> = ({
         className='w-full h-full drop-shadow-xl overflow-visible'
       >
         <defs>
-          <linearGradient id='pillTopGrad3' x1='35' y1='25' x2='85' y2='80' gradientUnits='userSpaceOnUse'>
-            <stop offset='0%' stopColor='#F58CB4' />
-            <stop offset='70%' stopColor='#E94383' />
-            <stop offset='100%' stopColor='#D83272' />
+          <linearGradient id='ribbonTealGrad' x1='0' y1='0' x2='1' y2='1'>
+            <stop offset='0%' stopColor='#2DD4BF' />
+            <stop offset='100%' stopColor='#0D9488' />
           </linearGradient>
-          <linearGradient id='pillBotGrad3' x1='35' y1='80' x2='85' y2='135' gradientUnits='userSpaceOnUse'>
+          <linearGradient id='ribbonRoseGrad' x1='0' y1='0' x2='1' y2='1'>
+            <stop offset='0%' stopColor='#FB7185' />
+            <stop offset='100%' stopColor='#E11D48' />
+          </linearGradient>
+          <linearGradient id='shieldGrad' x1='0' y1='0' x2='1' y2='1'>
             <stop offset='0%' stopColor='#FFFFFF' />
-            <stop offset='100%' stopColor='#FFF1F5' />
-          </linearGradient>
-          <linearGradient id='ribbonGrad' x1='0' y1='0' x2='1' y2='1'>
-            <stop offset='0%' stopColor='#F58CB4' />
-            <stop offset='100%' stopColor='#E94383' />
+            <stop offset='100%' stopColor='#F0FDFA' />
           </linearGradient>
         </defs>
 
-        {/* Shadows */}
-        <ellipse cx='72' cy='146' rx='34' ry='6' fill='#24354D' fillOpacity='0.12' />
+        {/* Floor Shadow */}
+        <ellipse cx='80' cy='144' rx='40' ry='8' fill='#0F172A' fillOpacity='0.10' />
 
-        {/* Capsule Pill Mascot */}
-        <g transform='translate(0, 0)'>
+        {/* Center Health Shield */}
+        <g transform='translate(42, 28)'>
           <path
-            d='M44 80 L44 52 C44 34.3 58.3 20 76 20 C93.7 20 108 34.3 108 52 L108 80 Z'
-            fill='url(#pillTopGrad3)'
+            d='M38 0 C64 0 76 12 76 28 C76 60 38 82 38 82 C38 82 0 60 0 28 C0 12 12 0 38 0 Z'
+            fill='url(#shieldGrad)'
+            stroke='#CCFBF1'
+            strokeWidth='2'
+            filter='drop-shadow(0 8px 18px rgba(13,148,136,0.18))'
           />
+
+          {/* Heart Beat Pulse Line */}
           <path
-            d='M44 80 L44 108 C44 125.7 58.3 140 76 140 C93.7 140 108 125.7 108 108 L108 80 Z'
-            fill='url(#pillBotGrad3)'
-            stroke='#FCE7F3'
-            strokeWidth='1.5'
+            d='M18 42 L28 42 L32 32 L38 52 L44 38 L48 42 L58 42'
+            stroke='#0D9488'
+            strokeWidth='3'
+            strokeLinecap='round'
+            strokeLinejoin='round'
+            fill='none'
           />
-          <line x1='44' y1='80' x2='108' y2='80' stroke='#E94383' strokeWidth='1.5' strokeOpacity='0.4' />
 
-          {/* Gloss */}
-          <path d='M52 35 C52 35 50 60 50 80' stroke='#FFFFFF' strokeWidth='3.5' strokeLinecap='round' strokeOpacity='0.7' />
-
-          {/* Loving Cheerful Eyes */}
-          <ellipse cx='64' cy='56' rx='4' ry='5.5' fill='#24354D' />
-          <circle cx='62.5' cy='54' r='1.8' fill='#FFFFFF' />
-          <ellipse cx='86' cy='56' rx='4' ry='5.5' fill='#24354D' />
-          <circle cx='84.5' cy='54' r='1.8' fill='#FFFFFF' />
-
-          {/* Cheeks */}
-          <ellipse cx='55' cy='63' rx='4.5' ry='2.5' fill='#F58CB4' fillOpacity='0.9' />
-          <ellipse cx='95' cy='63' rx='4.5' ry='2.5' fill='#F58CB4' fillOpacity='0.9' />
-
-          {/* Smile */}
-          <path d='M70 63 Q75 70 80 63' stroke='#24354D' strokeWidth='2.2' strokeLinecap='round' fill='none' />
+          {/* Medical Plus Header */}
+          <rect x='35' y='14' width='6' height='14' rx='2' fill='#F97316' />
+          <rect x='31' y='18' width='14' height='6' rx='2' fill='#F97316' />
         </g>
 
-        {/* Floating Health & SADARI Ribbon Badge (Right Bottom) */}
-        <g transform='translate(90, 80)'>
-          {/* Circular Shield Badge */}
-          <circle cx='22' cy='22' r='22' fill='#FFFFFF' filter='drop-shadow(0 4px 12px rgba(233,67,131,0.25))' />
-          <circle cx='22' cy='22' r='19' fill='#FFF1F5' stroke='#FCE7F3' strokeWidth='2' />
+        {/* Floating Women Health / SADARI Awareness Ribbon (Bottom Right) */}
+        <g transform='translate(90, 78)'>
+          <circle cx='22' cy='22' r='22' fill='#FFFFFF' filter='drop-shadow(0 6px 14px rgba(225,29,72,0.22))' />
+          <circle cx='22' cy='22' r='19' fill='#FFF1F2' stroke='#FFE4E6' strokeWidth='2' />
 
-          {/* Pink Ribbon for Women Health & SADARI */}
+          {/* Dual Tone Awareness Ribbon (Loop) */}
           <path
             d='M16 32 C18 25 22 17 22 12 C22 8 20 6 18 6 C15 6 14 9 14 12 C14 16 17 24 22 28 L28 32'
-            stroke='url(#ribbonGrad)'
-            strokeWidth='3.2'
+            stroke='url(#ribbonRoseGrad)'
+            strokeWidth='3.5'
             strokeLinecap='round'
             fill='none'
           />
           <path
             d='M28 32 C26 25 22 17 22 12 C22 8 24 6 26 6 C29 6 30 9 30 12 C30 16 27 24 22 28 L16 32'
-            stroke='url(#ribbonGrad)'
-            strokeWidth='3.2'
+            stroke='url(#ribbonTealGrad)'
+            strokeWidth='3.5'
             strokeLinecap='round'
             fill='none'
           />
-          <circle cx='22' cy='12' r='2' fill='#E94383' />
+          <circle cx='22' cy='12' r='2.5' fill='#E11D48' />
         </g>
 
-        {/* Sparkles & Hearts */}
-        <path d='M130 26 L131.5 31 L136 32.5 L131.5 34 L130 39 L128.5 34 L124 32.5 L128.5 31 Z' fill='#E94383' />
-        <circle cx='20' cy='46' r='2.5' fill='#58AA96' />
+        {/* Sparkles */}
+        <path d='M26 36 L28 42 L34 44 L28 46 L26 52 L24 46 L18 44 L24 42 Z' fill='#0D9488' />
+        <path d='M134 32 L136 38 L142 40 L136 42 L134 48 L132 42 L126 40 L132 38 Z' fill='#FB7185' />
+        <circle cx='138' cy='78' r='2.5' fill='#F97316' />
       </svg>
     </div>
   );
 };
+
+export default ReminderIllustration;

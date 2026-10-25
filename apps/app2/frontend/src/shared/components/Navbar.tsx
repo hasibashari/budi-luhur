@@ -176,8 +176,8 @@ export default function Navbar() {
             </div>
           ) : (
             <Link
-              to='/splash'
-              className='bg-gradient-to-r from-[#E94383] to-[#F58CB4] hover:from-[#d83574] hover:to-[#E94383] text-white px-5 py-2.25 rounded-full text-sm font-bold transition-all shadow-md shadow-pink-500/25 flex items-center gap-1.5 hover:scale-105 active:scale-95'
+              to='/onboarding'
+              className='bg-gradient-to-r from-[#0D9488] to-[#14B8A6] hover:from-[#0F766E] hover:to-[#0D9488] text-white px-5 py-2.25 rounded-full text-sm font-bold transition-all shadow-md shadow-teal-700/20 flex items-center gap-1.5 hover:scale-105 active:scale-95'
             >
               <Sparkles size={16} />
               <span>Buka Aplikasi</span>
@@ -279,9 +279,9 @@ export default function Navbar() {
               </div>
             ) : (
               <Link
-                to='/splash'
+                to='/onboarding'
                 onClick={() => setIsMobileMenuOpen(false)}
-                className='bg-gradient-to-r from-[#E94383] to-[#F58CB4] text-white text-center py-3 rounded-full font-bold shadow-md shadow-pink-500/20 flex items-center justify-center gap-2'
+                className='bg-gradient-to-r from-[#0D9488] to-[#14B8A6] text-white text-center py-3 rounded-full font-bold shadow-md shadow-teal-700/20 flex items-center justify-center gap-2'
               >
                 <Sparkles size={16} />
                 <span>Buka Aplikasi Sekarang</span>

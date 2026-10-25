@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Check, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Check, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { Card } from '@/src/shared/components/ui/Card';
 import { ActivityDateInfo } from '../api/consumptionRepository';
 
@@ -46,13 +46,34 @@ export const FullBlisterPackCalendar: React.FC<FullBlisterPackCalendarProps> = (
       const dateKey = getDateKey(year, month, day);
       const activity = activityMap[dateKey];
       const isToday = dateKey === todayStr;
+      const isPast = dateKey < todayStr;
+
+      let status: 'recorded' | 'missed' | 'pending' | 'none' = 'none';
+
+      if (activity) {
+        if (activity.status === 'recorded') {
+          status = 'recorded';
+        } else if (activity.status === 'missed') {
+          status = 'missed';
+        } else if (isToday) {
+          status = todayStatus || 'pending';
+        } else if (isPast) {
+          status = 'missed';
+        }
+      } else if (isToday) {
+        status = todayStatus || 'pending';
+      } else if (isPast) {
+        status = 'missed';
+      } else {
+        status = 'none';
+      }
 
       days.push({
         dateKey,
         dayNumber: day,
         isToday,
         isSelected: dateKey === selectedDate,
-        status: activity?.status || (isToday ? todayStatus : 'none'),
+        status,
       });
     }
 
@@ -67,12 +88,7 @@ export const FullBlisterPackCalendar: React.FC<FullBlisterPackCalendarProps> = (
     <Card padding='md' className='border border-slate-200/90 bg-white shadow-xs'>
       <div className='flex items-center justify-between border-b border-slate-100 pb-3'>
         <div>
-          <h3 className='text-sm font-bold tracking-tight text-slate-900 sm:text-base'>
-            Kalender Konsumsi Pil
-          </h3>
-          <p className='mt-0.5 text-xs text-slate-500'>
-            Pilih tanggal untuk melihat atau mengubah status konsumsi
-          </p>
+          <h3 className='text-sm font-bold tracking-tight text-slate-900 sm:text-base'>Kalender</h3>
         </div>
         <div className='flex items-center gap-1'>
           <button
@@ -139,6 +155,13 @@ export const FullBlisterPackCalendar: React.FC<FullBlisterPackCalendarProps> = (
                     size={10}
                     strokeWidth={3}
                     className='absolute bottom-1 right-1 sm:bottom-1.5 sm:right-1.5'
+                  />
+                )}
+                {day.status === 'missed' && (
+                  <X
+                    size={10}
+                    strokeWidth={3}
+                    className='absolute bottom-1 right-1 sm:bottom-1.5 sm:right-1.5 text-rose-600'
                   />
                 )}
               </button>

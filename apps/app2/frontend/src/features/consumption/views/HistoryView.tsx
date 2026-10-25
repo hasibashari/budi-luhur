@@ -26,15 +26,8 @@ export default function HistoryView() {
   const [statusFilter, setStatusFilter] = useState<StatusFilterOption>('ALL');
 
   // Unified PostgreSQL data fetching & realtime mutations hook
-  const {
-    dashboardData,
-    activityMap,
-    allLogs,
-    stats,
-    loading,
-    isUpdatingDate,
-    updateDateStatus,
-  } = useMonitoringData(userId);
+  const { dashboardData, activityMap, allLogs, stats, loading, isUpdatingDate, updateDateStatus } =
+    useMonitoringData(userId);
 
   // Selected date details and status
   const selectedDateActivity = activityMap[selectedDate];
@@ -47,15 +40,9 @@ export default function HistoryView() {
 
   // Filtered log items based on selected preset and status filter
   const filteredLogs = useMemo(() => {
-    return allLogs.filter((log) => {
+    return allLogs.filter(log => {
       // 1. Date filter preset
-      if (dateFilterPreset === 'TODAY' && log.scheduledDate !== todayStr) return false;
       if (dateFilterPreset === 'CUSTOM' && log.scheduledDate !== selectedDate) return false;
-      if (dateFilterPreset === '7_DAYS') {
-        const logMs = new Date(log.scheduledDate).getTime();
-        const nowMs = new Date(todayStr).getTime();
-        if ((nowMs - logMs) / (1000 * 60 * 60 * 24) > 7) return false;
-      }
       if (dateFilterPreset === '30_DAYS') {
         const logMs = new Date(log.scheduledDate).getTime();
         const nowMs = new Date(todayStr).getTime();
@@ -75,9 +62,9 @@ export default function HistoryView() {
   // Label for log list header
   const filterLabel = useMemo(() => {
     if (dateFilterPreset === 'ALL') return 'Semua catatan';
-    if (dateFilterPreset === 'TODAY') return 'Catatan hari ini';
+    if (dateFilterPreset === '30_DAYS') return '30 hari terakhir';
     if (dateFilterPreset === 'CUSTOM') return `Catatan tanggal ${formatShortDate(selectedDate)}`;
-    return `Filter ${dateFilterPreset.replace('_', ' ')}`;
+    return `Filter ${dateFilterPreset}`;
   }, [dateFilterPreset, selectedDate]);
 
   if (loading && !dashboardData) {
@@ -123,47 +110,51 @@ export default function HistoryView() {
       />
 
       <div className='flex flex-col gap-5 animate-fade-in'>
-          {/* COMPACT FILTER BAR WITH CALENDAR POPOVER */}
-          <DateFilterBar
+        {/* COMPACT FILTER BAR WITH CALENDAR POPOVER */}
+        <DateFilterBar
+          selectedDate={selectedDate}
+          onSelectDate={setSelectedDate}
+          dateFilterPreset={dateFilterPreset}
+          onDateFilterPresetChange={setDateFilterPreset}
+          activityMap={activityMap}
+          todayStr={todayStr}
+          todayStatus={dashboardData?.todayStatus}
+        />
+
+        <MonthlyEvaluationView
+          stats={stats}
+          streakCount={streakCount}
+          streakUnit={streakUnit}
+          hbLevel={dashboardData?.user.hbLevel}
+          riskLevel={dashboardData?.user.riskLevel}
+          logs={allLogs}
+          activityMap={activityMap}
+          selectedDate={selectedDate}
+          onSelectDate={setSelectedDate}
+          todayStr={todayStr}
+        />
+
+        {/* ACTIVE DATE QUICK ACTION CARD */}
+        {dateFilterPreset === 'CUSTOM' && (
+          <ActiveDateActionCard
             selectedDate={selectedDate}
-            onSelectDate={setSelectedDate}
-            dateFilterPreset={dateFilterPreset}
-            onDateFilterPresetChange={setDateFilterPreset}
-            activityMap={activityMap}
-            todayStr={todayStr}
-            todayStatus={dashboardData?.todayStatus}
+            isToday={isSelectedDateToday}
+            activity={selectedDateActivity}
+            effectiveStatus={effectiveSelectedStatus}
+            fallbackTabletName={dashboardData?.activeSchedule?.tabletName}
+            fallbackTime={dashboardData?.activeSchedule?.time}
+            isUpdating={isUpdatingDate}
+            onUpdateStatus={updateDateStatus}
           />
+        )}
 
-          <MonthlyEvaluationView
-            stats={stats}
-            streakCount={streakCount}
-            streakUnit={streakUnit}
-            hbLevel={dashboardData?.user.hbLevel}
-            riskLevel={dashboardData?.user.riskLevel}
-            logs={allLogs}
-          />
-
-          {/* ACTIVE DATE QUICK ACTION CARD */}
-          {(dateFilterPreset === 'CUSTOM' || dateFilterPreset === 'TODAY') && (
-            <ActiveDateActionCard
-              selectedDate={selectedDate}
-              isToday={isSelectedDateToday}
-              activity={selectedDateActivity}
-              effectiveStatus={effectiveSelectedStatus}
-              fallbackTabletName={dashboardData?.activeSchedule?.tabletName}
-              fallbackTime={dashboardData?.activeSchedule?.time}
-              isUpdating={isUpdatingDate}
-              onUpdateStatus={updateDateStatus}
-            />
-          )}
-
-          {/* UNIFIED CONSUMPTION LOG LIST WITH STATUS FILTER DROPDOWN */}
-          <ConsumptionLogList
-            logs={filteredLogs}
-            filterLabel={filterLabel}
-            statusFilter={statusFilter}
-            onStatusFilterChange={setStatusFilter}
-          />
+        {/* UNIFIED CONSUMPTION LOG LIST WITH STATUS FILTER DROPDOWN */}
+        <ConsumptionLogList
+          logs={filteredLogs}
+          filterLabel={filterLabel}
+          statusFilter={statusFilter}
+          onStatusFilterChange={setStatusFilter}
+        />
       </div>
     </div>
   );

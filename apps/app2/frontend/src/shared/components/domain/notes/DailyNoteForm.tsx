@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import { Chip } from '@/src/shared/components/ui/Chip';
 import { Button } from '@/src/shared/components/ui/Button';
-import { SymptomSectionCard } from './SymptomSectionCard';
+import { NoteSectionCard } from './NoteSectionCard';
 import {
   ClinicalAdvice,
   formatIndonesianDate,
@@ -29,9 +29,9 @@ import {
   BLEEDING_OPTIONS,
   SIDE_EFFECT_OPTIONS,
   WEIGHT_OPTIONS,
-} from './symptomHealth.types';
+} from './notes.types';
 
-export interface SymptomDailyFormProps {
+export interface DailyNoteFormProps {
   selectedDate: string;
   onDateChange: (newDate: string) => void;
   mood: MoodType;
@@ -55,7 +55,10 @@ export interface SymptomDailyFormProps {
   saveError: string | null;
 }
 
-export const SymptomDailyForm: React.FC<SymptomDailyFormProps> = ({
+// Backward compatibility alias
+export type SymptomDailyFormProps = DailyNoteFormProps;
+
+export const DailyNoteForm: React.FC<DailyNoteFormProps> = ({
   selectedDate,
   onDateChange,
   mood,
@@ -144,130 +147,130 @@ export const SymptomDailyForm: React.FC<SymptomDailyFormProps> = ({
         </button>
       </div>
 
-      {/* GRID KATEGORI GEJALA */}
-      <div className='grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-3.5'>
-        {/* 1. KATEGORI MOOD */}
-        <SymptomSectionCard
+      {/* GRID KARTU PERTANYAAN */}
+      <div className='grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4'>
+        {/* 1. MOOD */}
+        <NoteSectionCard
           icon={<Smile className='w-5 h-5 sm:w-6 sm:h-6' />}
-          iconColorClassName='text-accent-amber'
-          title='Mood'
+          iconColorClassName='text-primary'
+          title='Bagaimana mood Anda?'
         >
-          <div className='flex flex-wrap gap-1.5 sm:gap-2'>
-            {MOOD_OPTIONS.map(item => (
+          <div className='flex flex-wrap gap-1.5'>
+            {MOOD_OPTIONS.map(opt => (
               <Chip
-                key={item.id}
+                key={opt.id}
                 size='sm'
-                active={mood === item.id}
-                onClick={() => onMoodChange(item.id)}
+                active={mood === opt.id}
+                onClick={() => onMoodChange(opt.id)}
               >
-                {item.label}
+                {opt.label}
               </Chip>
             ))}
           </div>
-        </SymptomSectionCard>
+        </NoteSectionCard>
 
-        {/* 2. KATEGORI NYERI */}
-        <SymptomSectionCard
+        {/* 2. NYERI TUBUH */}
+        <NoteSectionCard
           icon={<Zap className='w-5 h-5 sm:w-6 sm:h-6' />}
           iconColorClassName='text-primary'
-          title='Nyeri'
+          title='Tingkat nyeri tubuh'
         >
-          <div className='flex flex-wrap gap-1.5 sm:gap-2'>
-            {PAIN_OPTIONS.map(item => (
+          <div className='flex flex-wrap gap-1.5'>
+            {PAIN_OPTIONS.map(opt => (
               <Chip
-                key={item.id}
+                key={opt.id}
                 size='sm'
-                active={pain === item.id}
-                onClick={() => onPainChange(item.id)}
+                active={pain === opt.id}
+                onClick={() => onPainChange(opt.id)}
               >
-                {item.label}
+                {opt.label}
               </Chip>
             ))}
           </div>
-        </SymptomSectionCard>
+        </NoteSectionCard>
 
-        {/* 3. KATEGORI PENDARAHAN */}
-        <SymptomSectionCard
+        {/* 3. PENDARAHAN */}
+        <NoteSectionCard
           icon={<Droplet className='w-5 h-5 sm:w-6 sm:h-6' />}
           iconColorClassName='text-primary'
-          title='Pendarahan'
+          title='Pendarahan / flek'
         >
-          <div className='flex flex-wrap gap-1.5 sm:gap-2'>
-            {BLEEDING_OPTIONS.map(item => (
+          <div className='flex flex-wrap gap-1.5'>
+            {BLEEDING_OPTIONS.map(opt => (
               <Chip
-                key={item.id}
+                key={opt.id}
                 size='sm'
-                active={bleeding === item.id}
-                onClick={() => onBleedingChange(item.id)}
+                active={bleeding === opt.id}
+                onClick={() => onBleedingChange(opt.id)}
               >
-                {item.label}
+                {opt.label}
               </Chip>
             ))}
           </div>
-        </SymptomSectionCard>
+        </NoteSectionCard>
 
-        {/* 4. KATEGORI EFEK SAMPING (Multi-Select) */}
-        <SymptomSectionCard
-          icon={<Star className='w-5 h-5 sm:w-6 sm:h-6' />}
-          iconColorClassName='text-accent-amber'
-          title='Efek Samping'
-          subtitle='(Bisa pilih >1)'
-        >
-          <div className='flex flex-wrap gap-1.5 sm:gap-2'>
-            {SIDE_EFFECT_OPTIONS.map(item => (
-              <Chip
-                key={item.id}
-                size='sm'
-                active={sideEffects.includes(item.id)}
-                onClick={() => onToggleSideEffect(item.id)}
-              >
-                {item.label}
-              </Chip>
-            ))}
-          </div>
-        </SymptomSectionCard>
-
-        {/* 5. KATEGORI BERAT BADAN */}
-        <SymptomSectionCard
+        {/* 4. BERAT BADAN */}
+        <NoteSectionCard
           icon={<Scale className='w-5 h-5 sm:w-6 sm:h-6' />}
           iconColorClassName='text-primary'
-          title='Berat Badan'
-          className='md:col-span-2'
+          title='Berat badan'
         >
-          <div className='flex flex-wrap items-center justify-between gap-2.5'>
-            <div className='flex flex-wrap gap-1.5 sm:gap-2'>
-              {WEIGHT_OPTIONS.map(item => (
+          <div className='space-y-2'>
+            <div className='flex flex-wrap gap-1.5'>
+              {WEIGHT_OPTIONS.map(opt => (
                 <Chip
-                  key={item.id}
+                  key={opt.id}
                   size='sm'
-                  active={weightStatus === item.id}
-                  onClick={() => onWeightStatusChange(item.id)}
+                  active={weightStatus === opt.id}
+                  onClick={() => onWeightStatusChange(opt.id)}
                 >
-                  {item.label}
+                  {opt.label}
                 </Chip>
               ))}
             </div>
-
-            {/* Input Angka Berat Badan */}
-            <div className='flex w-full items-center gap-2 rounded-xl border border-primary-soft bg-surface-soft px-3 py-1.5 transition-all focus-within:border-primary focus-within:bg-surface sm:w-44'>
-              <Scale className='w-4 h-4 text-slate-500 shrink-0' />
-              <input
-                type='number'
-                step='0.1'
-                min='20'
-                max='250'
-                value={weightKg}
-                onChange={e => onWeightKgChange(e.target.value)}
-                placeholder='55'
-                className='w-full text-xs sm:text-sm font-bold text-slate-800 bg-transparent focus:outline-none'
-              />
-              <span className='text-xs font-semibold text-slate-500 shrink-0'>kg</span>
+            <div className='flex items-center gap-2 pt-1'>
+              <span className='text-[11px] sm:text-xs text-slate-500 font-medium'>Angka:</span>
+              <div className='relative w-28'>
+                <input
+                  type='number'
+                  step='0.1'
+                  value={weightKg}
+                  onChange={e => onWeightKgChange(e.target.value)}
+                  placeholder='55.0'
+                  className='w-full rounded-xl border border-border bg-surface-soft px-3 py-1.5 text-xs text-body placeholder:text-muted-soft transition-all focus:border-primary focus:bg-surface focus:outline-none sm:text-sm'
+                />
+                <span className='absolute right-2.5 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400'>
+                  kg
+                </span>
+              </div>
             </div>
           </div>
-        </SymptomSectionCard>
+        </NoteSectionCard>
 
-        {/* 6. KATEGORI CATATAN TAMBAHAN */}
-        <SymptomSectionCard
+        {/* 5. EFEK SAMPING */}
+        <NoteSectionCard
+          icon={<Star className='w-5 h-5 sm:w-6 sm:h-6' />}
+          iconColorClassName='text-primary'
+          title='Efek samping adaptasi'
+          subtitle='(bisa pilih lebih dari satu)'
+          className='md:col-span-2'
+        >
+          <div className='flex flex-wrap gap-1.5'>
+            {SIDE_EFFECT_OPTIONS.map(opt => (
+              <Chip
+                key={opt.id}
+                size='sm'
+                active={sideEffects.includes(opt.id)}
+                onClick={() => onToggleSideEffect(opt.id)}
+              >
+                {opt.label}
+              </Chip>
+            ))}
+          </div>
+        </NoteSectionCard>
+
+        {/* 6. CATATAN TAMBAHAN */}
+        <NoteSectionCard
           icon={<FileText className='w-5 h-5 sm:w-6 sm:h-6' />}
           iconColorClassName='text-primary'
           title='Catatan tambahan'
@@ -277,10 +280,10 @@ export const SymptomDailyForm: React.FC<SymptomDailyFormProps> = ({
             type='text'
             value={notes}
             onChange={e => onNotesChange(e.target.value)}
-            placeholder='Tulis catatan di sini...'
+            placeholder='Tulis catatan kondisi harian di sini...'
             className='w-full rounded-xl border border-border bg-surface-soft px-3.5 py-2.5 text-xs text-body placeholder:text-muted-soft transition-all focus:border-primary focus:bg-surface focus:outline-none sm:text-sm'
           />
-        </SymptomSectionCard>
+        </NoteSectionCard>
       </div>
 
       {/* FEEDBACK EDUKATIF BIDAN */}
@@ -326,3 +329,8 @@ export const SymptomDailyForm: React.FC<SymptomDailyFormProps> = ({
     </div>
   );
 };
+
+// Re-export alias backward compatibility
+export const SymptomDailyForm = DailyNoteForm;
+
+export default DailyNoteForm;
