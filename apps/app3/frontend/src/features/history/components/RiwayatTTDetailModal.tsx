@@ -63,8 +63,8 @@ export function RiwayatTTDetailModal({
   if (!record) return null;
 
   return (
-    <div className='fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-950/60 backdrop-blur-xs animate-fade-in'>
-      <div className='relative w-full max-w-lg bg-white rounded-t-[28px] sm:rounded-3xl shadow-2xl border border-stone-200 overflow-hidden flex flex-col max-h-[92dvh]'>
+    <div className='fixed inset-0 z-[70] flex items-center justify-center p-4 sm:p-6 bg-slate-950/60 backdrop-blur-xs animate-fade-in'>
+      <div className='relative w-full max-w-lg bg-white rounded-2xl sm:rounded-3xl shadow-2xl border border-stone-200 overflow-hidden flex flex-col max-h-[88vh] sm:max-h-[90vh]'>
         <div className='px-5 py-4 bg-gradient-to-r from-[#aa294d] to-[#cb4364] text-white flex items-start justify-between gap-3'>
           <div>
             <p className='text-[11px] text-rose-100'>Detail Riwayat Imunisasi</p>
@@ -168,25 +168,26 @@ export function RiwayatTTDetailModal({
               )}
             </div>
           )}
+        </div>
 
-          <div className='flex items-center gap-2 pt-1'>
-            <button
-              type='button'
-              onClick={() => onEdit(record)}
-              className='flex-1 h-11 rounded-full bg-[#eff4ff] text-[#121c2a] font-bold text-xs sm:text-sm flex items-center justify-center gap-2 hover:bg-[#dee9fc] active:scale-[0.98] transition-all cursor-pointer'
-            >
-              <Pencil size={16} />
-              Perbaiki Data
-            </button>
-            <button
-              type='button'
-              onClick={() => onDelete(record)}
-              className='h-11 px-4 rounded-full bg-white border border-[#ffd9de] text-[#aa294d] font-bold text-xs sm:text-sm flex items-center justify-center gap-2 hover:bg-[#ffd9de]/40 active:scale-[0.98] transition-all cursor-pointer'
-            >
-              <Trash2 size={16} />
-              Hapus
-            </button>
-          </div>
+        {/* Action Footer */}
+        <div className='p-4 sm:p-5 bg-stone-50 border-t border-stone-100 shrink-0 flex items-center gap-2.5'>
+          <button
+            type='button'
+            onClick={() => onEdit(record)}
+            className='flex-1 h-11 rounded-full bg-[#eff4ff] text-[#121c2a] font-bold text-xs sm:text-sm flex items-center justify-center gap-2 hover:bg-[#dee9fc] active:scale-[0.98] transition-all cursor-pointer'
+          >
+            <Pencil size={16} />
+            Perbaiki Data
+          </button>
+          <button
+            type='button'
+            onClick={() => onDelete(record)}
+            className='h-11 px-5 rounded-full bg-white border border-[#ffd9de] text-[#aa294d] font-bold text-xs sm:text-sm flex items-center justify-center gap-2 hover:bg-[#ffd9de]/40 active:scale-[0.98] transition-all cursor-pointer'
+          >
+            <Trash2 size={16} />
+            Hapus
+          </button>
         </div>
       </div>
     </div>

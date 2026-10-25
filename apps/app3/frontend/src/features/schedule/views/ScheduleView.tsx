@@ -6,7 +6,6 @@ import {
   Calendar as CalendarIcon,
   ArrowLeft,
   Share2,
-  Heart,
   CalendarClock,
   ShieldCheck,
   Info,
@@ -236,17 +235,17 @@ function ScheduleCard({ schedule, onToggle, onRecordResult, onEdit, onDelete }: 
             type='button'
             onClick={() => onEdit(schedule)}
             aria-label='Ubah jadwal'
-            className='p-1.5 rounded-full text-[#574144] hover:text-[#aa294d] hover:bg-[#ffd9de]/50 transition-colors cursor-pointer'
+            className='min-w-[36px] min-h-[36px] p-2 rounded-full text-[#574144] hover:text-[#aa294d] hover:bg-[#ffd9de]/50 flex items-center justify-center transition-colors cursor-pointer active:scale-95'
           >
-            <Edit3 size={14} />
+            <Edit3 size={15} />
           </button>
           <button
             type='button'
             onClick={() => onDelete(schedule)}
             aria-label='Hapus jadwal'
-            className='p-1.5 rounded-full text-[#8b7074] hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer'
+            className='min-w-[36px] min-h-[36px] p-2 rounded-full text-[#8b7074] hover:text-red-600 hover:bg-red-50 flex items-center justify-center transition-colors cursor-pointer active:scale-95'
           >
-            <Trash2 size={14} />
+            <Trash2 size={15} />
           </button>
         </div>
       </div>
@@ -277,169 +276,150 @@ function ScheduleFormModal({ mode, initial, onClose, onSave, isSaving }: Schedul
   };
 
   return (
-    <div className='fixed inset-0 z-60 flex items-center justify-center p-4 bg-slate-950/40 backdrop-blur-xs animate-fade-in'>
+    <div className='fixed inset-0 z-[70] flex items-center justify-center p-4 sm:p-6 bg-slate-950/60 backdrop-blur-xs animate-fade-in'>
       <div className='absolute inset-0' onClick={() => !isSaving && onClose()} />
-      <div className='relative z-10 w-full max-w-md bg-white rounded-3xl p-5 shadow-2xl border border-[#ffd9de] max-h-[90vh] overflow-y-auto'>
-        <div className='flex items-center justify-between pb-3 border-b border-[#ffd9de]/60 mb-4'>
+      <div className='relative z-10 w-full max-w-lg bg-white rounded-2xl sm:rounded-3xl shadow-2xl border border-stone-200 overflow-hidden flex flex-col max-h-[88vh] sm:max-h-[90vh]'>
+        {/* Modal Header */}
+        <div className='px-5 py-3.5 sm:py-4 bg-gradient-to-r from-[#aa294d] to-[#cb4364] text-white flex items-center justify-between shrink-0'>
           <div className='flex items-center gap-2.5'>
-            <div className='w-9 h-9 rounded-2xl bg-[#ffd9de] text-[#aa294d] flex items-center justify-center'>
-              <CalendarClock size={18} />
+            <div className='w-9 h-9 rounded-full bg-white/20 flex items-center justify-center shadow-xs'>
+              <CalendarClock size={18} className='text-white' />
             </div>
             <div>
-              <h3 className='text-sm font-black text-[#121c2a]'>
+              <h3 className='text-sm sm:text-base font-bold leading-tight'>
                 {mode === 'create' ? 'Buat Jadwal TT' : 'Ubah Jadwal TT'}
               </h3>
-              <span className='text-[11px] text-[#8b7074]'>
+              <p className='text-[11px] text-rose-100'>
                 {mode === 'create'
                   ? 'Tentukan tahap & tanggal imunisasi'
                   : 'Perbarui detail jadwal'}
-              </span>
+              </p>
             </div>
           </div>
           <button
             type='button'
             onClick={() => !isSaving && onClose()}
-            aria-label='Tutup'
-            className='w-7 h-7 rounded-full bg-stone-100 text-stone-500 hover:text-stone-800 flex items-center justify-center transition-colors cursor-pointer'
+            aria-label='Tutup Modal'
+            className='w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors cursor-pointer active:scale-90'
           >
-            <X size={15} />
+            <X size={18} />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
-          <div>
-            <label className='text-xs font-bold text-[#121c2a] mb-1.5 block'>
-              Tahap Imunisasi TT <span className='text-[#aa294d]'>*</span>
-            </label>
-            <div className='grid grid-cols-5 gap-1.5'>
-              {TT_DOSAGE_LIST.map(item => (
-                <button
-                  key={item.level}
-                  type='button'
-                  onClick={() => set('stage', item.level as TTStage)}
-                  className={`min-h-[44px] py-2 rounded-xl border text-center transition-all cursor-pointer ${
-                    form.stage === item.level
-                      ? 'bg-[#ffd9de]/70 border-[#aa294d] text-[#8c0f39] font-bold ring-1 ring-[#aa294d]'
-                      : 'bg-white border-stone-200 text-[#574144] hover:bg-stone-50'
-                  }`}
-                >
-                  <span className='block text-xs font-black'>{item.level}</span>
-                </button>
-              ))}
-            </div>
-            {dose && (
-              <div className='mt-2 p-3 rounded-xl bg-[#eff4ff] border border-[#d9e3f6]/60'>
-                <p className='text-[11px] text-[#574144] leading-relaxed'>
-                  <strong className='text-[#121c2a]'>Interval:</strong> {dose.interval}
-                  <br />
-                  <strong className='text-[#121c2a]'>Proteksi:</strong> {dose.protectionDuration}
-                </p>
+        <form onSubmit={handleSubmit} className='flex-1 flex flex-col min-h-0 overflow-hidden'>
+          <div className='p-5 overflow-y-auto flex-1 flex flex-col gap-4 text-[#121c2a]'>
+            <div>
+              <label className='text-xs font-bold text-[#121c2a] mb-1.5 block'>
+                Tahap Imunisasi TT <span className='text-[#aa294d]'>*</span>
+              </label>
+              <div className='grid grid-cols-5 gap-1.5'>
+                {TT_DOSAGE_LIST.map(item => (
+                  <button
+                    key={item.level}
+                    type='button'
+                    onClick={() => set('stage', item.level as TTStage)}
+                    className={`min-h-[44px] py-2 rounded-xl border text-center transition-all cursor-pointer ${
+                      form.stage === item.level
+                        ? 'bg-[#ffd9de]/70 border-[#aa294d] text-[#8c0f39] font-bold ring-1 ring-[#aa294d]'
+                        : 'bg-white border-stone-200 text-[#574144] hover:bg-stone-50'
+                    }`}
+                  >
+                    <span className='block text-xs font-black'>{item.level}</span>
+                  </button>
+                ))}
               </div>
-            )}
-          </div>
-
-          <div>
-            <label className='text-xs font-bold text-[#121c2a] mb-1.5 block'>
-              Tanggal Jadwal Imunisasi <span className='text-[#aa294d]'>*</span>
-            </label>
-            <input
-              type='date'
-              value={form.scheduledDate}
-              min={mode === 'create' ? todayKey() : undefined}
-              onChange={event => set('scheduledDate', event.target.value)}
-              required
-              className='w-full bg-white text-[#121c2a] font-medium text-xs sm:text-sm rounded-xl border border-stone-200 focus:border-[#aa294d] focus:ring-1 focus:ring-[#aa294d] px-3.5 py-2.5 outline-none transition-all'
-            />
-          </div>
-
-          <div>
-            <label className='text-xs font-bold text-[#121c2a] mb-1.5 block'>
-              Jam Kunjungan (format 24 jam)
-            </label>
-            <div className='grid grid-cols-3 gap-2 mb-2.5'>
-              {TIME_PRESETS.map(preset => (
-                <button
-                  key={preset.time}
-                  type='button'
-                  onClick={() => set('timeSlot', preset.time)}
-                  className={`py-2 px-2 rounded-xl border text-center transition-all cursor-pointer ${
-                    form.timeSlot === preset.time
-                      ? 'bg-[#ffd9de]/70 border-[#aa294d] text-[#8c0f39] font-bold'
-                      : 'bg-white border-stone-200 text-[#574144] hover:bg-stone-50'
-                  }`}
-                >
-                  <span className='block text-xs font-black'>{preset.time}</span>
-                  <span className='block text-[10px] text-[#8b7074] mt-0.5'>{preset.desc}</span>
-                </button>
-              ))}
+              {dose && (
+                <div className='mt-2 p-3 rounded-xl bg-[#eff4ff] border border-[#d9e3f6]/60'>
+                  <p className='text-[11px] text-[#574144] leading-relaxed'>
+                    <strong className='text-[#121c2a]'>Interval:</strong> {dose.interval}
+                    <br />
+                    <strong className='text-[#121c2a]'>Proteksi:</strong> {dose.protectionDuration}
+                  </p>
+                </div>
+              )}
             </div>
-            <div className='flex items-center justify-between gap-2 bg-[#fff0f2]/60 px-3.5 py-2 rounded-xl border border-[#ffd9de]'>
-              <div className='flex items-center gap-2 text-xs text-[#574144] font-medium'>
-                <Clock size={14} className='text-[#aa294d]' />
-                <span>Jam kustom:</span>
-              </div>
+
+            <div>
+              <label className='text-xs font-bold text-[#121c2a] mb-1.5 block'>
+                Tanggal Jadwal Imunisasi <span className='text-[#aa294d]'>*</span>
+              </label>
               <input
-                type='time'
-                value={form.timeSlot}
-                onChange={event => set('timeSlot', event.target.value)}
+                type='date'
+                value={form.scheduledDate}
+                min={mode === 'create' ? todayKey() : undefined}
+                onChange={event => set('scheduledDate', event.target.value)}
                 required
-                className='bg-white px-2.5 py-1 rounded-lg border border-stone-200 text-xs font-bold text-[#121c2a] outline-none focus:border-[#aa294d]'
+                className='w-full bg-white text-[#121c2a] font-medium text-xs sm:text-sm rounded-xl border border-stone-200 focus:border-[#aa294d] focus:ring-1 focus:ring-[#aa294d] px-3.5 py-2.5 outline-none transition-all'
               />
             </div>
-          </div>
 
-          <div className='grid grid-cols-1 sm:grid-cols-2 gap-3'>
             <div>
-              <label className='text-xs font-bold text-[#121c2a] mb-1.5 block'>Dosis</label>
-              <input
-                type='text'
-                value={form.dosage ?? ''}
-                onChange={event => set('dosage', event.target.value)}
-                placeholder='1 dosis (0.5 mL)'
-                className='w-full bg-stone-50 text-[#121c2a] text-xs rounded-xl border border-stone-200 focus:border-[#aa294d] focus:ring-1 focus:ring-[#aa294d] px-3.5 py-2.5 outline-none transition-all'
-              />
-            </div>
-            <div>
-              <label className='text-xs font-bold text-[#121c2a] mb-1.5 block'>Catatan</label>
-              <input
-                type='text'
-                value={form.notes ?? ''}
-                onChange={event => set('notes', event.target.value)}
-                placeholder='Cth: Poli imunisasi Puskesmas'
-                className='w-full bg-stone-50 text-[#121c2a] text-xs rounded-xl border border-stone-200 focus:border-[#aa294d] focus:ring-1 focus:ring-[#aa294d] px-3.5 py-2.5 outline-none transition-all'
-              />
-            </div>
-          </div>
-
-          <div className='flex items-center justify-between p-3 bg-[#fff0f2] rounded-2xl border border-[#ffd9de]'>
-            <div className='flex items-center gap-2.5'>
-              <div className='w-7 h-7 rounded-full bg-white flex items-center justify-center text-[#aa294d] shadow-2xs'>
-                <Bell size={14} />
+              <label className='text-xs font-bold text-[#121c2a] mb-1.5 block'>
+                Jam Kunjungan (format 24 jam)
+              </label>
+              <div className='grid grid-cols-3 gap-2 mb-2.5'>
+                {TIME_PRESETS.map(preset => (
+                  <button
+                    key={preset.time}
+                    type='button'
+                    onClick={() => set('timeSlot', preset.time)}
+                    className={`py-2 px-2 rounded-xl border text-center transition-all cursor-pointer ${
+                      form.timeSlot === preset.time
+                        ? 'bg-[#ffd9de]/70 border-[#aa294d] text-[#8c0f39] font-bold'
+                        : 'bg-white border-stone-200 text-[#574144] hover:bg-stone-50'
+                    }`}
+                  >
+                    <span className='block text-xs font-black'>{preset.time}</span>
+                    <span className='block text-[10px] text-[#8b7074] mt-0.5'>{preset.desc}</span>
+                  </button>
+                ))}
               </div>
-              <div>
-                <span className='block text-xs font-bold text-[#121c2a] leading-tight'>
-                  Pengingat 15 Menit Sebelumnya
-                </span>
-                <span className='block text-[10px] text-[#8b7074] leading-tight mt-0.5'>
-                  Notifikasi awal sebelum kunjungan faskes
-                </span>
+              <div className='flex items-center justify-between gap-2 bg-[#fff0f2]/60 px-3.5 py-2 rounded-xl border border-[#ffd9de]'>
+                <div className='flex items-center gap-2 text-xs text-[#574144] font-medium'>
+                  <Clock size={14} className='text-[#aa294d]' />
+                  <span>Jam kustom:</span>
+                </div>
+                <input
+                  type='time'
+                  value={form.timeSlot}
+                  onChange={event => set('timeSlot', event.target.value)}
+                  required
+                  className='bg-white px-2.5 py-1 rounded-lg border border-stone-200 text-xs font-bold text-[#121c2a] outline-none focus:border-[#aa294d]'
+                />
               </div>
             </div>
-            <input
-              type='checkbox'
-              checked={form.remind15MinBefore ?? true}
-              onChange={event => set('remind15MinBefore', event.target.checked)}
-              className='w-4.5 h-4.5 accent-[#aa294d] rounded-md cursor-pointer'
-            />
+
+            <div className='flex items-center justify-between p-3 bg-[#fff0f2] rounded-2xl border border-[#ffd9de]'>
+              <div className='flex items-center gap-2.5'>
+                <div className='w-7 h-7 rounded-full bg-white flex items-center justify-center text-[#aa294d] shadow-2xs'>
+                  <Bell size={14} />
+                </div>
+                <div>
+                  <span className='block text-xs font-bold text-[#121c2a] leading-tight'>
+                    Pengingat 15 Menit Sebelumnya
+                  </span>
+                  <span className='block text-[10px] text-[#8b7074] leading-tight mt-0.5'>
+                    Notifikasi awal sebelum kunjungan faskes
+                  </span>
+                </div>
+              </div>
+              <input
+                type='checkbox'
+                checked={form.remind15MinBefore ?? true}
+                onChange={event => set('remind15MinBefore', event.target.checked)}
+                className='w-4.5 h-4.5 accent-[#aa294d] rounded-md cursor-pointer'
+              />
+            </div>
           </div>
 
-          <div className='flex items-center gap-2 pt-3 border-t border-stone-100'>
+          {/* Footer Action Bar */}
+          <div className='p-4 sm:p-5 bg-stone-50 border-t border-stone-100 flex items-center gap-2.5 shrink-0'>
             <Button
               type='button'
               variant='outline'
               size='sm'
               shape='pill'
-              className='flex-1 text-xs font-bold'
+              className='flex-1 min-h-[44px] text-xs font-bold cursor-pointer active:scale-95'
               onClick={() => !isSaving && onClose()}
               disabled={isSaving}
             >
@@ -450,7 +430,7 @@ function ScheduleFormModal({ mode, initial, onClose, onSave, isSaving }: Schedul
               variant='primary'
               size='sm'
               shape='pill'
-              className='flex-1 text-xs font-bold bg-[#aa294d] hover:bg-[#8c0f39] text-white'
+              className='flex-1 min-h-[44px] text-xs font-bold bg-[#aa294d] hover:bg-[#8c0f39] text-white shadow-xs cursor-pointer active:scale-95'
               disabled={isSaving}
               icon={isSaving ? <Loader2 size={14} className='animate-spin' /> : undefined}
             >
@@ -741,9 +721,16 @@ export default function ScheduleView() {
             Tetap Terlindungi Bersama
           </h2>
         </div>
-        <div className='w-10 h-10 rounded-full bg-[#ffd9de] flex items-center justify-center text-[#aa294d] shadow-2xs'>
-          <Heart size={20} className='fill-[#aa294d]' />
-        </div>
+        <Button
+          variant='primary'
+          size='sm'
+          shape='pill'
+          icon={<Plus size={14} />}
+          onClick={handleOpenAdd}
+          className='text-xs font-bold bg-[#aa294d] hover:bg-[#8c0f39] text-white shadow-sm shrink-0'
+        >
+          Tambah
+        </Button>
       </div>
 
       {/* Next Schedule Hero */}
@@ -810,29 +797,17 @@ export default function ScheduleView() {
         </div>
       )}
 
-      {/* Summary + Add */}
-      <div className='flex items-center justify-between gap-3'>
-        <div className='flex items-center gap-2 text-[11px] font-semibold'>
-          <span className='px-2.5 py-1 rounded-full bg-[#eff4ff] text-[#574144]'>
-            {schedules.length} jadwal
-          </span>
-          <span className='px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200'>
-            {completedCount} selesai
-          </span>
-          <span className='px-2.5 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200'>
-            {schedules.length - completedCount} pending
-          </span>
-        </div>
-        <Button
-          variant='primary'
-          size='sm'
-          shape='pill'
-          icon={<Plus size={14} />}
-          onClick={handleOpenAdd}
-          className='text-xs font-bold bg-[#aa294d] hover:bg-[#8c0f39] text-white shadow-sm shrink-0'
-        >
-          Tambah
-        </Button>
+      {/* Summary */}
+      <div className='flex items-center gap-2 text-[11px] font-semibold'>
+        <span className='px-2.5 py-1 rounded-full bg-[#eff4ff] text-[#574144]'>
+          {schedules.length} jadwal
+        </span>
+        <span className='px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200'>
+          {completedCount} selesai
+        </span>
+        <span className='px-2.5 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200'>
+          {schedules.length - completedCount} pending
+        </span>
       </div>
 
       {/* Schedule List */}

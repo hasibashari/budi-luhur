@@ -58,12 +58,8 @@ export function VaccineCardModal({
   });
 
   return (
-    <div className='fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-950/60 backdrop-blur-xs animate-fade-in'>
-      <div className='relative w-full max-w-lg bg-white rounded-t-[28px] sm:rounded-3xl shadow-2xl border border-stone-200 overflow-hidden flex flex-col max-h-[90dvh] sm:max-h-[92vh]'>
-        {/* Mobile Pull Drag Indicator Bar */}
-        <div className='sm:hidden w-full pt-2.5 pb-1 flex justify-center bg-gradient-to-r from-[#aa294d] to-[#cb4364]'>
-          <div className='w-12 h-1.5 rounded-full bg-white/40' />
-        </div>
+    <div className='fixed inset-0 z-[70] flex items-center justify-center p-4 sm:p-6 bg-slate-950/60 backdrop-blur-xs animate-fade-in'>
+      <div className='relative w-full max-w-lg bg-white rounded-2xl sm:rounded-3xl shadow-2xl border border-stone-200 overflow-hidden flex flex-col max-h-[88vh] sm:max-h-[90vh]'>
 
         {/* Header */}
         <div className='px-5 py-3.5 sm:py-4 bg-gradient-to-r from-[#aa294d] to-[#cb4364] text-white flex items-center justify-between'>
@@ -108,15 +104,6 @@ export function VaccineCardModal({
                 </span>
               </div>
             </div>
-            <span
-              className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                verifiedCount > 0 ? 'bg-[#aff1d0] text-[#0a5139]' : 'bg-[#fff3cd] text-[#8a5a00]'
-              }`}
-            >
-              {verifiedCount > 0
-                ? `${verifiedCount} Dosis Terverifikasi`
-                : 'Belum Ada Dosis Terverifikasi'}
-            </span>
           </div>
 
           {/* Catin Identity */}
@@ -200,9 +187,6 @@ export function VaccineCardModal({
           {/* Ucapan Penyemangat */}
           <div className='rounded-2xl p-3.5 bg-gradient-to-r from-[#fff7ed] via-[#fefce8] to-[#f0fdf4] border border-amber-200'>
             <div className='flex items-start gap-2.5'>
-              <div className='w-8 h-8 shrink-0 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center'>
-                <Sparkles size={16} />
-              </div>
               <div>
                 <p className='text-[11px] sm:text-xs font-bold text-slate-900'>
                   {currentTTLevel >= 5
@@ -212,7 +196,7 @@ export function VaccineCardModal({
                 <p className='text-[10px] sm:text-[11px] text-slate-600 leading-relaxed mt-1'>
                   {currentTTLevel >= 5
                     ? 'Perlindungan seumur hidup sudah terbentuk. Tetap jaga kesehatan dan lakukan pemeriksaan pranikah secara berkala bersama pasangan.'
-                    : `Setiap dosis yang diselesaikan adalah perlindungan nyata bagi dirimu, pasangan, dan calon buah hati. Lanjutkan sampai TT5 sesuai jadwal dari tenaga kesehatan — sedikit lagi, manfaatnya bertahan puluhan tahun.`}
+                    : `Setiap dosis yang diselesaikan adalah perlindungan nyata bagi dirimu, pasangan, dan calon buah hati. Lanjutkan sampai TT5 sesuai jadwal dari tenaga kesehatan. Lengkapi imunisasi dan dapatkan sertifikat imunisasi Tetanus Toksoid.`}
                 </p>
                 <p className='text-[10px] font-semibold text-emerald-700 mt-1.5'>
                   Progres: TT{Math.min(currentTTLevel, 5)} dari TT5
@@ -240,7 +224,7 @@ export function VaccineCardModal({
         </div>
 
         {/* Footer Actions */}
-        <div className='px-5 pt-3.5 pb-[calc(1.25rem+env(safe-area-inset-bottom,0px))] sm:pb-3.5 bg-stone-50 border-t border-stone-200 flex flex-col-reverse sm:flex-row sm:items-center justify-end gap-2.5'>
+        <div className='px-5 py-3.5 bg-stone-50 border-t border-stone-200 flex flex-col-reverse sm:flex-row sm:items-center justify-end gap-2.5'>
           <Button
             variant='outline'
             size='md'

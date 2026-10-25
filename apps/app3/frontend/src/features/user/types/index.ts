@@ -9,7 +9,6 @@ export interface UserProfile {
   height?: number;
   weight?: number;
   schoolOrOrg?: string;
-  hbLevel?: number;
   streakCount?: number;
   friendCode?: string;
   weddingDate?: string;
@@ -117,7 +116,6 @@ export interface UserDashboardData {
     streakCount: number;
     streakUnit?: 'Hari' | 'Minggu';
     consecutiveDates?: string[];
-    hbLevel?: number | null;
     schoolOrOrg?: string | null;
     riskLevel?: string | null;
     friendCode?: string;

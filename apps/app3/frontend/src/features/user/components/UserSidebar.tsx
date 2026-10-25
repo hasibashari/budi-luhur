@@ -7,7 +7,7 @@ export const USER_NAV_ITEMS = [
   { name: 'Beranda', href: '/user/dashboard', icon: Home },
   { name: 'Edukasi', href: '/user/education', icon: BookOpen },
   { name: 'Riwayat TT', href: '/user/imunisasi?tab=riwayat', icon: ShieldCheck },
-  { name: 'Jadwal TT ', href: '/user/schedule', icon: Clock },
+  { name: 'Jadwal TT', href: '/user/schedule', icon: Clock },
   { name: 'Profil & Akun', href: '/user/profile', icon: User },
 ];
 

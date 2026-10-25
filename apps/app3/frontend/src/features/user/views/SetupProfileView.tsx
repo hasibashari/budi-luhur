@@ -43,7 +43,6 @@ export function SetupProfileView() {
   const [bloodType, setBloodType] = useState<string>('');
   const [height, setHeight] = useState<string>('');
   const [weight, setWeight] = useState<string>('');
-  const [hbLevel, setHbLevel] = useState<string>('');
 
   // Step 2 Form States (Rencana Pranikah & Riwayat TT)
   const [partnerName, setPartnerName] = useState('');
@@ -72,7 +71,6 @@ export function SetupProfileView() {
         bloodType: bloodType || undefined,
         height: height ? Number(height) : undefined,
         weight: weight ? Number(weight) : undefined,
-        hbLevel: hbLevel ? Number(hbLevel) : undefined,
         partnerName: partnerName.trim() || undefined,
         weddingDate: weddingDate || undefined,
         ttStatus: lastTTStatus || 'TT0',
@@ -82,7 +80,6 @@ export function SetupProfileView() {
         updateUser({
           schoolOrOrg: schoolOrOrg.trim(),
           isProfileComplete: true,
-          hbLevel: hbLevel ? Number(hbLevel) : undefined,
         });
         navigate('/user/dashboard');
       } else {
@@ -231,8 +228,8 @@ export function SetupProfileView() {
                 </div>
               </div>
 
-              {/* Parameter Fisik & Lab (3 cols) */}
-              <div className='grid grid-cols-3 gap-2 sm:gap-3'>
+              {/* Parameter Fisik (2 cols) */}
+              <div className='grid grid-cols-2 gap-3 sm:gap-4'>
                 <div className='min-w-0'>
                   <label className='block text-[11px] sm:text-xs font-bold text-[#121c2a] mb-1.5 truncate text-center sm:text-left'>
                     Tinggi <span className='text-slate-400 font-normal text-[10px]'>(cm)</span>
@@ -243,7 +240,7 @@ export function SetupProfileView() {
                     placeholder='160'
                     value={height}
                     onChange={e => setHeight(e.target.value)}
-                    className='w-full min-h-[46px] bg-white text-base sm:text-sm text-[#121c2a] rounded-full border border-stone-200 px-2 sm:px-3 py-2 outline-none focus:border-[#aa294d] focus:ring-2 focus:ring-[#aa294d]/10 transition-colors shadow-2xs text-center'
+                    className='w-full min-h-[46px] bg-white text-base sm:text-sm text-[#121c2a] rounded-full border border-stone-200 px-3 py-2 outline-none focus:border-[#aa294d] focus:ring-2 focus:ring-[#aa294d]/10 transition-colors shadow-2xs text-center'
                   />
                 </div>
 
@@ -257,22 +254,7 @@ export function SetupProfileView() {
                     placeholder='50'
                     value={weight}
                     onChange={e => setWeight(e.target.value)}
-                    className='w-full min-h-[46px] bg-white text-base sm:text-sm text-[#121c2a] rounded-full border border-stone-200 px-2 sm:px-3 py-2 outline-none focus:border-[#aa294d] focus:ring-2 focus:ring-[#aa294d]/10 transition-colors shadow-2xs text-center'
-                  />
-                </div>
-
-                <div className='min-w-0'>
-                  <label className='block text-[11px] sm:text-xs font-bold text-[#121c2a] mb-1.5 truncate text-center sm:text-left'>
-                    Hb Lab <span className='text-slate-400 font-normal text-[10px]'>(g/dL)</span>
-                  </label>
-                  <input
-                    type='number'
-                    inputMode='decimal'
-                    step='0.1'
-                    placeholder='12.5'
-                    value={hbLevel}
-                    onChange={e => setHbLevel(e.target.value)}
-                    className='w-full min-h-[46px] bg-white text-base sm:text-sm text-[#121c2a] rounded-full border border-stone-200 px-2 sm:px-3 py-2 outline-none focus:border-[#aa294d] focus:ring-2 focus:ring-[#aa294d]/10 transition-colors shadow-2xs text-center'
+                    className='w-full min-h-[46px] bg-white text-base sm:text-sm text-[#121c2a] rounded-full border border-stone-200 px-3 py-2 outline-none focus:border-[#aa294d] focus:ring-2 focus:ring-[#aa294d]/10 transition-colors shadow-2xs text-center'
                   />
                 </div>
               </div>
@@ -281,8 +263,7 @@ export function SetupProfileView() {
               <div className='p-3 rounded-2xl bg-[#ecfdf5] border border-[#aff1d0] flex items-start gap-2.5'>
                 <Activity size={16} className='text-[#2a6950] shrink-0 mt-0.5' />
                 <p className='text-[11px] text-[#166534] leading-relaxed'>
-                  Pemeriksaan hemoglobin (Hb) dan status gizi sangat penting bagi calon ibu untuk
-                  mencegah anemia pranikah dan risiko stunting pada keturunan kelak.
+                  Pemeriksaan status fisik dan skrining kesehatan pranikah sangat penting bagi calon pengantin untuk memastikan kesiapan kesehatan keluarga dan keturunan.
                 </p>
               </div>
             </div>

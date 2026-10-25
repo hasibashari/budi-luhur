@@ -214,11 +214,11 @@ export default function UserFormModal({
 
       <div>
         <label className='block text-xs font-bold text-[#121c2a] mb-1'>
-          Catatan Skrining, Hb & Riwayat Medis
+          Catatan Skrining & Riwayat Medis
         </label>
         <textarea
           rows={3}
-          placeholder='Hasil skrining Hb, riwayat imunisasi masa sekolah, atau catatan alergi obat...'
+          placeholder='Riwayat imunisasi masa sekolah, status kesehatan catin, atau catatan alergi obat...'
           value={formData.medicalNotes}
           onChange={e => onUpdateFormData({ medicalNotes: e.target.value })}
           className='w-full px-3.5 py-2.5 rounded-xl border border-[#dee9fc] bg-white text-sm text-[#121c2a] focus:outline-none focus:ring-2 focus:ring-[#ffd9de] focus:border-[#aa294d] transition-all resize-none'

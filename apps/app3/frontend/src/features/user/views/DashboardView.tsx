@@ -138,7 +138,6 @@ export default function DashboardView() {
     streakCount: 0,
     streakUnit: 'Minggu' as const,
     consecutiveDates: [],
-    hbLevel: authUser?.hbLevel || null,
     schoolOrOrg: authUser?.schoolOrOrg || '',
     avatarUrl: authUser?.avatarUrl || null,
   };
@@ -509,9 +508,8 @@ export default function DashboardView() {
               </div>
             </div>
             <p className='text-xs text-[#574144] leading-relaxed'>
-              Pemeriksaan pranikah meliputi skrining TT (5 dosis), cek Hb (mencegah anemia ibu
-              hamil), status gizi (LILA min. 23.5 cm), dan skrining calon ayah untuk generasi bebas
-              stunting.
+              Pemeriksaan pranikah meliputi skrining imunisasi TT (5 dosis), status gizi (LILA min.
+              23.5 cm), serta edukasi kesiapan kesehatan pranikah untuk generasi bebas stunting.
             </p>
             <div className='mt-3 pt-2.5 border-t border-[#aff1d0]/50 flex items-center justify-between'>
               <Link

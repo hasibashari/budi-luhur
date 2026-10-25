@@ -1,4 +1,3 @@
-import React from 'react';
 import { Heart, Calendar, AlertTriangle, ShieldCheck, ArrowRight, Clock } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -69,30 +68,32 @@ export function WeddingCountdownWidget({
       </div>
 
       {/* Countdown Digits Grid */}
-      <div className='py-4 flex items-center justify-center gap-3'>
-        <div className='flex flex-col items-center justify-center bg-stone-50 border border-stone-200/80 rounded-2xl w-20 py-2.5 shadow-2xs'>
-          <span className='text-2xl font-black text-slate-900 leading-none'>{diffDays}</span>
-          <span className='text-[10px] font-bold text-slate-500 mt-1 uppercase tracking-wider'>
-            Hari Lagi
-          </span>
+      <div className='py-3.5 flex items-center justify-between gap-2 sm:gap-3'>
+        <div className='flex items-center gap-1.5 sm:gap-2 shrink-0'>
+          <div className='flex flex-col items-center justify-center bg-stone-50 border border-stone-200/80 rounded-2xl w-16 sm:w-20 py-2 sm:py-2.5 shadow-2xs'>
+            <span className='text-xl sm:text-2xl font-black text-slate-900 leading-none'>{diffDays}</span>
+            <span className='text-[9px] sm:text-[10px] font-bold text-slate-500 mt-1 uppercase tracking-wider'>
+              Hari Lagi
+            </span>
+          </div>
+
+          <span className='text-slate-300 font-bold text-base sm:text-xl'>:</span>
+
+          <div className='flex flex-col items-center justify-center bg-stone-50 border border-stone-200/80 rounded-2xl w-16 sm:w-20 py-2 sm:py-2.5 shadow-2xs'>
+            <span className='text-xl sm:text-2xl font-black text-slate-900 leading-none'>{diffWeeks}</span>
+            <span className='text-[9px] sm:text-[10px] font-bold text-slate-500 mt-1 uppercase tracking-wider'>
+              Minggu
+            </span>
+          </div>
         </div>
 
-        <span className='text-slate-300 font-bold text-xl'>:</span>
-
-        <div className='flex flex-col items-center justify-center bg-stone-50 border border-stone-200/80 rounded-2xl w-20 py-2.5 shadow-2xs'>
-          <span className='text-2xl font-black text-slate-900 leading-none'>{diffWeeks}</span>
-          <span className='text-[10px] font-bold text-slate-500 mt-1 uppercase tracking-wider'>
-            Minggu
-          </span>
-        </div>
-
-        <div className='flex-1 pl-2'>
+        <div className='min-w-0 flex-1 pl-1 sm:pl-2'>
           <div className='flex items-center gap-1.5 text-xs text-slate-800 font-semibold'>
-            <Calendar size={13} className='text-[#2a6950]' />
+            <Calendar size={13} className='text-[#2a6950] shrink-0' />
             <span className='truncate'>{formattedDate}</span>
           </div>
-          <span className='text-[10px] text-slate-500 block mt-0.5'>
-            {hasCustomDate ? 'Tanggal Akad Terdaftar' : 'Estimasi (dapat disesuaikan di Profil)'}
+          <span className='text-[10px] text-slate-500 block mt-0.5 leading-tight'>
+            {hasCustomDate ? 'Tanggal Akad Terdaftar' : 'Estimasi (sesuaikan di Profil)'}
           </span>
         </div>
       </div>
@@ -113,11 +114,13 @@ export function WeddingCountdownWidget({
         <div className='flex-1 text-[11px] leading-relaxed'>
           {isUrgent ? (
             <p>
-              <strong>Batas Waktu TT2 Kritis!</strong> Kemenkes mensyaratkan vaksin TT2 minimal 30 hari sebelum hari pernikahan agar antibodi tetanus protektif optimal.
+              <strong>Batas Waktu TT2 Kritis!</strong> Kemenkes mensyaratkan vaksin TT2 minimal 30
+              hari sebelum hari pernikahan agar antibodi tetanus protektif optimal.
             </p>
           ) : (
             <p>
-              <strong>Kesiapan Pranikah Prima.</strong> Status TT Anda mencukupi syarat administrasi KUA/Faskes. Pastikan pemeriksaan Hb & gizi tetap terjaga.
+              <strong>Kesiapan Pranikah Prima.</strong> Status TT Anda mencukupi syarat administrasi
+              KUA/Faskes. Pastikan kondisi kesehatan dan jadwal dosis berikutnya tetap terjaga.
             </p>
           )}
         </div>

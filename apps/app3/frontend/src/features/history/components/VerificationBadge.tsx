@@ -53,15 +53,3 @@ export function VerificationBadge({
     </span>
   );
 }
-
-export function VerificationLegend() {
-  return (
-    <div className='flex flex-wrap items-center gap-x-3 gap-y-1.5 px-1'>
-      {(Object.keys(VERIFICATION_CONFIG) as TTVerificationStatus[]).map(status => (
-        <span key={status} className='inline-flex items-center gap-1'>
-          <VerificationBadge status={status} size='xs' />
-        </span>
-      ))}
-    </div>
-  );
-}

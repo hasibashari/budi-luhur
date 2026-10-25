@@ -12,7 +12,6 @@ import {
   ArrowLeft,
   PlusCircle,
   Activity,
-  Heart,
   AlertTriangle,
   ChevronRight,
   FileWarning,
@@ -22,7 +21,7 @@ import { useAuth } from '@/src/features/auth/context/AuthContext';
 import { useMonitoringData } from '../hooks/useMonitoringData';
 import { InputRiwayatTTModal, NewTTRiwayatData } from '../components/InputRiwayatTTModal';
 import { RiwayatTTDetailModal } from '../components/RiwayatTTDetailModal';
-import { VerificationBadge, VerificationLegend } from '../components/VerificationBadge';
+import { VerificationBadge } from '../components/VerificationBadge';
 import { VaccineCardModal } from '@/src/features/dashboard/components/VaccineCardModal';
 import { MonthlyEvaluationView } from '../components/MonthlyEvaluationView';
 import {
@@ -466,25 +465,16 @@ export default function HistoryView() {
           <ArrowLeft size={18} />
         </button>
 
-        <div className='text-center'>
-          <h1 className='text-base sm:text-lg md:text-xl font-bold text-[#121c2a] leading-snug'>
-            Pusat Imunisasi TT
+        <div className='text-center min-w-0 flex-1 px-2'>
+          <h1 className='text-base sm:text-lg md:text-xl font-bold text-[#121c2a] leading-snug truncate'>
+            Riwayat & Evaluasi
           </h1>
-          <p className='text-[11px] sm:text-xs text-[#574144]'>
+          <p className='text-[11px] sm:text-xs text-[#574144] truncate'>
             Kesehatan & Kelayakan Nikah Calon Pengantin
           </p>
         </div>
 
         <div className='flex items-center gap-2'>
-          <button
-            type='button'
-            onClick={handleShare}
-            aria-label='Bagikan Ringkasan'
-            className='w-11 h-11 rounded-full flex items-center justify-center bg-[#eff4ff] text-[#574144] hover:text-[#aa294d] hover:bg-[#ffd9de]/50 active:scale-90 transition-all cursor-pointer'
-            title='Bagikan Ringkasan'
-          >
-            <Share2 size={18} />
-          </button>
           <button
             type='button'
             onClick={() => setIsVaccineCardOpen(true)}
@@ -497,38 +487,24 @@ export default function HistoryView() {
         </div>
       </div>
 
-      {/* 2. Page Header Badges + Quick Link ke Jadwal */}
-      <div className='flex items-center justify-between px-1'>
-        <div className='flex items-center gap-2'>
-          <div className='w-8 h-8 rounded-xl bg-[#ffd9de] flex items-center justify-center text-[#aa294d]'>
-            <ShieldCheck size={18} />
-          </div>
-          <span className='text-sm font-bold text-[#121c2a]'>Riwayat & Evaluasi</span>
-        </div>
-        <Link
-          to='/user/schedule'
-          className='flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#eff4ff] text-[#aa294d] hover:bg-[#ffd9de]/50 text-xs font-bold transition-all active:scale-95 shadow-2xs'
-        >
-          <CalendarClock size={14} />
-          <span>Lihat Jadwal</span>
-        </Link>
-      </div>
-
       {/* -------------------- RIWAYAT & EVALUASI -------------------- */}
       <div className='flex flex-col gap-6 animate-fade-in'>
         {/* Intro Greeting */}
         <div className='flex items-center justify-between'>
           <div className='flex flex-col'>
             <span className='text-[11px] uppercase tracking-wider text-[#aa294d] font-bold'>
-              Rencana Suntik Pranikah
+              Rencana Suntik TT
             </span>
-            <h2 className='text-base sm:text-lg font-bold text-[#121c2a]'>
-              Tetap Terlindungi Bersama Pasangan
-            </h2>
+            <h2 className='text-base sm:text-lg font-bold text-[#121c2a]'>Evaluasi Vaksinasi TT</h2>
           </div>
-          <div className='w-10 h-10 rounded-full bg-[#ffd9de] flex items-center justify-center text-[#aa294d] shadow-2xs'>
-            <Heart size={20} className='fill-[#aa294d]' />
-          </div>
+          <button
+            type='button'
+            onClick={handleOpenCreate}
+            className='inline-flex items-center gap-1.5 px-3.5 py-2 min-h-[38px] rounded-full bg-[#aa294d] text-white hover:bg-[#cb4364] active:scale-95 transition-all text-xs font-bold shadow-sm shadow-rose-950/15 cursor-pointer shrink-0'
+          >
+            <PlusCircle size={15} />
+            <span>Tambah Dosis</span>
+          </button>
         </div>
 
         {/* Highlight Card: dosis berikutnya — hanya dari jadwal yang benar-benar dibuat */}
@@ -658,23 +634,6 @@ export default function HistoryView() {
             <span className='text-xs text-[#574144]'>TT1 – TT5</span>
           </div>
 
-          {/* Action: Tambah Dosis — ditempatkan di atas agar mudah ditemukan */}
-          <button
-            type='button'
-            onClick={handleOpenCreate}
-            className='w-full h-12 min-h-12 rounded-full bg-[#aa294d] text-white hover:bg-[#cb4364] active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow-[0_4px_14px_0_rgba(170,41,77,0.25)] cursor-pointer font-bold text-xs sm:text-sm'
-          >
-            <PlusCircle size={18} />
-            <span>Tambah Riwayat Dosis</span>
-          </button>
-          <p className='text-center text-[11px] text-[#574144]'>
-            Catat dosis yang sudah pernah kamu terima. Data akan berstatus{' '}
-            <strong className='text-[#8a5a00]'>Menunggu Validasi</strong> sampai diperiksa tenaga
-            kesehatan.
-          </p>
-
-          <VerificationLegend />
-
           {recordsLoading ? (
             <div className='flex flex-col gap-3'>
               {[0, 1].map(index => (
@@ -768,12 +727,8 @@ export default function HistoryView() {
         <div className='pt-4 border-t border-[#eff4ff] flex flex-col gap-3'>
           <div className='flex items-center justify-between px-1'>
             <div>
-              <h3 className='text-sm sm:text-base font-bold text-[#121c2a]'>
-                Grafik Evaluasi & Kesiapan Pranikah
-              </h3>
-              <p className='text-[11px] text-[#574144]'>
-                Rekapitulasi kepatuhan kontrol kesehatan & skrining catin
-              </p>
+              <h3 className='text-sm sm:text-base font-bold text-[#121c2a]'>Grafik Capaian Imunisasi TT</h3>
+              <p className='text-[11px] text-[#574144]'>Diagram batang tahapan dosis TT1–TT5 & kepatuhan</p>
             </div>
             <span className='inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#aff1d0] text-[#0a5139] text-xs font-bold'>
               <Activity size={12} /> Optimal
@@ -784,9 +739,9 @@ export default function HistoryView() {
             stats={stats}
             streakCount={dashboardData?.user.streakCount || 0}
             streakUnit={dashboardData?.user.streakUnit || 'Minggu'}
-            hbLevel={dashboardData?.user.hbLevel}
-            riskLevel={dashboardData?.user.riskLevel}
             logs={allLogs}
+            records={records}
+            schedules={schedules}
           />
         </div>
       </div>

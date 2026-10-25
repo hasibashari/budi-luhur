@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   BookOpen,
   ClipboardCheck,
   CalendarClock,
   BellRing,
-  ArrowRight,
   ChevronRight,
   ToggleLeft,
   ToggleRight,
@@ -50,115 +49,93 @@ export function QuickAction({
         {/* 1. Edukasi Catin */}
         <Link
           to='/user/education'
-          className='flex flex-col justify-between p-3.5 sm:p-4 rounded-2xl bg-white border border-[#eff4ff] shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-md transition-all active:scale-[0.98] group'
+          className='flex flex-col justify-between p-3.5 sm:p-4 rounded-2xl bg-white border border-[#eff4ff] shadow-xs hover:shadow-md transition-all active:scale-[0.98] group'
         >
-          <div className='flex flex-col gap-2.5'>
-            <div className='w-11 sm:w-12 h-11 sm:h-12 rounded-xl bg-[#ffd9de] flex items-center justify-center text-[#aa294d] transition-transform group-hover:scale-105 shadow-2xs'>
-              <BookOpen size={22} />
-            </div>
-            <div>
-              <h3 className='text-xs sm:text-sm font-bold text-[#121c2a] group-hover:text-[#aa294d] transition-colors'>
-                Edukasi Catin
-              </h3>
-              <p className='text-[11px] text-[#574144] line-clamp-2 mt-0.5 leading-snug'>
-                Panduan & artikel medis pra-nikah terpercaya.
-              </p>
-            </div>
+          <div className='w-11 h-11 rounded-xl bg-[#ffd9de] flex items-center justify-center text-[#aa294d] transition-transform group-hover:scale-105 shadow-2xs mb-3'>
+            <BookOpen size={20} />
           </div>
-          <div className='mt-3 flex items-center gap-1 text-[#aa294d] font-bold text-xs'>
-            <span>Pelajari</span>
-            <ArrowRight size={13} />
+          <div className='flex items-center justify-between'>
+            <h3 className='text-xs sm:text-sm font-bold text-[#121c2a] group-hover:text-[#aa294d] transition-colors'>
+              Edukasi Catin
+            </h3>
+            <ChevronRight
+              size={15}
+              className='text-[#8b7074] group-hover:text-[#aa294d] transition-colors'
+            />
           </div>
         </Link>
 
         {/* 2. Riwayat Vaksin */}
         <Link
           to='/user/imunisasi?tab=riwayat'
-          className='flex flex-col justify-between p-3.5 sm:p-4 rounded-2xl bg-white border border-[#eff4ff] shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-md transition-all active:scale-[0.98] group'
+          className='flex flex-col justify-between p-3.5 sm:p-4 rounded-2xl bg-white border border-[#eff4ff] shadow-xs hover:shadow-md transition-all active:scale-[0.98] group'
         >
-          <div className='flex flex-col gap-2.5'>
-            <div className='w-11 sm:w-12 h-11 sm:h-12 rounded-xl bg-[#aff1d0] flex items-center justify-center text-[#2a6950] transition-transform group-hover:scale-105 shadow-2xs'>
-              <ClipboardCheck size={22} />
-            </div>
-            <div>
-              <h3 className='text-xs sm:text-sm font-bold text-[#121c2a] group-hover:text-[#2a6950] transition-colors'>
-                Riwayat Vaksin
-              </h3>
-              <p className='text-[11px] text-[#574144] line-clamp-2 mt-0.5 leading-snug'>
-                Lihat bukti suntik dosis TT1 hingga saat ini.
-              </p>
-            </div>
+          <div className='w-11 h-11 rounded-xl bg-[#aff1d0] flex items-center justify-center text-[#2a6950] transition-transform group-hover:scale-105 shadow-2xs mb-3'>
+            <ClipboardCheck size={20} />
           </div>
-          <div className='mt-3 flex items-center gap-1 text-[#2a6950] font-bold text-xs'>
-            <span>Catatan Dosis & Evaluasi</span>
-            <ArrowRight size={13} />
+          <div className='flex items-center justify-between'>
+            <h3 className='text-xs sm:text-sm font-bold text-[#121c2a] group-hover:text-[#2a6950] transition-colors'>
+              Riwayat Vaksin
+            </h3>
+            <ChevronRight
+              size={15}
+              className='text-[#8b7074] group-hover:text-[#2a6950] transition-colors'
+            />
           </div>
         </Link>
 
+        {/* 3. Jadwal TT */}
         <Link
           to='/user/schedule'
-          className='flex flex-col justify-between p-3.5 sm:p-4 rounded-2xl bg-white border border-[#eff4ff] shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-md transition-all active:scale-[0.98] group'
+          className='flex flex-col justify-between p-3.5 sm:p-4 rounded-2xl bg-white border border-[#eff4ff] shadow-xs hover:shadow-md transition-all active:scale-[0.98] group'
         >
-          <div className='flex flex-col gap-2.5'>
-            <div className='w-11 sm:w-12 h-11 sm:h-12 rounded-xl bg-[#dee9fc] flex items-center justify-center text-[#cb4364] transition-transform group-hover:scale-105 shadow-2xs'>
-              <CalendarClock size={22} />
-            </div>
-            <div>
-              <h3 className='text-xs sm:text-sm font-bold text-[#121c2a] group-hover:text-[#cb4364] transition-colors'>
-                Jadwal TT{nextLevel}
-              </h3>
-              <p className='text-[11px] text-[#574144] line-clamp-2 mt-0.5 leading-snug'>
-                Estimasi suntik booster berikutnya di Puskesmas.
-              </p>
-            </div>
+          <div className='w-11 h-11 rounded-xl bg-[#dee9fc] flex items-center justify-center text-[#cb4364] transition-transform group-hover:scale-105 shadow-2xs mb-3'>
+            <CalendarClock size={20} />
           </div>
-          <div className='mt-3 flex items-center gap-1 text-[#cb4364] font-bold text-xs'>
-            <span>{nextScheduleDate}</span>
-            <ChevronRight size={14} />
+          <div className='flex items-center justify-between'>
+            <h3 className='text-xs sm:text-sm font-bold text-[#121c2a] group-hover:text-[#cb4364] transition-colors'>
+              Jadwal TT{nextLevel}
+            </h3>
+            <ChevronRight
+              size={15}
+              className='text-[#8b7074] group-hover:text-[#cb4364] transition-colors'
+            />
           </div>
         </Link>
 
         {/* 4. Pengingat Vaksin */}
-        <div
-          role='button'
-          tabIndex={0}
-          onClick={handleToggleReminder}
-          onKeyDown={e => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault();
-              handleToggleReminder();
-            }
-          }}
-          className='flex flex-col justify-between p-3.5 sm:p-4 rounded-2xl bg-white border border-[#eff4ff] shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-md transition-all active:scale-[0.98] group cursor-pointer'
-        >
-          <div className='flex flex-col gap-2.5'>
-            <div className='w-11 sm:w-12 h-11 sm:h-12 rounded-xl bg-[#ffd9dd] flex items-center justify-center text-[#ac254b] transition-transform group-hover:scale-105 shadow-2xs'>
-              <BellRing size={22} />
+        <div className='flex flex-col justify-between p-3.5 sm:p-4 rounded-2xl bg-white border border-[#eff4ff] shadow-xs hover:shadow-md transition-all group'>
+          <div className='flex items-center justify-between mb-3'>
+            <div className='w-11 h-11 rounded-xl bg-[#ffd9dd] flex items-center justify-center text-[#ac254b] shadow-2xs'>
+              <BellRing size={20} />
             </div>
-            <div>
-              <h3 className='text-xs sm:text-sm font-bold text-[#121c2a] group-hover:text-[#ac254b] transition-colors'>
-                Pengingat
-              </h3>
-              <p className='text-[11px] text-[#574144] line-clamp-2 mt-0.5 leading-snug'>
-                Notifikasi otomatis via WhatsApp & Notifikasi Ponsel.
-              </p>
-            </div>
+            <button
+              type='button'
+              onClick={handleToggleReminder}
+              aria-label={
+                reminderActive ? 'Nonaktifkan pengingat imunisasi' : 'Aktifkan pengingat imunisasi'
+              }
+              className='cursor-pointer text-[#2a6950] hover:opacity-80 active:scale-95 transition-transform'
+              title={reminderActive ? 'Pengingat Aktif' : 'Pengingat Nonaktif'}
+            >
+              {reminderActive ? (
+                <ToggleRight size={24} className='text-[#2a6950]' />
+              ) : (
+                <ToggleLeft size={24} className='text-[#8b7074]' />
+              )}
+            </button>
           </div>
-          <div className='mt-3 flex items-center justify-between'>
+          <div className='flex items-center justify-between'>
+            <h3 className='text-xs sm:text-sm font-bold text-[#121c2a] group-hover:text-[#ac254b] transition-colors'>
+              Pengingat
+            </h3>
             <Link
               to='/user/profile?section=reminder'
-              onClick={e => e.stopPropagation()}
-              className={`text-[11px] font-bold transition-colors hover:underline ${
-                reminderActive ? 'text-[#2a6950]' : 'text-[#8b7074]'
-              }`}
+              className='text-[10px] font-bold text-[#aa294d] hover:underline flex items-center gap-0.5 cursor-pointer'
             >
-              {reminderActive ? 'Aktif (WA & App)' : 'Nonaktif'} • Atur
+              <span>{reminderActive ? 'Aktif' : 'Nonaktif'}</span>
+              <ChevronRight size={11} />
             </Link>
-            {reminderActive ? (
-              <ToggleRight size={22} className='text-[#2a6950] transition-all' />
-            ) : (
-              <ToggleLeft size={22} className='text-[#8b7074] transition-all' />
-            )}
           </div>
         </div>
       </div>

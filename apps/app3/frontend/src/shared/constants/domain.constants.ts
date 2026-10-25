@@ -90,12 +90,6 @@ export const TT_DOSAGE_LIST = Object.values(TT_DOSAGE_LEVELS);
 
 export const PREMARITAL_SCREENING_TESTS = [
   {
-    key: 'hb',
-    name: 'Pemeriksaan Hemoglobin (Hb)',
-    purpose: 'Mendeteksi dini anemia defisiensi besi untuk mencegah komplikasi kehamilan & stunting anak.',
-    normalRange: '≥ 12.0 g/dL untuk wanita usia subur',
-  },
-  {
     key: 'blood_type_rhesus',
     name: 'Golongan Darah & Rhesus',
     purpose: 'Mencegah ketidakcocokan rhesus (inkompatibilitas rhesus) antara ibu dan calon janin.',

@@ -57,8 +57,8 @@ Masih banyak kesalahpahaman seputar vaksinasi sebelum menikah. Mari kita bedah f
 
 | Mitos | Fakta Sebenarnya |
 |---|---|
-| Imunisasi TT adalah bentuk KB mandul | TT sama sekali bukan alat kontrasepsi; murni vaksin pencegah bakteri tetanus |
-| Catin yang sehat tidak butuh skrining | Skrining mendeteksi dini anemia (Hb), thalasemia, dan status TT tanpa gejala |
+| Vaksin TT tidak diperlukan jika merasa sehat | Vaksinasi TT melindungi ibu dan calon bayi dari infeksi tetanus mematikan |
+| Catin yang sehat tidak butuh skrining | Skrining mendeteksi dini risiko kesehatan dan status imunitas TT tanpa gejala |
 | Suntik TT menimbulkan efek samping berat | Efeknya hanya nyeri ringan atau pegal pada lengan suntik selama 1–2 hari |
 
 > Fakta Medis: Program imunisasi TT pranikah telah menyelamatkan jutaan ibu dan bayi dari risiko tetanus obstetrik yang fatal.`,

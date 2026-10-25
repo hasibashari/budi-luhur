@@ -32,7 +32,7 @@ export default function MobileTopBar({
       className='sticky top-0 z-40 w-full bg-[#ffffff]/92 backdrop-blur-xl border-b border-[#e6eeff] shadow-[0_1px_8px_rgba(170,41,77,0.04)] select-none'
       style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}
     >
-      <div className='w-full px-3.5 sm:px-4 h-14 flex items-center justify-between max-w-[430px] mx-auto'>
+      <div className='w-full px-3.5 sm:px-4 h-14 flex items-center justify-between max-w-xl mx-auto'>
         {/* Left: Sidebar Toggle Button (if onOpenSidebar provided) + Brand */}
         <div className='flex items-center gap-2'>
           {onOpenSidebar && (

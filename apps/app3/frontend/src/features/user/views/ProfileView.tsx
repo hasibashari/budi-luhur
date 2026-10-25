@@ -23,7 +23,7 @@ import {
 import { FaskesRujukanCard } from '@/src/shared/components/domain/FaskesRujukanCard';
 import { useAuth } from '@/src/features/auth/context/AuthContext';
 import { VaccineCardModal } from '@/src/features/dashboard/components/VaccineCardModal';
-import { DigitalImmunizationCertificateModal } from '@/src/shared/components/profile/DigitalImmunizationCertificateModal';
+import { DigitalImmunizationCertificateModal } from '@/src/shared/components/profile/CertificateModal';
 import {
   getCertificateVerificationAction,
   getUserDashboardDataAction,
@@ -41,7 +41,6 @@ interface UserProfileState {
   phone: string;
   avatarUrl: string;
   streakCount: number;
-  hbLevel?: number | null;
   schoolOrOrg?: string | null;
   riskLevel?: string | null;
   partnerName?: string;
@@ -60,7 +59,6 @@ export default function ProfileView() {
     phone: authUser?.phone || '',
     avatarUrl: authUser?.avatarUrl || '',
     streakCount: authUser?.streakCount || 0,
-    hbLevel: authUser?.hbLevel || null,
     schoolOrOrg: authUser?.schoolOrOrg || null,
     riskLevel: null,
   });
@@ -108,7 +106,6 @@ export default function ProfileView() {
               ...prev,
               name: data.user.name || prev.name,
               schoolOrOrg: data.user.schoolOrOrg || prev.schoolOrOrg,
-              hbLevel: data.user.hbLevel || prev.hbLevel,
               avatarUrl: data.user.avatarUrl || prev.avatarUrl,
               partnerName: data.user.partnerName,
               weddingDate: data.user.weddingDate,

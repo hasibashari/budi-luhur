@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Article } from '../types';
 import {
@@ -16,8 +16,6 @@ import {
   Bookmark,
   BookmarkCheck,
   CheckCircle2,
-  Heart,
-  Baby,
   ShieldCheck,
   CalendarClock,
   ArrowRight,
@@ -41,7 +39,7 @@ export default function ArticleDetailView({
   const [loading, setLoading] = useState(true);
   const [bookmarked, setBookmarked] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
-  const [readProgress, setReadProgress] = useState(35);
+  const [readProgress, setReadProgress] = useState(0);
 
   const { user } = useAuth();
   const userId = user?.id || '';
@@ -84,15 +82,28 @@ export default function ArticleDetailView({
     fetchData();
 
     const handleScroll = () => {
-      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const progress = docHeight > 0 ? (window.scrollY / docHeight) * 100 : 35;
-      setReadProgress(Math.min(Math.max(progress, 20), 100));
+      const mainEl = document.querySelector('main');
+      let progress = 0;
+      if (mainEl && mainEl.scrollHeight > mainEl.clientHeight) {
+        const scrollable = mainEl.scrollHeight - mainEl.clientHeight;
+        progress = scrollable > 0 ? (mainEl.scrollTop / scrollable) * 100 : 0;
+      } else {
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        progress = docHeight > 0 ? (window.scrollY / docHeight) * 100 : 0;
+      }
+      setReadProgress(Math.min(Math.max(progress, 0), 100));
     };
 
-    window.addEventListener('scroll', handleScroll);
+    const mainEl = document.querySelector('main');
+    if (mainEl) {
+      mainEl.addEventListener('scroll', handleScroll, { passive: true });
+    }
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
 
     return () => {
       isMounted = false;
+      if (mainEl) mainEl.removeEventListener('scroll', handleScroll);
       window.removeEventListener('scroll', handleScroll);
     };
   }, [articleId, userId]);
@@ -419,28 +430,6 @@ export default function ArticleDetailView({
           )}
         </>
       )}
-
-      {/* In-Flow Bottom CTA Banner (Stitch Screen 4) */}
-      <div className='mt-8 pt-6 border-t border-[#eff4ff] flex flex-col sm:flex-row items-center justify-between gap-4 bg-linear-to-r from-[#ffd9de]/50 via-white to-[#aff1d0]/30 p-5 rounded-3xl border border-[#ffd9de]/70 shadow-xs'>
-        <div className='flex flex-col text-center sm:text-left'>
-          <span className='text-[11px] font-bold text-[#aa294d] uppercase tracking-wider mb-0.5'>
-            Langkah Selanjutnya
-          </span>
-          <h4 className='text-sm sm:text-base font-bold text-[#121c2a]'>
-            Sudah Siap Melengkapi Status Imunisasi?
-          </h4>
-          <p className='text-xs text-[#574144] mt-0.5'>
-            Lihat jadwal penyuntikan TT dan faskes terdaftar Anda.
-          </p>
-        </div>
-        <Link
-          to='/user/schedule'
-          className='w-full sm:w-auto px-6 h-12 rounded-full bg-[#aa294d] text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-[0_4px_14px_0_rgba(170,41,77,0.32)] hover:bg-[#cb4364] active:scale-[0.98] transition-transform shrink-0'
-        >
-          <span>Lanjutkan ke Jadwal TT</span>
-          <ArrowRight size={18} />
-        </Link>
-      </div>
     </div>
   );
 }

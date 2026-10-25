@@ -7,8 +7,8 @@ export type UserGender = (typeof GENDER_OPTIONS)[number]['value'];
 
 export const RISK_LEVEL_OPTIONS = [
   { value: 'Rendah', label: 'Rendah (Skrining Optimal & TT Lengkap)' },
-  { value: 'Sedang', label: 'Sedang (Perlu Booster TT / Hb Borderline)' },
-  { value: 'Tinggi', label: 'Tinggi (Anemia Hb < 10 / Belum Imunisasi TT)' },
+  { value: 'Sedang', label: 'Sedang (Perlu Booster TT Pranikah)' },
+  { value: 'Tinggi', label: 'Tinggi (Belum Imunisasi TT / Kategori Rentan)' },
 ] as const;
 
 export type RiskLevel = (typeof RISK_LEVEL_OPTIONS)[number]['value'];

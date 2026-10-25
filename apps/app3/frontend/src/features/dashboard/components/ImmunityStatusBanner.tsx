@@ -30,10 +30,10 @@ export function ImmunityStatusBanner({
     protectionText = 'Perlindungan Seumur Hidup (>25 Tahun)';
     protectionDetail = 'Status T5 Lengkap resmi Kemenkes RI terhadap infeksi Tetanus.';
   } else if (safeDose === 4) {
-    protectionText = `Perlindungan aktif hingga Juli ${currentYear + 10}`;
+    protectionText = `Perlindungan aktif hingga ${currentYear + 10}`;
     protectionDetail = 'Durasi proteksi 10 tahun terhadap infeksi Tetanus maternal & neonatal.';
   } else if (safeDose === 3) {
-    protectionText = `Perlindungan aktif hingga 12 Juli ${currentYear + 2}`;
+    protectionText = `Perlindungan aktif hingga ${currentYear + 5}`;
     protectionDetail = 'Durasi proteksi 5 tahun terhadap infeksi Tetanus maternal & neonatal.';
   } else if (safeDose === 2) {
     protectionText = `Perlindungan aktif hingga ${currentYear + 3}`;
@@ -126,11 +126,11 @@ export function ImmunityStatusBanner({
         </div>
 
         {/* Micro Action / Quick Certificate Tap */}
-        <div className='pt-1 flex items-center justify-between border-t border-[#eff4ff]'>
+        <div className='pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-t border-[#eff4ff]'>
           <button
             type='button'
             onClick={onDownloadCard}
-            className='inline-flex items-center gap-1.5 text-[#aa294d] hover:text-[#cb4364] text-xs font-bold transition-all active:scale-95 cursor-pointer'
+            className='inline-flex items-center gap-1.5 text-[#aa294d] hover:text-[#cb4364] text-xs font-bold transition-all active:scale-95 cursor-pointer self-start sm:self-auto py-1'
           >
             <FileBadge size={16} />
             <span>Unduh Kartu Vaksin Catin</span>
@@ -140,7 +140,7 @@ export function ImmunityStatusBanner({
               <>
                 Dosis ke-{nextDoseNumber}:{' '}
                 <strong className='text-[#121c2a] font-bold'>
-                  {nextAppointmentDate || 'Juli 2026'}
+                  {nextAppointmentDate || 'Belum dijadwalkan'}
                 </strong>
               </>
             ) : (

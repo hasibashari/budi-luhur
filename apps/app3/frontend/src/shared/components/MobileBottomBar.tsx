@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, BookOpen, ShieldCheck, User } from 'lucide-react';
+import { Home, Clock, BookOpen, ShieldCheck, User } from 'lucide-react';
 
 export interface BottomNavItem {
   name: string;
@@ -11,13 +11,14 @@ export interface BottomNavItem {
 
 export const USER_BOTTOM_NAV_ITEMS: BottomNavItem[] = [
   { name: 'Beranda', href: '/user/dashboard', icon: Home },
-  { name: 'Edukasi', href: '/user/education', icon: BookOpen, matchPrefixes: ['/user/education'] },
+  { name: 'Jadwal', href: '/user/schedule', icon: Clock, matchPrefixes: ['/user/schedule'] },
   {
     name: 'Imunisasi',
     href: '/user/imunisasi',
     icon: ShieldCheck,
-    matchPrefixes: ['/user/imunisasi', '/user/history', '/user/schedule'],
+    matchPrefixes: ['/user/imunisasi', '/user/history'],
   },
+  { name: 'Edukasi', href: '/user/education', icon: BookOpen, matchPrefixes: ['/user/education'] },
   { name: 'Profil', href: '/user/profile', icon: User, matchPrefixes: ['/user/profile'] },
 ];
 
@@ -32,10 +33,10 @@ export default function MobileBottomBar({ items = USER_BOTTOM_NAV_ITEMS }: Mobil
   return (
     <nav
       aria-label='Navigasi Bawah TEMANI'
-      className='fixed bottom-0 left-0 right-0 z-50 md:hidden bg-[#ffffff]/94 backdrop-blur-xl border-t border-[#e6eeff] shadow-[0_-4px_20px_rgba(170,41,77,0.06)]'
+      className='fixed bottom-0 left-0 right-0 z-40 md:hidden bg-[#ffffff]/94 backdrop-blur-xl border-t border-[#e6eeff] shadow-[0_-4px_20px_rgba(170,41,77,0.06)]'
       style={{ paddingBottom: 'max(0.5rem, env(safe-area-inset-bottom, 0px))' }}
     >
-      <div className='max-w-[430px] mx-auto h-16 px-2 flex items-center justify-around'>
+      <div className='max-w-xl mx-auto h-16 px-2 flex items-center justify-around'>
         {items.map(item => {
           const isActive =
             pathname === item.href ||

@@ -6,7 +6,7 @@ const ADMIN_BOTTOM_ITEMS = [
   { name: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
   { name: 'Catin', href: '/admin/users', icon: Users },
   { name: 'Jadwal', href: '/admin/schedules', icon: CalendarCheck },
-  { name: 'Verifikasi', href: '/admin/certificates', icon: Award },
+  { name: 'Validasi', href: '/admin/certificates', icon: Award },
   { name: 'Artikel', href: '/admin/articles', icon: FileText },
   { name: 'Laporan', href: '/admin/reports', icon: BarChart3 },
 ];
@@ -21,7 +21,7 @@ export default function AdminMobileBottomNav() {
       style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
       aria-label='Navigasi Bawah Petugas'
     >
-      <div className='flex items-center justify-around h-16 px-2 max-w-lg mx-auto'>
+      <div className='flex items-center justify-around h-16 px-1.5 max-w-xl mx-auto'>
         {ADMIN_BOTTOM_ITEMS.map(item => {
           const isActive =
             pathname === item.href ||
