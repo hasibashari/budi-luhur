@@ -15,7 +15,6 @@ export const config = {
   databaseUrl: process.env.APP2_DATABASE_URL || process.env.DATABASE_URL || '',
   jwtSecret: process.env.APP2_JWT_SECRET || process.env.JWT_SECRET || '',
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || '7d',
-  geminiApiKey: process.env.GEMINI_API_KEY || process.env.GEMINI_API || '',
   nodeEnv: process.env.NODE_ENV || 'development',
   vapidSubject: process.env.VAPID_SUBJECT || '',
   vapidPublicKey: process.env.VAPID_PUBLIC_KEY || '',

@@ -15,12 +15,42 @@ export const config = {
   databaseUrl: process.env.APP1_DATABASE_URL || process.env.DATABASE_URL || '',
   jwtSecret: process.env.APP1_JWT_SECRET || process.env.JWT_SECRET || '',
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || '7d',
-  geminiApiKey: process.env.GEMINI_API_KEY || process.env.GEMINI_API || '',
+  get geminiApiKey(): string {
+    return (process.env.APP1_GEMINI_API_KEY || process.env.GEMINI_API_KEY || process.env.GEMINI_API || '').trim();
+  },
+  get geminiModel(): string {
+    return (process.env.APP1_GEMINI_MODEL || process.env.GEMINI_MODEL || 'gemini-2.5-flash').trim();
+  },
   nodeEnv: process.env.NODE_ENV || 'development',
   vapidSubject: process.env.VAPID_SUBJECT || '',
   vapidPublicKey: process.env.VAPID_PUBLIC_KEY || '',
   vapidPrivateKey: process.env.VAPID_PRIVATE_KEY || '',
 };
+
+export function validateGeminiModel(modelName?: string): { valid: boolean; model: string; error?: string } {
+  const chosenModel = (modelName !== undefined ? modelName : config.geminiModel).trim();
+  if (!chosenModel) {
+    return {
+      valid: false,
+      model: '',
+      error: 'Konfigurasi GEMINI_MODEL tidak boleh kosong. Tentukan nama model AI di file .env (contoh: GEMINI_MODEL=gemini-2.5-flash).',
+    };
+  }
+
+  const modelRegex = /^[a-zA-Z0-9][a-zA-Z0-9._-]*$/;
+  if (!modelRegex.test(chosenModel)) {
+    return {
+      valid: false,
+      model: chosenModel,
+      error: `Format nama model AI "${chosenModel}" tidak valid. Format yang diizinkan hanya alfanumerik, titik (.), strip (-), dan garis bawah (_).`,
+    };
+  }
+
+  return {
+    valid: true,
+    model: chosenModel,
+  };
+}
 
 if (!config.databaseUrl) {
   console.warn('⚠️ WARNING: DATABASE_URL is not set in environment variables');

@@ -10,12 +10,11 @@ dotenv.config({ path: path.resolve(__dirname, '../../.env'), override: true });
 dotenv.config({ override: true });
 
 export const config = {
-  port: parseInt(process.env.PORT || '4001', 10),
-  corsOrigin: process.env.CORS_ORIGIN || 'http://localhost:5173',
+  port: parseInt(process.env.PORT || '4003', 10),
+  corsOrigin: process.env.CORS_ORIGIN || 'http://localhost:5175',
   databaseUrl: process.env.APP3_DATABASE_URL || process.env.DATABASE_URL || '',
   jwtSecret: process.env.APP3_JWT_SECRET || process.env.JWT_SECRET || '',
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || '7d',
-  geminiApiKey: process.env.GEMINI_API_KEY || process.env.GEMINI_API || '',
   nodeEnv: process.env.NODE_ENV || 'development',
   vapidSubject: process.env.VAPID_SUBJECT || '',
   vapidPublicKey: process.env.VAPID_PUBLIC_KEY || '',

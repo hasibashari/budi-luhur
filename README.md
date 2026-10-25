@@ -117,11 +117,22 @@ Setiap aplikasi telah dilengkapi akun bawaan hasil *seeding* mandiri:
 
 ---
 
-## 🛡️ Jaminan Isolasi Sistem
+## 🛡️ Jaminan Isolasi Sistem & Konfigurasi AI
 
 1. **Isolasi Database Penuh**:
    - Data siswi atau pencatatan obat yang dibuat di Aplikasi 1 **tidak akan pernah muncul** di Aplikasi 2 maupun Aplikasi 3 karena masing-masing terhubung ke database Neon terpisah (`fe_tablet_app1`, `fe_tablet_app2`, `fe_tablet_app3`).
 2. **Isolasi Sesi Multi-Tab**:
    - Pengguna dapat membuka Aplikasi 1 sebagai Siswi pada Tab 1 dan membuka Aplikasi 2 sebagai Admin pada Tab 2 pada peramban yang sama secara bersamaan tanpa saling menimpa token login.
-3. **Build Validated**:
-   - Seluruh modul frontend dan backend telah divalidasi dengan `npm run build:all` dengan hasil kompilasi bersih 100%.
+3. **Isolasi Fitur AI & Pengaturan Model**:
+   - **App 1 (FEMORY):** Dilengkapi fitur Gemini AI (Konsultasi Dokter Virtual 24/7, Pembuatan Draf Artikel Edukasi, dan Smart Reminder Nudge). Model AI dikonfigurasi melalui environment variable `GEMINI_MODEL` di file `.env` (default: `gemini-2.5-flash`), sehingga developer dapat mengganti model tanpa harus mengubah kode sumber. API key hanya berada di sisi backend dan tidak diekspos ke frontend.
+   - **App 2 (Pilluna) & App 3 (TEMANI):** **100% Bebas AI**. Seluruh integrasi, API, dependensi, dan helper Gemini telah dihapus. Pembuatan, pengeditan, dan pengelolaan artikel pada App 2 dan App 3 dilakukan murni melalui form CMS aplikasi tanpa ketergantungan AI.
+4. **Cara Mengganti Model AI App 1**:
+   - Buka `apps/app1/backend/.env`.
+   - Ubah nilai variabel `GEMINI_MODEL`, misalnya:
+     ```env
+     GEMINI_MODEL=gemini-2.5-flash
+     # atau model lain: gemini-1.5-flash, gemini-1.5-pro, gemini-2.5-pro
+     ```
+   - Restart backend App 1 (`npm run dev:app1`). Model baru akan langsung aktif dan divalidasi secara otomatis.
+5. **Build Validated**:
+   - Seluruh modul frontend dan backend telah divalidasi dengan hasil kompilasi bersih 100%.

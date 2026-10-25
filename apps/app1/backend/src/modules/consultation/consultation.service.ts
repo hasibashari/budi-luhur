@@ -1,11 +1,9 @@
-import { config } from '../../config/env.js';
+import { config, validateGeminiModel } from '../../config/env.js';
 
 interface ChatHistoryItem {
   role: 'user' | 'model';
   parts: Array<{ text: string }>;
 }
-
-const GEMINI_MODEL = 'gemini-3.8-flash';
 
 const FEMORY_SYSTEM_PROMPT = `
 Kamu adalah "Dokter & Asisten Medis Cerdas FEMORY" (Klinik Edukasi Anemia & Suplementasi Tablet Tambah Darah).
@@ -25,6 +23,15 @@ export interface UserConsultationContext {
 }
 
 export class ConsultationService {
+  static getModel(): string {
+    const rawModel = config.geminiModel;
+    const validation = validateGeminiModel(rawModel);
+    if (!validation.valid) {
+      throw new Error(validation.error);
+    }
+    return validation.model;
+  }
+
   static async askQuestion(
     prompt: string,
     history: Array<{ sender: 'user' | 'assistant'; text: string }> = [],
@@ -36,6 +43,18 @@ export class ConsultationService {
           success: true,
           answer:
             'Halo! 🌸 Terima kasih telah bertanya. Untuk konsumsi Tablet Tambah Darah (TTD), minumlah 1 tablet setiap minggu secara rutin setelah makan malam atau sebelum tidur dengan segelas air putih. Hindari meminumnya bersamaan dengan teh, kopi, atau susu ya agar penyerapan zat besi optimal! Bila ada keluhan pusing berkelanjutan, jangan ragu untuk periksa ke UKS atau Puskesmas terdekat.',
+        };
+      }
+
+      let model: string;
+      try {
+        model = ConsultationService.getModel();
+      } catch (modelErr: any) {
+        console.error('Gemini Model Config Error:', modelErr.message);
+        return {
+          success: false,
+          answer: `Konfigurasi AI bermasalah: ${modelErr.message}`,
+          error: modelErr.message,
         };
       }
 
@@ -72,7 +91,7 @@ export class ConsultationService {
       });
 
       const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${config.geminiApiKey}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${config.geminiApiKey}`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -139,6 +158,16 @@ export class ConsultationService {
       };
     }
 
+    let model: string;
+    try {
+      model = ConsultationService.getModel();
+    } catch (modelErr: any) {
+      return {
+        success: false,
+        error: modelErr.message,
+      };
+    }
+
     try {
       const prompt = `
 Buatkan draf artikel edukasi kesehatan lengkap dan menarik untuk aplikasi FEMORY (Program Tablet Tambah Darah & Pencegahan Anemia Remaja Putri).
@@ -156,7 +185,7 @@ Berikan output dalam format JSON valid persis seperti ini:
 `;
 
       const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${config.geminiApiKey}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${config.geminiApiKey}`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -215,6 +244,13 @@ Berikan output dalam format JSON valid persis seperti ini:
       return { success: true, message: fallbackMessage };
     }
 
+    let model: string;
+    try {
+      model = ConsultationService.getModel();
+    } catch (modelErr: any) {
+      return { success: false, message: fallbackMessage, error: modelErr.message };
+    }
+
     try {
       const prompt = `
 Tuliskan 1 pesan pengingat WhatsApp singkat (2-3 kalimat) dari Pembina UKS / Tim FEMORY untuk siswi berikut:
@@ -228,7 +264,7 @@ Pesan harus ramah, menyemangati, ada emotikon hangat, dan mengingatkan pentingny
 `;
 
       const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${config.geminiApiKey}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${config.geminiApiKey}`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },

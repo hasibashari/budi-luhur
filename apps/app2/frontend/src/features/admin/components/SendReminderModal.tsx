@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { BellRing, MessageSquare, Send, X, Smartphone, Sparkles } from 'lucide-react';
-import { generateAiUserNudgeAction } from '@/src/lib/gemini';
+import { BellRing, MessageSquare, Send, X, Smartphone } from 'lucide-react';
 
 export interface SendReminderModalProps {
   open: boolean;
@@ -33,7 +32,6 @@ function SendReminderModalContent({
   const displayPhone = userPhone || patientPhone || '0812-3456-7890';
   const [channel, setChannel] = useState<'app' | 'whatsapp'>('whatsapp');
   const [selectedTemplate, setSelectedTemplate] = useState<string>('standard');
-  const [isGeneratingAi, setIsGeneratingAi] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
 
   const getTemplateContent = (templateKey: string) => {
@@ -70,28 +68,6 @@ function SendReminderModalContent({
     setMessage(getTemplateContent(newTemplate));
   };
 
-  const handleGenerateAiMessage = async () => {
-    setIsGeneratingAi(true);
-    try {
-      const res = await generateAiUserNudgeAction({
-        userName: displayName,
-        medicationName,
-        dosage,
-        timeSlot,
-        tone:
-          selectedTemplate === 'urgent'
-            ? 'urgent'
-            : selectedTemplate === 'friendly'
-              ? 'friendly'
-              : 'motivational',
-      });
-      if (res.success && res.message) {
-        setMessage(res.message);
-      }
-    } finally {
-      setIsGeneratingAi(false);
-    }
-  };
 
   const handleSend = () => {
     const finalMsg = message || getTemplateContent(selectedTemplate);
@@ -203,19 +179,10 @@ function SendReminderModalContent({
 
           {/* Template Quick Selection */}
           <div>
-            <div className='flex items-center justify-between mb-2'>
+            <div className='mb-2'>
               <label className='block text-xs font-bold uppercase tracking-wider text-slate-500'>
                 Pilihan Template Pesan:
               </label>
-              <button
-                type='button'
-                onClick={handleGenerateAiMessage}
-                disabled={isGeneratingAi}
-                className='inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-100 border border-slate-200 text-[11px] font-bold text-slate-700 hover:bg-slate-200 transition-all cursor-pointer disabled:opacity-50'
-              >
-                <Sparkles size={12} className='text-teal-600' />
-                <span>{isGeneratingAi ? 'AI Menulis...' : 'Generate Teks AI'}</span>
-              </button>
             </div>
             <div className='flex flex-wrap gap-2'>
               {[

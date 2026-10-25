@@ -59,7 +59,6 @@ import { userRoutes } from './modules/users/user.routes.js';
 import { scheduleRoutes } from './modules/schedules/schedule.routes.js';
 import { consumptionRoutes } from './modules/consumption/consumption.routes.js';
 import { articleRoutes } from './modules/articles/article.routes.js';
-import { consultationRoutes } from './modules/consultation/consultation.routes.js';
 import { adminRoutes } from './modules/admin/admin.routes.js';
 import { notificationRoutes } from './modules/notifications/notification.routes.js';
 
@@ -68,7 +67,6 @@ app.use(['/api/v1/users', '/v1/users'], userRoutes);
 app.use(['/api/v1/schedules', '/v1/schedules'], scheduleRoutes);
 app.use(['/api/v1/consumption', '/v1/consumption'], consumptionRoutes);
 app.use(['/api/v1/articles', '/v1/articles'], articleRoutes);
-app.use(['/api/v1/consultation', '/v1/consultation'], consultationRoutes);
 app.use(['/api/v1/admin', '/v1/admin'], adminRoutes);
 app.use(['/api/v1/notifications', '/v1/notifications'], notificationRoutes);
 

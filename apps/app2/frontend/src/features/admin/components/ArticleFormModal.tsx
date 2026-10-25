@@ -1,8 +1,7 @@
-import React, { useRef, useState } from 'react';
-import { UploadCloud, Image as ImageIcon, X, Sparkles } from 'lucide-react';
+import React, { useRef } from 'react';
+import { UploadCloud, Image as ImageIcon, X } from 'lucide-react';
 import { CrudModalDialog } from '@/src/shared/components/CrudModalDialog';
 import { MarkdownEditor } from '@/src/shared/components/markdown';
-import { generateAiArticleDraftAction } from '@/src/lib/gemini';
 import { ArticleCategory } from '../types/admin.types';
 
 export interface ArticleFormData {
@@ -38,7 +37,6 @@ export default function ArticleFormModal({
   showToast,
 }: ArticleFormModalProps) {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const [isGeneratingAi, setIsGeneratingAi] = useState(false);
 
   const handleImageFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -60,34 +58,6 @@ export default function ArticleFormModal({
     updateFormData({ imageUrl: '' });
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
-    }
-  };
-
-  const handleGenerateAiArticle = async () => {
-    const topic = formData.title.trim() || formData.category;
-    if (!topic) {
-      showToast('Ketik judul atau kategori artikel terlebih dahulu', 'error');
-      return;
-    }
-
-    setIsGeneratingAi(true);
-    try {
-      const res = await generateAiArticleDraftAction(topic, formData.category);
-      if (res.success && res.data) {
-        updateFormData({
-          title: res.data.title || formData.title,
-          summary: res.data.summary,
-          content: res.data.content,
-          readTime: res.data.readTime,
-        });
-        showToast('Draf artikel berhasil dibuat oleh Gemini AI!', 'success');
-      } else {
-        showToast(res.error || 'Gagal membuat artikel dengan AI', 'error');
-      }
-    } catch {
-      showToast('Terjadi kesalahan saat memanggil AI', 'error');
-    } finally {
-      setIsGeneratingAi(false);
     }
   };
 
@@ -168,32 +138,6 @@ export default function ArticleFormModal({
         </div>
       </div>
 
-      {/* AI Assistant Generator Banner */}
-      <div className='p-4 rounded-2xl border border-teal-200 bg-teal-50/70 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3'>
-        <div className='flex items-center gap-3'>
-          <div className='w-9 h-9 rounded-xl bg-teal-100 text-teal-700 flex items-center justify-center shrink-0'>
-            <Sparkles size={18} />
-          </div>
-          <div>
-            <div className='font-bold text-slate-900 text-xs sm:text-sm'>
-              Asisten Penulis Medis AI
-            </div>
-            <div className='text-[11px] text-slate-500'>
-              Buat judul, ringkasan, dan materi edukasi otomatis dengan Gemini AI
-            </div>
-          </div>
-        </div>
-
-        <button
-          type='button'
-          disabled={isGeneratingAi}
-          onClick={handleGenerateAiArticle}
-          className='inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-teal-600 text-white font-bold text-xs hover:bg-teal-700 shadow-sm transition-all cursor-pointer disabled:opacity-50 shrink-0'
-        >
-          <Sparkles size={14} />
-          <span>{isGeneratingAi ? 'Menulis Artikel...' : 'Tulis dengan AI ✨'}</span>
-        </button>
-      </div>
 
       <div>
         <label className='block text-xs font-bold text-slate-700 mb-1'>

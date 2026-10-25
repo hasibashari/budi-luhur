@@ -1,8 +1,7 @@
-import React, { useRef, useState } from 'react';
-import { UploadCloud, Image as ImageIcon, X, Sparkles } from 'lucide-react';
+import React, { useRef } from 'react';
+import { UploadCloud, Image as ImageIcon, X } from 'lucide-react';
 import { CrudModalDialog } from '@/src/shared/components/CrudModalDialog';
 import { MarkdownEditor } from '@/src/shared/components/markdown';
-import { generateAiArticleDraftAction } from '@/src/lib/gemini';
 import { ArticleCategory } from '../types/admin.types';
 
 export interface ArticleFormData {
@@ -38,7 +37,6 @@ export default function ArticleFormModal({
   showToast,
 }: ArticleFormModalProps) {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const [isGeneratingAi, setIsGeneratingAi] = useState(false);
 
   const handleImageFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -63,33 +61,7 @@ export default function ArticleFormModal({
     }
   };
 
-  const handleGenerateAiArticle = async () => {
-    const topic = formData.title.trim() || formData.category;
-    if (!topic) {
-      showToast('Ketik judul atau kategori artikel terlebih dahulu', 'error');
-      return;
-    }
 
-    setIsGeneratingAi(true);
-    try {
-      const res = await generateAiArticleDraftAction(topic, formData.category);
-      if (res.success && res.data) {
-        updateFormData({
-          title: res.data.title || formData.title,
-          summary: res.data.summary,
-          content: res.data.content,
-          readTime: res.data.readTime,
-        });
-        showToast('Draf materi edukasi pranikah berhasil dibuat oleh Gemini AI!', 'success');
-      } else {
-        showToast(res.error || 'Gagal membuat artikel dengan AI', 'error');
-      }
-    } catch {
-      showToast('Terjadi kesalahan saat memanggil AI', 'error');
-    } finally {
-      setIsGeneratingAi(false);
-    }
-  };
 
   return (
     <CrudModalDialog
@@ -168,32 +140,6 @@ export default function ArticleFormModal({
         </div>
       </div>
 
-      {/* AI Assistant Generator Banner */}
-      <div className='p-4 rounded-2xl border border-[#ffd9de]/80 bg-linear-to-r from-white via-[#eff4ff] to-[#ffd9de]/30 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 shadow-xs'>
-        <div className='flex items-center gap-3'>
-          <div className='w-9 h-9 rounded-xl bg-[#ffd9de]/60 text-[#aa294d] flex items-center justify-center shrink-0 border border-[#ffd9de]'>
-            <Sparkles size={18} />
-          </div>
-          <div>
-            <div className='font-bold text-[#121c2a] text-xs sm:text-sm'>
-              Asisten Penulis Medis Pranikah TEMANI AI
-            </div>
-            <div className='text-[11px] text-[#574144]'>
-              Susun materi edukasi, ringkasan, dan rujukan klinis TT secara instan
-            </div>
-          </div>
-        </div>
-
-        <button
-          type='button'
-          disabled={isGeneratingAi}
-          onClick={handleGenerateAiArticle}
-          className='inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-[#aa294d] text-white font-bold text-xs hover:bg-[#cb4364] shadow-md shadow-[#aa294d]/20 transition-all cursor-pointer disabled:opacity-50 shrink-0'
-        >
-          <Sparkles size={14} />
-          <span>{isGeneratingAi ? 'Menulis Artikel...' : 'Tulis dengan AI ✨'}</span>
-        </button>
-      </div>
 
       <div>
         <label className='block text-xs font-bold text-[#121c2a] mb-1'>
