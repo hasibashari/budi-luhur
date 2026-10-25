@@ -11,7 +11,6 @@ import {
   ChevronRight,
   BookOpen,
   AlertTriangle,
-  ShieldAlert,
 } from 'lucide-react';
 import { Card } from '@/src/shared/components/ui/Card';
 import { useAuth } from '@/src/features/auth';
@@ -140,11 +139,14 @@ export default function ConsultationView() {
               </div>
               <div>
                 <h4 className='text-xs font-bold text-[#1e293b]'>Asisten Cerdas TTD</h4>
-                <span className='text-[10px] text-[#059669] font-semibold'>● Terhubung Database Edukasi</span>
+                <span className='text-[10px] text-[#059669] font-semibold'>
+                  ● Terhubung Database Edukasi
+                </span>
               </div>
             </div>
             <p className='text-xs text-[#475569] leading-relaxed'>
-              Siap memberikan edukasi resmi seputar cara minum TTD, tips adaptasi efek samping mual, dan nutrisi penambah zat besi.
+              Siap memberikan edukasi resmi seputar cara minum TTD, tips adaptasi efek samping mual,
+              dan nutrisi penambah zat besi.
             </p>
           </Card>
 
@@ -182,7 +184,8 @@ export default function ConsultationView() {
             <div className='mt-3 pt-2.5 border-t border-[#fce7f3] flex items-start gap-1.5 text-[10px] text-[#64748b] shrink-0'>
               <Info size={13} className='text-rose-500 shrink-0 mt-0.5' />
               <span>
-                Diselaraskan dengan pedoman Kemenkes RI & artikel resmi FEMORY untuk suplementasi remaja putri.
+                Diselaraskan dengan pedoman Kemenkes RI & artikel resmi FEMORY untuk suplementasi
+                remaja putri.
               </span>
             </div>
           </Card>
@@ -209,23 +212,6 @@ export default function ConsultationView() {
             padding='none'
             className='flex-1 min-h-0 flex flex-col overflow-hidden bg-[#fffdfd] shadow-sm border border-[#fce7f3] p-2.5 sm:p-4 rounded-2xl'
           >
-            {/* Top Non-intrusive Medical Disclaimer Banner */}
-            <div className='shrink-0 mb-2 p-2 sm:px-3 sm:py-2 bg-gradient-to-r from-rose-50 to-pink-50/60 border border-rose-200/80 rounded-xl flex items-center justify-between gap-2 text-[11px] text-rose-900 shadow-2xs'>
-              <div className='flex items-center gap-2'>
-                <ShieldAlert size={14} className='text-rose-600 shrink-0' />
-                <span className='leading-tight font-medium line-clamp-1 sm:line-clamp-none'>
-                  AI dapat memberikan informasi yang kurang tepat. Bukan pengganti konsultasi tenaga kesehatan.
-                </span>
-              </div>
-              <Link
-                to='/user/education'
-                className='text-[10px] sm:text-[11px] font-semibold text-rose-700 hover:text-rose-900 underline shrink-0 whitespace-nowrap inline-flex items-center gap-0.5'
-              >
-                <span>Baca Artikel</span>
-                <ChevronRight size={11} />
-              </Link>
-            </div>
-
             {/* Scrollable Message List */}
             <div className='flex-1 min-h-0 overflow-y-auto pr-1 sm:pr-2 space-y-3 pb-2 overscroll-contain'>
               {messages.map(msg => {
@@ -290,7 +276,10 @@ export default function ConsultationView() {
                                 className='inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-white hover:bg-rose-100 text-rose-800 text-[11px] font-semibold border border-rose-200 transition-colors shadow-2xs group'
                               >
                                 <span className='line-clamp-1 max-w-[200px]'>{ref.title}</span>
-                                <ChevronRight size={11} className='text-rose-500 group-hover:translate-x-0.5 transition-transform shrink-0' />
+                                <ChevronRight
+                                  size={11}
+                                  className='text-rose-500 group-hover:translate-x-0.5 transition-transform shrink-0'
+                                />
                               </Link>
                             ))}
                           </div>
@@ -382,7 +371,8 @@ export default function ConsultationView() {
               <div className='flex items-center justify-center gap-1.5 text-[10px] text-[#64748b] text-center pt-0.5 px-2'>
                 <AlertCircle size={11} className='text-[#e11d48] shrink-0' />
                 <span>
-                  AI dapat memberikan informasi yang kurang tepat. Informasi ini bukan pengganti konsultasi dengan dokter, bidan, atau tenaga kesehatan profesional.
+                  AI dapat memberikan informasi yang kurang tepat. Informasi ini bukan pengganti
+                  konsultasi dengan dokter, bidan, atau tenaga kesehatan profesional.
                 </span>
               </div>
             </div>
