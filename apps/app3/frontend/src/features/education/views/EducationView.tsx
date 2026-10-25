@@ -9,11 +9,13 @@ import {
   BookOpen,
   Award,
   Clock,
+  Check,
   CheckCircle2,
 } from 'lucide-react';
 import { getArticlesAction } from '../api/educationRepository';
 import { Article } from '../types';
 import { normalizeArticleCategory } from '../constants/education.constants';
+import { useReadArticles } from '../utils/readArticles';
 
 export default function EducationView() {
   const navigate = useNavigate();
@@ -22,6 +24,7 @@ export default function EducationView() {
   const [selectedCategory, setSelectedCategory] = useState<string>('Semua');
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const { isRead, markAsRead } = useReadArticles();
 
   // Seluruh artikel berasal dari backend (dikelola admin). Tidak ada data contoh.
 
@@ -200,55 +203,91 @@ export default function EducationView() {
         </div>
       ) : filteredArticles.length > 0 ? (
         <div className='flex flex-col gap-3.5'>
-          {filteredArticles.map((art: any) => (
-            <Link
-              key={art.id}
-              to={`/user/education/${art.id}`}
-              className='group bg-white rounded-2xl p-3.5 sm:p-4 shadow-[0_2px_10px_-2px_rgba(31,41,55,0.04),0_4px_16px_-2px_rgba(217,78,111,0.03)] border border-[#eff4ff] hover:shadow-md active:scale-[0.98] transition-all flex gap-3.5 items-start cursor-pointer'
-            >
-              <div className='relative w-20 h-20 sm:w-24 sm:h-24 rounded-xl overflow-hidden shrink-0 bg-[#eff4ff]'>
-                {art.imageUrl ? (
-                  <img
-                    src={art.imageUrl}
-                    alt={art.title}
-                    className='w-full h-full object-cover group-hover:scale-105 transition-transform duration-300'
-                  />
-                ) : (
-                  <div className='w-full h-full flex items-center justify-center text-[#aa294d]'>
-                    <BookOpen size={26} />
-                  </div>
-                )}
-                <div className='absolute inset-0 bg-linear-to-t from-black/30 via-transparent to-transparent' />
-              </div>
-
-              <div className='flex-1 min-w-0'>
-                <div className='flex items-center justify-between gap-1 mb-1'>
-                  <span
-                    className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                      art.badgeColor || 'bg-[#ffd9de] text-[#8c0f39]'
-                    }`}
-                  >
-                    {art.badge || art.category}
-                  </span>
-                  <span className='text-[11px] text-[#8b7074] flex items-center gap-1'>
-                    <Clock size={12} /> {art.readTime || '4 mnt'}
-                  </span>
+          {filteredArticles.map((art: any) => {
+            const read = isRead(art.id);
+            return (
+              <Link
+                key={art.id}
+                to={`/user/education/${art.id}`}
+                onClick={() => markAsRead(art.id)}
+                className={`group rounded-2xl p-3.5 sm:p-4 border transition-all flex gap-3.5 items-start cursor-pointer active:scale-[0.98] ${
+                  read
+                    ? 'bg-stone-50/80 border-stone-200/80 opacity-90 hover:opacity-100 hover:border-stone-300'
+                    : 'bg-white border-[#eff4ff] shadow-[0_2px_10px_-2px_rgba(31,41,55,0.04),0_4px_16px_-2px_rgba(217,78,111,0.03)] hover:shadow-md'
+                }`}
+              >
+                <div className='relative w-20 h-20 sm:w-24 sm:h-24 rounded-xl overflow-hidden shrink-0 bg-[#eff4ff]'>
+                  {art.imageUrl ? (
+                    <img
+                      src={art.imageUrl}
+                      alt={art.title}
+                      className={`w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 ${
+                        read ? 'grayscale-[35%] group-hover:grayscale-0' : ''
+                      }`}
+                    />
+                  ) : (
+                    <div className={`w-full h-full flex items-center justify-center ${read ? 'text-stone-400' : 'text-[#aa294d]'}`}>
+                      <BookOpen size={26} />
+                    </div>
+                  )}
+                  <div className='absolute inset-0 bg-linear-to-t from-black/30 via-transparent to-transparent' />
                 </div>
 
-                <h3 className='text-xs sm:text-sm font-bold text-[#121c2a] group-hover:text-[#aa294d] transition-colors leading-snug line-clamp-1'>
-                  {art.title}
-                </h3>
+                <div className='flex-1 min-w-0'>
+                  <div className='flex items-center justify-between gap-1 mb-1'>
+                    <div className='flex items-center gap-1.5 flex-wrap'>
+                      <span
+                        className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                          read
+                            ? 'bg-stone-200/70 text-stone-600'
+                            : art.badgeColor || 'bg-[#ffd9de] text-[#8c0f39]'
+                        }`}
+                      >
+                        {art.badge || art.category}
+                      </span>
+                      {read && (
+                        <span className='inline-flex items-center gap-1 text-[10px] text-stone-500 font-medium bg-stone-200/60 px-1.5 py-0.5 rounded-md'>
+                          <Check size={11} className='text-emerald-600' />
+                          Sudah dibaca
+                        </span>
+                      )}
+                    </div>
+                    <span className='text-[11px] text-[#8b7074] flex items-center gap-1 shrink-0'>
+                      <Clock size={12} /> {art.readTime || '4 mnt'}
+                    </span>
+                  </div>
 
-                <p className='text-[11px] text-[#574144] line-clamp-2 mt-1 leading-snug'>
-                  {art.summary}
-                </p>
-              </div>
+                  <h3
+                    className={`text-xs sm:text-sm leading-snug line-clamp-1 transition-colors ${
+                      read
+                        ? 'font-medium text-stone-500 group-hover:text-stone-700'
+                        : 'font-bold text-[#121c2a] group-hover:text-[#aa294d]'
+                    }`}
+                  >
+                    {art.title}
+                  </h3>
 
-              <div className='self-center pl-1 shrink-0 text-[#8b7074] group-hover:text-[#aa294d] group-hover:translate-x-1 transition-all'>
-                <ChevronRight size={20} />
-              </div>
-            </Link>
-          ))}
+                  <p
+                    className={`text-[11px] line-clamp-2 mt-1 leading-snug ${
+                      read ? 'text-stone-400' : 'text-[#574144]'
+                    }`}
+                  >
+                    {art.summary}
+                  </p>
+                </div>
+
+                <div
+                  className={`self-center pl-1 shrink-0 group-hover:translate-x-1 transition-all ${
+                    read
+                      ? 'text-stone-400 group-hover:text-stone-600'
+                      : 'text-[#8b7074] group-hover:text-[#aa294d]'
+                  }`}
+                >
+                  <ChevronRight size={20} />
+                </div>
+              </Link>
+            );
+          })}
         </div>
       ) : (
         /* Empty State */

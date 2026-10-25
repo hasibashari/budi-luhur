@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import {
   BellRing,
   X,
+  Check,
   CheckCircle2,
   CalendarClock,
   ArrowRight,
@@ -35,11 +36,13 @@ import { AdminNudge } from '@/src/features/schedule/types';
 import { useTTSchedules } from '@/src/features/schedule/hooks/useTTSchedules';
 import { getArticlesAction } from '@/src/features/education/api/educationRepository';
 import { Article } from '@/src/features/education/types';
+import { useReadArticles } from '@/src/features/education/utils/readArticles';
 
 export default function DashboardView() {
   const { user: authUser } = useAuth();
   const navigate = useNavigate();
   const { schedules } = useTTSchedules();
+  const { isRead, markAsRead } = useReadArticles();
   const [dashboardData, setDashboardData] = useState<UserDashboardData | null>(null);
   const [activeNudge, setActiveNudge] = useState<AdminNudge | null>(null);
   const [featuredArticle, setFeaturedArticle] = useState<Article | null>(null);
@@ -396,24 +399,38 @@ export default function DashboardView() {
             const articleAuthor =
               featuredArticle?.author?.name || 'dr. Sarah Jenkins, Sp.GK & Tim Medis Kemenkes';
 
+            const read = isRead(activeArticleId);
+
             return (
               <section aria-label='Banner Edukasi Pranikah Pilihan'>
-                <div className='relative overflow-hidden rounded-2xl bg-white border border-[#eff4ff] shadow-[0_4px_16px_rgba(0,0,0,0.04)] flex flex-col group'>
+                <div
+                  className={`relative overflow-hidden rounded-2xl bg-white border border-[#eff4ff] shadow-[0_4px_16px_rgba(0,0,0,0.04)] flex flex-col group transition-all ${
+                    read ? 'bg-stone-50/80 border-stone-200/80 opacity-90' : ''
+                  }`}
+                >
                   {/* Image Card Header with Editorial Scrim */}
                   <Link
                     to={`/user/education/${activeArticleId}`}
+                    onClick={() => markAsRead(activeArticleId)}
                     className='relative w-full h-44 sm:h-48 bg-stone-100 overflow-hidden block cursor-pointer'
                   >
                     <img
-                      className='w-full h-full object-cover group-hover:scale-105 transition-transform duration-300'
+                      className={`w-full h-full object-cover group-hover:scale-105 transition-all duration-300 ${
+                        read ? 'grayscale-[35%] group-hover:grayscale-0' : ''
+                      }`}
                       src={articleImage}
                       alt={articleTitle}
                     />
                     <div className='absolute inset-0 bg-linear-to-t from-[#121c2a]/85 via-[#121c2a]/20 to-transparent' />
-                    <div className='absolute top-3 left-3'>
+                    <div className='absolute top-3 left-3 flex items-center gap-1.5 flex-wrap'>
                       <span className='px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-md text-[#aa294d] text-[11px] font-bold shadow-xs'>
                         Wajib bagi Catin
                       </span>
+                      {read && (
+                        <span className='inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-stone-900/80 backdrop-blur-md text-stone-200 text-[11px] font-semibold shadow-xs'>
+                          <Check size={12} className='text-emerald-400' /> Sudah dibaca
+                        </span>
+                      )}
                     </div>
                   </Link>
 
@@ -427,22 +444,36 @@ export default function DashboardView() {
                       <span className='truncate'>{articleAuthor}</span>
                     </div>
 
-                    <Link to={`/user/education/${activeArticleId}`}>
-                      <h3 className='text-sm sm:text-base font-bold text-[#121c2a] group-hover:text-[#aa294d] transition-colors leading-snug'>
+                    <Link
+                      to={`/user/education/${activeArticleId}`}
+                      onClick={() => markAsRead(activeArticleId)}
+                    >
+                      <h3
+                        className={`text-sm sm:text-base font-bold transition-colors leading-snug ${
+                          read
+                            ? 'text-stone-500 font-semibold group-hover:text-stone-700'
+                            : 'text-[#121c2a] group-hover:text-[#aa294d]'
+                        }`}
+                      >
                         {articleTitle}
                       </h3>
                     </Link>
 
-                    <p className='text-xs text-[#574144] leading-relaxed line-clamp-2'>
+                    <p className={`text-xs leading-relaxed line-clamp-2 ${read ? 'text-stone-400' : 'text-[#574144]'}`}>
                       {articleSummary}
                     </p>
 
                     <div className='pt-2 flex items-center justify-between gap-3'>
                       <Link
                         to={`/user/education/${activeArticleId}`}
-                        className='inline-flex items-center justify-center px-5 py-2.5 min-h-[44px] rounded-full bg-[#aa294d] text-white text-xs font-bold shadow-[0_4px_12px_rgba(170,41,77,0.25)] hover:bg-[#cb4364] transition-all active:scale-95'
+                        onClick={() => markAsRead(activeArticleId)}
+                        className={`inline-flex items-center justify-center px-5 py-2.5 min-h-[44px] rounded-full text-xs font-bold transition-all active:scale-95 ${
+                          read
+                            ? 'bg-stone-200 text-stone-700 hover:bg-stone-300 shadow-none'
+                            : 'bg-[#aa294d] text-white shadow-[0_4px_12px_rgba(170,41,77,0.25)] hover:bg-[#cb4364]'
+                        }`}
                       >
-                        Baca Selengkapnya
+                        {read ? 'Baca Lagi' : 'Baca Selengkapnya'}
                       </Link>
                       <button
                         type='button'

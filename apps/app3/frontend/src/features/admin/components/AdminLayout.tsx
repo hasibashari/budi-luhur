@@ -7,7 +7,7 @@ import MobileTopBar from '@/src/shared/components/MobileTopBar';
 export default function AdminLayout() {
   const adminBadge = (
     <span className='px-2.5 py-0.5 rounded-full bg-[#ffd9de] text-[#8c0f39] text-[10px] font-extrabold shadow-2xs uppercase tracking-wider border border-[#ffd9de]/80'>
-      PETUGAS FASKES
+      ADMIN
     </span>
   );
 

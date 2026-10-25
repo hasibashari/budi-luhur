@@ -58,8 +58,11 @@ export async function toggleArticleBookmarkAction(
   articleId: string,
 ): Promise<{ success: boolean; isBookmarked: boolean }> {
   try {
-    const response = await apiClient.post<{ bookmarked: boolean }>(`/articles/${articleId}/bookmark`);
-    return { success: true, isBookmarked: response.data.bookmarked };
+    const response = await apiClient.post<{ isBookmarked?: boolean; bookmarked?: boolean }>(
+      `/articles/${articleId}/bookmark`,
+    );
+    const isBookmarked = response.data?.isBookmarked ?? response.data?.bookmarked ?? false;
+    return { success: true, isBookmarked: Boolean(isBookmarked) };
   } catch (err: any) {
     return { success: false, isBookmarked: false };
   }

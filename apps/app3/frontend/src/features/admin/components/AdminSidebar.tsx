@@ -32,7 +32,7 @@ export default function AdminSidebar({ mobileOpen = false, onMobileClose }: Admi
 
   const adminBadge = (
     <span className='px-2 py-0.5 rounded-full bg-[#ffd9de] text-[#8c0f39] text-[10px] font-extrabold uppercase tracking-wider border border-[#ffd9de] shadow-2xs'>
-      PETUGAS FASKES
+      ADMIN
     </span>
   );
 

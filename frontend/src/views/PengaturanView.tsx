@@ -26,7 +26,11 @@ export const PengaturanView: React.FC<PengaturanViewProps> = ({ onNavigate }) =>
       <section className='p-5 rounded-2xl bg-gradient-to-br from-[#004B87] to-[#005EB8] text-white shadow-md space-y-3.5'>
         <div className='flex items-center gap-3'>
           <div className='w-10 h-10 rounded-xl bg-white p-1 flex items-center justify-center shrink-0 shadow-xs'>
-            <img src='/images/sibiru.png' alt='Logo SIBIRU' className='w-full h-full object-contain' />
+            <img
+              src='/images/sibiru.png'
+              alt='Logo SIBIRU'
+              className='w-full h-full object-contain'
+            />
           </div>
           <div>
             <h4 className='text-sm font-bold text-white leading-tight'>Aplikasi SIBIRU</h4>
@@ -35,15 +39,17 @@ export const PengaturanView: React.FC<PengaturanViewProps> = ({ onNavigate }) =>
         </div>
 
         <span className='inline-block text-[10px] uppercase font-bold tracking-wider text-[#fdc800] bg-white/10 px-2 py-0.5 rounded-md'>
-          Visi Institusi 2040
+          SIBIRU
         </span>
         <h3 className='text-base sm:text-lg font-bold leading-snug'>
-          "Menjadi Perguruan Tinggi yang Religius, Berbudi Luhur, dan Unggul di Tingkat
-          Internasional Tahun 2040."
+          "Aplikasi SIBIRU Kesehatan Kebidanan Sepanjang Siklus Hidup Perempuan"
         </h3>
         <p className='text-xs text-sky-100/90 leading-relaxed'>
-          STIKes Budi Luhur Cimahi di bawah naungan Yayasan Pambudhi Luhur 1976 menyelenggarakan
-          pendidikan tenaga kesehatan profesional dan berdaya saing global.
+          SIBIRU merupakan platform kesehatan kebidanan berbasis digital yang dirancang untuk
+          mendukung kesehatan perempuan sepanjang siklus hidupnya. SIBIRU menaungi tiga aplikasi
+          yang berfokus pada kesehatan remaja putri, calon pengantin, dan ibu rumah tangga, dengan
+          fitur edukasi, pengingat, pencatatan kesehatan, konsultasi, serta layanan pendukung
+          lainnya sesuai kebutuhan pada setiap tahap kehidupan perempuan.
         </p>
       </section>
 
@@ -74,7 +80,7 @@ export const PengaturanView: React.FC<PengaturanViewProps> = ({ onNavigate }) =>
           </div>
 
           <div className='p-3.5 rounded-xl bg-gray-50 border border-gray-200 space-y-1.5'>
-            <span className='font-bold text-gray-800 block'>PRELUNA</span>
+            <span className='font-bold text-gray-800 block'>TEMANI</span>
             <div className='flex items-center gap-1.5 text-gray-600'>
               <Database className='w-3.5 h-3.5 text-blue-600' />
               <span>fe_tablet_app3</span>

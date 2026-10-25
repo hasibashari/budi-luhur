@@ -2,24 +2,26 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Article } from '../types';
 import {
-  getArticleByIdAction,
-  getRelatedArticlesAction,
+  getArticleDetailAction,
   toggleArticleBookmarkAction,
-  isArticleBookmarkedAction,
 } from '../api/educationRepository';
+import { DEFAULT_CATEGORY_IMAGES, normalizeArticleCategory } from '../constants/education.constants';
 import { useAuth } from '@/src/features/auth/context/AuthContext';
 import { MarkdownRenderer } from '@/src/shared/components/markdown';
+import { useReadArticles, markArticleAsRead } from '../utils/readArticles';
 import {
   ArrowLeft,
   Clock,
   Share2,
   Bookmark,
   BookmarkCheck,
+  Check,
   CheckCircle2,
   ShieldCheck,
   CalendarClock,
   ArrowRight,
   Building2,
+  BookOpen,
 } from 'lucide-react';
 
 interface ArticleDetailViewProps {
@@ -43,6 +45,7 @@ export default function ArticleDetailView({
 
   const { user } = useAuth();
   const userId = user?.id || '';
+  const { isRead, markAsRead } = useReadArticles();
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
@@ -58,25 +61,26 @@ export default function ArticleDetailView({
     const fetchData = async () => {
       setLoading(true);
       try {
-        const [data, related] = await Promise.all([
-          getArticleByIdAction(articleId),
-          getRelatedArticlesAction(articleId),
-        ]);
-
+        const detail = await getArticleDetailAction(articleId, userId);
         if (isMounted) {
-          setArticle(data);
-          setRelatedArticles(related || []);
-          if (data) {
-            const bookmarkStatus = await isArticleBookmarkedAction(userId, data.id);
-            if (isMounted) {
-              setBookmarked(bookmarkStatus);
-            }
+          if (detail?.article) {
+            setArticle(detail.article);
+            setRelatedArticles(detail.relatedArticles || []);
+            setBookmarked(Boolean(detail.isBookmarked));
+            // Tandai artikel ini sebagai sudah dibaca
+            markArticleAsRead(detail.article.id || articleId);
+          } else {
+            setArticle(null);
+            setRelatedArticles([]);
           }
           setLoading(false);
         }
       } catch (err) {
         console.error('Error fetching article detail:', err);
-        if (isMounted) setLoading(false);
+        if (isMounted) {
+          setArticle(null);
+          setLoading(false);
+        }
       }
     };
     fetchData();
@@ -132,17 +136,53 @@ export default function ArticleDetailView({
     const newStatus = !bookmarked;
     setBookmarked(newStatus);
     showToast(newStatus ? 'Artikel disimpan ke daftar bacaan!' : 'Artikel dihapus dari simpanan');
-    await toggleArticleBookmarkAction(userId, article.id);
+    const res = await toggleArticleBookmarkAction(userId, article.id);
+    if (res.success) {
+      setBookmarked(res.isBookmarked);
+    }
   };
 
   const title = article?.title || 'Mengenal Imunisasi TT untuk Catin Wanita';
   const readTime = article?.readTime || '4 Menit Baca';
+  const category = normalizeArticleCategory(article?.category || 'Imunisasi TT');
+
+  // Fallback featured image
+  const featuredImage =
+    article?.imageUrl && article.imageUrl.trim() !== ''
+      ? article.imageUrl
+      : DEFAULT_CATEGORY_IMAGES[category] || DEFAULT_CATEGORY_IMAGES.default;
+
+  // Determine Markdown Content vs Sections:
+  // Admin stores full markdown text in content or leadParagraph.
+  const rawBodyContent = article?.content || article?.leadParagraph || '';
+  const isMarkdownArticle =
+    rawBodyContent.includes('#') ||
+    rawBodyContent.includes('**') ||
+    rawBodyContent.includes('\n\n') ||
+    rawBodyContent.length > 80;
+
+  // Clean Summary: ensure it doesn't leak raw markdown titles
+  const summaryText =
+    article?.summary && !article.summary.startsWith('#')
+      ? article.summary
+      : article?.leadParagraph && !article.leadParagraph.startsWith('#')
+        ? article.leadParagraph
+        : 'Panduan kesehatan pranikah resmi Kementerian Kesehatan RI untuk calon pengantin.';
+
+  // Check if sections are custom structured (not just the automated split duplicate)
+  const hasCustomSections =
+    Boolean(article?.sections && article.sections.length > 0) &&
+    !(
+      article?.sections?.length === 1 &&
+      article.sections[0].heading === 'Pembahasan Edukasi' &&
+      isMarkdownArticle
+    );
 
   return (
-    <div className='flex flex-col w-full max-w-3xl mx-auto pb-12 sm:pb-16'>
+    <div className='flex flex-col w-full max-w-3xl mx-auto pb-12 sm:pb-16 text-[#121c2a]'>
       {/* Toast Feedback - Mobile Thumb-Zone Friendly */}
       {toastMessage && (
-        <div className='fixed bottom-[calc(5.5rem+env(safe-area-inset-bottom,0px))] sm:bottom-auto sm:top-20 left-4 right-4 sm:left-auto sm:right-6 z-50 max-w-sm mx-auto sm:mx-0 bg-[#121c2a] text-white px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-2.5 text-xs font-semibold animate-fade-in border border-white/10'>
+        <div className='fixed bottom-[calc(5.5rem+env(safe-area-inset-bottom,0px))] sm:bottom-auto sm:top-20 left-4 right-4 sm:left-auto sm:right-6 z-[70] max-w-sm mx-auto sm:mx-0 bg-[#121c2a] text-white px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-2.5 text-xs font-semibold animate-fade-in border border-white/10'>
           <CheckCircle2 size={16} className='text-[#aff1d0] shrink-0' />
           <span className='flex-1'>{toastMessage}</span>
         </div>
@@ -188,7 +228,7 @@ export default function ArticleDetailView({
         </div>
       </div>
 
-      {/* Reading Progress Indicator (Stitch Screen 4) */}
+      {/* Reading Progress Indicator */}
       <div className='w-full bg-[#eff4ff] rounded-full h-1 mb-4 overflow-hidden'>
         <div
           className='bg-[#aa294d] h-full transition-all duration-300 rounded-full'
@@ -197,79 +237,96 @@ export default function ArticleDetailView({
       </div>
 
       {loading ? (
-        <div className='flex items-center justify-center py-24 w-full'>
-          <div className='animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#aa294d]' />
+        <div className='flex flex-col items-center justify-center py-24 w-full gap-3'>
+          <div className='animate-spin rounded-full h-9 w-9 border-t-2 border-b-2 border-[#aa294d]' />
+          <p className='text-xs text-[#8b7074]'>Memuat materi edukasi...</p>
+        </div>
+      ) : !article ? (
+        <div className='flex flex-col items-center justify-center py-20 px-4 text-center bg-white rounded-3xl border border-[#eff4ff] shadow-xs'>
+          <div className='w-14 h-14 rounded-full bg-[#ffd9de] flex items-center justify-center text-[#aa294d] mb-4'>
+            <BookOpen size={24} />
+          </div>
+          <h2 className='text-lg font-bold text-[#121c2a]'>Artikel Tidak Ditemukan</h2>
+          <p className='text-xs text-[#574144] mt-1.5 max-w-sm leading-relaxed'>
+            Artikel yang kamu cari mungkin telah dipindahkan atau belum dipublikasikan oleh faskes.
+          </p>
+          <button
+            type='button'
+            onClick={() => navigate(backHref)}
+            className='mt-5 inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#aa294d] text-white text-xs font-bold shadow-xs hover:bg-[#8c0f39] active:scale-95 transition-all cursor-pointer'
+          >
+            <ArrowLeft size={16} />
+            Kembali ke Halaman Edukasi
+          </button>
         </div>
       ) : (
         <>
-          {/* Hero Editorial Banner (Stitch Screen 4) */}
-          <div className='relative w-full rounded-2xl overflow-hidden bg-linear-to-br from-[#ffd9de] via-[#eff4ff] to-[#aff1d0]/40 p-4 sm:p-5 shadow-xs mb-5 border border-[#ffd9de]/60'>
-            <div className='flex items-center justify-between gap-3'>
-              <div className='flex-1 pr-1'>
-                <span className='inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/80 text-[#aa294d] text-[11px] font-bold backdrop-blur-xs mb-2 shadow-2xs'>
+          {/* Editorial Article Header Card */}
+          <div className='relative w-full rounded-2xl sm:rounded-3xl overflow-hidden bg-linear-to-br from-[#ffd9de]/80 via-[#eff4ff] to-[#aff1d0]/30 p-5 sm:p-6 shadow-xs mb-5 border border-[#ffd9de]/60'>
+            <div className='flex flex-col gap-2.5'>
+              <div className='flex items-center gap-2 flex-wrap'>
+                <span className='inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/90 text-[#aa294d] text-xs font-bold backdrop-blur-xs shadow-2xs'>
                   <CheckCircle2 size={13} className='text-[#2a6950]' />
-                  {article?.category || 'Edukasi Resmi Catin'}
+                  {category}
                 </span>
-                <h2 className='text-base sm:text-xl font-bold text-[#121c2a] leading-snug'>
-                  {title}
-                </h2>
+                <span className='inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/70 text-[#574144] text-[11px] font-semibold'>
+                  <Clock size={12} />
+                  {readTime}
+                </span>
               </div>
 
-              {/* Illustrated Hero Avatar Badge (Stitch Screen 4) */}
-              <div className='relative w-22 h-22 sm:w-24 sm:h-24 shrink-0 rounded-2xl overflow-hidden shadow-md bg-white border border-[#ffd9de]'>
-                <img
-                  src={
-                    article?.imageUrl ||
-                    'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&auto=format&fit=crop&q=80'
-                  }
-                  alt={title}
-                  className='w-full h-full object-cover'
-                />
-                <div className='absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-[#2a6950] text-white flex items-center justify-center shadow-xs'>
-                  <ShieldCheck size={16} />
+              <h2 className='text-lg sm:text-2xl font-black text-[#121c2a] leading-snug tracking-tight'>
+                {title}
+              </h2>
+
+              {/* Author & Publishing Metadata */}
+              <div className='flex items-center gap-3 pt-2 mt-1 border-t border-black/5'>
+                <div className='w-9 h-9 rounded-full bg-[#aff1d0] text-[#0a5139] flex items-center justify-center shadow-2xs shrink-0'>
+                  <Building2 size={18} />
+                </div>
+                <div className='flex flex-col min-w-0'>
+                  <span className='text-xs font-bold text-[#121c2a] truncate'>
+                    {article?.author?.name || 'Tim Medis Faskes / Kemenkes RI'}
+                  </span>
+                  <span className='text-[11px] text-[#574144] truncate'>
+                    {article?.author?.role || 'Puskesmas Mitra Pranikah Kemenkes RI'}
+                    {article?.publishedAt ? ` • ${article.publishedAt}` : ''}
+                  </span>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Author Metadata & Reading Tags (Stitch Screen 4) */}
-          <div className='flex items-center justify-between py-2 px-1 mb-4'>
-            <div className='flex items-center gap-2.5'>
-              <div className='w-9 h-9 rounded-full bg-[#aff1d0] text-[#0a5139] flex items-center justify-center shadow-2xs'>
-                <Building2 size={18} />
+          {/* Featured Hero Banner Image */}
+          <div className='relative w-full h-48 sm:h-72 rounded-2xl sm:rounded-3xl overflow-hidden shadow-sm border border-[#ffd9de]/50 mb-5 bg-stone-100'>
+            <img
+              src={featuredImage}
+              alt={title}
+              className='w-full h-full object-cover'
+            />
+            {article?.imageCaption && (
+              <div className='absolute bottom-0 inset-x-0 bg-linear-to-t from-black/70 via-black/30 to-transparent p-3 text-white text-[11px] sm:text-xs'>
+                {article.imageCaption}
               </div>
-              <div className='flex flex-col'>
-                <span className='text-xs font-bold text-[#121c2a]'>
-                  {article?.author?.name || 'dr. Sarah Jenkins, Sp.GK & Tim Medis'}
-                </span>
-                <span className='text-[11px] text-[#574144]'>
-                  {article?.author?.role || 'Puskesmas Mitra Pranikah Kemenkes RI'}
-                </span>
-              </div>
-            </div>
-
-            <div className='flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#eff4ff] text-[#574144] text-[11px] font-semibold'>
-              <Clock size={13} />
-              <span>{readTime}</span>
-            </div>
+            )}
           </div>
 
-          {/* Lead Paragraph / Summary Card (Stitch Screen 4) */}
-          <div className='bg-white rounded-2xl p-4 sm:p-5 shadow-xs border border-[#eff4ff] mb-5'>
-            <div className='flex items-center gap-2 mb-2 text-[#aa294d]'>
-              <ShieldCheck size={18} />
-              <span className='text-xs font-bold tracking-wider uppercase'>Panduan Klinis</span>
+          {/* Clinical Summary / Intisari Artikel */}
+          {summaryText && (
+            <div className='bg-linear-to-br from-[#eff4ff] to-[#ffd9de]/30 rounded-2xl p-4 sm:p-5 shadow-xs border border-[#eff4ff] mb-5'>
+              <div className='flex items-center gap-2 mb-2 text-[#aa294d]'>
+                <ShieldCheck size={18} />
+                <span className='text-xs font-bold tracking-wider uppercase'>Intisari Panduan Klinis</span>
+              </div>
+              <p className='text-xs sm:text-sm text-[#121c2a] leading-relaxed font-medium'>
+                {summaryText}
+              </p>
             </div>
-            <p className='text-xs sm:text-sm text-[#121c2a] leading-relaxed'>
-              {article?.leadParagraph ||
-                article?.summary ||
-                'Imunisasi Tetanus Toxoid (TT) adalah vaksinasi penting yang direkomendasikan bagi setiap calon pengantin wanita untuk mencegah infeksi tetanus yang berbahaya bagi ibu dan bayi, terutama pada saat proses persalinan dan pemotongan tali pusat.'}
-            </p>
-          </div>
+          )}
 
           {/* Key Takeaways Highlight Box if present */}
           {article?.keyTakeaways && article.keyTakeaways.length > 0 && (
-            <div className='bg-linear-to-br from-[#eff4ff] to-[#ffd9de]/30 rounded-2xl p-4 sm:p-5 border border-[#eff4ff] mb-5 shadow-xs'>
+            <div className='bg-white rounded-2xl p-4 sm:p-5 border border-[#eff4ff] mb-5 shadow-xs'>
               <div className='flex items-center gap-2 mb-2.5 text-[#aa294d]'>
                 <CheckCircle2 size={18} />
                 <span className='text-xs font-bold uppercase tracking-wider'>
@@ -290,10 +347,15 @@ export default function ArticleDetailView({
             </div>
           )}
 
-          {/* Dynamic Content Sections from Backend */}
-          {article?.sections && article.sections.length > 0 ? (
+          {/* Main Article Content - Rendered with Rich Markdown */}
+          {isMarkdownArticle ? (
+            <div className='bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-7 shadow-xs border border-[#eff4ff] mb-5 leading-relaxed'>
+              <MarkdownRenderer content={rawBodyContent} />
+            </div>
+          ) : hasCustomSections ? (
+            /* Structured Custom Sections if provided */
             <div className='flex flex-col gap-4 mb-5'>
-              {article.sections.map((sec, idx) => (
+              {article.sections!.map((sec, idx) => (
                 <div
                   key={idx}
                   className='bg-white rounded-2xl p-4 sm:p-5 shadow-xs border border-[#eff4ff] flex flex-col gap-2.5'
@@ -342,39 +404,22 @@ export default function ArticleDetailView({
                 </div>
               ))}
             </div>
-          ) : (
-            /* Tidak ada konten statis: isi artikel sepenuhnya berasal dari admin. */
-            <div className='rounded-2xl p-4 bg-white border border-dashed border-[#d9e3f6] text-center mb-5'>
-              <p className='text-xs font-semibold text-[#574144]'>
-                Artikel ini belum memiliki bagian isi tambahan dari pengelola.
-              </p>
-            </div>
-          )}
+          ) : null}
 
-          {/* Warm Clinical Infobox (Stitch Screen 4) */}
+          {/* Warm Clinical Infobox */}
           <div className='rounded-2xl p-4 bg-[#aff1d0]/30 border border-[#aff1d0]/50 shadow-xs flex items-start gap-3 mb-5'>
             <div className='w-9 h-9 shrink-0 rounded-full bg-[#2a6950] text-white flex items-center justify-center mt-0.5 shadow-2xs'>
               <CalendarClock size={18} />
             </div>
             <div className='flex flex-col'>
               <span className='text-xs font-bold text-[#0a5139] mb-1'>
-                Kapan Sebaiknya Menerimanya?
+                Kapan Sebaiknya Menerima Vaksin TT?
               </span>
               <p className='text-xs text-[#121c2a] leading-relaxed'>
-                Sebaiknya dilakukan <strong>minimal 1 bulan</strong> sebelum hari pernikahan atau
-                disesuaikan dengan riwayat imunisasi dasar di buku KIA/Puskesmas.
+                Sebaiknya dilakukan <strong>minimal 1 bulan</strong> sebelum hari pernikahan di Puskesmas atau faskes terdekat agar sertifikat imunisasi resmi siap digunakan untuk kelengkapan administrasi KUA.
               </p>
             </div>
           </div>
-
-          {/* Full Markdown Content if present */}
-          {article?.content &&
-            article.content !== article.summary &&
-            article.content !== article.leadParagraph && (
-              <div className='bg-white rounded-2xl p-4 sm:p-6 shadow-xs border border-[#eff4ff] mb-5'>
-                <MarkdownRenderer content={article.content} />
-              </div>
-            )}
 
           {/* Related Articles List */}
           {relatedArticles.length > 0 && (
@@ -390,41 +435,70 @@ export default function ArticleDetailView({
               </div>
 
               <div className='flex flex-col gap-2.5'>
-                {relatedArticles.map(rel => (
-                  <Link
-                    key={rel.id}
-                    to={`/user/education/${rel.id}`}
-                    className='flex items-center gap-3.5 p-3 rounded-2xl bg-white border border-[#eff4ff] hover:shadow-xs hover:border-[#ffd9de]/80 transition-all cursor-pointer group'
-                  >
-                    <div className='w-14 h-14 rounded-xl overflow-hidden shrink-0 bg-stone-100'>
-                      <img
-                        src={
-                          rel.imageUrl ||
-                          'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=400&auto=format&fit=crop&q=80'
-                        }
-                        alt={rel.title}
-                        className='w-full h-full object-cover group-hover:scale-105 transition-transform'
-                      />
-                    </div>
-                    <div className='flex-1 min-w-0'>
-                      <div className='flex items-center gap-2 mb-0.5'>
-                        <span className='text-[10px] font-bold text-[#aa294d] bg-[#ffd9de]/60 px-2 py-0.2 rounded-full'>
-                          {rel.category}
-                        </span>
-                        <span className='text-[10px] text-[#8b7074]'>{rel.readTime}</span>
+                {relatedArticles.map(rel => {
+                  const read = isRead(rel.id);
+                  return (
+                    <Link
+                      key={rel.id}
+                      to={`/user/education/${rel.id}`}
+                      onClick={() => markAsRead(rel.id)}
+                      className={`flex items-center gap-3.5 p-3 rounded-2xl border transition-all cursor-pointer group ${
+                        read
+                          ? 'bg-stone-50/80 border-stone-200/70 opacity-85 hover:opacity-100 hover:border-stone-300'
+                          : 'bg-white border-[#eff4ff] hover:shadow-xs hover:border-[#ffd9de]/80'
+                      }`}
+                    >
+                      <div className='w-14 h-14 rounded-xl overflow-hidden shrink-0 bg-stone-100'>
+                        <img
+                          src={
+                            rel.imageUrl && rel.imageUrl.trim() !== ''
+                              ? rel.imageUrl
+                              : DEFAULT_CATEGORY_IMAGES[rel.category] || DEFAULT_CATEGORY_IMAGES.default
+                          }
+                          alt={rel.title}
+                          className={`w-full h-full object-cover transition-transform group-hover:scale-105 ${
+                            read ? 'grayscale-[30%] group-hover:grayscale-0' : ''
+                          }`}
+                        />
                       </div>
-                      <h4 className='text-xs font-bold text-[#121c2a] group-hover:text-[#aa294d] transition-colors line-clamp-1'>
-                        {rel.title}
-                      </h4>
-                      <p className='text-[11px] text-[#574144] line-clamp-1 mt-0.5'>
-                        {rel.summary}
-                      </p>
-                    </div>
-                    <div className='text-[#8b7074] group-hover:text-[#aa294d] group-hover:translate-x-1 transition-all pr-1'>
-                      <ArrowRight size={16} />
-                    </div>
-                  </Link>
-                ))}
+                      <div className='flex-1 min-w-0'>
+                        <div className='flex items-center gap-2 mb-0.5 flex-wrap'>
+                          <span
+                            className={`text-[10px] font-bold px-2 py-0.2 rounded-full ${
+                              read
+                                ? 'bg-stone-200/70 text-stone-600'
+                                : 'bg-[#ffd9de]/60 text-[#aa294d]'
+                            }`}
+                          >
+                            {rel.category}
+                          </span>
+                          <span className='text-[10px] text-[#8b7074]'>{rel.readTime}</span>
+                          {read && (
+                            <span className='inline-flex items-center gap-1 text-[10px] text-stone-500 font-medium bg-stone-200/50 px-1.5 py-0.2 rounded-md'>
+                              <Check size={10} className='text-emerald-600' />
+                              Sudah dibaca
+                            </span>
+                          )}
+                        </div>
+                        <h4
+                          className={`text-xs transition-colors line-clamp-1 ${
+                            read
+                              ? 'font-medium text-stone-500 group-hover:text-stone-700'
+                              : 'font-bold text-[#121c2a] group-hover:text-[#aa294d]'
+                          }`}
+                        >
+                          {rel.title}
+                        </h4>
+                        <p className={`text-[11px] line-clamp-1 mt-0.5 ${read ? 'text-stone-400' : 'text-[#574144]'}`}>
+                          {rel.summary}
+                        </p>
+                      </div>
+                      <div className='text-[#8b7074] group-hover:text-[#aa294d] group-hover:translate-x-1 transition-all pr-1'>
+                        <ArrowRight size={16} />
+                      </div>
+                    </Link>
+                  );
+                })}
               </div>
             </div>
           )}
