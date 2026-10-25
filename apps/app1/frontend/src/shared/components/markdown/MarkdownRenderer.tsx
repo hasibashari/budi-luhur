@@ -228,12 +228,14 @@ function renderInlineMarkdown(text: string): React.ReactNode {
     } else if (token.startsWith('[') && token.includes('](')) {
       const linkMatch = token.match(/\[([^\]]+)\]\(([^)]+)\)/);
       if (linkMatch) {
+        const url = linkMatch[2];
+        const isInternal = url.startsWith('/');
         parts.push(
           <a
             key={match.index}
-            href={linkMatch[2]}
-            target='_blank'
-            rel='noopener noreferrer'
+            href={url}
+            target={isInternal ? undefined : '_blank'}
+            rel={isInternal ? undefined : 'noopener noreferrer'}
             className='text-[#e11d48] underline font-semibold hover:text-[#be123c]'
           >
             {linkMatch[1]}

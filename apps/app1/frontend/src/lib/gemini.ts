@@ -1,8 +1,16 @@
 import apiClient from '@/src/shared/api/client';
 
+export interface ArticleReference {
+  id: string;
+  title: string;
+  category: string;
+}
+
 export interface AskGeminiResult {
   success: boolean;
   answer: string;
+  errorType?: 'QUOTA_EXCEEDED' | 'NETWORK_ERROR' | 'SERVER_ERROR' | 'CONFIG_ERROR';
+  references?: ArticleReference[];
 }
 
 export async function askGeminiConsultationAction(
@@ -11,21 +19,31 @@ export async function askGeminiConsultationAction(
   userContext?: any,
 ): Promise<AskGeminiResult> {
   try {
-    const response = await apiClient.post<{ answer: string }>('/consultation/ask', {
+    const response = await apiClient.post<AskGeminiResult>('/consultation/ask', {
       prompt,
       history,
       userContext,
     });
-    return {
-      success: true,
-      answer: response.data.answer,
-    };
+    return response.data;
   } catch (error: any) {
     console.error('Gemini Consultation Error:', error);
+    const data = error.response?.data;
+    if (data && data.answer) {
+      return {
+        success: Boolean(data.success),
+        answer: data.answer,
+        errorType: data.errorType || 'SERVER_ERROR',
+        references: data.references || [],
+      };
+    }
+
+    const isNetwork = !error.response || error.code === 'ERR_NETWORK' || error.message?.includes('Network Error');
     return {
       success: false,
-      answer:
-        'Halo siswi hebat! Saat ini layanan asisten kesehatan sedang sibuk. Pastikan kamu tetap mengonsumsi Tablet Tambah Darah (TTD) sesuai jadwal dan istirahat yang cukup ya! 🌸',
+      errorType: isNetwork ? 'NETWORK_ERROR' : 'SERVER_ERROR',
+      answer: isNetwork
+        ? 'Koneksi ke asisten TTD mengalami gangguan jaringan. Silakan periksa koneksi internet Anda dan coba kembali nanti. Anda tetap dapat membaca artikel dan informasi Tablet Tambah Darah yang tersedia di aplikasi.'
+        : 'Asisten TTD sedang tidak tersedia untuk sementara karena batas penggunaan telah tercapai. Silakan coba kembali nanti. Anda tetap dapat membaca artikel dan informasi Tablet Tambah Darah yang tersedia di aplikasi.',
     };
   }
 }

@@ -1,7 +1,6 @@
 import { Response } from 'express';
 import { ConsultationService } from './consultation.service.js';
 import { AuthRequest } from '../../middlewares/auth.middleware.js';
-import { UserService } from '../users/user.service.js';
 
 export class ConsultationController {
   static async askQuestion(req: AuthRequest, res: Response) {
@@ -12,17 +11,11 @@ export class ConsultationController {
         return;
       }
 
+      // Privacy-first: only send the first name of user to AI assistant, avoiding sensitive PII (Hb level, school, etc.)
       let userContext;
-      if (req.user?.id) {
-        const profile = await UserService.getProfile(req.user.id);
-        if (profile) {
-          userContext = {
-            name: profile.name,
-            schoolOrOrg: profile.schoolOrOrg,
-            hbLevel: profile.hbLevel,
-            gender: profile.gender,
-          };
-        }
+      if (req.user?.name) {
+        const firstName = req.user.name.trim().split(/\s+/)[0];
+        userContext = { name: firstName };
       }
 
       const result = await ConsultationService.askQuestion(prompt, history || [], userContext);
@@ -31,8 +24,9 @@ export class ConsultationController {
       console.error('ConsultationController.askQuestion error:', error);
       res.status(500).json({
         success: false,
-        answer: 'Terjadi kendala pada layanan konsultasi. Silakan coba kembali nanti.',
-        error: error.message,
+        errorType: 'SERVER_ERROR',
+        answer: 'Terjadi kendala pada server layanan asisten TTD. Silakan coba kembali beberapa saat lagi.',
+        error: 'SERVER_ERROR',
       });
     }
   }

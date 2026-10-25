@@ -17,7 +17,7 @@ export const CONSULTATION_TOPICS: ConsultationTopic[] = [
     category: 'Efek Samping',
     prompt: 'Bagaimana cara mengatasi rasa mual atau begah di perut setelah minum TTD?',
     initialAnswer:
-      'Rasa mual ringan adalah reaksi adaptasi normal tubuh terhadap zat besi. Untuk mengatasinya: 1) Minum TTD tepat setelah makan malam atau sebelum tidur, 2) Jangan minum saat perut kosong, 3) Minum bersama segelas air putih hangat.',
+      'Rasa mual ringan adalah reaksi adaptasi normal tubuh terhadap zat besi. Untuk mengatasinya: 1) Minum TTD tepat setelah makan malam atau sebelum tidur, 2) Jangan minum saat perut kosong, 3) Minum bersama segelas air putih atau jus jeruk kaya vitamin C.',
   },
   {
     id: 'top_3',
@@ -26,7 +26,7 @@ export const CONSULTATION_TOPICS: ConsultationTopic[] = [
     category: 'Pantangan',
     prompt: 'Mengapa kita tidak boleh minum TTD bersamaan dengan teh atau kopi?',
     initialAnswer:
-      'Teh dan kopi mengandung senyawa tanin dan polifenol yang dapat mengikat zat besi sebelum sempat diserap oleh usus, sehingga efektivitas TTD bisa turun lebih dari 50%. Beri jeda minimal 2 jam jika ingin menikmati teh/kopi.',
+      'Teh dan kopi mengandung senyawa tanin dan polifenol yang dapat mengikat zat besi sebelum sempat diserap oleh usus, sehingga efektivitas TTD bisa turun lebih dari 50%. Beri jeda minimal 2 jam jika ingin menikmati teh atau kopi.',
   },
   {
     id: 'top_4',
@@ -35,7 +35,7 @@ export const CONSULTATION_TOPICS: ConsultationTopic[] = [
     category: 'Kadar Hb',
     prompt: 'Berapa angka kadar hemoglobin (Hb) yang normal untuk remaja putri?',
     initialAnswer:
-      'Kadar hemoglobin (Hb) normal untuk remaja putri usia 12-18 tahun adalah minimal 12.0 g/dL. Jika hasil pemeriksaan menunjukkan di bawah 12.0 g/dL, seseorang dikategorikan mengalami anemia dan disarankan konsumsi TTD sesuai anjuran tenaga medis.',
+      'Kadar hemoglobin (Hb) normal untuk remaja putri usia 12-18 tahun adalah minimal 12.0 g/dL. Jika hasil pemeriksaan menunjukkan di bawah 12.0 g/dL, seseorang dikategorikan mengalami anemia dan disarankan konsumsi TTD teratur serta konsultasi ke UKS atau Puskesmas.',
   },
 ];
 
@@ -48,7 +48,7 @@ export const getInitialChatMessages = (userName?: string): ChatMessage[] => {
     {
       id: 'msg_1',
       sender: 'assistant',
-      text: `Halo ${displayName}! 🌸 Saya Asisten Pintar FEMORY. Ada yang ingin kamu tanyakan seputar jadwal minum TTD, tips cegah mual, atau panduan anemia?`,
+      text: `Halo ${displayName}! 🌸 Saya Asisten TTD FEMORY siap membantu pertanyaan seputar Tablet Tambah Darah (TTD), aturan konsumsi, tips mengatasi mual, dan nutrisi pencegah anemia.\n\n> 💡 **Penting:** AI dapat memberikan informasi yang kurang tepat. Informasi ini bukan pengganti konsultasi dengan dokter, bidan, atau tenaga kesehatan profesional.`,
       timestamp,
     },
   ];

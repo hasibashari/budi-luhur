@@ -1,3 +1,9 @@
+export interface ArticleReference {
+  id: string;
+  title: string;
+  category: string;
+}
+
 export interface ConsultationTopic {
   id: string;
   icon: string;
@@ -12,4 +18,7 @@ export interface ChatMessage {
   sender: 'user' | 'assistant';
   text: string;
   timestamp: string;
+  errorType?: 'QUOTA_EXCEEDED' | 'NETWORK_ERROR' | 'SERVER_ERROR' | 'CONFIG_ERROR';
+  isError?: boolean;
+  references?: ArticleReference[];
 }

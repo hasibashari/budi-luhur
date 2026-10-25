@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import {
   Bot,
   Send,
@@ -8,6 +9,9 @@ import {
   User,
   Info,
   ChevronRight,
+  BookOpen,
+  AlertTriangle,
+  ShieldAlert,
 } from 'lucide-react';
 import { Card } from '@/src/shared/components/ui/Card';
 import { useAuth } from '@/src/features/auth';
@@ -57,29 +61,21 @@ export default function ConsultationView() {
     setIsTyping(true);
 
     try {
-      // Call Real Gemini API Server Action with User Context
+      // Call Real Gemini API Server Action with sanitized user context
       const res = await askGeminiConsultationAction(
         text,
         updatedHistory.map(m => ({ sender: m.sender, text: m.text })),
-        {
-          name: user?.name,
-          schoolOrOrg: user?.schoolOrOrg,
-          hbLevel: user?.hbLevel,
-          gender: user?.gender,
-        },
+        { name: user?.name },
       );
 
-      const displayName = user?.name?.trim() ? user.name.trim().split(' ')[0] : 'Sahabat FEMORY';
-      const answer =
-        res.success && res.answer
-          ? res.answer
-          : `Halo ${displayName}! Terima kasih atas pertanyaannya. Minum Tablet Tambah Darah secara rutin sangat penting untuk mencegah anemia. Pastikan diminum setelah makan dengan air putih atau jus buah ya! 🌸`;
-
       const assistantMsg: ChatMessage = {
-        id: createMsgId('ai'),
+        id: createMsgId(res.success ? 'ai' : 'ai_warn'),
         sender: 'assistant',
-        text: answer,
+        text: res.answer,
         timestamp: getFormattedTimestamp(),
+        errorType: res.errorType,
+        isError: !res.success,
+        references: res.references,
       };
 
       setMessages(prev => [...prev, assistantMsg]);
@@ -88,8 +84,10 @@ export default function ConsultationView() {
       const errorMsg: ChatMessage = {
         id: createMsgId('ai_err'),
         sender: 'assistant',
-        text: 'Mohon maaf, terjadi gangguan koneksi ke asisten AI. Silakan tanyakan kembali sesaat lagi.',
+        text: 'Asisten TTD sedang tidak tersedia untuk sementara karena batas penggunaan telah tercapai atau kendala jaringan. Silakan coba kembali nanti. Anda tetap dapat membaca artikel dan informasi Tablet Tambah Darah yang tersedia di aplikasi.',
         timestamp: getFormattedTimestamp(),
+        isError: true,
+        errorType: 'SERVER_ERROR',
       };
       setMessages(prev => [...prev, errorMsg]);
     } finally {
@@ -111,11 +109,11 @@ export default function ConsultationView() {
       <div className='shrink-0 flex items-center justify-between gap-2 pb-0.5'>
         <div>
           <h2 className='text-base sm:text-xl md:text-2xl font-extrabold text-[#1e293b] tracking-tight flex items-center gap-1.5'>
-            <span>Konsultasi AI</span>
+            <span>Konsultasi AI TTD</span>
             <span className='text-sm sm:text-base'>🌸</span>
           </h2>
           <p className='text-[11px] sm:text-xs text-[#64748b] leading-none mt-0.5'>
-            Tanya jawab seputar TTD, nutrisi zat besi, & cegah anemia
+            Tanya jawab seputar Tablet Tambah Darah, nutrisi zat besi, & cegah anemia
           </p>
         </div>
 
@@ -141,13 +139,12 @@ export default function ConsultationView() {
                 <Bot size={20} />
               </div>
               <div>
-                <h4 className='text-xs font-bold text-[#1e293b]'>Asisten Pintar Fe</h4>
-                <span className='text-[10px] text-[#059669] font-semibold'>● Online 24/7</span>
+                <h4 className='text-xs font-bold text-[#1e293b]'>Asisten Cerdas TTD</h4>
+                <span className='text-[10px] text-[#059669] font-semibold'>● Terhubung Database Edukasi</span>
               </div>
             </div>
             <p className='text-xs text-[#475569] leading-relaxed'>
-              Siap memberikan penjelasan medis edukatif seputar efek samping, cara minum, dan
-              nutrisi penambah darah.
+              Siap memberikan edukasi resmi seputar cara minum TTD, tips adaptasi efek samping mual, dan nutrisi penambah zat besi.
             </p>
           </Card>
 
@@ -158,7 +155,7 @@ export default function ConsultationView() {
             <div>
               <h4 className='text-xs font-bold text-[#1e293b] mb-2.5 flex items-center gap-1.5'>
                 <Sparkles size={13} className='text-[#e11d48]' />
-                <span>Pertanyaan Populer:</span>
+                <span>Pertanyaan Populer TTD:</span>
               </h4>
 
               <div className='space-y-2'>
@@ -185,7 +182,7 @@ export default function ConsultationView() {
             <div className='mt-3 pt-2.5 border-t border-[#fce7f3] flex items-start gap-1.5 text-[10px] text-[#64748b] shrink-0'>
               <Info size={13} className='text-rose-500 shrink-0 mt-0.5' />
               <span>
-                Diselaraskan dengan pedoman Kemenkes RI untuk suplementasi TTD remaja putri.
+                Diselaraskan dengan pedoman Kemenkes RI & artikel resmi FEMORY untuk suplementasi remaja putri.
               </span>
             </div>
           </Card>
@@ -210,12 +207,30 @@ export default function ConsultationView() {
 
           <Card
             padding='none'
-            className='flex-1 min-h-0 flex flex-col overflow-hidden bg-[#fffdfd] shadow-sm border border-[#fce7f3] p-3 sm:p-4 rounded-2xl'
+            className='flex-1 min-h-0 flex flex-col overflow-hidden bg-[#fffdfd] shadow-sm border border-[#fce7f3] p-2.5 sm:p-4 rounded-2xl'
           >
-            {/* Scrollable Message List (Fills full height!) */}
+            {/* Top Non-intrusive Medical Disclaimer Banner */}
+            <div className='shrink-0 mb-2 p-2 sm:px-3 sm:py-2 bg-gradient-to-r from-rose-50 to-pink-50/60 border border-rose-200/80 rounded-xl flex items-center justify-between gap-2 text-[11px] text-rose-900 shadow-2xs'>
+              <div className='flex items-center gap-2'>
+                <ShieldAlert size={14} className='text-rose-600 shrink-0' />
+                <span className='leading-tight font-medium line-clamp-1 sm:line-clamp-none'>
+                  AI dapat memberikan informasi yang kurang tepat. Bukan pengganti konsultasi tenaga kesehatan.
+                </span>
+              </div>
+              <Link
+                to='/user/education'
+                className='text-[10px] sm:text-[11px] font-semibold text-rose-700 hover:text-rose-900 underline shrink-0 whitespace-nowrap inline-flex items-center gap-0.5'
+              >
+                <span>Baca Artikel</span>
+                <ChevronRight size={11} />
+              </Link>
+            </div>
+
+            {/* Scrollable Message List */}
             <div className='flex-1 min-h-0 overflow-y-auto pr-1 sm:pr-2 space-y-3 pb-2 overscroll-contain'>
               {messages.map(msg => {
                 const isUser = msg.sender === 'user';
+                const hasError = Boolean(msg.isError);
 
                 return (
                   <div
@@ -227,11 +242,15 @@ export default function ConsultationView() {
                       className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center shrink-0 text-white ${
                         isUser
                           ? 'bg-rose-500'
-                          : 'bg-gradient-to-tr from-rose-600 to-rose-400 shadow-xs'
+                          : hasError
+                            ? 'bg-amber-500 shadow-xs'
+                            : 'bg-gradient-to-tr from-rose-600 to-rose-400 shadow-xs'
                       }`}
                     >
                       {isUser ? (
                         <User size={14} className='sm:w-4 sm:h-4' />
+                      ) : hasError ? (
+                        <AlertTriangle size={14} className='sm:w-4 sm:h-4' />
                       ) : (
                         <Bot size={14} className='sm:w-4 sm:h-4' />
                       )}
@@ -239,10 +258,12 @@ export default function ConsultationView() {
 
                     {/* Message Bubble */}
                     <div
-                      className={`max-w-[88%] sm:max-w-[80%] rounded-2xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm leading-relaxed shadow-2xs break-words ${
+                      className={`max-w-[90%] sm:max-w-[82%] rounded-2xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm leading-relaxed shadow-2xs break-words ${
                         isUser
                           ? 'bg-[#e11d48] text-white rounded-tr-none'
-                          : 'bg-white text-[#1e293b] border border-[#fce7f3] rounded-tl-none'
+                          : hasError
+                            ? 'bg-rose-50/90 text-[#1e293b] border border-rose-200 rounded-tl-none'
+                            : 'bg-white text-[#1e293b] border border-[#fce7f3] rounded-tl-none'
                       }`}
                     >
                       {isUser ? (
@@ -253,6 +274,50 @@ export default function ConsultationView() {
                           className='text-xs sm:text-sm [&_p]:text-xs [&_p]:sm:text-sm [&_p]:my-1.5 [&_ul]:my-1.5 [&_ol]:my-1.5 [&_ul]:pl-4 [&_ol]:pl-4 [&_li]:text-xs [&_li]:sm:text-sm [&_h1]:text-sm [&_h2]:text-xs [&_h3]:text-xs [&_h1]:font-bold [&_h2]:font-bold [&_h3]:font-bold [&_h1]:my-2 [&_h2]:my-1.5 [&_h3]:my-1.5 break-words overflow-hidden'
                         />
                       )}
+
+                      {/* Reference Badges if articles are cited or retrieved */}
+                      {!isUser && msg.references && msg.references.length > 0 && (
+                        <div className='mt-2.5 pt-2 border-t border-rose-100'>
+                          <div className='flex items-center gap-1.5 text-[11px] font-bold text-rose-900 mb-1.5'>
+                            <BookOpen size={12} className='text-rose-600' />
+                            <span>Rujukan Artikel Edukasi TTD:</span>
+                          </div>
+                          <div className='flex flex-wrap gap-1.5'>
+                            {msg.references.map(ref => (
+                              <Link
+                                key={ref.id}
+                                to={`/user/education/${ref.id}`}
+                                className='inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-white hover:bg-rose-100 text-rose-800 text-[11px] font-semibold border border-rose-200 transition-colors shadow-2xs group'
+                              >
+                                <span className='line-clamp-1 max-w-[200px]'>{ref.title}</span>
+                                <ChevronRight size={11} className='text-rose-500 group-hover:translate-x-0.5 transition-transform shrink-0' />
+                              </Link>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Error Banner with Direct Education Link */}
+                      {hasError && (
+                        <div className='mt-2.5 pt-2 border-t border-rose-200/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2'>
+                          <span className='text-[10px] text-rose-700 font-medium flex items-center gap-1'>
+                            <AlertTriangle size={12} className='text-rose-600 shrink-0' />
+                            <span>
+                              {msg.errorType === 'QUOTA_EXCEEDED'
+                                ? 'Batas kuota layanan tercapai'
+                                : 'Layanan asisten sementara tidak tersedia'}
+                            </span>
+                          </span>
+                          <Link
+                            to='/user/education'
+                            className='inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-semibold text-white bg-rose-600 hover:bg-rose-700 rounded-lg shadow-2xs transition-colors shrink-0'
+                          >
+                            <BookOpen size={11} />
+                            <span>Buka Artikel TTD</span>
+                          </Link>
+                        </div>
+                      )}
+
                       <span
                         className={`text-[10px] block mt-1.5 ${
                           isUser ? 'text-rose-100 text-right' : 'text-[#94a3b8]'
@@ -276,7 +341,7 @@ export default function ConsultationView() {
                     <span className='w-1.5 h-1.5 rounded-full bg-[#e11d48] animate-bounce delay-150' />
                     <span className='w-1.5 h-1.5 rounded-full bg-[#e11d48] animate-bounce delay-300' />
                     <span className='text-[11px] sm:text-xs font-medium ml-1'>
-                      Asisten sedang mengetik...
+                      Asisten sedang mencari artikel & menyusun jawaban...
                     </span>
                   </div>
                 </div>
@@ -296,10 +361,11 @@ export default function ConsultationView() {
               >
                 <input
                   type='text'
-                  placeholder='Ketik pertanyaan seputar Tablet Tambah Darah...'
+                  placeholder='Ketik pertanyaan seputar Tablet Tambah Darah (TTD)...'
                   value={inputText}
                   onChange={e => setInputText(e.target.value)}
-                  className='flex-1 bg-[#fff5f7] text-[#1e293b] placeholder-[#94a3b8] text-xs sm:text-sm rounded-full border border-[#fce7f3] focus:border-[#e11d48] px-4 py-2.5 sm:py-3 outline-none touch-manipulation'
+                  disabled={isTyping}
+                  className='flex-1 bg-[#fff5f7] text-[#1e293b] placeholder-[#94a3b8] text-xs sm:text-sm rounded-full border border-[#fce7f3] focus:border-[#e11d48] px-4 py-2.5 sm:py-3 outline-none touch-manipulation disabled:opacity-60'
                 />
 
                 <button
@@ -312,10 +378,12 @@ export default function ConsultationView() {
                 </button>
               </form>
 
-              {/* Integrated Compact Medical Disclaimer Footer */}
-              <div className='flex items-center justify-center gap-1 text-[10px] text-[#94a3b8] text-center pt-0.5'>
+              {/* Integrated Explicit Medical Disclaimer Footer */}
+              <div className='flex items-center justify-center gap-1.5 text-[10px] text-[#64748b] text-center pt-0.5 px-2'>
                 <AlertCircle size={11} className='text-[#e11d48] shrink-0' />
-                <span>Edukasi umum • Bukan pengganti diagnosa medis dokter</span>
+                <span>
+                  AI dapat memberikan informasi yang kurang tepat. Informasi ini bukan pengganti konsultasi dengan dokter, bidan, atau tenaga kesehatan profesional.
+                </span>
               </div>
             </div>
           </Card>
