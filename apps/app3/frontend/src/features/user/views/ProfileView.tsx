@@ -488,6 +488,7 @@ export default function ProfileView() {
         partnerName={partnerName}
         currentTTLevel={currentTTLevel}
         records={immunizationRecords}
+        catinId={catinId}
       />
 
       {/* E-Sertifikat dengan tanda tangan admin */}

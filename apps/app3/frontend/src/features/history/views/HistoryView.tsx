@@ -452,6 +452,7 @@ export default function HistoryView() {
         partnerName={partnerName}
         currentTTLevel={verifiedLevel}
         records={records.filter(record => record.verificationStatus === 'VERIFIED')}
+        catinId={dashboardData?.user.id}
       />
 
       {/* 1. Top Navigation & Action Bar */}

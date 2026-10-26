@@ -213,6 +213,7 @@ export default function DashboardView() {
         partnerName={partnerName}
         currentTTLevel={ttLevel}
         records={dashboardData?.immunizationRecords}
+        catinId={currentUser.id}
       />
 
       {/* Top Personal Greeting & Notification Bar (Screen 2 Stitch) */}
