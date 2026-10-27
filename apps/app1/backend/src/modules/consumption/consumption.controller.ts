@@ -15,7 +15,7 @@ export class ConsumptionController {
         req.body.targetDate ||
         req.body.date ||
         req.body.scheduledDate ||
-        new Date().toLocaleDateString('en-CA');
+        new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Jakarta' });
       const { status, notes } = req.body;
       const result = await ConsumptionService.recordConsumption(userId, targetDate, status, notes);
       res.json(result);

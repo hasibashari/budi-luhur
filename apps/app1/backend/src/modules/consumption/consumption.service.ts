@@ -11,7 +11,8 @@ export class ConsumptionService {
     notes?: string,
   ) {
     const finalTargetDate =
-      (targetDate && targetDate.trim()) || new Date().toLocaleDateString('en-CA');
+      (targetDate && targetDate.trim()) ||
+      new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Jakarta' });
     const timeFormatter = new Intl.DateTimeFormat('en-GB', {
       timeZone: 'Asia/Jakarta',
       hour: '2-digit',

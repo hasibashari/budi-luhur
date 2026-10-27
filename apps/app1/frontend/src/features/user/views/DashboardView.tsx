@@ -48,8 +48,9 @@ export default function DashboardView() {
 
   const handleAutoMissed = React.useCallback(async () => {
     if (dashboardData && dashboardData.todayStatus === 'pending') {
+      const todayDateStr = new Date().toLocaleDateString('en-CA');
       setDashboardData(prev => (prev ? { ...prev, todayStatus: 'missed' } : null));
-      await recordUserConsumptionAction(userId, 'missed');
+      await recordUserConsumptionAction(userId, 'missed', undefined, todayDateStr);
     }
   }, [dashboardData, userId]);
 
@@ -120,14 +121,36 @@ export default function DashboardView() {
     if (!dashboardData) return;
     const currentUid = authUser?.id || dashboardData.user.id;
     const prevStatus = dashboardData.todayStatus;
+    const prevRecordedTime = dashboardData.todayRecordedTime;
+    const todayDateStr = new Date().toLocaleDateString('en-CA');
+    const timeStr =
+      newStatus === 'recorded'
+        ? new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB'
+        : undefined;
 
     // Optimistic UI update
-    setDashboardData(prev => (prev ? { ...prev, todayStatus: newStatus } : null));
+    setDashboardData(prev =>
+      prev
+        ? {
+            ...prev,
+            todayStatus: newStatus,
+            todayRecordedTime: timeStr,
+          }
+        : null,
+    );
 
-    const res = await recordUserConsumptionAction(currentUid, newStatus);
+    const res = await recordUserConsumptionAction(currentUid, newStatus, undefined, todayDateStr);
     if (!res.success) {
       // Revert if error
-      setDashboardData(prev => (prev ? { ...prev, todayStatus: prevStatus } : null));
+      setDashboardData(prev =>
+        prev
+          ? {
+              ...prev,
+              todayStatus: prevStatus,
+              todayRecordedTime: prevRecordedTime,
+            }
+          : null,
+      );
     } else {
       // Fetch fresh synchronized data
       const freshData = await getUserDashboardDataAction(currentUid);
@@ -466,8 +489,8 @@ export default function DashboardView() {
           {/* 1. Status Hari Ini Card */}
           <section aria-label='Status Konsumsi Hari Ini'>
             <StatusCard
-              initialStatus={dashboardData?.todayStatus || 'pending'}
-              initialRecordedTime={dashboardData?.todayRecordedTime}
+              status={dashboardData?.todayStatus || 'pending'}
+              recordedTime={dashboardData?.todayRecordedTime}
               onStatusChange={handleStatusChange}
             />
           </section>

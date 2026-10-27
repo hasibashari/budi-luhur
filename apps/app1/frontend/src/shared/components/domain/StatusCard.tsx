@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { CheckCircle2, XCircle, Clock, Sparkles } from 'lucide-react';
 import { Card } from '../ui/Card';
 import { Badge } from '../ui/Badge';
@@ -10,30 +10,40 @@ export type ConsumptionStatus = 'recorded' | 'missed' | 'pending';
 
 export interface StatusCardProps {
   initialStatus?: ConsumptionStatus;
+  status?: ConsumptionStatus;
   initialRecordedTime?: string;
+  recordedTime?: string;
   onStatusChange?: (newStatus: ConsumptionStatus) => void;
 }
 
 export function StatusCard({
   initialStatus = 'pending',
+  status: propStatus,
   initialRecordedTime = '',
+  recordedTime: propRecordedTime,
   onStatusChange,
 }: StatusCardProps) {
-  const [prevInitialStatus, setPrevInitialStatus] = useState(initialStatus);
-  const [status, setStatus] = useState<ConsumptionStatus>(initialStatus);
+  const effectiveInitialStatus = propStatus ?? initialStatus;
+  const effectiveInitialTime = propRecordedTime ?? initialRecordedTime;
 
-  const [prevInitialRecordedTime, setPrevInitialRecordedTime] = useState(initialRecordedTime);
-  const [recordedTime, setRecordedTime] = useState<string>(initialRecordedTime);
+  const [status, setStatus] = useState<ConsumptionStatus>(effectiveInitialStatus);
+  const [recordedTime, setRecordedTime] = useState<string>(effectiveInitialTime);
 
-  if (initialStatus !== prevInitialStatus) {
-    setPrevInitialStatus(initialStatus);
-    setStatus(initialStatus);
-  }
+  useEffect(() => {
+    if (propStatus !== undefined) {
+      setStatus(propStatus);
+    } else if (initialStatus !== undefined) {
+      setStatus(initialStatus);
+    }
+  }, [propStatus, initialStatus]);
 
-  if (initialRecordedTime !== prevInitialRecordedTime) {
-    setPrevInitialRecordedTime(initialRecordedTime);
-    setRecordedTime(initialRecordedTime);
-  }
+  useEffect(() => {
+    if (propRecordedTime !== undefined) {
+      setRecordedTime(propRecordedTime);
+    } else if (initialRecordedTime !== undefined) {
+      setRecordedTime(initialRecordedTime);
+    }
+  }, [propRecordedTime, initialRecordedTime]);
 
   const handleSetRecorded = () => {
     const timeStr =
