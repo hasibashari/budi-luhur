@@ -52,7 +52,7 @@ export function SetupProfileView() {
   const handleNextStep = (e: React.FormEvent) => {
     e.preventDefault();
     if (!schoolOrOrg.trim()) {
-      setErrorMessage('Puskesmas Rujukan / KUA wajib diisi.');
+      setErrorMessage('Puskesmas Rujukan wajib diisi.');
       return;
     }
     setErrorMessage(null);
@@ -175,7 +175,7 @@ export function SetupProfileView() {
                   </div>
                   <input
                     type='text'
-                    placeholder='Contoh: Puskesmas Kebayoran Baru / KUA Jaksel'
+                    placeholder='Contoh: Puskesmas Kebayoran Baru'
                     value={schoolOrOrg}
                     onChange={e => setSchoolOrOrg(e.target.value)}
                     required

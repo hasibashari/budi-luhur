@@ -23,7 +23,7 @@ import { MedicationSchedule, ManagedUser } from '../types/admin.types';
 import { SCHEDULE_CATEGORY_COLORS } from '../constants/schedule.constants';
 import { subscribeRealtimeEvent } from '@/src/shared/utils/realtimeSync';
 
-const CATEGORY_FILTERS = ['Semua', 'Imunisasi TT', 'Skrining Pranikah', 'Bimbingan KUA'].map(
+const CATEGORY_FILTERS = ['Semua', 'Imunisasi TT', 'Skrining Pranikah', 'Bimbingan Pranikah'].map(
   value => ({ label: value, value }),
 );
 const STATUS_FILTERS = ['Semua', 'PENDING', 'COMPLETED'].map(value => ({
@@ -129,7 +129,8 @@ export default function ScheduleManagementView() {
           schedule.medicationName.toLowerCase().includes(q) ||
           targetUserId.toLowerCase().includes(q);
 
-        const matchesCategory = categoryFilter === 'Semua' || schedule.category === categoryFilter;
+        const matchesCategory =
+          categoryFilter === 'Semua' || schedule.category === categoryFilter;
         const matchesStatus =
           statusFilter === 'Semua' ||
           (statusFilter === 'COMPLETED' && schedule.todayStatus === 'COMPLETED') ||

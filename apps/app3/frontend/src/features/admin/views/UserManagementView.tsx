@@ -371,7 +371,7 @@ export default function UserManagementView() {
     },
     {
       id: 'kuaStatus',
-      label: 'Sertifikat KUA',
+      label: 'Sertifikat',
       width: '16%',
       renderCell: user => {
         const kua = user.kuaStatus || 'Menunggu Skrining';
@@ -446,7 +446,7 @@ export default function UserManagementView() {
     <div>
       <AdminHeader
         title='Manajemen Calon Pengantin (Catin)'
-        subtitle='Pantau dosis imunisasi TT1–TT5, kesiapan sertifikat pranikah KUA, dan koordinasi skrining faskes.'
+        subtitle='Pantau dosis imunisasi TT1–TT5, kesiapan sertifikat pranikah, dan koordinasi skrining faskes.'
       />
 
       {/* Filter Bar */}
@@ -459,7 +459,7 @@ export default function UserManagementView() {
               </span>
               <input
                 type='text'
-                placeholder='Cari catin, pasangan, no WA, atau faskes/KUA...'
+                placeholder='Cari catin, pasangan, no WA, atau faskes...'
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
                 className='w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-[#dee9fc] bg-[#f8f9ff] text-xs sm:text-sm text-[#121c2a] focus:outline-none focus:ring-2 focus:ring-[#ffd9de] focus:border-[#aa294d] focus:bg-white transition-all min-h-[44px]'
@@ -472,7 +472,7 @@ export default function UserManagementView() {
                 onChange={e => setKuaFilter(e.target.value)}
                 className='w-full px-3.5 py-2.5 rounded-xl border border-[#dee9fc] bg-[#f8f9ff] text-xs sm:text-sm font-medium text-[#121c2a] focus:outline-none focus:ring-2 focus:ring-[#ffd9de] focus:border-[#aa294d] focus:bg-white transition-all cursor-pointer min-h-[44px]'
               >
-                <option value='Semua'>Semua Status KUA</option>
+                <option value='Semua'>Semua Status Sertifikat</option>
                 {KUA_STATUS_OPTIONS.map(opt => (
                   <option key={opt.value} value={opt.value}>
                     {opt.label}
@@ -509,7 +509,7 @@ export default function UserManagementView() {
 
         {/* Mobile Horizontal Filter Chips (< sm: 640px) */}
         <div className='block sm:hidden border-t border-[#eff4ff] pt-2.5'>
-          <p className='text-[11px] font-bold text-[#8b7074] mb-1.5'>Filter Sertifikat KUA:</p>
+          <p className='text-[11px] font-bold text-[#8b7074] mb-1.5'>Filter Sertifikat:</p>
           <MobileFilterChips
             selectedValue={kuaFilter}
             onSelect={setKuaFilter}
@@ -551,7 +551,7 @@ export default function UserManagementView() {
 
           return (
             <div className='p-4 rounded-2xl border border-[#eff4ff] bg-white shadow-xs flex flex-col gap-3.5'>
-              {/* Header: Avatar + Name + Partner + KUA Badge */}
+              {/* Header: Avatar + Name + Partner + Sertifikat Badge */}
               <div className='flex items-start justify-between gap-2.5'>
                 <div className='flex items-center gap-3 min-w-0'>
                   <Avatar
@@ -619,7 +619,7 @@ export default function UserManagementView() {
 
                 <div className='col-span-2 pt-1 border-t border-[#eff4ff]'>
                   <span className='text-[#8b7074] block text-[11px] font-medium'>
-                    Faskes / KUA Rujukan
+                    Faskes Rujukan
                   </span>
                   <span className='font-bold text-[#121c2a] truncate block mt-0.5'>
                     {user.schoolOrOrg || 'Faskes belum diisi'}
@@ -684,7 +684,7 @@ export default function UserManagementView() {
       <ConfirmDeleteDialog
         open={deleteConfirmOpen}
         title='Konfirmasi Hapus Catin'
-        message='Apakah Anda yakin ingin menghapus data calon pengantin ini? Riwayat imunisasi dan kesiapan sertifikat KUA akan ikut terhapus.'
+        message='Apakah Anda yakin ingin menghapus data calon pengantin ini? Riwayat imunisasi dan kesiapan sertifikat akan ikut terhapus.'
         confirmText='Hapus Data Catin'
         onClose={handleCloseDelete}
         onConfirm={handleConfirmDelete}

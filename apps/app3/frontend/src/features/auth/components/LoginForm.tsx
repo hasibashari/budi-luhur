@@ -43,7 +43,7 @@ export function LoginForm({ hideHeader = false }: LoginFormProps) {
         const isProfileComplete = res.isProfileComplete ?? res.user?.isProfileComplete;
         const isUserIncomplete = res.user?.role === 'user' && !isProfileComplete;
         const target = isUserIncomplete ? '/user/setup' : redirectParam || res.redirectTo;
-        const roleLabel = res.user?.role === 'admin' ? 'Petugas Faskes / KUA' : 'Calon Pengantin';
+        const roleLabel = res.user?.role === 'admin' ? 'Petugas Faskes' : 'Calon Pengantin';
         setSuccessRole(roleLabel);
         setTimeout(() => {
           navigate(target);
@@ -66,7 +66,7 @@ export function LoginForm({ hideHeader = false }: LoginFormProps) {
             Masuk ke TEMANI
           </h2>
           <p className='text-xs sm:text-sm text-[#574144]'>
-            Masukkan kredensial akun Calon Pengantin atau Petugas Faskes/KUA Anda.
+            Masukkan kredensial akun Calon Pengantin atau Petugas Faskes Anda.
           </p>
         </div>
       )}
@@ -168,7 +168,7 @@ export function LoginForm({ hideHeader = false }: LoginFormProps) {
             onClick={e => {
               e.preventDefault();
               alert(
-                'Silakan hubungi administrator fasilitas kesehatan atau KUA untuk mereset kata sandi Anda.',
+                'Silakan hubungi administrator fasilitas kesehatan untuk mereset kata sandi Anda.',
               );
             }}
             className='text-xs text-[#574144] hover:text-[#aa294d] font-medium transition-colors text-center sm:text-left py-2'

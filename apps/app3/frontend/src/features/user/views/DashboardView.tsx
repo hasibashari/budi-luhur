@@ -391,7 +391,7 @@ export default function DashboardView() {
               'Mengapa Skrining TT itu Sangat Penting Sebelum Ijab Kabul?';
             const articleSummary =
               featuredArticle?.summary ||
-              'Imunisasi Tetanus Toxoid (TT) bukan sekadar syarat administratif KUA, melainkan benteng proteksi seumur hidup bagi calon ibu dan buah hati dari risiko tetanus neonatorum saat persalinan.';
+              'Imunisasi Tetanus Toxoid (TT) bukan sekadar syarat administratif pernikahan, melainkan benteng proteksi seumur hidup bagi calon ibu dan buah hati dari risiko tetanus neonatorum saat persalinan.';
             const articleImage =
               featuredArticle?.imageUrl ||
               'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&auto=format&fit=crop&q=80';

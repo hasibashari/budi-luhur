@@ -29,7 +29,7 @@ export interface AppSidebarProps {
 export default function AppSidebar({
   navItems,
   brandTitle = 'TEMANI',
-  brandSubtitle = 'Portal Faskes & KUA',
+  brandSubtitle = 'Portal Faskes',
   brandIcon: BrandIcon,
   brandHref = '/admin/dashboard',
   badge,

@@ -112,7 +112,7 @@ export default function UserFormModal({
       {/* 2. Informasi Pasangan & Akad Nikah */}
       <div className='p-3.5 rounded-2xl bg-[#f8f9ff] border border-[#ffd9de]/60 space-y-3.5'>
         <div className='text-xs font-extrabold text-[#8c0f39] uppercase tracking-wider'>
-          Persiapan Akad Nikah & KUA
+          Persiapan Akad Nikah
         </div>
         <div className='grid grid-cols-1 sm:grid-cols-2 gap-3.5'>
           <div>
@@ -145,7 +145,7 @@ export default function UserFormModal({
         </div>
       </div>
 
-      {/* 3. Status Imunisasi TT & KUA */}
+      {/* 3. Status Imunisasi TT & Sertifikat */}
       <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
         <div>
           <label className='block text-xs font-bold text-[#121c2a] mb-1'>
@@ -165,7 +165,7 @@ export default function UserFormModal({
         </div>
         <div>
           <label className='block text-xs font-bold text-[#121c2a] mb-1'>
-            Status Sertifikat Pranikah KUA
+            Status Sertifikat Pranikah
           </label>
           <select
             value={formData.kuaStatus}
@@ -200,11 +200,11 @@ export default function UserFormModal({
         </div>
         <div>
           <label className='block text-xs font-bold text-[#121c2a] mb-1'>
-            Faskes / KUA Rujukan
+            Faskes Rujukan
           </label>
           <input
             type='text'
-            placeholder='Contoh: Puskesmas Gambir - KUA Gambir'
+            placeholder='Contoh: Puskesmas Gambir'
             value={formData.assignedDoctor}
             onChange={e => onUpdateFormData({ assignedDoctor: e.target.value })}
             className='w-full px-3.5 py-2.5 rounded-xl border border-[#dee9fc] bg-white text-sm text-[#121c2a] focus:outline-none focus:ring-2 focus:ring-[#ffd9de] focus:border-[#aa294d] transition-all'

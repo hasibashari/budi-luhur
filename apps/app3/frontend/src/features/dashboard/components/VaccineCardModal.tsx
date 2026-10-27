@@ -120,7 +120,7 @@ export function VaccineCardModal({
                 Calon Pasangan
               </span>
               <span className='text-xs sm:text-sm font-bold text-slate-900 block truncate'>
-                {partnerName || 'Tercatat di KUA'}
+                {partnerName || 'Tercatat di Faskes'}
               </span>
             </div>
             <div>

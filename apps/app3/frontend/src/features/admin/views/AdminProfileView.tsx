@@ -21,9 +21,9 @@ export default function AdminProfileView() {
     name: user?.name || 'SUPER ADMIN',
     email: user?.email || 'superAdmin@gmail.com',
     phone: user?.phone || '+62 811-2233-4455',
-    title: user?.schoolOrOrg || 'Bidan Koordinator / Petugas KUA Pranikah',
+    title: user?.schoolOrOrg || 'Bidan Koordinator / Petugas Pranikah',
     department: 'Pelayanan Kesehatan Reproduksi & Imunisasi TT Catin',
-    clinicName: 'Puskesmas Gambir - KUA Gambir',
+    clinicName: 'Puskesmas Gambir',
     roleLabel: 'Administrator Petugas',
     avatarUrl: user?.avatarUrl || '',
   });
@@ -119,7 +119,7 @@ export default function AdminProfileView() {
     {
       id: 'system',
       label: 'Sistem Pengelola',
-      value: 'Puskesmas / KUA',
+      value: 'Puskesmas',
       subtitle: 'Portal Terpadu Imunisasi TT Catin',
       icon: Building,
       iconBgColor: 'bg-[#eff4ff]',
@@ -155,7 +155,7 @@ export default function AdminProfileView() {
       icon: Building,
       label: 'Unit Kerja / Fasilitas',
       value: profileData.department,
-      fallbackValue: 'Pelayanan Imunisasi TT & KUA',
+      fallbackValue: 'Pelayanan Imunisasi TT',
     },
   ];
 
@@ -183,7 +183,7 @@ export default function AdminProfileView() {
       <ProfileHeaderCard
         name={profileData.name}
         avatarUrl={profileData.avatarUrl}
-        roleBadgeText='PETUGAS FASKES / KUA'
+        roleBadgeText='PETUGAS FASKES'
         roleBadgeColor='admin'
         subtitle={`${profileData.title} • ${profileData.clinicName}`}
         verified={true}
@@ -203,7 +203,7 @@ export default function AdminProfileView() {
       {/* 3. Contact Card */}
       <ProfileContactCard
         title='Informasi Kontak Dinas'
-        subtitle='Saluran komunikasi resmi petugas faskes & KUA TEMANI'
+        subtitle='Saluran komunikasi resmi petugas faskes TEMANI'
         items={contactItems}
       />
 

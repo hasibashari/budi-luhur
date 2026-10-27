@@ -416,7 +416,7 @@ export default function ArticleDetailView({
                 Kapan Sebaiknya Menerima Vaksin TT?
               </span>
               <p className='text-xs text-[#121c2a] leading-relaxed'>
-                Sebaiknya dilakukan <strong>minimal 1 bulan</strong> sebelum hari pernikahan di Puskesmas atau faskes terdekat agar sertifikat imunisasi resmi siap digunakan untuk kelengkapan administrasi KUA.
+                Sebaiknya dilakukan <strong>minimal 1 bulan</strong> sebelum hari pernikahan di Puskesmas atau faskes terdekat agar sertifikat imunisasi resmi siap digunakan untuk kelengkapan administrasi pernikahan.
               </p>
             </div>
           </div>

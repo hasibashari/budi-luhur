@@ -120,7 +120,7 @@ export function WeddingCountdownWidget({
           ) : (
             <p>
               <strong>Kesiapan Pranikah Prima.</strong> Status TT Anda mencukupi syarat administrasi
-              KUA/Faskes. Pastikan kondisi kesehatan dan jadwal dosis berikutnya tetap terjaga.
+              Faskes. Pastikan kondisi kesehatan dan jadwal dosis berikutnya tetap terjaga.
             </p>
           )}
         </div>

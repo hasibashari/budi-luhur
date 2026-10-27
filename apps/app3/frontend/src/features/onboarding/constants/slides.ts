@@ -35,10 +35,10 @@ export const ONBOARDING_SLIDES: OnboardingSlide[] = [
   },
   {
     id: 'premarital_wellness',
-    title: 'Sertifikat KUA & Edukasi Pranikah',
+    title: 'Sertifikat & Edukasi Pranikah',
     tagline: 'Kesiapan Nikah & Edukasi Gizi',
     description:
-      'Akses bukti verifikasi faskes resmi untuk berkas pernikahan di KUA serta pelajari panduan nutrisi dan skrining kesehatan reproduksi calon pengantin.',
+      'Akses bukti verifikasi faskes resmi untuk berkas pernikahan serta pelajari panduan nutrisi dan skrining kesehatan reproduksi calon pengantin.',
     illustration: BuddyIllustration,
     accentColor: 'sage',
   },

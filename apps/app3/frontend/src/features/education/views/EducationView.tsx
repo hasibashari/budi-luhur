@@ -167,7 +167,7 @@ export default function EducationView() {
               Sertifikat Bebas Tetanus
             </h4>
             <p className='text-[11px] text-[#574144] line-clamp-1 mt-0.5'>
-              Syarat wajib pendaftaran nikah di KUA / Dukcapil.
+              Syarat wajib pendaftaran nikah di Dukcapil.
             </p>
           </div>
         </div>

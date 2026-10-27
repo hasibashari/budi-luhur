@@ -107,7 +107,7 @@ export default function AdminDashboardView() {
   return (
     <div>
       <AdminHeader
-        title='Dashboard Petugas Faskes & KUA'
+        title='Dashboard Petugas Faskes'
         subtitle='Pantau cakupan imunisasi Tetanus Toxoid (TT), jadwal vaksinasi catin, dan bimbingan pranikah secara terpadu.'
       />
 

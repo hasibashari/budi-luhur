@@ -27,7 +27,7 @@ const ARTICLE_CATEGORY_COLORS: Record<string, { bg: string; text: string; border
 const initialArticleFormData: ArticleFormData = {
   title: '',
   category: '',
-  author: 'Tim Promkes Puskesmas & KUA',
+  author: 'Tim Promkes Puskesmas',
   summary: '',
   content: '',
   readTime: '3 min read',
@@ -405,7 +405,7 @@ export default function ArticleManagementView() {
     <div>
       <AdminHeader
         title='Manajemen Artikel Edukasi Pranikah'
-        subtitle='Kelola materi edukasi imunisasi TT, kesehatan reproduksi catin, dan panduan pernikahan sehat KUA.'
+        subtitle='Kelola materi edukasi imunisasi TT, kesehatan reproduksi catin, dan panduan pernikahan sehat.'
       />
 
       {/* Filter Bar with MobileFilterChips */}

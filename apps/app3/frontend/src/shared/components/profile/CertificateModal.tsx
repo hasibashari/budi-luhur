@@ -127,7 +127,7 @@ export function DigitalImmunizationCertificateModal({
                 E-Sertifikat Imunisasi TT Catin
               </h3>
               <span className='text-[10px] text-slate-500'>
-                Dokumen Resmi Administrasi KUA / Catatan Sipil
+                Dokumen Resmi Administrasi Catatan Sipil
               </span>
             </div>
           </div>

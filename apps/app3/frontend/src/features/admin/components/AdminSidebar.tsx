@@ -68,7 +68,7 @@ export default function AdminSidebar({ mobileOpen = false, onMobileClose }: Admi
 
   return (
     <AppSidebar
-      brandSubtitle='Petugas Faskes & KUA'
+      brandSubtitle='Petugas Faskes'
       badge={adminBadge}
       brandHref='/admin/dashboard'
       navItems={ADMIN_NAVIGATION_ITEMS}

@@ -18,7 +18,7 @@ export default function AdminLayout() {
         <div className='block md:hidden shrink-0'>
           <MobileTopBar
             brandTitle='TEMANI'
-            brandSubtitle='Portal Faskes & KUA'
+            brandSubtitle='Portal Faskes'
             brandHref='/admin/dashboard'
             badge={adminBadge}
           />

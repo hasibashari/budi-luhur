@@ -247,7 +247,7 @@ export class AdminService {
         .replace(/[^A-Z]/g, '')
         .slice(0, 5) || 'CATIN';
     const friendCode = `CATIN-${cleanTag}-${Math.floor(1000 + Math.random() * 9000)}`;
-    const school = data.schoolOrOrg || 'Puskesmas Gambir - KUA Gambir';
+    const school = data.schoolOrOrg || 'Puskesmas Gambir';
     const catinAge = data.age || 24;
     const birthDate = new Date(new Date().getFullYear() - catinAge, 5, 15)
       .toISOString()
@@ -482,7 +482,7 @@ export class AdminService {
           canonicalCategory,
           data.status || 'Terbit',
           today,
-          data.author || 'Tim Medis Faskes / KUA',
+          data.author || 'Tim Medis Faskes',
         ],
       );
 
@@ -503,7 +503,7 @@ export class AdminService {
       id: newId,
       title: data.title,
       category: canonicalCategory,
-      author: data.author || 'Tim Medis Faskes / KUA',
+      author: data.author || 'Tim Medis Faskes',
       publishDate: today,
       status: (data.status || 'Terbit') as HealthArticle['status'],
       views: 0,

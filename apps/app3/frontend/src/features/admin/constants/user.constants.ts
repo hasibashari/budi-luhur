@@ -23,7 +23,7 @@ export const RISK_LEVEL_COLORS: Record<string, { bg: string; text: string }> = {
 export const TT_STATUS_OPTIONS = [
   { value: 'TT0', label: 'TT0 (Belum Imunisasi - Perlu Penjadwalan)' },
   { value: 'TT1', label: 'TT1 (Dosis 1 - Langkah Awal Pranikah)' },
-  { value: 'TT2', label: 'TT2 (Dosis 2 - Syarat Minimal KUA, Proteksi 3 Th)' },
+  { value: 'TT2', label: 'TT2 (Dosis 2 - Syarat Minimal Pranikah, Proteksi 3 Th)' },
   { value: 'TT3', label: 'TT3 (Dosis 3 - Proteksi 5 Th)' },
   { value: 'TT4', label: 'TT4 (Dosis 4 - Proteksi 10 Th)' },
   { value: 'TT5', label: 'TT5 (Dosis 5 - Proteksi Penuh 25+ Th)' },
@@ -32,7 +32,7 @@ export const TT_STATUS_OPTIONS = [
 export type TTStatus = (typeof TT_STATUS_OPTIONS)[number]['value'];
 
 export const KUA_STATUS_OPTIONS = [
-  { value: 'Terverifikasi', label: 'Terverifikasi (Sertifikat KUA Siap)' },
+  { value: 'Terverifikasi', label: 'Terverifikasi (Sertifikat Siap)' },
   { value: 'Menunggu Skrining', label: 'Menunggu Skrining (Jadwal Puskesmas)' },
   { value: 'Belum Lengkap', label: 'Belum Lengkap (Syarat Belum Terpenuhi)' },
 ] as const;
@@ -54,7 +54,7 @@ export const KUA_STATUS_COLORS: Record<string, { bg: string; text: string; borde
   'Belum Lengkap': { bg: '#ffd9de', text: '#8c0f39', border: '#fca5a5' },
 };
 
-export const DEFAULT_SCHOOL_ORG = 'Puskesmas Gambir - KUA Gambir';
+export const DEFAULT_SCHOOL_ORG = 'Puskesmas Gambir';
 
 export interface UserFormData {
   name: string;

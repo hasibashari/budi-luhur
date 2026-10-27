@@ -378,7 +378,7 @@ export default function ProfileView() {
     },
     {
       icon: Building2,
-      label: 'Fasilitas Kesehatan / KUA',
+      label: 'Fasilitas Kesehatan',
       value: userProfile.schoolOrOrg || 'Belum dipilih',
     },
   ];
@@ -427,7 +427,7 @@ export default function ProfileView() {
       {/* 3. Contact & Affiliation Card */}
       <ProfileContactCard
         title='Data Kontak & Fasilitas Kesehatan'
-        subtitle='Informasi calon pengantin dan puskesmas rujukan KUA yang terdaftar'
+        subtitle='Informasi calon pengantin dan puskesmas rujukan yang terdaftar'
         items={contactItems}
       />
 

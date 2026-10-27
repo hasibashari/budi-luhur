@@ -385,8 +385,8 @@ export class ScheduleService {
     return {
       id: row.id,
       patientId: row.user_id,
-      senderName: row.sender_name || 'Petugas Faskes / KUA',
-      senderRole: 'Tenaga Kesehatan / Petugas KUA',
+      senderName: row.sender_name || 'Petugas Faskes',
+      senderRole: 'Tenaga Kesehatan',
       scheduleId: row.schedule_id || undefined,
       medicationName: 'Imunisasi Tetanus Toxoid (TT)',
       dosage: '1 dosis (0.5 mL)',

@@ -57,7 +57,7 @@ export default function ReportAnalyticsView() {
     <div className='space-y-6'>
       <AdminHeader
         title='Laporan & Cakupan Imunisasi TT Catin'
-        subtitle='Analisis statistik cakupan imunisasi Tetanus Toxoid catin, kepatuhan jadwal faskes, serta rekapitulasi sertifikat KUA.'
+        subtitle='Analisis statistik cakupan imunisasi Tetanus Toxoid catin, kepatuhan jadwal faskes, serta rekapitulasi sertifikat.'
       />
 
       {/* Control Bar */}

@@ -166,7 +166,7 @@ export default function ArticleFormModal({
         </div>
         <div>
           <label className='block text-xs font-bold text-[#121c2a] mb-1'>
-            Penulis / Petugas Faskes & KUA
+            Penulis / Petugas Faskes
           </label>
           <input
             type='text'

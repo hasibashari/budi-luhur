@@ -37,11 +37,11 @@ function SendReminderModalContent({
   const getTemplateContent = (templateKey: string) => {
     switch (templateKey) {
       case 'standard':
-        return `Halo ${displayName}, ini pengingat resmi dari Petugas Faskes & KUA (TEMANI) untuk jadwal imunisasi ${medicationName} (${dosage}) pada jam ${timeSlot}. Jangan lupa hadir membawa KTP dan dokumen skrining pranikah ya!`;
+        return `Halo ${displayName}, ini pengingat resmi dari Petugas Faskes (TEMANI) untuk jadwal imunisasi ${medicationName} (${dosage}) pada jam ${timeSlot}. Jangan lupa hadir membawa KTP dan dokumen skrining pranikah ya!`;
       case 'friendly':
         return `Halo ${displayName}, cegah tetanus maternal & neonatal dan lindungi calon buah hati kelak! Jangan lupa jadwal imunisasi TT (${medicationName}) kamu hari ini ya. Semoga persiapan hari bahagia lancar selalu!`;
       case 'urgent':
-        return `PENGINGAT PENTING: Halo ${displayName}, jadwal imunisasi TT (${medicationName}) kamu menjelang hari H akad nikah belum tercatat. Segera kunjungi Puskesmas rujukan agar sertifikat imunisasi catin dapat diproses untuk persyaratan KUA.`;
+        return `PENGINGAT PENTING: Halo ${displayName}, jadwal imunisasi TT (${medicationName}) kamu menjelang hari H akad nikah belum tercatat. Segera kunjungi Puskesmas rujukan agar sertifikat imunisasi catin dapat diproses untuk persyaratan administrasi pernikahan.`;
       default:
         return `Halo ${displayName}, jangan lupa jadwal imunisasi/skrining ${medicationName} (${dosage}) sesuai jadwal persiapan pernikahan kamu ya!`;
     }
