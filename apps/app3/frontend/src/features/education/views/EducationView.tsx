@@ -226,7 +226,9 @@ export default function EducationView() {
                       }`}
                     />
                   ) : (
-                    <div className={`w-full h-full flex items-center justify-center ${read ? 'text-stone-400' : 'text-[#aa294d]'}`}>
+                    <div
+                      className={`w-full h-full flex items-center justify-center ${read ? 'text-stone-400' : 'text-[#aa294d]'}`}
+                    >
                       <BookOpen size={26} />
                     </div>
                   )}

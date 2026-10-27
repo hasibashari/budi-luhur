@@ -1,5 +1,5 @@
 import React from 'react';
-import { OnboardingIllustration } from './OnboardingIllustration';
+import { OnboardingSplashLogo } from '../components/OnboardingSplashLogo';
 import { ShieldCheck } from 'lucide-react';
 
 export interface OnboardingScreenViewProps {
@@ -25,7 +25,7 @@ export function OnboardingScreenView({
 
       <div className='flex-1 min-h-0 flex flex-col items-center justify-center text-center my-auto px-4 max-w-sm sm:max-w-md w-full animate-fade-in'>
         <div className='mb-5 sm:mb-6'>
-          <OnboardingIllustration size={145} className='sm:w-[165px] sm:h-[165px]' />
+          <OnboardingSplashLogo size={145} className='sm:w-[165px] sm:h-[165px]' />
         </div>
 
         <h1 className='text-3xl sm:text-4xl md:text-5xl font-black text-[#8c0f39] tracking-widest flex items-center justify-center gap-2 mb-2 uppercase'>

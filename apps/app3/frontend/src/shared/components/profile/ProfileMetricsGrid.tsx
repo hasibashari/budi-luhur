@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import { LucideIcon } from 'lucide-react';
 
 export interface ProfileMetricItem {
@@ -13,6 +12,7 @@ export interface ProfileMetricItem {
   iconColor?: string;
   badgeText?: string;
   badgeColor?: string;
+  onClick?: () => void;
 }
 
 export interface ProfileMetricsGridProps {
@@ -50,7 +50,10 @@ export function ProfileMetricsGrid({
           return (
             <div
               key={metric.id}
-              className='p-4 rounded-2xl bg-stone-50/70 border border-stone-200/80 hover:border-[#aa294d]/40 hover:shadow-xs transition-all flex flex-col justify-between'
+              onClick={metric.onClick}
+              className={`p-4 rounded-2xl bg-stone-50/70 border border-stone-200/80 hover:border-[#aa294d]/40 hover:shadow-xs transition-all flex flex-col justify-between ${
+                metric.onClick ? 'cursor-pointer active:scale-[0.98]' : ''
+              }`}
             >
               <div className='flex items-start justify-between gap-2 mb-2'>
                 <span className='text-xs font-bold text-slate-500'>{metric.label}</span>

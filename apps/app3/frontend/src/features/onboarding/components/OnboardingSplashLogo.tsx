@@ -1,11 +1,11 @@
 import React from 'react';
 
-interface OnboardingIllustrationProps {
+export interface OnboardingSplashLogoProps {
   className?: string;
   size?: number;
 }
 
-export const OnboardingIllustration: React.FC<OnboardingIllustrationProps> = ({
+export const OnboardingSplashLogo: React.FC<OnboardingSplashLogoProps> = ({
   className = '',
   size = 140,
 }) => {
@@ -120,4 +120,6 @@ export const OnboardingIllustration: React.FC<OnboardingIllustrationProps> = ({
   );
 };
 
-export default OnboardingIllustration;
+// Backward compatibility alias
+export const OnboardingIllustration = OnboardingSplashLogo;
+export default OnboardingSplashLogo;

@@ -13,6 +13,7 @@ export class UserProfileService {
   static async calculateAndSyncUserStreak(
     userId: string,
     scheduleFrequency: 'daily' | 'weekly' = 'weekly',
+    persist: boolean = true,
   ): Promise<StreakResult> {
     const res = await db.query<{ scheduled_date: string; taken_at: string | null }>(
       `SELECT scheduled_date, taken_at 
@@ -25,13 +26,15 @@ export class UserProfileService {
     const completedDates = res.rows.map((r: { scheduled_date: string }) => r.scheduled_date);
     const streakResult = await calculateChronologicalStreak(completedDates, scheduleFrequency);
 
-    // Sync streak_count in user_profiles
-    await db.query(
-      `UPDATE user_profiles 
-       SET streak_count = $1, last_active_at = CURRENT_TIMESTAMP
-       WHERE user_id = $2`,
-      [streakResult.streakCount, userId],
-    );
+    if (persist) {
+      // Sync streak_count in user_profiles only on write operations
+      await db.query(
+        `UPDATE user_profiles 
+         SET streak_count = $1, last_active_at = CURRENT_TIMESTAMP
+         WHERE user_id = $2`,
+        [streakResult.streakCount, userId],
+      );
+    }
 
     return streakResult;
   }
@@ -39,7 +42,7 @@ export class UserProfileService {
   static async getDashboardData(userId: string): Promise<UserDashboardData | null> {
     const todayStr = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Jakarta' });
 
-    const [userRes, immunizationRes, scheduleRes, todayLogRes, articleRes] =
+    const [userRes, immunizationRes, scheduleRes, todayLogRes, articleRes, streakLogsRes] =
       await Promise.all([
         db.query<{
           name: string;
@@ -58,17 +61,17 @@ export class UserProfileService {
           notes: string | null;
         }>(
           `SELECT u.name, u.email, u.phone, u.avatar_url,
-                p.friend_code, p.school_or_org, p.hb_level, p.risk_level, p.streak_count,
-                p.wedding_date, p.tt_status, p.kua_status, p.partner_name, p.notes
-         FROM users u
-         LEFT JOIN user_profiles p ON u.id = p.user_id
-         WHERE u.id = $1`,
+                  p.friend_code, p.school_or_org, p.hb_level, p.risk_level, p.streak_count,
+                  p.wedding_date, p.tt_status, p.kua_status, p.partner_name, p.notes
+           FROM users u
+           LEFT JOIN user_profiles p ON u.id = p.user_id
+           WHERE u.id = $1`,
           [userId],
         ),
         db.query<ImmunizationRecord>(
           `${IMMUNIZATION_SELECT}
-         WHERE user_id = $1 AND verification_status <> 'REJECTED' AND deleted_at IS NULL
-         ORDER BY vaccine_date ASC, dose_level ASC`,
+           WHERE user_id = $1 AND verification_status <> 'REJECTED' AND deleted_at IS NULL
+           ORDER BY vaccine_date ASC, dose_level ASC`,
           [userId],
         ),
         db.query<{
@@ -87,17 +90,17 @@ export class UserProfileService {
           instructions: string | null;
         }>(
           `SELECT id, tablet_name, dosage, frequency, day_of_week, time_slot, is_enabled, remind_15min_before,
-                reminder_timing, channel_push, channel_whatsapp, channel_email, instructions
-         FROM reminder_schedules
-         WHERE user_id = $1 AND status = 'Aktif'
-         ORDER BY created_at DESC LIMIT 1`,
+                  reminder_timing, channel_push, channel_whatsapp, channel_email, instructions
+           FROM reminder_schedules
+           WHERE user_id = $1 AND status = 'Aktif'
+           ORDER BY created_at DESC LIMIT 1`,
           [userId],
         ),
         db.query<{ status: string; taken_at: string | null }>(
           `SELECT status, taken_at 
-         FROM consumption_logs 
-         WHERE user_id = $1 AND scheduled_date = $2
-         ORDER BY created_at DESC LIMIT 1`,
+           FROM consumption_logs 
+           WHERE user_id = $1 AND scheduled_date = $2
+           ORDER BY created_at DESC LIMIT 1`,
           [userId, todayStr],
         ),
         db.query<{
@@ -109,9 +112,16 @@ export class UserProfileService {
           image_url: string;
         }>(
           `SELECT id, title, category, read_time, summary, image_url 
-         FROM articles 
-         WHERE status = 'Terbit' 
-         ORDER BY is_featured DESC, published_at DESC LIMIT 1`,
+           FROM articles 
+           WHERE status = 'Terbit' 
+           ORDER BY is_featured DESC, published_at DESC LIMIT 1`,
+        ),
+        db.query<{ scheduled_date: string; taken_at: string | null }>(
+          `SELECT scheduled_date, taken_at 
+           FROM consumption_logs 
+           WHERE user_id = $1 AND status IN ('ON_TIME', 'LATE')
+           ORDER BY scheduled_date DESC`,
+          [userId],
         ),
       ]);
 
@@ -151,7 +161,8 @@ export class UserProfileService {
       };
     }
 
-    const streakResult = await this.calculateAndSyncUserStreak(userId, schedFrequencyType);
+    const completedDates = streakLogsRes.rows.map(r => r.scheduled_date);
+    const streakResult = await calculateChronologicalStreak(completedDates, schedFrequencyType);
 
     let todayStatus: 'recorded' | 'missed' | 'pending' = 'pending';
     let todayRecordedTime: string | undefined;

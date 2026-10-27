@@ -1,5 +1,4 @@
 export * from './types';
-export { default as DashboardView } from './views/DashboardView';
 export { default as SetupProfileView } from './views/SetupProfileView';
 export { default as ProfileView } from './views/ProfileView';
 export { default as UserLayout } from './components/UserLayout';

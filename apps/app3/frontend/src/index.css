@@ -178,21 +178,94 @@ body {
 }
 
 @media print {
-  body * {
-    visibility: hidden !important;
+  @page {
+    size: A4 portrait;
+    margin: 8mm 10mm;
   }
 
-  .vaccine-card-printable,
-  .vaccine-card-printable * {
-    visibility: visible !important;
+  *,
+  *::before,
+  *::after {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
 
-  .vaccine-card-printable {
-    position: absolute !important;
-    inset: 0 !important;
-    width: 100% !important;
+  /* 1. When certificate modal is open, completely remove root and non-modal elements from layout tree */
+  body.vaccine-modal-open > *:not(.vaccine-card-modal-backdrop),
+  body:has(.vaccine-card-modal-backdrop) > *:not(.vaccine-card-modal-backdrop) {
+    display: none !important;
+  }
+
+  /* 2. Reset html & body so no unwanted margins or heights push down */
+  html,
+  body {
+    background: #ffffff !important;
+    color: #121c2a !important;
+    height: auto !important;
+    min-height: 0 !important;
     max-height: none !important;
     overflow: visible !important;
-    padding: 24px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* 3. Reset modal backdrop & layout constraints so it begins at top of page 1 */
+  .vaccine-card-modal-backdrop {
+    position: static !important;
+    display: block !important;
+    inset: auto !important;
+    background: transparent !important;
+    backdrop-filter: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    z-index: auto !important;
+    overflow: visible !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+  }
+
+  .vaccine-card-modal-wrapper {
+    position: static !important;
+    display: block !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    max-height: none !important;
+    height: auto !important;
+    overflow: visible !important;
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* 4. Target print card document */
+  .vaccine-card-print-document {
+    position: static !important;
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    max-width: 185mm !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    background: #ffffff !important;
+    border: 1.5px solid #cb4364 !important;
+    border-radius: 16px !important;
+    box-shadow: none !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  .vaccine-card-print-document * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* 5. Hide screen-only interactive elements */
+  .no-print,
+  .no-print * {
+    display: none !important;
   }
 }

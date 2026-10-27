@@ -1,5 +1,13 @@
+import dns from 'dns';
 import { Pool, PoolClient, QueryResult, QueryResultRow } from 'pg';
 import { config } from './env.js';
+
+// Prioritize IPv4 to avoid ENETUNREACH errors on WSL/environments lacking IPv6 routes
+try {
+  dns.setDefaultResultOrder('ipv4first');
+} catch {
+  // Ignore in environments where not supported
+}
 
 let poolInstance: Pool | null = null;
 
@@ -28,10 +36,12 @@ export function getDatabasePool(): Pool {
         },
     max: 10,
     idleTimeoutMillis: 30000,
-    connectionTimeoutMillis: 10000,
+    connectionTimeoutMillis: 20000, // 20s allowance for Neon serverless wake-up
+    keepAlive: true,
+    keepAliveInitialDelayMillis: 10000,
   });
 
-  poolInstance.on('error', (err) => {
+  poolInstance.on('error', err => {
     console.error('Unexpected error on idle PostgreSQL client:', err);
   });
 
@@ -48,14 +58,12 @@ export const pool = {
 
 export async function query<T extends QueryResultRow = QueryResultRow>(
   text: string,
-  params?: unknown[]
+  params?: unknown[],
 ): Promise<QueryResult<T>> {
   return getDatabasePool().query<T>(text, params);
 }
 
-export async function transaction<T>(
-  callback: (client: PoolClient) => Promise<T>
-): Promise<T> {
+export async function transaction<T>(callback: (client: PoolClient) => Promise<T>): Promise<T> {
   const client = await getDatabasePool().connect();
   try {
     await client.query('BEGIN');

@@ -36,21 +36,25 @@ export interface Article {
   tags?: string[];
 }
 
+// In-memory cache with 60-second TTL for fast article listings
+interface CacheEntry<T> {
+  data: T;
+  timestamp: number;
+}
+const articlesCache = new Map<string, CacheEntry<Article[]>>();
+const CACHE_TTL_MS = 60 * 1000; // 60 seconds
+
+export function clearArticlesCache() {
+  articlesCache.clear();
+}
+
 export class ArticleService {
   static async getArticles(category?: string): Promise<Article[]> {
-    await db.query(`
-      WITH canonical AS (
-        SELECT lower(btrim(category)) AS category_key, min(btrim(category)) AS category
-        FROM articles
-        WHERE btrim(category) <> ''
-        GROUP BY lower(btrim(category))
-      )
-      UPDATE articles AS a
-      SET category = canonical.category
-      FROM canonical
-      WHERE lower(btrim(a.category)) = canonical.category_key
-        AND a.category <> canonical.category
-    `);
+    const cacheKey = category || 'ALL';
+    const cached = articlesCache.get(cacheKey);
+    if (cached && Date.now() - cached.timestamp < CACHE_TTL_MS) {
+      return cached.data;
+    }
 
     let sql = `
       SELECT id, title, summary, lead_paragraph, image_url, image_caption, read_time, category, status, views, published_at,
@@ -69,7 +73,7 @@ export class ArticleService {
 
     const res = await db.query<any>(sql, params);
 
-    return res.rows.map((r: any) => {
+    const result = res.rows.map((r: any) => {
       let author: Author | undefined;
       if (r.author_name) {
         author = {
@@ -103,28 +107,37 @@ export class ArticleService {
         tags: r.tags ? (typeof r.tags === 'string' ? JSON.parse(r.tags) : r.tags) : undefined,
       };
     });
+
+    articlesCache.set(cacheKey, { data: result, timestamp: Date.now() });
+    return result;
   }
 
   static async getArticleById(id: string): Promise<Article | null> {
-    await db.query(`UPDATE articles SET views = views + 1 WHERE id = $1`, [id]);
+    // Non-blocking fire-and-forget view count increment
+    db.query(`UPDATE articles SET views = views + 1 WHERE id = $1`, [id]).catch(err => {
+      console.error('Failed to increment article views:', err);
+    });
 
-    const res = await db.query<any>(
-      `SELECT id, title, summary, lead_paragraph, image_url, image_caption, read_time, category, status, views, published_at,
-              author_id, author_name, author_role, author_avatar_url, author_bio, key_takeaways, tags
-       FROM articles 
-       WHERE id = $1`,
-      [id],
-    );
+    // Run article query and section query in parallel to eliminate sequential round-trip latency
+    const [res, sectionRes] = await Promise.all([
+      db.query<any>(
+        `SELECT id, title, summary, lead_paragraph, image_url, image_caption, read_time, category, status, views, published_at,
+                author_id, author_name, author_role, author_avatar_url, author_bio, key_takeaways, tags
+         FROM articles 
+         WHERE id = $1`,
+        [id],
+      ),
+      db.query<any>(
+        `SELECT heading, subheading, paragraphs, callout_type, callout_title, callout_text, bullet_points
+         FROM article_sections
+         WHERE article_id = $1
+         ORDER BY order_index ASC`,
+        [id],
+      ),
+    ]);
+
     const row = res.rows[0];
     if (!row) return null;
-
-    const sectionRes = await db.query<any>(
-      `SELECT heading, subheading, paragraphs, callout_type, callout_title, callout_text, bullet_points
-       FROM article_sections
-       WHERE article_id = $1
-       ORDER BY order_index ASC`,
-      [id],
-    );
 
     const sections: ContentSection[] = sectionRes.rows.map((sec: any) => ({
       heading: sec.heading || undefined,
@@ -229,12 +242,19 @@ export class ArticleService {
     };
   }
 
-  static async getRelatedArticles(currentId: string, limit: number = 3): Promise<Article[]> {
-    const currentRes = await db.query<{ category: string }>(
-      `SELECT category FROM articles WHERE id = $1`,
-      [currentId],
-    );
-    const category = currentRes.rows[0]?.category || '';
+  static async getRelatedArticles(
+    currentId: string,
+    limit: number = 3,
+    category?: string,
+  ): Promise<Article[]> {
+    let targetCategory = category;
+    if (!targetCategory) {
+      const currentRes = await db.query<{ category: string }>(
+        `SELECT category FROM articles WHERE id = $1`,
+        [currentId],
+      );
+      targetCategory = currentRes.rows[0]?.category || '';
+    }
 
     const res = await db.query<any>(
       `SELECT id, title, summary, image_url, read_time, category, published_at, author_name, author_avatar_url
@@ -242,7 +262,7 @@ export class ArticleService {
        WHERE id != $1 AND status = 'Terbit'
        ORDER BY CASE WHEN category = $2 THEN 0 ELSE 1 END, published_at DESC
        LIMIT $3`,
-      [currentId, category, limit],
+      [currentId, targetCategory, limit],
     );
 
     return res.rows.map((r: any) => ({

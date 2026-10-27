@@ -23,12 +23,11 @@ export class ArticleController {
         return;
       }
 
-      let isBookmarked = false;
-      if (req.user?.id) {
-        isBookmarked = await ArticleService.isBookmarked(req.user.id, id);
-      }
-
-      const related = await ArticleService.getRelatedArticles(id, 3);
+      // Parallelize isBookmarked check and related articles lookup
+      const [isBookmarked, related] = await Promise.all([
+        req.user?.id ? ArticleService.isBookmarked(req.user.id, id) : Promise.resolve(false),
+        ArticleService.getRelatedArticles(id, 3, article.category),
+      ]);
 
       res.json({
         ...article,

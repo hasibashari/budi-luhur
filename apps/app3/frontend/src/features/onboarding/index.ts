@@ -1,3 +1,4 @@
-export * from './components/OnboardingIllustration';
-export * from './components/OnboardingScreenView';
+export * from './components/OnboardingSplashLogo';
+export * from './components/OnboardingIllustrations';
+export * from './views/OnboardingScreenView';
 export * from './views/OnboardingView';

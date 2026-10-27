@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Article } from '../types';
+import { getArticleDetailAction, toggleArticleBookmarkAction } from '../api/educationRepository';
 import {
-  getArticleDetailAction,
-  toggleArticleBookmarkAction,
-} from '../api/educationRepository';
-import { DEFAULT_CATEGORY_IMAGES, normalizeArticleCategory } from '../constants/education.constants';
+  DEFAULT_CATEGORY_IMAGES,
+  normalizeArticleCategory,
+} from '../constants/education.constants';
 import { useAuth } from '@/src/features/auth/context/AuthContext';
 import { MarkdownRenderer } from '@/src/shared/components/markdown';
 import { useReadArticles, markArticleAsRead } from '../utils/readArticles';
@@ -299,11 +299,7 @@ export default function ArticleDetailView({
 
           {/* Featured Hero Banner Image */}
           <div className='relative w-full h-48 sm:h-72 rounded-2xl sm:rounded-3xl overflow-hidden shadow-sm border border-[#ffd9de]/50 mb-5 bg-stone-100'>
-            <img
-              src={featuredImage}
-              alt={title}
-              className='w-full h-full object-cover'
-            />
+            <img src={featuredImage} alt={title} className='w-full h-full object-cover' />
             {article?.imageCaption && (
               <div className='absolute bottom-0 inset-x-0 bg-linear-to-t from-black/70 via-black/30 to-transparent p-3 text-white text-[11px] sm:text-xs'>
                 {article.imageCaption}
@@ -316,7 +312,9 @@ export default function ArticleDetailView({
             <div className='bg-linear-to-br from-[#eff4ff] to-[#ffd9de]/30 rounded-2xl p-4 sm:p-5 shadow-xs border border-[#eff4ff] mb-5'>
               <div className='flex items-center gap-2 mb-2 text-[#aa294d]'>
                 <ShieldCheck size={18} />
-                <span className='text-xs font-bold tracking-wider uppercase'>Intisari Panduan Klinis</span>
+                <span className='text-xs font-bold tracking-wider uppercase'>
+                  Intisari Panduan Klinis
+                </span>
               </div>
               <p className='text-xs sm:text-sm text-[#121c2a] leading-relaxed font-medium'>
                 {summaryText}
@@ -416,7 +414,9 @@ export default function ArticleDetailView({
                 Kapan Sebaiknya Menerima Vaksin TT?
               </span>
               <p className='text-xs text-[#121c2a] leading-relaxed'>
-                Sebaiknya dilakukan <strong>minimal 1 bulan</strong> sebelum hari pernikahan di Puskesmas atau faskes terdekat agar sertifikat imunisasi resmi siap digunakan untuk kelengkapan administrasi pernikahan.
+                Sebaiknya dilakukan <strong>minimal 1 bulan</strong> sebelum hari pernikahan di
+                Puskesmas atau faskes terdekat agar sertifikat imunisasi resmi siap digunakan untuk
+                kelengkapan administrasi pernikahan.
               </p>
             </div>
           </div>
@@ -453,7 +453,8 @@ export default function ArticleDetailView({
                           src={
                             rel.imageUrl && rel.imageUrl.trim() !== ''
                               ? rel.imageUrl
-                              : DEFAULT_CATEGORY_IMAGES[rel.category] || DEFAULT_CATEGORY_IMAGES.default
+                              : DEFAULT_CATEGORY_IMAGES[rel.category] ||
+                                DEFAULT_CATEGORY_IMAGES.default
                           }
                           alt={rel.title}
                           className={`w-full h-full object-cover transition-transform group-hover:scale-105 ${
@@ -489,7 +490,9 @@ export default function ArticleDetailView({
                         >
                           {rel.title}
                         </h4>
-                        <p className={`text-[11px] line-clamp-1 mt-0.5 ${read ? 'text-stone-400' : 'text-[#574144]'}`}>
+                        <p
+                          className={`text-[11px] line-clamp-1 mt-0.5 ${read ? 'text-stone-400' : 'text-[#574144]'}`}
+                        >
                           {rel.summary}
                         </p>
                       </div>

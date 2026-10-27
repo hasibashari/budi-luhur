@@ -23,9 +23,9 @@ import {
 import { FaskesRujukanCard } from '@/src/shared/components/domain/FaskesRujukanCard';
 import { useAuth } from '@/src/features/auth/context/AuthContext';
 import { VaccineCardModal } from '@/src/features/dashboard/components/VaccineCardModal';
-import { DigitalImmunizationCertificateModal } from '@/src/shared/components/profile/CertificateModal';
 import {
   getCertificateVerificationAction,
+  requestCertificateVerificationAction,
   getUserDashboardDataAction,
   getUserScheduleAction,
   updateUserProfileAction,
@@ -67,8 +67,8 @@ export default function ProfileView() {
   const [immunizationRecords, setImmunizationRecords] = useState<ImmunizationRecord[]>([]);
   const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
   const [isCertificateModalOpen, setIsCertificateModalOpen] = useState(false);
-  const [isECertificateOpen, setIsECertificateOpen] = useState(false);
   const [certificate, setCertificate] = useState<CertificateVerification | null>(null);
+  const [isRequestingCert, setIsRequestingCert] = useState(false);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -93,6 +93,20 @@ export default function ProfileView() {
   const showToast = (msg: string) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 3000);
+  };
+
+  const handleRequestVerification = async () => {
+    setIsRequestingCert(true);
+    try {
+      await requestCertificateVerificationAction();
+      const updated = await getCertificateVerificationAction();
+      setCertificate(updated);
+      showToast('Pengajuan verifikasi berhasil dikirim ke faskes!');
+    } catch {
+      showToast('Gagal mengajukan verifikasi sertifikat.');
+    } finally {
+      setIsRequestingCert(false);
+    }
   };
 
   useEffect(() => {
@@ -306,6 +320,7 @@ export default function ProfileView() {
         currentTTLevel > 0
           ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
           : 'bg-slate-100 text-slate-600 border border-slate-200',
+      onClick: () => setIsCertificateModalOpen(true),
     },
     {
       id: 'certificate',
@@ -321,10 +336,10 @@ export default function ProfileView() {
       subtitle:
         certificate?.status === 'APPROVED'
           ? `Ditandatangani ${certificate.signerName || certificate.reviewedBy || 'petugas faskes'}`
-          : 'Surat Keterangan Imunisasi Kemenkes RI',
-      icon: Award,
-      iconBgColor: 'bg-emerald-50 border border-emerald-100',
-      iconColor: 'text-emerald-700',
+          : 'Kartu Imunisasi Resmi Kemenkes RI',
+      icon: ShieldCheck,
+      iconBgColor: 'bg-[#ffd9de] border border-[#ffc2cc]',
+      iconColor: 'text-[#aa294d]',
       badgeText:
         certificate?.status === 'APPROVED'
           ? 'Terverifikasi'
@@ -335,10 +350,11 @@ export default function ProfileView() {
               : 'Belum diajukan',
       badgeColor:
         certificate?.status === 'APPROVED'
-          ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
+          ? 'bg-[#aff1d0]/70 text-[#0a5139] border border-[#aff1d0]'
           : certificate?.status === 'REJECTED'
             ? 'bg-rose-50 text-rose-700 border border-rose-200'
             : 'bg-amber-50 text-amber-800 border border-amber-200',
+      onClick: () => setIsCertificateModalOpen(true),
     },
     {
       id: 'partner',
@@ -434,28 +450,30 @@ export default function ProfileView() {
       {/* 4. Faskes Rujukan Terpilih */}
       <FaskesRujukanCard faskesName={userProfile.schoolOrOrg || undefined} />
 
-      {/* 4b. E-Sertifikat Imunisasi (status verifikasi dikelola admin) */}
+      {/* 4b. Kartu Vaksin & E-Sertifikat Imunisasi TT */}
       <button
         type='button'
-        onClick={() => setIsECertificateOpen(true)}
-        className='w-full flex items-center gap-3 rounded-2xl border border-[#eff4ff] bg-white p-4 text-left shadow-xs hover:shadow-md transition-all active:scale-[0.99] cursor-pointer'
+        onClick={() => setIsCertificateModalOpen(true)}
+        className='w-full flex items-center gap-3 rounded-2xl border border-[#ffd9de]/80 bg-linear-to-r from-white via-white to-[#ffd9de]/20 p-4 text-left shadow-xs hover:shadow-md transition-all active:scale-[0.99] cursor-pointer group'
       >
-        <span className='w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-100 flex items-center justify-center shrink-0'>
-          <Award size={18} />
+        <span className='w-10 h-10 rounded-xl bg-[#ffd9de] text-[#aa294d] border border-[#ffc2cc] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform'>
+          <ShieldCheck size={20} />
         </span>
         <span className='flex-1 min-w-0'>
-          <span className='block text-xs sm:text-sm font-bold text-[#121c2a]'>
-            Lihat E-Sertifikat Imunisasi
+          <span className='block text-xs sm:text-sm font-bold text-[#121c2a] group-hover:text-[#aa294d] transition-colors'>
+            Lihat Kartu Vaksin Catin (E-Sertifikat TT)
           </span>
           <span className='block text-[11px] text-[#574144]'>
             {certificate?.status === 'APPROVED'
-              ? 'Sudah ditandatangani petugas faskes'
+              ? `Terverifikasi resmi ${certificate.signerName ? `oleh ${certificate.signerName}` : 'oleh faskes'}`
               : certificate?.status === 'PENDING'
-                ? 'Menunggu verifikasi petugas faskes'
-                : 'Ajukan verifikasi ke petugas faskes'}
+                ? 'Sedang dalam antrean verifikasi petugas faskes'
+                : 'Kartu imunisasi resmi standar Kementerian Kesehatan RI'}
           </span>
         </span>
-        <span className='text-[11px] font-bold text-[#aa294d] shrink-0'>Buka</span>
+        <span className='inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-[#aa294d] text-white text-[11px] font-bold shrink-0 shadow-2xs group-hover:bg-[#8c0f39] transition-colors'>
+          Buka Kartu
+        </span>
       </button>
 
       {/* 5. Notification & Reminder Settings Card (Burgundy Theme) */}
@@ -479,26 +497,18 @@ export default function ProfileView() {
         lastLoginText='Hari ini via Web App TEMANI'
       />
 
-      {/* Vaccine Card Modal */}
+      {/* Kartu Vaksin & E-Sertifikat Resmi (Satu Modal Terpadu) */}
       <VaccineCardModal
         isOpen={isCertificateModalOpen}
         onClose={() => setIsCertificateModalOpen(false)}
         userName={userProfile.name}
-        faskesName={userProfile.schoolOrOrg || ''}
+        faskesName={userProfile.schoolOrOrg || 'Puskesmas Mitra TEMANI'}
         partnerName={partnerName}
         currentTTLevel={currentTTLevel}
         records={immunizationRecords}
-      />
-
-      {/* E-Sertifikat dengan tanda tangan admin */}
-      <DigitalImmunizationCertificateModal
-        isOpen={isECertificateOpen}
-        onClose={() => setIsECertificateOpen(false)}
-        catinName={userProfile.name}
-        catinId={catinId}
-        partnerName={partnerName}
-        faskesName={userProfile.schoolOrOrg || ''}
-        ttLevel={currentTTLevel}
+        certificate={certificate}
+        onRequestVerification={handleRequestVerification}
+        isRequestingVerification={isRequestingCert}
       />
 
       {/* Edit Profile Modal */}

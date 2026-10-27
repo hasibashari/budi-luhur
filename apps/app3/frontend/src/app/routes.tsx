@@ -5,7 +5,8 @@ import { LoginView, RegisterView, useAuth } from '@/src/features/auth';
 import { OnboardingView, OnboardingScreenView } from '@/src/features/onboarding';
 
 // User Portal Views
-import { UserLayout, DashboardView, SetupProfileView, ProfileView } from '@/src/features/user';
+import { UserLayout, SetupProfileView, ProfileView } from '@/src/features/user';
+import { DashboardView } from '@/src/features/dashboard';
 import { ScheduleView } from '@/src/features/schedule';
 import { HistoryView } from '@/src/features/history';
 import { EducationView, ArticleDetailView } from '@/src/features/education';

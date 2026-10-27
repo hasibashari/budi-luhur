@@ -34,11 +34,11 @@ export const ONBOARDING_SLIDES: OnboardingSlide[] = [
     accentColor: 'gold',
   },
   {
-    id: 'premarital_wellness',
-    title: 'Sertifikat & Edukasi Pranikah',
-    tagline: 'Kesiapan Nikah & Edukasi Gizi',
+    id: 'tt_certificate',
+    title: 'Sertifikat Imunisasi Tetanus Toxoid',
+    tagline: 'Bukti Resmi & Kesiapan Pranikah',
     description:
-      'Akses bukti verifikasi faskes resmi untuk berkas pernikahan serta pelajari panduan nutrisi dan skrining kesehatan reproduksi calon pengantin.',
+      'Peroleh sertifikat imunisasi TT resmi dari faskes untuk melengkapi syarat administrasi pernikahan serta menjamin perlindungan ibu dan buah hati.',
     illustration: BuddyIllustration,
     accentColor: 'sage',
   },

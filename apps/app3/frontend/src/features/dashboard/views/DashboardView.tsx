@@ -7,7 +7,6 @@ import {
   CheckCircle2,
   CalendarClock,
   ArrowRight,
-  Sparkles,
   Bookmark,
   BookmarkCheck,
   ShieldCheck,
@@ -34,7 +33,6 @@ import {
 } from '@/src/features/schedule/api/scheduleRepository';
 import { AdminNudge } from '@/src/features/schedule/types';
 import { useTTSchedules } from '@/src/features/schedule/hooks/useTTSchedules';
-import { getArticlesAction } from '@/src/features/education/api/educationRepository';
 import { Article } from '@/src/features/education/types';
 import { useReadArticles } from '@/src/features/education/utils/readArticles';
 
@@ -62,17 +60,15 @@ export default function DashboardView() {
     let isMounted = true;
     async function fetchDashboard() {
       try {
-        const [data, nudge, articles] = await Promise.all([
+        const [data, nudge] = await Promise.all([
           getUserDashboardDataAction(userId),
           getActiveNudgeAction(userId),
-          getArticlesAction().catch(() => []),
         ]);
         if (isMounted) {
           setDashboardData(data);
           setActiveNudge(nudge);
-          if (articles && articles.length > 0) {
-            const topArt = articles.find((a: Article) => a.id === 'art_tt_1') || articles[0];
-            setFeaturedArticle(topArt);
+          if (data?.featuredArticle) {
+            setFeaturedArticle(data.featuredArticle as any);
           }
           setLoading(false);
         }
