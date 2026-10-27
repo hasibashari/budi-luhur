@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Lightbulb } from 'lucide-react';
 
 interface MarkdownRendererProps {
@@ -231,15 +232,25 @@ function renderInlineMarkdown(text: string): React.ReactNode {
         const url = linkMatch[2];
         const isInternal = url.startsWith('/');
         parts.push(
-          <a
-            key={match.index}
-            href={url}
-            target={isInternal ? undefined : '_blank'}
-            rel={isInternal ? undefined : 'noopener noreferrer'}
-            className='text-[#e11d48] underline font-semibold hover:text-[#be123c]'
-          >
-            {linkMatch[1]}
-          </a>,
+          isInternal ? (
+            <Link
+              key={match.index}
+              to={url}
+              className='text-[#e11d48] underline font-semibold hover:text-[#be123c]'
+            >
+              {linkMatch[1]}
+            </Link>
+          ) : (
+            <a
+              key={match.index}
+              href={url}
+              target='_blank'
+              rel='noopener noreferrer'
+              className='text-[#e11d48] underline font-semibold hover:text-[#be123c]'
+            >
+              {linkMatch[1]}
+            </a>
+          ),
         );
       }
     }

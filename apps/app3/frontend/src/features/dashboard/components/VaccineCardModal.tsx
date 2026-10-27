@@ -101,7 +101,10 @@ export function VaccineCardModal({
                 <ShieldCheck size={22} className='text-white' />
               </div>
               <div>
-                <h3 id='vaccine-card-title' className='text-sm sm:text-base font-bold leading-tight'>
+                <h3
+                  id='vaccine-card-title'
+                  className='text-sm sm:text-base font-bold leading-tight'
+                >
                   Kartu Vaksin Catin Kemenkes RI
                 </h3>
                 <p className='text-[11px] sm:text-xs text-rose-100 mt-0.5 font-medium'>
@@ -200,37 +203,45 @@ export function VaccineCardModal({
 
             {/* Doses History Table */}
             <div className='flex flex-col gap-1.5'>
-              <h4 className='text-xs font-bold text-slate-800 tracking-wide uppercase'>
-                Riwayat Pemberian Dosis Imunisasi (TT 5 Dosis):
-              </h4>
-              <div className='border border-stone-200 rounded-xl overflow-hidden text-xs'>
-                <table className='w-full text-left'>
+              <div className='flex items-center justify-between'>
+                <h4 className='text-xs font-bold text-slate-800 tracking-wide uppercase'>
+                  Riwayat Pemberian Dosis Imunisasi (TT 5 Dosis):
+                </h4>
+              </div>
+              <div className='border border-stone-200 rounded-xl overflow-x-auto text-xs'>
+                <table className='w-full min-w-[460px] sm:min-w-full text-left'>
                   <thead className='bg-stone-50 border-b border-stone-200 text-slate-700 font-bold'>
                     <tr>
-                      <th className='p-2.5'>Dosis</th>
-                      <th className='p-2.5'>Tanggal Pemberian</th>
-                      <th className='p-2.5'>Masa Perlindungan</th>
-                      <th className='p-2.5 text-right'>Status Validasi</th>
+                      <th className='p-2 sm:p-2.5 whitespace-nowrap'>Dosis</th>
+                      <th className='p-2 sm:p-2.5 whitespace-nowrap'>Tanggal Pemberian</th>
+                      <th className='p-2 sm:p-2.5 whitespace-nowrap'>Masa Perlindungan</th>
+                      <th className='p-2 sm:p-2.5 text-right whitespace-nowrap'>Status Validasi</th>
                     </tr>
                   </thead>
                   <tbody className='divide-y divide-stone-100 bg-white'>
                     {doses.map(dose => (
                       <tr key={dose.level} className='hover:bg-slate-50/50'>
-                        <td className='p-2.5 font-bold text-slate-900'>{dose.level}</td>
-                        <td className='p-2.5 text-slate-600'>{dose.date}</td>
-                        <td className='p-2.5 text-slate-600'>{dose.duration}</td>
-                        <td className='p-2.5 text-right'>
+                        <td className='p-2 sm:p-2.5 font-bold text-slate-900 whitespace-nowrap'>
+                          {dose.level}
+                        </td>
+                        <td className='p-2 sm:p-2.5 text-slate-600 whitespace-nowrap'>
+                          {dose.date}
+                        </td>
+                        <td className='p-2 sm:p-2.5 text-slate-600 whitespace-nowrap'>
+                          {dose.duration}
+                        </td>
+                        <td className='p-2 sm:p-2.5 text-right whitespace-nowrap'>
                           {dose.status === 'Belum' ? (
                             <span className='text-slate-400 font-medium'>{dose.status}</span>
                           ) : (
                             <span
-                              className={`inline-flex items-center gap-1 font-bold ${
+                              className={`inline-flex items-center justify-end gap-1 font-bold ${
                                 dose.status === 'Terverifikasi'
                                   ? 'text-[#0a5139]'
                                   : 'text-amber-700'
                               }`}
                             >
-                              <CheckCircle2 size={13} /> {dose.status}
+                              <CheckCircle2 size={13} className='shrink-0' /> {dose.status}
                             </span>
                           )}
                         </td>

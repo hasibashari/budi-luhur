@@ -11,6 +11,8 @@ import {
   ChevronRight,
   BookOpen,
   AlertTriangle,
+  Copy,
+  Check,
 } from 'lucide-react';
 import { Card } from '@/src/shared/components/ui/Card';
 import { useAuth } from '@/src/features/auth';
@@ -30,10 +32,56 @@ const getFormattedTimestamp = () =>
 export default function ConsultationView() {
   const { user } = useAuth();
   const userName = user?.name || '';
-  const [messages, setMessages] = useState<ChatMessage[]>(() => getInitialChatMessages(userName));
+  const storageKey = `femory_chat_history_${user?.id || 'guest'}`;
+
+  const [messages, setMessages] = useState<ChatMessage[]>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem(`femory_chat_history_${user?.id || 'guest'}`);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            return parsed;
+          }
+        }
+      } catch (e) {
+        console.warn('Failed to parse chat from localStorage', e);
+      }
+    }
+    return getInitialChatMessages(userName);
+  });
   const [inputText, setInputText] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
+
+  // Sync with localStorage when user changes
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      const saved = localStorage.getItem(storageKey);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setMessages(parsed);
+          return;
+        }
+      }
+    } catch (e) {
+      console.warn('Failed to load chat from localStorage', e);
+    }
+    setMessages(getInitialChatMessages(user?.name));
+  }, [storageKey, user?.name]);
+
+  // Persist messages to localStorage
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(messages));
+    } catch (e) {
+      console.warn('Failed to save chat to localStorage', e);
+    }
+  }, [messages, storageKey]);
 
   const scrollToBottom = () => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -42,6 +90,14 @@ export default function ConsultationView() {
   useEffect(() => {
     scrollToBottom();
   }, [messages, isTyping]);
+
+  const handleCopyText = (text: string, id: string) => {
+    if (typeof window !== 'undefined' && navigator.clipboard) {
+      navigator.clipboard.writeText(text);
+      setCopiedId(id);
+      setTimeout(() => setCopiedId(null), 2000);
+    }
+  };
 
   const handleSendMessage = async (textToSend?: string) => {
     const text = (textToSend || inputText).trim();
@@ -99,6 +155,13 @@ export default function ConsultationView() {
   };
 
   const handleResetChat = () => {
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.removeItem(storageKey);
+      } catch (e) {
+        console.warn('Failed to remove chat from localStorage', e);
+      }
+    }
     setMessages(getInitialChatMessages(user?.name));
   };
 
@@ -261,36 +324,31 @@ export default function ConsultationView() {
                         />
                       )}
 
-                      {/* Reference Badges if articles are cited or retrieved */}
+                      {/* Rujukan artikel sederhana (link saja) */}
                       {!isUser && msg.references && msg.references.length > 0 && (
-                        <div className='mt-2.5 pt-2 border-t border-rose-100'>
-                          <div className='flex items-center gap-1.5 text-[11px] font-bold text-rose-900 mb-1.5'>
-                            <BookOpen size={12} className='text-rose-600' />
-                            <span>Rujukan Artikel Edukasi TTD:</span>
-                          </div>
-                          <div className='flex flex-wrap gap-1.5'>
-                            {msg.references.map(ref => (
-                              <Link
-                                key={ref.id}
-                                to={`/user/education/${ref.id}`}
-                                className='inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-white hover:bg-rose-100 text-rose-800 text-[11px] font-semibold border border-rose-200 transition-colors shadow-2xs group'
-                              >
-                                <span className='line-clamp-1 max-w-[200px]'>{ref.title}</span>
-                                <ChevronRight
-                                  size={11}
-                                  className='text-rose-500 group-hover:translate-x-0.5 transition-transform shrink-0'
-                                />
-                              </Link>
-                            ))}
-                          </div>
+                        <div className='mt-2.5 pt-2 border-t border-rose-100 flex flex-wrap items-center gap-1.5 text-xs'>
+                          <span className='text-[11px] font-semibold text-rose-700 flex items-center gap-1 shrink-0'>
+                            <BookOpen size={11} className='text-rose-500' />
+                            <span>Rujukan:</span>
+                          </span>
+                          {msg.references.map(ref => (
+                            <Link
+                              key={ref.id}
+                              to={`/user/education/${ref.id}`}
+                              className='inline-flex items-center gap-1 text-[11px] text-rose-700 hover:text-rose-900 font-medium hover:underline bg-rose-50 hover:bg-rose-100 px-2 py-0.5 rounded-md border border-rose-200/60 transition-colors'
+                            >
+                              <span className='line-clamp-1 max-w-[200px]'>{ref.title}</span>
+                              <ChevronRight size={10} className='text-rose-400 shrink-0' />
+                            </Link>
+                          ))}
                         </div>
                       )}
 
                       {/* Error Banner with Direct Education Link */}
                       {hasError && (
-                        <div className='mt-2.5 pt-2 border-t border-rose-200/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2'>
+                        <div className='mt-2.5 pt-2 border-t border-rose-200/80 flex flex-wrap items-center justify-between gap-1.5'>
                           <span className='text-[10px] text-rose-700 font-medium flex items-center gap-1'>
-                            <AlertTriangle size={12} className='text-rose-600 shrink-0' />
+                            <AlertTriangle size={11} className='text-rose-600 shrink-0' />
                             <span>
                               {msg.errorType === 'QUOTA_EXCEEDED'
                                 ? 'Batas kuota layanan tercapai'
@@ -298,22 +356,45 @@ export default function ConsultationView() {
                             </span>
                           </span>
                           <Link
-                            to='/user/education'
-                            className='inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-semibold text-white bg-rose-600 hover:bg-rose-700 rounded-lg shadow-2xs transition-colors shrink-0'
+                            to={
+                              msg.references && msg.references.length > 0
+                                ? `/user/education/${msg.references[0].id}`
+                                : '/user/education'
+                            }
+                            className='inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-semibold text-rose-700 bg-rose-100 hover:bg-rose-200 rounded-md border border-rose-200 transition-colors shrink-0'
                           >
-                            <BookOpen size={11} />
-                            <span>Buka Artikel TTD</span>
+                            <BookOpen size={10} />
+                            <span>Buka Artikel Terkait</span>
                           </Link>
                         </div>
                       )}
 
-                      <span
-                        className={`text-[10px] block mt-1.5 ${
-                          isUser ? 'text-rose-100 text-right' : 'text-[#94a3b8]'
-                        }`}
-                      >
-                        {msg.timestamp}
-                      </span>
+                      {/* Bubble Footer: Timestamp & Copy Button */}
+                      <div className='flex items-center justify-between mt-1.5 pt-1 text-[10px]'>
+                        <span className={isUser ? 'text-rose-100' : 'text-[#94a3b8]'}>
+                          {msg.timestamp}
+                        </span>
+                        {!isUser && (
+                          <button
+                            type='button'
+                            onClick={() => handleCopyText(msg.text, msg.id)}
+                            title='Salin jawaban'
+                            className='inline-flex items-center gap-1 text-[#94a3b8] hover:text-[#e11d48] transition-colors cursor-pointer px-1 py-0.5 rounded hover:bg-rose-50/50'
+                          >
+                            {copiedId === msg.id ? (
+                              <>
+                                <Check size={11} className='text-emerald-500' />
+                                <span className='text-emerald-600 font-medium'>Tersalin</span>
+                              </>
+                            ) : (
+                              <>
+                                <Copy size={11} />
+                                <span>Salin</span>
+                              </>
+                            )}
+                          </button>
+                        )}
+                      </div>
                     </div>
                   </div>
                 );
@@ -370,10 +451,7 @@ export default function ConsultationView() {
               {/* Integrated Explicit Medical Disclaimer Footer */}
               <div className='flex items-center justify-center gap-1.5 text-[10px] text-[#64748b] text-center pt-0.5 px-2'>
                 <AlertCircle size={11} className='text-[#e11d48] shrink-0' />
-                <span>
-                  AI dapat memberikan informasi yang kurang tepat. Informasi ini bukan pengganti
-                  konsultasi dengan dokter, bidan, atau tenaga kesehatan profesional.
-                </span>
+                <span>AI dapat membuat kekeliruan. Selalu verifikasi informasi penting dengan tenaga kesehatan.</span>
               </div>
             </div>
           </Card>
