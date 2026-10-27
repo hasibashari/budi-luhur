@@ -5,7 +5,6 @@ import {
   AuthContextValue,
   LoginCredentials,
   RegisterCredentials,
-  UserRole,
 } from '../types/auth.types';
 import apiClient, { AUTH_STORAGE_KEY, USER_STORAGE_KEY } from '../../../shared/api/client';
 
