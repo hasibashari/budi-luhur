@@ -110,8 +110,10 @@ export class UserProfileService {
           read_time: string;
           summary: string;
           image_url: string;
+          author_name?: string;
+          author_role?: string;
         }>(
-          `SELECT id, title, category, read_time, summary, image_url 
+          `SELECT id, title, category, read_time, summary, image_url, author_name, author_role 
            FROM articles 
            WHERE status = 'Terbit' 
            ORDER BY is_featured DESC, published_at DESC LIMIT 1`,
@@ -211,6 +213,12 @@ export class UserProfileService {
             readTime: article.read_time,
             summary: article.summary,
             imageUrl: article.image_url,
+            author: article.author_name
+              ? {
+                  name: article.author_name,
+                  role: article.author_role || 'Tim Medis Kemenkes',
+                }
+              : undefined,
           }
         : null,
       activeBuddy: null,

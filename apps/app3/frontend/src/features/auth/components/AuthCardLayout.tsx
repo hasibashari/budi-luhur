@@ -59,14 +59,15 @@ export function AuthCardLayout({ children }: AuthCardLayoutProps) {
         <div className='absolute bottom-[12%] left-[-6%] w-80 h-80 rounded-full border border-dashed border-[#aff1d0]/40 pointer-events-none' />
 
         {/* Visual Showcase Content Container - Proportionate to laptop screens */}
-        <div className='relative z-10 w-full max-w-[360px] xl:max-w-[390px] flex flex-col gap-4'>
+        <div className='relative z-10 w-full max-w-[360px] xl:max-w-[390px] flex flex-col gap-4 text-center'>
           {/* Welcome Showcase Header */}
           <div>
             <h3 className='text-base sm:text-lg font-black text-[#121c2a] tracking-tight mb-1'>
               Selamat datang di Aplikasi TEMANI
             </h3>
             <p className='text-xs text-[#574144] leading-relaxed'>
-              Persiapkan pernikahan yang sehat dan pantau imunisasi Tetanus Toksoid.
+              Persiapkan pernikahan yang sehat dan pantau imunisasi Tetanus Toksoid di aplikasi
+              TEMANI.
             </p>
           </div>
 
@@ -146,8 +147,9 @@ export function AuthCardLayout({ children }: AuthCardLayoutProps) {
           {/* Inspirational Description */}
           <div className='text-center px-2'>
             <p className='text-[11px] sm:text-xs text-[#574144] leading-relaxed'>
-              Pantau jadwal imunisasi Tetanus Toxoid, catat status kesehatan pranikah, dan dapatkan
-              sertifikat verifikasi digital terstandar Kemenkes RI.
+              Dapatkan informasi kesehatan pranikah, pantau status imunisasi TT, dan dapatkan
+              pengingat jadwal imunisasi tetanus toxoid agar jadwal imunisasi tetap terpantau dan
+              tidak terlewat.
             </p>
           </div>
         </div>

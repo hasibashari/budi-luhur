@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Clock, BookOpen, ShieldCheck, User } from 'lucide-react';
+import { Home, BookOpen, ShieldCheck, User } from 'lucide-react';
 
 export interface BottomNavItem {
   name: string;
@@ -11,9 +11,8 @@ export interface BottomNavItem {
 
 export const USER_BOTTOM_NAV_ITEMS: BottomNavItem[] = [
   { name: 'Beranda', href: '/user/dashboard', icon: Home },
-  { name: 'Jadwal', href: '/user/schedule', icon: Clock, matchPrefixes: ['/user/schedule'] },
   {
-    name: 'Imunisasi',
+    name: 'Riwayat',
     href: '/user/imunisasi',
     icon: ShieldCheck,
     matchPrefixes: ['/user/imunisasi', '/user/history'],

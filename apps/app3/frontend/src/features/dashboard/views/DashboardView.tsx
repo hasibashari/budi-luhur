@@ -69,6 +69,8 @@ export default function DashboardView() {
           setActiveNudge(nudge);
           if (data?.featuredArticle) {
             setFeaturedArticle(data.featuredArticle as any);
+          } else {
+            setFeaturedArticle(null);
           }
           setLoading(false);
         }
@@ -379,124 +381,114 @@ export default function DashboardView() {
             />
           </section>
 
-          {/* 3. Banner Informasi Catin Terpadu (Educational Article Highlight from Stitch Screen 2) */}
-          {(() => {
-            const activeArticleId = featuredArticle?.id || 'art_tt_1';
-            const articleTitle =
-              featuredArticle?.title ||
-              'Mengapa Skrining TT itu Sangat Penting Sebelum Ijab Kabul?';
-            const articleSummary =
-              featuredArticle?.summary ||
-              'Imunisasi Tetanus Toxoid (TT) bukan sekadar syarat administratif pernikahan, melainkan benteng proteksi seumur hidup bagi calon ibu dan buah hati dari risiko tetanus neonatorum saat persalinan.';
-            const articleImage =
-              featuredArticle?.imageUrl ||
-              'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&auto=format&fit=crop&q=80';
-            const articleReadTime = featuredArticle?.readTime || '4 Menit Baca';
-            const articleAuthor =
-              featuredArticle?.author?.name || 'dr. Sarah Jenkins, Sp.GK & Tim Medis Kemenkes';
-
-            const read = isRead(activeArticleId);
-
-            return (
-              <section aria-label='Banner Edukasi Pranikah Pilihan'>
-                <div
-                  className={`relative overflow-hidden rounded-2xl bg-white border border-[#eff4ff] shadow-[0_4px_16px_rgba(0,0,0,0.04)] flex flex-col group transition-all ${
-                    read ? 'bg-stone-50/80 border-stone-200/80 opacity-90' : ''
-                  }`}
+          {/* 3. Banner Informasi Catin Terpadu (Educational Article Highlight from Stitch Screen 2 - dinamis, hanya tampil jika ada artikel) */}
+          {featuredArticle && (
+            <section aria-label='Banner Edukasi Pranikah Pilihan'>
+              <div
+                className={`relative overflow-hidden rounded-2xl bg-white border border-[#eff4ff] shadow-[0_4px_16px_rgba(0,0,0,0.04)] flex flex-col group transition-all ${
+                  isRead(featuredArticle.id) ? 'bg-stone-50/80 border-stone-200/80 opacity-90' : ''
+                }`}
+              >
+                {/* Image Card Header with Editorial Scrim */}
+                <Link
+                  to={`/user/education/${featuredArticle.id}`}
+                  onClick={() => markAsRead(featuredArticle.id)}
+                  className='relative w-full h-44 sm:h-48 bg-stone-100 overflow-hidden block cursor-pointer'
                 >
-                  {/* Image Card Header with Editorial Scrim */}
-                  <Link
-                    to={`/user/education/${activeArticleId}`}
-                    onClick={() => markAsRead(activeArticleId)}
-                    className='relative w-full h-44 sm:h-48 bg-stone-100 overflow-hidden block cursor-pointer'
-                  >
-                    <img
-                      className={`w-full h-full object-cover group-hover:scale-105 transition-all duration-300 ${
-                        read ? 'grayscale-[35%] group-hover:grayscale-0' : ''
-                      }`}
-                      src={articleImage}
-                      alt={articleTitle}
-                    />
-                    <div className='absolute inset-0 bg-linear-to-t from-[#121c2a]/85 via-[#121c2a]/20 to-transparent' />
-                    <div className='absolute top-3 left-3 flex items-center gap-1.5 flex-wrap'>
-                      <span className='px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-md text-[#aa294d] text-[11px] font-bold shadow-xs'>
-                        Wajib bagi Catin
+                  <img
+                    className={`w-full h-full object-cover group-hover:scale-105 transition-all duration-300 ${
+                      isRead(featuredArticle.id) ? 'grayscale-[35%] group-hover:grayscale-0' : ''
+                    }`}
+                    src={featuredArticle.imageUrl}
+                    alt={featuredArticle.title}
+                  />
+                  <div className='absolute inset-0 bg-linear-to-t from-[#121c2a]/85 via-[#121c2a]/20 to-transparent' />
+                  <div className='absolute top-3 left-3 flex items-center gap-1.5 flex-wrap'>
+                    <span className='px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-md text-[#aa294d] text-[11px] font-bold shadow-xs'>
+                      {featuredArticle.category || 'Wajib bagi Catin'}
+                    </span>
+                    {isRead(featuredArticle.id) && (
+                      <span className='inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-stone-900/80 backdrop-blur-md text-stone-200 text-[11px] font-semibold shadow-xs'>
+                        <Check size={12} className='text-emerald-400' /> Sudah dibaca
                       </span>
-                      {read && (
-                        <span className='inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-stone-900/80 backdrop-blur-md text-stone-200 text-[11px] font-semibold shadow-xs'>
-                          <Check size={12} className='text-emerald-400' /> Sudah dibaca
-                        </span>
-                      )}
-                    </div>
+                    )}
+                  </div>
+                </Link>
+
+                {/* Article Content */}
+                <div className='p-4 sm:p-5 flex flex-col gap-2.5'>
+                  <div className='flex items-center gap-2 text-[#574144] text-[11px]'>
+                    <span className='flex items-center gap-1'>
+                      <Clock size={13} /> {featuredArticle.readTime || '3 Menit Baca'}
+                    </span>
+                    {featuredArticle.author?.name && (
+                      <>
+                        <span>•</span>
+                        <span className='truncate'>{featuredArticle.author.name}</span>
+                      </>
+                    )}
+                  </div>
+
+                  <Link
+                    to={`/user/education/${featuredArticle.id}`}
+                    onClick={() => markAsRead(featuredArticle.id)}
+                  >
+                    <h3
+                      className={`text-sm sm:text-base font-bold transition-colors leading-snug ${
+                        isRead(featuredArticle.id)
+                          ? 'text-stone-500 font-semibold group-hover:text-stone-700'
+                          : 'text-[#121c2a] group-hover:text-[#aa294d]'
+                      }`}
+                    >
+                      {featuredArticle.title}
+                    </h3>
                   </Link>
 
-                  {/* Article Content */}
-                  <div className='p-4 sm:p-5 flex flex-col gap-2.5'>
-                    <div className='flex items-center gap-2 text-[#574144] text-[11px]'>
-                      <span className='flex items-center gap-1'>
-                        <Clock size={13} /> {articleReadTime}
-                      </span>
-                      <span>•</span>
-                      <span className='truncate'>{articleAuthor}</span>
-                    </div>
+                  <p
+                    className={`text-xs leading-relaxed line-clamp-2 ${
+                      isRead(featuredArticle.id) ? 'text-stone-400' : 'text-[#574144]'
+                    }`}
+                  >
+                    {featuredArticle.summary}
+                  </p>
 
+                  <div className='pt-2 flex items-center justify-between gap-3'>
                     <Link
-                      to={`/user/education/${activeArticleId}`}
-                      onClick={() => markAsRead(activeArticleId)}
+                      to={`/user/education/${featuredArticle.id}`}
+                      onClick={() => markAsRead(featuredArticle.id)}
+                      className={`inline-flex items-center justify-center px-5 py-2.5 min-h-[44px] rounded-full text-xs font-bold transition-all active:scale-95 ${
+                        isRead(featuredArticle.id)
+                          ? 'bg-stone-200 text-stone-700 hover:bg-stone-300 shadow-none'
+                          : 'bg-[#aa294d] text-white shadow-[0_4px_12px_rgba(170,41,77,0.25)] hover:bg-[#cb4364]'
+                      }`}
                     >
-                      <h3
-                        className={`text-sm sm:text-base font-bold transition-colors leading-snug ${
-                          read
-                            ? 'text-stone-500 font-semibold group-hover:text-stone-700'
-                            : 'text-[#121c2a] group-hover:text-[#aa294d]'
-                        }`}
-                      >
-                        {articleTitle}
-                      </h3>
+                      {isRead(featuredArticle.id) ? 'Baca Lagi' : 'Baca Selengkapnya'}
                     </Link>
-
-                    <p className={`text-xs leading-relaxed line-clamp-2 ${read ? 'text-stone-400' : 'text-[#574144]'}`}>
-                      {articleSummary}
-                    </p>
-
-                    <div className='pt-2 flex items-center justify-between gap-3'>
-                      <Link
-                        to={`/user/education/${activeArticleId}`}
-                        onClick={() => markAsRead(activeArticleId)}
-                        className={`inline-flex items-center justify-center px-5 py-2.5 min-h-[44px] rounded-full text-xs font-bold transition-all active:scale-95 ${
-                          read
-                            ? 'bg-stone-200 text-stone-700 hover:bg-stone-300 shadow-none'
-                            : 'bg-[#aa294d] text-white shadow-[0_4px_12px_rgba(170,41,77,0.25)] hover:bg-[#cb4364]'
-                        }`}
-                      >
-                        {read ? 'Baca Lagi' : 'Baca Selengkapnya'}
-                      </Link>
-                      <button
-                        type='button'
-                        onClick={() => {
-                          setIsBookmarked(!isBookmarked);
-                          showToast(
-                            !isBookmarked
-                              ? 'Artikel disimpan ke daftar bacaan!'
-                              : 'Artikel dihapus dari simpanan.',
-                          );
-                        }}
-                        className='w-11 h-11 rounded-full flex items-center justify-center text-[#574144] hover:text-[#aa294d] hover:bg-[#ffd9de]/30 transition-colors cursor-pointer active:scale-90 shrink-0'
-                        title='Simpan Artikel'
-                        aria-label='Simpan Artikel'
-                      >
-                        {isBookmarked ? (
-                          <BookmarkCheck size={20} className='text-[#aa294d]' />
-                        ) : (
-                          <Bookmark size={20} />
-                        )}
-                      </button>
-                    </div>
+                    <button
+                      type='button'
+                      onClick={() => {
+                        setIsBookmarked(!isBookmarked);
+                        showToast(
+                          !isBookmarked
+                            ? 'Artikel disimpan ke daftar bacaan!'
+                            : 'Artikel dihapus dari simpanan.',
+                        );
+                      }}
+                      className='w-11 h-11 rounded-full flex items-center justify-center text-[#574144] hover:text-[#aa294d] hover:bg-[#ffd9de]/30 transition-colors cursor-pointer active:scale-90 shrink-0'
+                      title='Simpan Artikel'
+                      aria-label='Simpan Artikel'
+                    >
+                      {isBookmarked ? (
+                        <BookmarkCheck size={20} className='text-[#aa294d]' />
+                      ) : (
+                        <Bookmark size={20} />
+                      )}
+                    </button>
                   </div>
                 </div>
-              </section>
-            );
-          })()}
+              </div>
+            </section>
+          )}
 
           {/* Bottom Reassurance Micro-Banner (Stitch Screen 2) */}
           <div className='py-2 flex items-center justify-center gap-2 text-[#574144]/80 text-xs'>
@@ -540,7 +532,7 @@ export default function DashboardView() {
             </p>
             <div className='mt-3 pt-2.5 border-t border-[#aff1d0]/50 flex items-center justify-between'>
               <Link
-                to={`/user/education/${featuredArticle?.id || 'art_tt_1'}`}
+                to={featuredArticle ? `/user/education/${featuredArticle.id}` : '/user/education'}
                 className='text-[11px] font-bold text-[#2a6950] hover:underline inline-flex items-center gap-1'
               >
                 <BookOpen size={12} />

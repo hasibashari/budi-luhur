@@ -94,6 +94,10 @@ export interface UserDashboardData {
     readTime: string;
     summary: string;
     imageUrl: string;
+    author?: {
+      name: string;
+      role?: string;
+    };
   } | null;
   activeBuddy: {
     connectionId: string;
