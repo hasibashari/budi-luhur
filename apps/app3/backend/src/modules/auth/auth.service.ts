@@ -6,6 +6,8 @@ import {
   AuthUser,
   LoginCredentials,
   RegisterCredentials,
+  ForgotPasswordDto,
+  ResetPasswordDto,
   UserDbRow,
   UserRole,
 } from './auth.types.js';
@@ -194,5 +196,140 @@ export class AuthService {
       success: true,
       message: 'Akun dan seluruh data Anda telah berhasil dihapus secara permanen.',
     };
+  }
+
+  /**
+   * Pengecekan alamat email untuk pemulihan kata sandi tanpa OTP/email verifikasi.
+   * Menghasilkan token pemulihan sementara (15 menit) yang terlindungi hash fingerprint
+   * agar tidak dapat digunakan berulang kali setelah kata sandi berhasil diubah.
+   */
+  static async forgotPassword(dto: ForgotPasswordDto) {
+    const rawEmail = (dto.email || '').trim().toLowerCase();
+    if (!rawEmail) {
+      return { success: false, error: 'Silakan masukkan alamat email Anda.' };
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(rawEmail)) {
+      return { success: false, error: 'Format alamat email tidak valid (contoh: nama@gmail.com).' };
+    }
+
+    try {
+      const res = await db.query<UserDbRow>(
+        `SELECT id, name, email, password_hash FROM users WHERE lower(email) = $1`,
+        [rawEmail],
+      );
+      const user = res.rows[0];
+      if (!user) {
+        return {
+          success: false,
+          error: 'Alamat email tidak terdaftar dalam sistem. Pastikan akun Anda sudah terdaftar.',
+        };
+      }
+
+      // Hash fingerprint untuk token sekali pakai (single-use token protection)
+      const tokenVersion = user.password_hash ? user.password_hash.slice(-10) : 'none';
+
+      const resetToken = jwt.sign(
+        {
+          id: user.id,
+          email: user.email,
+          purpose: 'password-reset',
+          tokenVersion,
+        },
+        config.jwtSecret,
+        { expiresIn: '15m' } as jwt.SignOptions,
+      );
+
+      return {
+        success: true,
+        message: 'Alamat email terverifikasi. Silakan masukkan kata sandi baru Anda.',
+        resetToken,
+        email: user.email,
+      };
+    } catch (dbErr) {
+      console.error('Database query during forgotPassword failed:', dbErr);
+      return { success: false, error: 'Gagal memverifikasi email pemulihan saat ini.' };
+    }
+  }
+
+  /**
+   * Simpan kata sandi baru menggunakan token pemulihan sekali pakai.
+   * Memvalidasi token, tokenVersion, mencocokkan konfirmasi, dan menyimpan hash bcrypt baru.
+   */
+  static async resetPassword(data: ResetPasswordDto) {
+    const resetToken = (data.resetToken || '').trim();
+    const newPassword = data.newPassword || '';
+    const confirmPassword = data.confirmPassword;
+
+    if (!resetToken) {
+      return {
+        success: false,
+        error: 'Sesi pemulihan tidak valid atau tidak ditemukan. Silakan ulangi langkah pemulihan.',
+      };
+    }
+
+    if (!newPassword || newPassword.length < 6) {
+      return { success: false, error: 'Kata sandi baru minimal 6 karakter.' };
+    }
+
+    if (confirmPassword !== undefined && newPassword !== confirmPassword) {
+      return { success: false, error: 'Konfirmasi kata sandi tidak cocok.' };
+    }
+
+    let decoded: any;
+    try {
+      decoded = jwt.verify(resetToken, config.jwtSecret);
+    } catch {
+      return {
+        success: false,
+        error: 'Sesi pemulihan telah kedaluwarsa atau tidak sah. Silakan ajukan pemulihan kata sandi kembali.',
+      };
+    }
+
+    if (!decoded || decoded.purpose !== 'password-reset' || !decoded.id) {
+      return {
+        success: false,
+        error: 'Otorisasi pemulihan tidak sah.',
+      };
+    }
+
+    try {
+      const res = await db.query<UserDbRow>(
+        `SELECT id, email, password_hash FROM users WHERE id = $1`,
+        [decoded.id],
+      );
+      const user = res.rows[0];
+      if (!user) {
+        return {
+          success: false,
+          error: 'Akun pengguna pemohon pemulihan tidak ditemukan.',
+        };
+      }
+
+      // Validasi single-use: jika password_hash sudah berubah, tokenVersion tidak lagi cocok
+      const currentVersion = user.password_hash ? user.password_hash.slice(-10) : 'none';
+      if (decoded.tokenVersion !== currentVersion) {
+        return {
+          success: false,
+          error: 'Sesi pemulihan ini sudah pernah digunakan atau tidak lagi berlaku. Silakan ajukan pemulihan baru.',
+        };
+      }
+
+      const passwordHash = await bcrypt.hash(newPassword, 10);
+
+      await db.query(
+        `UPDATE users SET password_hash = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2`,
+        [passwordHash, user.id],
+      );
+
+      return {
+        success: true,
+        message: 'Kata sandi berhasil diperbarui! Silakan masuk dengan kata sandi baru Anda.',
+      };
+    } catch (dbErr) {
+      console.error('Database query during resetPassword failed:', dbErr);
+      return { success: false, error: 'Gagal memperbarui kata sandi di sistem.' };
+    }
   }
 }

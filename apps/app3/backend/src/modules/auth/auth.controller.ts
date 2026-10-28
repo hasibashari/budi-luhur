@@ -64,4 +64,33 @@ export class AuthController {
       res.status(500).json({ success: false, error: 'Gagal memproses penghapusan akun.' });
     }
   }
+
+  static async forgotPassword(req: Request, res: Response) {
+    try {
+      const result = await AuthService.forgotPassword(req.body);
+      if (!result.success) {
+        const isNotFound = result.error?.includes('tidak terdaftar');
+        res.status(isNotFound ? 404 : 400).json(result);
+        return;
+      }
+      res.json(result);
+    } catch (error: any) {
+      console.error('AuthController.forgotPassword error:', error);
+      res.status(500).json({ success: false, error: 'Gagal memproses verifikasi email pemulihan.' });
+    }
+  }
+
+  static async resetPassword(req: Request, res: Response) {
+    try {
+      const result = await AuthService.resetPassword(req.body);
+      if (!result.success) {
+        res.status(400).json(result);
+        return;
+      }
+      res.json(result);
+    } catch (error: any) {
+      console.error('AuthController.resetPassword error:', error);
+      res.status(500).json({ success: false, error: 'Gagal memperbarui kata sandi baru.' });
+    }
+  }
 }

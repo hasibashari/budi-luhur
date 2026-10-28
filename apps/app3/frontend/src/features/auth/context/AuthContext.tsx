@@ -5,6 +5,7 @@ import {
   AuthContextValue,
   LoginCredentials,
   RegisterCredentials,
+  ResetPasswordCredentials,
 } from '../types/auth.types';
 import apiClient, { AUTH_STORAGE_KEY, USER_STORAGE_KEY } from '../../../shared/api/client';
 
@@ -18,7 +19,7 @@ const initialAuthState: AuthState = {
   hasCompletedOnboarding: false,
 };
 
-const AuthContext = createContext<AuthContextValue | undefined>(undefined);
+export const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<AuthState>(initialAuthState);
@@ -181,6 +182,48 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  const verifyResetEmail = useCallback(async (email: string) => {
+    setState(prev => ({ ...prev, isLoading: true }));
+    try {
+      const res = await apiClient.post('/auth/forgot-password', { email });
+      setState(prev => ({ ...prev, isLoading: false }));
+      return {
+        success: true,
+        resetToken: res.data?.resetToken,
+        email: res.data?.email,
+        message: res.data?.message,
+      };
+    } catch (err: any) {
+      setState(prev => ({ ...prev, isLoading: false }));
+      return {
+        success: false,
+        error:
+          err.response?.data?.error ||
+          'Email tidak ditemukan atau terjadi kesalahan saat pengecekan.',
+      };
+    }
+  }, []);
+
+  const resetPassword = useCallback(async (credentials: ResetPasswordCredentials) => {
+    setState(prev => ({ ...prev, isLoading: true }));
+    try {
+      const res = await apiClient.post('/auth/reset-password', credentials);
+      setState(prev => ({ ...prev, isLoading: false }));
+      return {
+        success: true,
+        message: res.data?.message || 'Kata sandi berhasil diperbarui.',
+      };
+    } catch (err: any) {
+      setState(prev => ({ ...prev, isLoading: false }));
+      return {
+        success: false,
+        error:
+          err.response?.data?.error ||
+          'Gagal memperbarui kata sandi. Silakan coba kembali.',
+      };
+    }
+  }, []);
+
   const logout = useCallback(() => {
     try {
       localStorage.removeItem(AUTH_STORAGE_KEY);
@@ -246,6 +289,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         ...state,
         login,
         register,
+        verifyResetEmail,
+        resetPassword,
         logout,
         deleteAccount,
         completeOnboarding,

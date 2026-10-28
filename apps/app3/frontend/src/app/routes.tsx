@@ -1,7 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthGuard } from '@/src/features/auth/components/AuthGuard';
 import { GuestGuard } from '@/src/features/auth/components/GuestGuard';
-import { LoginView, RegisterView, useAuth } from '@/src/features/auth';
+import { LoginView, RegisterView, ForgotPasswordView, useAuth } from '@/src/features/auth';
 import { OnboardingView, OnboardingScreenView } from '@/src/features/onboarding';
 
 // User Portal Views
@@ -78,6 +78,14 @@ export function AppRoutes() {
         element={
           <GuestGuard>
             <RegisterView />
+          </GuestGuard>
+        }
+      />
+      <Route
+        path='/auth/forgot-password'
+        element={
+          <GuestGuard>
+            <ForgotPasswordView />
           </GuestGuard>
         }
       />

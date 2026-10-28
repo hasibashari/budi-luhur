@@ -20,6 +20,16 @@ export interface LoginCredentials {
   password?: string;
 }
 
+export interface ForgotPasswordDto {
+  email: string;
+}
+
+export interface ResetPasswordDto {
+  resetToken: string;
+  newPassword: string;
+  confirmPassword?: string;
+}
+
 export interface RegisterCredentials {
   name: string;
   email: string;

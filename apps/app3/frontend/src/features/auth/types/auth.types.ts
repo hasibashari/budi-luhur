@@ -27,6 +27,12 @@ export interface RegisterCredentials {
   gender?: 'Perempuan' | 'Laki-laki';
 }
 
+export interface ResetPasswordCredentials {
+  resetToken: string;
+  newPassword: string;
+  confirmPassword?: string;
+}
+
 export interface AuthState {
   user: AuthUser | null;
   isAuthenticated: boolean;
@@ -47,6 +53,16 @@ export interface AuthContextValue extends AuthState {
   }>;
   register: (
     data: RegisterCredentials,
+  ) => Promise<{ success: boolean; error?: string; message?: string }>;
+  verifyResetEmail: (email: string) => Promise<{
+    success: boolean;
+    resetToken?: string;
+    email?: string;
+    error?: string;
+    message?: string;
+  }>;
+  resetPassword: (
+    credentials: ResetPasswordCredentials,
   ) => Promise<{ success: boolean; error?: string; message?: string }>;
   logout: () => void;
   deleteAccount: () => Promise<{ success: boolean; error?: string; message?: string }>;

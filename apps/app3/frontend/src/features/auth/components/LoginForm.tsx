@@ -13,6 +13,7 @@ export function LoginForm({ onSwitchTab, hideHeader = false }: LoginFormProps) {
   const [searchParams] = useSearchParams();
   const redirectParam = searchParams.get('redirect');
   const isJustRegistered = searchParams.get('registered') === 'true';
+  const isJustReset = searchParams.get('reset') === 'true';
 
   const { login } = useAuth();
 
@@ -94,6 +95,16 @@ export function LoginForm({ onSwitchTab, hideHeader = false }: LoginFormProps) {
         </div>
       )}
 
+      {isJustReset && !errorMessage && !successRole && (
+        <div
+          role='status'
+          className='mb-3 p-3 rounded-xl bg-[#ecfdf5] border border-[#aff1d0] text-[#166534] text-xs font-medium flex items-center gap-2 animate-fade-in'
+        >
+          <CheckCircle2 size={16} className='text-[#2a6950] shrink-0' />
+          <span>Kata sandi berhasil diperbarui! Silakan masuk dengan kata sandi baru Anda.</span>
+        </div>
+      )}
+
       {errorMessage && (
         <div
           role='alert'
@@ -149,11 +160,7 @@ export function LoginForm({ onSwitchTab, hideHeader = false }: LoginFormProps) {
               Kata sandi
             </label>
             <Link
-              to='#'
-              onClick={e => {
-                e.preventDefault();
-                alert('Silakan hubungi administrator fasilitas kesehatan untuk mereset kata sandi Anda.');
-              }}
+              to='/auth/forgot-password'
               className='text-[11px] text-[#aa294d] hover:text-[#8c0f39] font-medium transition-colors cursor-pointer'
             >
               Lupa kata sandi?
