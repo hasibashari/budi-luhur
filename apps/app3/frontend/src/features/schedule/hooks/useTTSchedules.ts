@@ -82,6 +82,9 @@ export function useTTSchedules(): UseTTSchedulesReturn {
           dosage: payload.dosage,
           notes: payload.notes,
           remind15MinBefore: payload.remind15MinBefore,
+          remind1MonthBefore: payload.remind1MonthBefore,
+          remind1DayBefore: payload.remind1DayBefore,
+          remind30MinBefore: payload.remind30MinBefore,
           isEnabled: payload.isEnabled,
           status: payload.status,
         };

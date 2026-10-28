@@ -65,6 +65,14 @@ function parseTimeToMinutes(value?: string): number | null {
   return (hour || 0) * 60 + (minute || 0);
 }
 
+function diffInDays(targetDate: string, todayDate: string): number {
+  if (!targetDate || !todayDate) return 0;
+  const target = new Date(`${targetDate}T00:00:00`);
+  const today = new Date(`${todayDate}T00:00:00`);
+  if (Number.isNaN(target.getTime()) || Number.isNaN(today.getTime())) return 0;
+  return Math.round((target.getTime() - today.getTime()) / 86_400_000);
+}
+
 function wasAlreadyFired(key: string): boolean {
   if (typeof window === 'undefined') return true;
   try {
@@ -161,6 +169,36 @@ export function useTTScheduleReminders({
 
       for (const schedule of list) {
         if (!schedule.isEnabled || schedule.status === 'completed') continue;
+
+        const daysDiff = diffInDays(schedule.scheduledDate, dateKey);
+
+        // A. Pengingat H-1 Bulan (30 hari sebelum hari H)
+        if (schedule.remind1MonthBefore && daysDiff === 30) {
+          const keyMonth = `${STORAGE_PREFIX}_${userId || 'user'}_${schedule.id}_1month_${schedule.scheduledDate}`;
+          if (!wasAlreadyFired(keyMonth)) {
+            markAsFired(keyMonth);
+            notifyUser(`H-30 Hari: Persiapan Imunisasi ${schedule.stage} 📅`, {
+              body: `Jadwal ${schedule.title || schedule.stage} Anda dijadwalkan pada ${schedule.scheduledDate}. Persiapkan dokumen dan faskes tujuan.`,
+              tag: `tt_${schedule.id}_1month`,
+              url: `${APP_BASE}/user/jadwal`,
+            });
+          }
+        }
+
+        // B. Pengingat H-1 Hari (1 hari sebelum hari H)
+        if (schedule.remind1DayBefore && daysDiff === 1) {
+          const keyDay = `${STORAGE_PREFIX}_${userId || 'user'}_${schedule.id}_1day_${schedule.scheduledDate}`;
+          if (!wasAlreadyFired(keyDay)) {
+            markAsFired(keyDay);
+            notifyUser(`Besok: Jadwal Imunisasi ${schedule.stage}! ⏰`, {
+              body: `Besok ada jadwal ${schedule.title || schedule.stage} pukul ${schedule.time} WIB. Jangan lupa siapkan kartu TT.`,
+              tag: `tt_${schedule.id}_1day`,
+              url: `${APP_BASE}/user/jadwal`,
+            });
+          }
+        }
+
+        // C. Pengingat pada Hari H
         if (schedule.scheduledDate !== dateKey) continue;
 
         const scheduleMinutes = parseTimeToMinutes(schedule.time);
@@ -191,21 +229,45 @@ export function useTTScheduleReminders({
           continue;
         }
 
-        // 2. Pengingat 15 menit sebelumnya
-        if (schedule.remind15MinBefore && diff >= -EARLY_WINDOW_MINUTES && diff < 0) {
-          stillActive.push({
-            scheduleId: schedule.id,
-            kind: 'early',
-            stage: schedule.stage,
-            time: schedule.time,
-          });
+        // 2. Pengingat 30 menit sebelumnya
+        if (schedule.remind30MinBefore && diff >= -30 && diff < 0) {
+          if (!stillActive.some(item => item.scheduleId === schedule.id && item.kind === 'early')) {
+            stillActive.push({
+              scheduleId: schedule.id,
+              kind: 'early',
+              stage: schedule.stage,
+              time: schedule.time,
+            });
+          }
 
-          const key = `${baseKey}_early`;
-          if (!wasAlreadyFired(key)) {
-            markAsFired(key);
-            notifyUser(`15 Menit Lagi: Imunisasi ${schedule.stage} ⏰`, {
+          const key30 = `${baseKey}_early_30m`;
+          if (!wasAlreadyFired(key30)) {
+            markAsFired(key30);
+            notifyUser(`30 Menit Lagi: Imunisasi ${schedule.stage} ⏰`, {
               body: `Jadwal ${schedule.title || schedule.stage} pukul ${schedule.time} WIB. Siapkan kartu TT dan menuju faskes.`,
-              tag: `${notificationTag}_early`,
+              tag: `${notificationTag}_early_30m`,
+              url: `${APP_BASE}/user/imunisasi?catat=${encodeURIComponent(schedule.stage)}&scheduleId=${encodeURIComponent(schedule.id)}&date=${encodeURIComponent(schedule.scheduledDate)}&time=${encodeURIComponent(schedule.time)}`,
+            });
+          }
+        }
+
+        // 3. Pengingat 15 menit sebelumnya
+        if (schedule.remind15MinBefore && diff >= -15 && diff < 0) {
+          if (!stillActive.some(item => item.scheduleId === schedule.id && item.kind === 'early')) {
+            stillActive.push({
+              scheduleId: schedule.id,
+              kind: 'early',
+              stage: schedule.stage,
+              time: schedule.time,
+            });
+          }
+
+          const key15 = `${baseKey}_early_15m`;
+          if (!wasAlreadyFired(key15)) {
+            markAsFired(key15);
+            notifyUser(`15 Menit Lagi: Imunisasi ${schedule.stage} ⏰`, {
+              body: `Jadwal ${schedule.title || schedule.stage} pukul ${schedule.time} WIB. Menuju ruang imunisasi di faskes sekarang.`,
+              tag: `${notificationTag}_early_15m`,
               url: `${APP_BASE}/user/imunisasi?catat=${encodeURIComponent(schedule.stage)}&scheduleId=${encodeURIComponent(schedule.id)}&date=${encodeURIComponent(schedule.scheduledDate)}&time=${encodeURIComponent(schedule.time)}`,
             });
           }

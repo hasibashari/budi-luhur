@@ -38,6 +38,9 @@ function normalizeSchedule(raw: any): TTSchedule {
     status,
     isEnabled: raw?.isEnabled ?? raw?.is_enabled ?? true,
     remind15MinBefore: raw?.remind15MinBefore ?? raw?.remind_15min_before ?? true,
+    remind1MonthBefore: raw?.remind1MonthBefore ?? raw?.remind_1month_before ?? false,
+    remind1DayBefore: raw?.remind1DayBefore ?? raw?.remind_1day_before ?? true,
+    remind30MinBefore: raw?.remind30MinBefore ?? raw?.remind_30min_before ?? true,
     completedAt: raw?.completedAt ?? raw?.completed_at ?? null,
     createdAt: raw?.createdAt ?? raw?.created_at,
     updatedAt: raw?.updatedAt ?? raw?.updated_at,
@@ -77,6 +80,9 @@ export async function createTTScheduleAction(
       dosage: payload.dosage ?? '1 dosis (0.5 mL)',
       notes: payload.notes ?? '',
       remind15MinBefore: payload.remind15MinBefore ?? true,
+      remind1MonthBefore: payload.remind1MonthBefore ?? false,
+      remind1DayBefore: payload.remind1DayBefore ?? true,
+      remind30MinBefore: payload.remind30MinBefore ?? true,
       isEnabled: payload.isEnabled ?? true,
     });
     return { success: true, data: normalizeSchedule(response.data) };

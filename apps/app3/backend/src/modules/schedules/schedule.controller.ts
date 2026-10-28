@@ -28,9 +28,17 @@ export class ScheduleController {
 
       const id = String(req.params.id);
       const body = req.body || {};
-      const isTTUpdate = ['stage', 'scheduledDate', 'status', 'dosage', 'notes'].some(
-        key => body[key] !== undefined,
-      );
+      const isTTUpdate = [
+        'stage',
+        'scheduledDate',
+        'status',
+        'dosage',
+        'notes',
+        'remind15MinBefore',
+        'remind1MonthBefore',
+        'remind1DayBefore',
+        'remind30MinBefore',
+      ].some(key => body[key] !== undefined);
 
       const result = isTTUpdate
         ? await ScheduleService.updateTTSchedule(id, userId, body)
@@ -75,8 +83,18 @@ export class ScheduleController {
         return;
       }
 
-      const { stage, scheduledDate, timeSlot, dosage, notes, remind15MinBefore, isEnabled } =
-        req.body || {};
+      const {
+        stage,
+        scheduledDate,
+        timeSlot,
+        dosage,
+        notes,
+        remind15MinBefore,
+        remind1MonthBefore,
+        remind1DayBefore,
+        remind30MinBefore,
+        isEnabled,
+      } = req.body || {};
 
       if (!stage || !scheduledDate || !timeSlot) {
         res.status(400).json({
@@ -93,6 +111,9 @@ export class ScheduleController {
         dosage,
         notes,
         remind15MinBefore,
+        remind1MonthBefore,
+        remind1DayBefore,
+        remind30MinBefore,
         isEnabled,
       });
 

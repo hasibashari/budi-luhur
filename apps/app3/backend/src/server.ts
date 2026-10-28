@@ -20,7 +20,10 @@ async function start() {
     ALTER TABLE reminder_schedules
       ADD COLUMN IF NOT EXISTS tt_level VARCHAR(3),
       ADD COLUMN IF NOT EXISTS scheduled_date DATE,
-      ADD COLUMN IF NOT EXISTS completed_at TIMESTAMP WITH TIME ZONE;
+      ADD COLUMN IF NOT EXISTS completed_at TIMESTAMP WITH TIME ZONE,
+      ADD COLUMN IF NOT EXISTS remind_1month_before BOOLEAN DEFAULT FALSE,
+      ADD COLUMN IF NOT EXISTS remind_1day_before BOOLEAN DEFAULT TRUE,
+      ADD COLUMN IF NOT EXISTS remind_30min_before BOOLEAN DEFAULT TRUE;
     CREATE INDEX IF NOT EXISTS idx_schedules_user_date ON reminder_schedules(user_id, scheduled_date);
 
     -- Kolom kejujuran data riwayat imunisasi TT (aman dijalankan berulang).

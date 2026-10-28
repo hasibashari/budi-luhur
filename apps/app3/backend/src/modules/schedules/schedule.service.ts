@@ -19,6 +19,9 @@ export interface TTScheduleRow {
   status: 'pending' | 'completed';
   isEnabled: boolean;
   remind15MinBefore: boolean;
+  remind1MonthBefore: boolean;
+  remind1DayBefore: boolean;
+  remind30MinBefore: boolean;
   completedAt: string | null;
   createdAt: string;
   updatedAt: string;
@@ -31,6 +34,9 @@ export interface CreateTTScheduleInput {
   dosage?: string;
   notes?: string;
   remind15MinBefore?: boolean;
+  remind1MonthBefore?: boolean;
+  remind1DayBefore?: boolean;
+  remind30MinBefore?: boolean;
   isEnabled?: boolean;
 }
 
@@ -43,6 +49,9 @@ export interface UpdateTTScheduleInput {
   notes?: string;
   isEnabled?: boolean;
   remind15MinBefore?: boolean;
+  remind1MonthBefore?: boolean;
+  remind1DayBefore?: boolean;
+  remind30MinBefore?: boolean;
   status?: 'pending' | 'completed';
 }
 
@@ -80,6 +89,9 @@ function mapTTRow(row: any): TTScheduleRow {
     status: row.status === 'Selesai' ? 'completed' : 'pending',
     isEnabled: row.is_enabled ?? true,
     remind15MinBefore: row.remind_15min_before ?? true,
+    remind1MonthBefore: row.remind_1month_before ?? false,
+    remind1DayBefore: row.remind_1day_before ?? true,
+    remind30MinBefore: row.remind_30min_before ?? true,
     completedAt: row.completed_at ? new Date(row.completed_at).toISOString() : null,
     createdAt: row.created_at ? new Date(row.created_at).toISOString() : '',
     updatedAt: row.updated_at ? new Date(row.updated_at).toISOString() : '',
@@ -92,7 +104,8 @@ export class ScheduleService {
   /** Ambil semua jadwal TT aktif milik user. */
   static async getSchedules(userId: string): Promise<TTScheduleRow[]> {
     const res = await db.query<any>(
-      `SELECT id, user_id, tablet_name, dosage, time_slot, is_enabled, remind_15min_before,
+      `SELECT id, user_id, tablet_name, dosage, time_slot, is_enabled,
+              remind_15min_before, remind_1month_before, remind_1day_before, remind_30min_before,
               tt_level, scheduled_date, completed_at, instructions, status, created_at, updated_at
        FROM reminder_schedules
        WHERE user_id = $1 AND status <> 'Diberhentikan'
@@ -118,8 +131,9 @@ export class ScheduleService {
     await db.query(
       `INSERT INTO reminder_schedules (
          id, user_id, tablet_name, dosage, frequency, day_of_week, time_slot,
-         is_enabled, remind_15min_before, tt_level, scheduled_date, instructions, status
-       ) VALUES ($1, $2, $3, $4, 'weekly', $5, $6, $7, $8, $9, $10, $11, 'Aktif')`,
+         is_enabled, remind_15min_before, remind_1month_before, remind_1day_before, remind_30min_before,
+         tt_level, scheduled_date, instructions, status
+       ) VALUES ($1, $2, $3, $4, 'weekly', $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, 'Aktif')`,
       [
         id,
         userId,
@@ -129,6 +143,9 @@ export class ScheduleService {
         timeSlot,
         input.isEnabled ?? true,
         input.remind15MinBefore ?? true,
+        input.remind1MonthBefore ?? false,
+        input.remind1DayBefore ?? true,
+        input.remind30MinBefore ?? true,
         stage,
         scheduledDate || null,
         notes,
@@ -141,7 +158,8 @@ export class ScheduleService {
     ]);
 
     const res = await db.query<any>(
-      `SELECT id, user_id, tablet_name, dosage, time_slot, is_enabled, remind_15min_before,
+      `SELECT id, user_id, tablet_name, dosage, time_slot, is_enabled,
+              remind_15min_before, remind_1month_before, remind_1day_before, remind_30min_before,
               tt_level, scheduled_date, completed_at, instructions, status, created_at, updated_at
        FROM reminder_schedules WHERE id = $1`,
       [id],
@@ -190,6 +208,18 @@ export class ScheduleService {
       updates.push(`remind_15min_before = $${idx++}`);
       params.push(data.remind15MinBefore);
     }
+    if (data.remind1MonthBefore !== undefined) {
+      updates.push(`remind_1month_before = $${idx++}`);
+      params.push(data.remind1MonthBefore);
+    }
+    if (data.remind1DayBefore !== undefined) {
+      updates.push(`remind_1day_before = $${idx++}`);
+      params.push(data.remind1DayBefore);
+    }
+    if (data.remind30MinBefore !== undefined) {
+      updates.push(`remind_30min_before = $${idx++}`);
+      params.push(data.remind30MinBefore);
+    }
     if (data.status !== undefined) {
       updates.push(`status = $${idx++}`, `completed_at = $${idx++}`);
       params.push(data.status === 'completed' ? 'Selesai' : 'Aktif');
@@ -214,7 +244,8 @@ export class ScheduleService {
     }
 
     const res = await db.query<any>(
-      `SELECT id, user_id, tablet_name, dosage, time_slot, is_enabled, remind_15min_before,
+      `SELECT id, user_id, tablet_name, dosage, time_slot, is_enabled,
+              remind_15min_before, remind_1month_before, remind_1day_before, remind_30min_before,
               tt_level, scheduled_date, completed_at, instructions, status, created_at, updated_at
        FROM reminder_schedules WHERE id = $1`,
       [scheduleId],

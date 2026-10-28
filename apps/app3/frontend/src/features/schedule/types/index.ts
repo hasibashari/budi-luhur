@@ -19,7 +19,10 @@ export interface TTSchedule {
   notes?: string;
   status: TTScheduleStatus;
   isEnabled: boolean;
-  remind15MinBefore: boolean;
+  remind15MinBefore?: boolean;
+  remind1MonthBefore?: boolean;
+  remind1DayBefore?: boolean;
+  remind30MinBefore?: boolean;
   completedAt?: string | null;
   createdAt?: string;
   updatedAt?: string;
@@ -33,6 +36,9 @@ export interface CreateTTSchedulePayload {
   dosage?: string;
   notes?: string;
   remind15MinBefore?: boolean;
+  remind1MonthBefore?: boolean;
+  remind1DayBefore?: boolean;
+  remind30MinBefore?: boolean;
   isEnabled?: boolean;
 }
 
@@ -45,6 +51,9 @@ export interface UpdateTTSchedulePayload {
   dosage?: string;
   notes?: string;
   remind15MinBefore?: boolean;
+  remind1MonthBefore?: boolean;
+  remind1DayBefore?: boolean;
+  remind30MinBefore?: boolean;
   isEnabled?: boolean;
   status?: TTScheduleStatus;
 }

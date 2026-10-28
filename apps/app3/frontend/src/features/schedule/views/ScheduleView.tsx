@@ -83,6 +83,18 @@ function getNextStage(current?: string): TTStage {
   return `TT${next}` as TTStage;
 }
 
+function formatReminderSummary(schedule: TTSchedule): string {
+  if (!schedule.isEnabled) return 'Pengingat nonaktif';
+  const active: string[] = [];
+  if (schedule.remind1MonthBefore) active.push('H-1 bln');
+  if (schedule.remind1DayBefore) active.push('H-1 hr');
+  if (schedule.remind30MinBefore) active.push('30 mnt');
+  if (schedule.remind15MinBefore) active.push('15 mnt');
+
+  if (active.length === 0) return 'Tepat waktu';
+  return `Pengingat ${active.join(', ')}`;
+}
+
 function buildDefaultForm(userTTStatus?: string): FormState {
   return {
     stage: getNextStage(userTTStatus),
@@ -90,6 +102,9 @@ function buildDefaultForm(userTTStatus?: string): FormState {
     timeSlot: '08:00',
     dosage: '1 dosis (0.5 mL)',
     notes: '',
+    remind1MonthBefore: false,
+    remind1DayBefore: true,
+    remind30MinBefore: true,
     remind15MinBefore: true,
     isEnabled: true,
   };
@@ -216,7 +231,7 @@ function ScheduleCard({ schedule, onToggle, onRecordResult, onEdit, onDelete }: 
             className={schedule.isEnabled ? 'text-[#aa294d]' : 'text-stone-400'}
           />
           <span className='truncate'>
-            {schedule.remind15MinBefore ? 'Pengingat H-15 menit' : 'Pengingat tepat waktu'}
+            {formatReminderSummary(schedule)}
           </span>
         </div>
 
@@ -389,26 +404,95 @@ function ScheduleFormModal({ mode, initial, onClose, onSave, isSaving }: Schedul
               </div>
             </div>
 
-            <div className='flex items-center justify-between p-3 bg-[#fff0f2] rounded-2xl border border-[#ffd9de]'>
-              <div className='flex items-center gap-2.5'>
-                <div className='w-7 h-7 rounded-full bg-white flex items-center justify-center text-[#aa294d] shadow-2xs'>
-                  <Bell size={14} />
+            {/* Opsi Pengingat Multi-select */}
+            <div className='p-3.5 bg-[#fff0f2] rounded-2xl border border-[#ffd9de] space-y-2.5'>
+              <div className='flex items-center gap-2'>
+                <div className='w-6 h-6 rounded-full bg-white flex items-center justify-center text-[#aa294d] shadow-2xs shrink-0'>
+                  <Bell size={13} />
                 </div>
-                <div>
+                <div className='flex-1 min-w-0'>
                   <span className='block text-xs font-bold text-[#121c2a] leading-tight'>
-                    Pengingat 15 Menit Sebelumnya
+                    Waktu Pengingat Notifikasi
                   </span>
                   <span className='block text-[10px] text-[#8b7074] leading-tight mt-0.5'>
-                    Notifikasi awal sebelum kunjungan faskes
+                    Pilih waktu notifikasi (bisa dipilih salah satu atau semuanya)
                   </span>
                 </div>
               </div>
-              <input
-                type='checkbox'
-                checked={form.remind15MinBefore ?? true}
-                onChange={event => set('remind15MinBefore', event.target.checked)}
-                className='w-4.5 h-4.5 accent-[#aa294d] rounded-md cursor-pointer'
-              />
+
+              <div className='space-y-1.5 pt-1 border-t border-[#ffd9de]/70'>
+                {/* 1. H-1 Bulan */}
+                <label className='flex items-center justify-between p-2.5 rounded-xl bg-white/80 hover:bg-white border border-[#ffd9de]/60 transition-colors cursor-pointer select-none'>
+                  <div className='pr-2'>
+                    <span className='block text-xs font-semibold text-[#121c2a] leading-tight'>
+                      H-1 Bulan Sebelumnya
+                    </span>
+                    <span className='block text-[10px] text-[#8b7074] leading-tight mt-0.5'>
+                      Notifikasi 30 hari sebelum jadwal untuk persiapan
+                    </span>
+                  </div>
+                  <input
+                    type='checkbox'
+                    checked={form.remind1MonthBefore ?? false}
+                    onChange={event => set('remind1MonthBefore', event.target.checked)}
+                    className='w-4.5 h-4.5 accent-[#aa294d] rounded-md cursor-pointer shrink-0'
+                  />
+                </label>
+
+                {/* 2. H-1 Hari */}
+                <label className='flex items-center justify-between p-2.5 rounded-xl bg-white/80 hover:bg-white border border-[#ffd9de]/60 transition-colors cursor-pointer select-none'>
+                  <div className='pr-2'>
+                    <span className='block text-xs font-semibold text-[#121c2a] leading-tight'>
+                      H-1 Hari Sebelumnya
+                    </span>
+                    <span className='block text-[10px] text-[#8b7074] leading-tight mt-0.5'>
+                      Notifikasi 1 hari sebelum kunjungan faskes
+                    </span>
+                  </div>
+                  <input
+                    type='checkbox'
+                    checked={form.remind1DayBefore ?? true}
+                    onChange={event => set('remind1DayBefore', event.target.checked)}
+                    className='w-4.5 h-4.5 accent-[#aa294d] rounded-md cursor-pointer shrink-0'
+                  />
+                </label>
+
+                {/* 3. 30 Menit */}
+                <label className='flex items-center justify-between p-2.5 rounded-xl bg-white/80 hover:bg-white border border-[#ffd9de]/60 transition-colors cursor-pointer select-none'>
+                  <div className='pr-2'>
+                    <span className='block text-xs font-semibold text-[#121c2a] leading-tight'>
+                      30 Menit Sebelumnya
+                    </span>
+                    <span className='block text-[10px] text-[#8b7074] leading-tight mt-0.5'>
+                      Notifikasi persiapan awal sebelum jam kunjungan
+                    </span>
+                  </div>
+                  <input
+                    type='checkbox'
+                    checked={form.remind30MinBefore ?? true}
+                    onChange={event => set('remind30MinBefore', event.target.checked)}
+                    className='w-4.5 h-4.5 accent-[#aa294d] rounded-md cursor-pointer shrink-0'
+                  />
+                </label>
+
+                {/* 4. 15 Menit */}
+                <label className='flex items-center justify-between p-2.5 rounded-xl bg-white/80 hover:bg-white border border-[#ffd9de]/60 transition-colors cursor-pointer select-none'>
+                  <div className='pr-2'>
+                    <span className='block text-xs font-semibold text-[#121c2a] leading-tight'>
+                      15 Menit Sebelumnya
+                    </span>
+                    <span className='block text-[10px] text-[#8b7074] leading-tight mt-0.5'>
+                      Notifikasi pengingat singkat menjelang kunjungan faskes
+                    </span>
+                  </div>
+                  <input
+                    type='checkbox'
+                    checked={form.remind15MinBefore ?? true}
+                    onChange={event => set('remind15MinBefore', event.target.checked)}
+                    className='w-4.5 h-4.5 accent-[#aa294d] rounded-md cursor-pointer shrink-0'
+                  />
+                </label>
+              </div>
             </div>
           </div>
 
@@ -559,6 +643,9 @@ export default function ScheduleView() {
       dosage: schedule.dosage,
       notes: schedule.notes ?? '',
       remind15MinBefore: schedule.remind15MinBefore,
+      remind1MonthBefore: schedule.remind1MonthBefore ?? false,
+      remind1DayBefore: schedule.remind1DayBefore ?? true,
+      remind30MinBefore: schedule.remind30MinBefore ?? true,
       isEnabled: schedule.isEnabled,
     });
     setIsModalOpen(true);
@@ -578,6 +665,9 @@ export default function ScheduleView() {
           dosage: data.dosage,
           notes: data.notes,
           remind15MinBefore: data.remind15MinBefore,
+          remind1MonthBefore: data.remind1MonthBefore,
+          remind1DayBefore: data.remind1DayBefore,
+          remind30MinBefore: data.remind30MinBefore,
           isEnabled: data.isEnabled,
         });
         if (result.success) {
@@ -599,6 +689,9 @@ export default function ScheduleView() {
           dosage: data.dosage,
           notes: data.notes,
           remind15MinBefore: data.remind15MinBefore,
+          remind1MonthBefore: data.remind1MonthBefore,
+          remind1DayBefore: data.remind1DayBefore,
+          remind30MinBefore: data.remind30MinBefore,
         });
         if (result.success) {
           showToast('Jadwal TT berhasil diperbarui! ✨');
