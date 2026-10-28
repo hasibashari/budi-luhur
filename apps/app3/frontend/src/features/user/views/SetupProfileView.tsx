@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import {
   Building2,
   Calendar,
-  Droplets,
   ArrowRight,
   ArrowLeft,
   Check,
@@ -40,7 +39,6 @@ export function SetupProfileView() {
   const [dateOfBirth, setDateOfBirth] = useState('');
   const today = new Date();
   const maxDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-  const [bloodType, setBloodType] = useState<string>('');
   const [height, setHeight] = useState<string>('');
   const [weight, setWeight] = useState<string>('');
 
@@ -68,7 +66,6 @@ export function SetupProfileView() {
       const res = await saveUserInitialSetupAction(authUser?.id || '', {
         schoolOrOrg: schoolOrOrg.trim(),
         dateOfBirth: dateOfBirth || undefined,
-        bloodType: bloodType || undefined,
         height: height ? Number(height) : undefined,
         weight: weight ? Number(weight) : undefined,
         partnerName: partnerName.trim() || undefined,
@@ -184,47 +181,22 @@ export function SetupProfileView() {
                 </div>
               </div>
 
-              {/* Tanggal Lahir & Golongan Darah (2 cols) */}
-              <div className='grid grid-cols-1 sm:grid-cols-2 gap-3'>
-                <div>
-                  <label className='block text-xs font-bold text-[#121c2a] mb-1.5'>
-                    Tanggal Lahir
-                  </label>
-                  <div className='relative flex items-center'>
-                    <div className='absolute left-3.5 w-7 h-7 rounded-full bg-[#ffd9de]/50 flex items-center justify-center text-[#aa294d]'>
-                      <Calendar size={14} />
-                    </div>
-                    <input
-                      type='date'
-                      value={dateOfBirth}
-                      max={maxDate}
-                      onChange={e => setDateOfBirth(e.target.value)}
-                      className='w-full min-h-[48px] min-w-0 bg-white text-base sm:text-sm text-[#121c2a] rounded-full border border-stone-200 pl-12 pr-3 py-2.5 outline-none focus:border-[#aa294d] focus:ring-2 focus:ring-[#aa294d]/10 transition-colors shadow-2xs'
-                    />
+              {/* Tanggal Lahir */}
+              <div>
+                <label className='block text-xs font-bold text-[#121c2a] mb-1.5'>
+                  Tanggal Lahir
+                </label>
+                <div className='relative flex items-center'>
+                  <div className='absolute left-3.5 w-7 h-7 rounded-full bg-[#ffd9de]/50 flex items-center justify-center text-[#aa294d]'>
+                    <Calendar size={14} />
                   </div>
-                </div>
-
-                <div>
-                  <label className='block text-xs font-bold text-[#121c2a] mb-1.5'>
-                    Golongan Darah
-                  </label>
-                  <div className='relative flex items-center'>
-                    <div className='absolute left-3.5 w-7 h-7 rounded-full bg-[#ffd9de]/50 flex items-center justify-center text-[#aa294d]'>
-                      <Droplets size={14} />
-                    </div>
-                    <select
-                      value={bloodType}
-                      onChange={e => setBloodType(e.target.value)}
-                      className='w-full min-h-[48px] min-w-0 bg-white text-base sm:text-sm text-[#121c2a] rounded-full border border-stone-200 pl-12 pr-3 py-2.5 outline-none focus:border-[#aa294d] focus:ring-2 focus:ring-[#aa294d]/10 transition-colors shadow-2xs cursor-pointer'
-                    >
-                      <option value=''>Pilih Golongan Darah</option>
-                      <option value='A'>A</option>
-                      <option value='B'>B</option>
-                      <option value='AB'>AB</option>
-                      <option value='O'>O</option>
-                      <option value='Belum Tahu'>Belum Tahu</option>
-                    </select>
-                  </div>
+                  <input
+                    type='date'
+                    value={dateOfBirth}
+                    max={maxDate}
+                    onChange={e => setDateOfBirth(e.target.value)}
+                    className='w-full min-h-[48px] min-w-0 bg-white text-base sm:text-sm text-[#121c2a] rounded-full border border-stone-200 pl-12 pr-4 py-2.5 outline-none focus:border-[#aa294d] focus:ring-2 focus:ring-[#aa294d]/10 transition-colors shadow-2xs'
+                  />
                 </div>
               </div>
 

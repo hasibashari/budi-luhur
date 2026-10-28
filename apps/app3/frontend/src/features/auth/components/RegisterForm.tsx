@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Eye, EyeOff, Mail, Lock, User, ArrowRight, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, User, Phone, ArrowRight, CheckCircle2, AlertCircle, Heart } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 export interface RegisterFormProps {
@@ -58,11 +58,11 @@ export function RegisterForm({ onSwitchTab, hideHeader = false }: RegisterFormPr
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [gender, setGender] = useState<'Perempuan' | 'Laki-laki'>('Perempuan');
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -87,7 +87,19 @@ export function RegisterForm({ onSwitchTab, hideHeader = false }: RegisterFormPr
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email.trim())) {
-      setErrorMessage('Format alamat email tidak valid (contoh: calonpengantin@gmail.com).');
+      setErrorMessage('Format alamat email tidak valid (contoh: nama@gmail.com).');
+      return;
+    }
+
+    if (!phone.trim()) {
+      setErrorMessage('Silakan masukkan nomor WhatsApp Anda.');
+      return;
+    }
+
+    const cleanPhone = phone.trim().replace(/[-\s]/g, '');
+    const phoneRegex = /^(\+?62|0)8[0-9]{8,12}$/;
+    if (!phoneRegex.test(cleanPhone)) {
+      setErrorMessage('Format nomor telepon tidak valid (contoh: 081234567890).');
       return;
     }
 
@@ -113,14 +125,15 @@ export function RegisterForm({ onSwitchTab, hideHeader = false }: RegisterFormPr
       const res = await register({
         name: name.trim(),
         email: email.trim(),
+        phone: cleanPhone,
         password,
-        gender,
+        gender: 'Perempuan',
       });
 
       if (res.success) {
         setSuccessMessage(
           res.message ||
-            'Pendaftaran berhasil! Akun Calon Pengantin siap digunakan. Mengalihkan ke halaman Masuk...',
+            'Pendaftaran berhasil! Akun siap digunakan. Mengalihkan ke halaman Masuk...',
         );
         setTimeout(() => {
           if (onSwitchTab) {
@@ -130,7 +143,7 @@ export function RegisterForm({ onSwitchTab, hideHeader = false }: RegisterFormPr
           }
         }, 1600);
       } else {
-        setErrorMessage(res.error || 'Gagal mendaftarkan akun. Silakan coba lagi.');
+        setErrorMessage(res.error || 'Gagal membuat akun. Silakan coba lagi.');
       }
     } catch {
       setErrorMessage('Terjadi kendala sistem saat pendaftaran. Silakan coba lagi.');
@@ -142,19 +155,29 @@ export function RegisterForm({ onSwitchTab, hideHeader = false }: RegisterFormPr
   return (
     <div className='w-full'>
       {!hideHeader && (
-        <div className='mb-6 text-left'>
-          <h2 className='text-2xl font-extrabold text-[#121c2a] tracking-tight mb-1'>
-            Daftar Akun TEMANI
+        <div className='mb-3.5 sm:mb-4 text-left'>
+          <div className='inline-flex items-center gap-1.5 mb-1'>
+            <div className='w-6 h-6 rounded-md bg-[#fff0f2] border border-[#ffd9de] text-[#aa294d] flex items-center justify-center'>
+              <Heart size={12} className='fill-[#aa294d]' />
+            </div>
+            <span className='text-[10px] font-bold text-[#8c0f39] uppercase tracking-wider'>
+              Calon Pengantin
+            </span>
+          </div>
+          <h2 className='text-xl sm:text-2xl font-black text-[#121c2a] tracking-tight mb-1'>
+            Buat Akun
           </h2>
-          <p className='text-xs sm:text-sm text-[#574144]'>
-            Daftarkan akun Calon Pengantin untuk memulai pemantauan imunisasi TT dan kesehatan
-            pranikah.
+          <p className='text-xs text-[#574144] leading-relaxed'>
+            Daftar untuk mulai menggunakan layanan kami.
           </p>
         </div>
       )}
 
       {errorMessage && (
-        <div className='mb-4 p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs sm:text-sm font-semibold flex items-center gap-2 animate-fade-in'>
+        <div
+          role='alert'
+          className='mb-3 p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-semibold flex items-center gap-2 animate-fade-in'
+        >
           <AlertCircle size={16} className='text-rose-600 shrink-0' />
           <span>
             {typeof errorMessage === 'string'
@@ -165,144 +188,151 @@ export function RegisterForm({ onSwitchTab, hideHeader = false }: RegisterFormPr
       )}
 
       {successMessage && (
-        <div className='mb-4 p-4 rounded-2xl bg-[#ecfdf5] border border-[#aff1d0] text-[#166534] text-xs sm:text-sm font-medium flex flex-col gap-2 animate-scale-up'>
-          <div className='flex items-center gap-2 font-bold text-[#2a6950] text-sm'>
-            <CheckCircle2 size={18} className='text-[#2a6950] shrink-0' />
+        <div
+          role='status'
+          className='mb-3 p-3.5 rounded-xl bg-[#ecfdf5] border border-[#aff1d0] text-[#166534] text-xs font-medium flex flex-col gap-2 animate-scale-up'
+        >
+          <div className='flex items-center gap-1.5 font-bold text-[#2a6950] text-xs sm:text-sm'>
+            <CheckCircle2 size={16} className='text-[#2a6950] shrink-0' />
             <span>Pendaftaran Berhasil!</span>
           </div>
-          <p className='text-[#166534] leading-relaxed'>{successMessage}</p>
-          <div className='pt-1 flex items-center justify-end'>
+          <p className='text-[#166534] leading-relaxed text-xs'>{successMessage}</p>
+          <div className='pt-0.5 flex items-center justify-end'>
             <button
               type='button'
               onClick={() => {
                 if (onSwitchTab) onSwitchTab();
                 else navigate('/auth/login?registered=true');
               }}
-              className='text-xs font-bold text-[#2a6950] hover:text-[#166534] underline cursor-pointer inline-flex items-center gap-1'
+              className='text-xs font-bold text-[#2a6950] hover:text-[#166534] underline cursor-pointer inline-flex items-center gap-1 min-h-[32px]'
             >
-              Masuk Sekarang <ArrowRight size={13} />
+              Masuk Sekarang <ArrowRight size={12} />
             </button>
           </div>
         </div>
       )}
 
       {!successMessage && (
-        <form onSubmit={handleSubmit} noValidate className='flex flex-col gap-3.5'>
+        <form onSubmit={handleSubmit} noValidate className='flex flex-col gap-2 sm:gap-2.5'>
+          {/* 1. Nama lengkap */}
           <div>
-            <label className='text-xs font-bold text-[#121c2a] mb-1.5 block'>Nama Lengkap</label>
+            <label htmlFor='reg-name' className='text-[11px] sm:text-xs font-bold text-[#121c2a] mb-0.5 block'>
+              Nama lengkap
+            </label>
             <div className='relative flex items-center'>
-              <div className='absolute left-3.5 w-8 h-8 rounded-full bg-[#ffd9de]/50 flex items-center justify-center text-[#aa294d]'>
-                <User size={15} />
+              <div className='absolute left-2.5 w-6.5 h-6.5 rounded-full bg-[#ffd9de]/50 flex items-center justify-center text-[#aa294d] pointer-events-none'>
+                <User size={13} />
               </div>
               <input
+                id='reg-name'
                 type='text'
-                placeholder='Siti Rahmawati / Muhammad Rizky'
+                placeholder='Masukkan nama lengkap'
                 value={name}
                 onChange={e => setName(e.target.value)}
                 required
                 autoComplete='name'
-                className='w-full min-h-[48px] bg-white text-base sm:text-sm text-[#121c2a] rounded-full border border-slate-200 pl-13 pr-4 py-2.5 outline-none focus:border-[#aa294d] focus:ring-1 focus:ring-[#aa294d] transition-colors shadow-2xs'
+                className='w-full min-h-[40px] sm:min-h-[42px] bg-white text-base sm:text-xs text-[#121c2a] rounded-full border border-slate-200 pl-9.5 pr-3.5 py-1.5 sm:py-2 outline-none focus:border-[#aa294d] focus:ring-2 focus:ring-[#ffd9de] transition-all shadow-2xs'
               />
             </div>
           </div>
 
+          {/* 2. Alamat email */}
           <div>
-            <label className='text-xs font-bold text-[#121c2a] mb-1.5 block'>Jenis Kelamin</label>
-            <div className='grid grid-cols-2 gap-2'>
-              <button
-                type='button'
-                onClick={() => setGender('Perempuan')}
-                className={`min-h-[44px] py-2.5 px-3 rounded-xl text-xs font-bold border transition-all cursor-pointer active:scale-95 flex items-center justify-center text-center ${
-                  gender === 'Perempuan'
-                    ? 'bg-[#ffd9de]/60 border-[#aa294d] text-[#8c0f39] shadow-xs'
-                    : 'bg-white border-slate-200 text-[#574144] hover:bg-slate-50'
-                }`}
-              >
-                Perempuan
-              </button>
-              <button
-                type='button'
-                onClick={() => setGender('Laki-laki')}
-                className={`min-h-[44px] py-2.5 px-3 rounded-xl text-xs font-bold border transition-all cursor-pointer active:scale-95 flex items-center justify-center text-center ${
-                  gender === 'Laki-laki'
-                    ? 'bg-[#ffd9de]/60 border-[#aa294d] text-[#8c0f39] shadow-xs'
-                    : 'bg-white border-slate-200 text-[#574144] hover:bg-slate-50'
-                }`}
-              >
-                Laki-laki
-              </button>
-            </div>
-          </div>
-
-          <div>
-            <label className='text-xs font-bold text-[#121c2a] mb-1.5 block'>
-              Alamat Email Aktif
+            <label htmlFor='reg-email' className='text-[11px] sm:text-xs font-bold text-[#121c2a] mb-0.5 block'>
+              Alamat email
             </label>
             <div className='relative flex items-center'>
-              <div className='absolute left-3.5 w-8 h-8 rounded-full bg-[#ffd9de]/50 flex items-center justify-center text-[#aa294d]'>
-                <Mail size={15} />
+              <div className='absolute left-2.5 w-6.5 h-6.5 rounded-full bg-[#ffd9de]/50 flex items-center justify-center text-[#aa294d] pointer-events-none'>
+                <Mail size={13} />
               </div>
               <input
+                id='reg-email'
                 type='email'
                 inputMode='email'
-                placeholder='calonpengantin@gmail.com'
+                placeholder='nama@gmail.com'
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 required
                 autoComplete='email'
-                className='w-full min-h-[48px] bg-white text-base sm:text-sm text-[#121c2a] rounded-full border border-slate-200 pl-13 pr-4 py-2.5 outline-none focus:border-[#aa294d] focus:ring-1 focus:ring-[#aa294d] transition-colors shadow-2xs'
+                className='w-full min-h-[40px] sm:min-h-[42px] bg-white text-base sm:text-xs text-[#121c2a] rounded-full border border-slate-200 pl-9.5 pr-3.5 py-1.5 sm:py-2 outline-none focus:border-[#aa294d] focus:ring-2 focus:ring-[#ffd9de] transition-all shadow-2xs'
               />
             </div>
           </div>
 
+          {/* 3. Nomor WhatsApp */}
           <div>
-            <label className='text-xs font-bold text-[#121c2a] mb-1.5 block'>
-              Kata Sandi (Minimal 6 karakter)
+            <label htmlFor='reg-phone' className='text-[11px] sm:text-xs font-bold text-[#121c2a] mb-0.5 block'>
+              Nomor WhatsApp
             </label>
             <div className='relative flex items-center'>
-              <div className='absolute left-3.5 w-8 h-8 rounded-full bg-[#ffd9de]/50 flex items-center justify-center text-[#aa294d]'>
-                <Lock size={15} />
+              <div className='absolute left-2.5 w-6.5 h-6.5 rounded-full bg-[#ffd9de]/50 flex items-center justify-center text-[#aa294d] pointer-events-none'>
+                <Phone size={13} />
               </div>
               <input
+                id='reg-phone'
+                type='tel'
+                inputMode='tel'
+                placeholder='081234567890'
+                value={phone}
+                onChange={e => setPhone(e.target.value)}
+                required
+                autoComplete='tel'
+                className='w-full min-h-[40px] sm:min-h-[42px] bg-white text-base sm:text-xs text-[#121c2a] rounded-full border border-slate-200 pl-9.5 pr-3.5 py-1.5 sm:py-2 outline-none focus:border-[#aa294d] focus:ring-2 focus:ring-[#ffd9de] transition-all shadow-2xs'
+              />
+            </div>
+          </div>
+
+          {/* 4. Kata sandi */}
+          <div>
+            <label htmlFor='reg-password' className='text-[11px] sm:text-xs font-bold text-[#121c2a] mb-0.5 block'>
+              Kata sandi
+            </label>
+            <div className='relative flex items-center'>
+              <div className='absolute left-2.5 w-6.5 h-6.5 rounded-full bg-[#ffd9de]/50 flex items-center justify-center text-[#aa294d] pointer-events-none'>
+                <Lock size={13} />
+              </div>
+              <input
+                id='reg-password'
                 type={showPassword ? 'text' : 'password'}
-                placeholder='••••••••'
+                placeholder='Minimal 8 karakter disarankan'
                 value={password}
                 onChange={e => setPassword(e.target.value)}
                 required
                 autoComplete='new-password'
-                className='w-full min-h-[48px] bg-white text-base sm:text-sm text-[#121c2a] rounded-full border border-slate-200 pl-13 pr-11 py-2.5 outline-none focus:border-[#aa294d] focus:ring-1 focus:ring-[#aa294d] transition-colors shadow-2xs'
+                className='w-full min-h-[40px] sm:min-h-[42px] bg-white text-base sm:text-xs text-[#121c2a] rounded-full border border-slate-200 pl-9.5 pr-10 py-1.5 sm:py-2 outline-none focus:border-[#aa294d] focus:ring-2 focus:ring-[#ffd9de] transition-all shadow-2xs'
               />
               <button
                 type='button'
                 onClick={() => setShowPassword(!showPassword)}
-                className='absolute right-2.5 min-w-[40px] min-h-[40px] flex items-center justify-center text-slate-400 hover:text-slate-600 cursor-pointer p-1 active:scale-90'
+                className='absolute right-1.5 min-w-[36px] min-h-[36px] flex items-center justify-center text-slate-400 hover:text-slate-600 cursor-pointer p-1 active:scale-90 transition-transform'
                 aria-label={showPassword ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'}
               >
-                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
               </button>
             </div>
 
+            {/* Indikator Kekuatan Sandi */}
             {password.length > 0 && (
-              <div className='mt-2 px-1 flex flex-col gap-1.5 animate-fade-in'>
-                <div className='flex items-center justify-between text-[11px]'>
-                  <span className='text-slate-500 font-medium'>Kekuatan Sandi:</span>
+              <div className='mt-1 px-1 flex flex-col gap-1 animate-fade-in'>
+                <div className='flex items-center justify-between text-[10px]'>
+                  <span className='text-slate-500 font-medium'>Kekuatan sandi:</span>
                   <span className={`font-bold ${passwordStrength.textColorClass}`}>
                     {passwordStrength.label}
                   </span>
                 </div>
-                <div className='flex items-center gap-1.5 w-full'>
+                <div className='flex items-center gap-1 w-full'>
                   <div
-                    className={`h-1.5 flex-1 rounded-full transition-all duration-300 ${
+                    className={`h-1 flex-1 rounded-full transition-all duration-300 ${
                       passwordStrength.score >= 1 ? passwordStrength.colorClass : 'bg-slate-200'
                     }`}
                   />
                   <div
-                    className={`h-1.5 flex-1 rounded-full transition-all duration-300 ${
+                    className={`h-1 flex-1 rounded-full transition-all duration-300 ${
                       passwordStrength.score >= 2 ? passwordStrength.colorClass : 'bg-slate-200'
                     }`}
                   />
                   <div
-                    className={`h-1.5 flex-1 rounded-full transition-all duration-300 ${
+                    className={`h-1 flex-1 rounded-full transition-all duration-300 ${
                       passwordStrength.score >= 3 ? passwordStrength.colorClass : 'bg-slate-200'
                     }`}
                   />
@@ -311,13 +341,14 @@ export function RegisterForm({ onSwitchTab, hideHeader = false }: RegisterFormPr
             )}
           </div>
 
+          {/* 5. Konfirmasi kata sandi */}
           <div>
-            <label className='text-xs font-bold text-[#121c2a] mb-1.5 block'>
-              Konfirmasi Kata Sandi
+            <label htmlFor='reg-confirm-password' className='text-[11px] sm:text-xs font-bold text-[#121c2a] mb-0.5 block'>
+              Konfirmasi kata sandi
             </label>
             <div className='relative flex items-center'>
               <div
-                className={`absolute left-3.5 w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
+                className={`absolute left-2.5 w-6.5 h-6.5 rounded-full flex items-center justify-center transition-colors pointer-events-none ${
                   isPasswordMatch
                     ? 'bg-emerald-50 text-emerald-600'
                     : isPasswordMismatch
@@ -325,90 +356,92 @@ export function RegisterForm({ onSwitchTab, hideHeader = false }: RegisterFormPr
                       : 'bg-[#ffd9de]/50 text-[#aa294d]'
                 }`}
               >
-                <Lock size={15} />
+                <Lock size={13} />
               </div>
               <input
+                id='reg-confirm-password'
                 type={showConfirmPassword ? 'text' : 'password'}
-                placeholder='Ulangi kata sandi'
+                placeholder='Masukkan ulang kata sandi'
                 value={confirmPassword}
                 onChange={e => setConfirmPassword(e.target.value)}
                 required
                 autoComplete='new-password'
-                className={`w-full min-h-[48px] bg-white text-base sm:text-sm text-[#121c2a] rounded-full border pl-13 pr-11 py-2.5 outline-none transition-all shadow-2xs ${
+                className={`w-full min-h-[40px] sm:min-h-[42px] bg-white text-base sm:text-xs text-[#121c2a] rounded-full border pl-9.5 pr-10 py-1.5 sm:py-2 outline-none transition-all shadow-2xs ${
                   isPasswordMatch
                     ? 'border-emerald-400 focus:border-emerald-500 ring-2 ring-emerald-500/15'
                     : isPasswordMismatch
                       ? 'border-rose-300 focus:border-[#aa294d] ring-2 ring-rose-500/15'
-                      : 'border-slate-200 focus:border-[#aa294d] focus:ring-1 focus:ring-[#aa294d]'
+                      : 'border-slate-200 focus:border-[#aa294d] focus:ring-2 focus:ring-[#ffd9de]'
                 }`}
               />
               <button
                 type='button'
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className='absolute right-2.5 min-w-[40px] min-h-[40px] flex items-center justify-center text-slate-400 hover:text-slate-600 cursor-pointer p-1 active:scale-90'
+                onClick={() => setShowPassword(!showConfirmPassword)}
+                className='absolute right-1.5 min-w-[36px] min-h-[36px] flex items-center justify-center text-slate-400 hover:text-slate-600 cursor-pointer p-1 active:scale-90 transition-transform'
                 aria-label={
                   showConfirmPassword
                     ? 'Sembunyikan konfirmasi kata sandi'
                     : 'Tampilkan konfirmasi kata sandi'
                 }
               >
-                {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                {showConfirmPassword ? <EyeOff size={15} /> : <Eye size={15} />}
               </button>
             </div>
 
             {isPasswordMatch && (
-              <div className='flex items-center gap-1.5 mt-1.5 px-1 text-[11px] font-semibold text-emerald-600 animate-fade-in'>
-                <CheckCircle2 size={13} className='text-emerald-500 shrink-0' />
+              <div className='flex items-center gap-1 mt-1 px-1 text-[10px] font-semibold text-emerald-600 animate-fade-in'>
+                <CheckCircle2 size={12} className='text-emerald-500 shrink-0' />
                 <span>Kata sandi cocok</span>
               </div>
             )}
 
             {isPasswordMismatch && (
-              <div className='flex items-center gap-1.5 mt-1.5 px-1 text-[11px] font-medium text-rose-500 animate-fade-in'>
-                <AlertCircle size={13} className='text-rose-500 shrink-0' />
+              <div className='flex items-center gap-1 mt-1 px-1 text-[10px] font-medium text-rose-500 animate-fade-in'>
+                <AlertCircle size={12} className='text-rose-500 shrink-0' />
                 <span>Kata sandi belum cocok</span>
               </div>
             )}
           </div>
 
-          <div className='flex flex-col sm:flex-row-reverse sm:items-center sm:justify-between gap-3 mt-4 pt-1'>
+          {/* Submit Action */}
+          <div className='pt-1.5'>
             <button
               type='submit'
               disabled={loading}
-              className='w-full sm:w-auto px-8 min-h-[48px] py-3 bg-[#aa294d] hover:bg-[#8c0f39] text-white rounded-full text-sm sm:text-base font-bold shadow-md shadow-rose-950/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50'
+              className='w-full min-h-[42px] sm:min-h-[44px] py-2.5 px-5 bg-[#aa294d] hover:bg-[#8c0f39] text-white rounded-full text-xs sm:text-sm font-bold shadow-md shadow-rose-950/20 active:scale-[0.98] transition-all flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50'
             >
               {loading ? (
-                <span>Mendaftarkan...</span>
+                <span>Membuat Akun...</span>
               ) : (
                 <>
-                  <span>Daftar Sekarang</span>
-                  <ArrowRight size={16} />
+                  <span>Buat Akun</span>
+                  <ArrowRight size={15} />
                 </>
               )}
             </button>
+          </div>
 
-            {onSwitchTab ? (
-              <button
-                type='button'
-                onClick={onSwitchTab}
-                className='text-xs text-[#574144] hover:text-[#aa294d] font-medium transition-colors cursor-pointer bg-transparent border-none py-2 text-center sm:text-left inline-flex items-center justify-center sm:justify-start gap-1 min-h-[40px]'
-              >
-                Sudah punya akun?{' '}
-                <span className='font-bold text-[#aa294d] underline underline-offset-4 decoration-[#ffd9de]'>
-                  Masuk
-                </span>
-              </button>
-            ) : (
-              <Link
-                to='/auth/login'
-                className='text-xs text-[#574144] hover:text-[#aa294d] font-medium transition-colors py-2 text-center sm:text-left inline-flex items-center justify-center sm:justify-start gap-1 min-h-[40px]'
-              >
-                Sudah punya akun?{' '}
-                <span className='font-bold text-[#aa294d] underline underline-offset-4 decoration-[#ffd9de]'>
-                  Masuk
-                </span>
-              </Link>
-            )}
+          {/* Footer Switch */}
+          <div className='mt-1.5 pt-2 border-t border-slate-100 text-center'>
+            <p className='text-xs text-[#574144]'>
+              Sudah punya akun?{' '}
+              {onSwitchTab ? (
+                <button
+                  type='button'
+                  onClick={onSwitchTab}
+                  className='font-bold text-[#aa294d] hover:text-[#8c0f39] transition-colors underline decoration-[#ffd9de] underline-offset-4 cursor-pointer'
+                >
+                  Masuk di sini
+                </button>
+              ) : (
+                <Link
+                  to='/auth/login'
+                  className='font-bold text-[#aa294d] hover:text-[#8c0f39] transition-colors underline decoration-[#ffd9de] underline-offset-4'
+                >
+                  Masuk di sini
+                </Link>
+              )}
+            </p>
           </div>
         </form>
       )}

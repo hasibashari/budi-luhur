@@ -54,6 +54,7 @@ export const pool = {
   connect: () => getDatabasePool().connect(),
   on: (event: any, listener: (...args: any[]) => void) =>
     (getDatabasePool() as any).on(event, listener),
+  end: () => getDatabasePool().end(),
 } as unknown as Pool;
 
 export async function query<T extends QueryResultRow = QueryResultRow>(

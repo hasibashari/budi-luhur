@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import db, { pool } from '../config/database.js';
+import db, { getDatabasePool, pool } from '../config/database.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -20,12 +20,12 @@ export async function initializeDatabase() {
 if (process.argv[1]?.includes('init.ts') || process.argv[1]?.includes('init.js')) {
   initializeDatabase()
     .then(async () => {
-      await pool.end();
+      await getDatabasePool().end();
       process.exit(0);
     })
     .catch(async error => {
       console.error('❌ Failed to initialize PostgreSQL database:', error);
-      await pool.end();
+      await getDatabasePool().end();
       process.exit(1);
     });
 }

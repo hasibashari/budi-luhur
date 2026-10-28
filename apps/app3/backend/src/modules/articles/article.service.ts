@@ -118,48 +118,30 @@ export class ArticleService {
       console.error('Failed to increment article views:', err);
     });
 
-    // Run article query and section query in parallel to eliminate sequential round-trip latency
-    const [res, sectionRes] = await Promise.all([
-      db.query<any>(
-        `SELECT id, title, summary, lead_paragraph, image_url, image_caption, read_time, category, status, views, published_at,
-                author_id, author_name, author_role, author_avatar_url, author_bio, key_takeaways, tags
-         FROM articles 
-         WHERE id = $1 AND btrim(category) <> ''`,
-        [id],
-      ),
-      db.query<any>(
-        `SELECT heading, subheading, paragraphs, callout_type, callout_title, callout_text, bullet_points
-         FROM article_sections
-         WHERE article_id = $1
-         ORDER BY order_index ASC`,
-        [id],
-      ),
-    ]);
+    // Query article directly from single articles table
+    const res = await db.query<any>(
+      `SELECT id, title, summary, content, lead_paragraph, image_url, image_caption, read_time, category, status, views, published_at,
+              author_id, author_name, author_role, author_avatar_url, author_bio, key_takeaways, tags
+       FROM articles 
+       WHERE id = $1 AND btrim(category) <> ''`,
+      [id],
+    );
 
     const row = res.rows[0];
     if (!row) return null;
 
-    const sections: ContentSection[] = sectionRes.rows.map((sec: any) => ({
-      heading: sec.heading || undefined,
-      subheading: sec.subheading || undefined,
-      paragraphs: sec.paragraphs
-        ? typeof sec.paragraphs === 'string'
-          ? JSON.parse(sec.paragraphs)
-          : sec.paragraphs
-        : [],
-      callout: sec.callout_text
-        ? {
-            type: sec.callout_type || 'tip',
-            title: sec.callout_title || undefined,
-            text: sec.callout_text,
-          }
-        : undefined,
-      bulletPoints: sec.bullet_points
-        ? typeof sec.bullet_points === 'string'
-          ? JSON.parse(sec.bullet_points)
-          : sec.bullet_points
-        : undefined,
-    }));
+    const fullContent = row.content || row.lead_paragraph || row.summary || '';
+    const paragraphs = fullContent
+      .split('\n\n')
+      .map((p: string) => p.trim())
+      .filter(Boolean);
+
+    const sections: ContentSection[] = [
+      {
+        heading: 'Pembahasan Edukasi',
+        paragraphs: paragraphs.length > 0 ? paragraphs : [fullContent],
+      },
+    ];
 
     let author: Author | undefined;
     if (row.author_name) {
@@ -176,7 +158,7 @@ export class ArticleService {
       title: row.title,
       summary: row.summary,
       leadParagraph: row.lead_paragraph || undefined,
-      content: row.lead_paragraph || row.summary,
+      content: fullContent,
       imageUrl: row.image_url,
       imageCaption: row.image_caption || undefined,
       readTime: row.read_time,

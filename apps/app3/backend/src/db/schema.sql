@@ -67,21 +67,19 @@ CREATE TABLE user_profiles (
     last_active_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+-- 3. IMMUNIZATION RECORDS (TT1 - TT5)
 CREATE TABLE immunization_records (
     id VARCHAR(255) PRIMARY KEY,
     user_id VARCHAR(255) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     dose_level VARCHAR(3) NOT NULL CHECK (dose_level IN ('TT1', 'TT2', 'TT3', 'TT4', 'TT5')),
-    -- Jenis produk vaksin (bukan urutan dosis).
     vaccine_type VARCHAR(30) NOT NULL DEFAULT 'TT'
       CHECK (vaccine_type IN ('TT', 'Td', 'DPT', 'Lainnya')),
     vaccine_date DATE NOT NULL,
     faskes_name VARCHAR(255) NOT NULL,
     batch_number VARCHAR(100),
     notes TEXT,
-    -- Asal data: diisi mandiri, disalin dari buku KIA, atau dicatat nakes.
     info_source VARCHAR(30) NOT NULL DEFAULT 'self_reported'
       CHECK (info_source IN ('self_reported', 'faskes_record', 'health_worker')),
-    -- Tingkat presisi tanggal yang diketahui pengguna.
     date_precision VARCHAR(20) NOT NULL DEFAULT 'exact'
       CHECK (date_precision IN ('exact', 'month', 'year')),
     attachment_url TEXT,
@@ -95,8 +93,7 @@ CREATE TABLE immunization_records (
     deleted_at TIMESTAMP WITH TIME ZONE
 );
 
--- Bukti imunisasi opsional. Disimpan sebagai BYTEA dan hanya bisa diakses
--- pemilik data / admin melalui endpoint ber-autentikasi (tidak ada URL publik).
+-- Bukti imunisasi opsional (BYTEA)
 CREATE TABLE immunization_attachments (
     id VARCHAR(255) PRIMARY KEY,
     record_id VARCHAR(255) NOT NULL REFERENCES immunization_records(id) ON DELETE CASCADE,
@@ -108,17 +105,18 @@ CREATE TABLE immunization_attachments (
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- 3. PRODUCTS (SUPPLEMENTS & TTD INVENTORY)
-CREATE TABLE products (
-    id VARCHAR(255) PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    category VARCHAR(100) NOT NULL DEFAULT 'Suplemen TTD',
-    sku VARCHAR(100) NOT NULL UNIQUE,
-    stock INTEGER NOT NULL DEFAULT 0,
-    unit VARCHAR(50) NOT NULL DEFAULT 'Tablet',
-    price DOUBLE PRECISION NOT NULL DEFAULT 0.0,
-    status VARCHAR(50) NOT NULL DEFAULT 'Tersedia' CHECK(status IN ('Tersedia', 'Stok Menipis', 'Habis')),
-    description TEXT,
+-- Verifikasi sertifikat imunisasi catin / nakes
+CREATE TABLE certificate_verifications (
+    user_id VARCHAR(255) PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+    status VARCHAR(20) NOT NULL DEFAULT 'DRAFT'
+      CHECK (status IN ('DRAFT', 'PENDING', 'APPROVED', 'REJECTED')),
+    certificate_number VARCHAR(100),
+    note TEXT,
+    requested_at TIMESTAMP WITH TIME ZONE,
+    reviewed_by VARCHAR(255),
+    reviewed_at TIMESTAMP WITH TIME ZONE,
+    signer_name VARCHAR(255),
+    signer_sip VARCHAR(100),
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
@@ -127,7 +125,6 @@ CREATE TABLE products (
 CREATE TABLE reminder_schedules (
     id VARCHAR(255) PRIMARY KEY,
     user_id VARCHAR(255) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    product_id VARCHAR(255) REFERENCES products(id) ON DELETE SET NULL,
     tablet_name VARCHAR(255) NOT NULL DEFAULT 'Tablet Tambah Darah (TTD)',
     dosage VARCHAR(100) NOT NULL DEFAULT '1 tablet',
     frequency VARCHAR(50) NOT NULL DEFAULT 'weekly' CHECK(frequency IN ('weekly', 'daily')),
@@ -171,80 +168,13 @@ CREATE TABLE consumption_logs (
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- 6. BUDDY STREAK SYSTEM (BUDDY GROUPS, MEMBERS, MESSAGES, CONNECTIONS)
-CREATE TABLE buddy_groups (
-    id VARCHAR(255) PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    description TEXT,
-    group_code VARCHAR(50) NOT NULL UNIQUE,
-    creator_id VARCHAR(255) REFERENCES users(id) ON DELETE SET NULL,
-    streak_count INTEGER NOT NULL DEFAULT 0,
-    avatar_url TEXT,
-    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE buddy_group_members (
-    id VARCHAR(255) PRIMARY KEY,
-    group_id VARCHAR(255) NOT NULL REFERENCES buddy_groups(id) ON DELETE CASCADE,
-    user_id VARCHAR(255) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    role VARCHAR(50) NOT NULL DEFAULT 'member' CHECK(role IN ('admin', 'member')),
-    joined_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT uq_group_member UNIQUE(group_id, user_id)
-);
-
-CREATE TABLE buddy_group_messages (
-    id VARCHAR(255) PRIMARY KEY,
-    group_id VARCHAR(255) NOT NULL REFERENCES buddy_groups(id) ON DELETE CASCADE,
-    sender_id VARCHAR(255) REFERENCES users(id) ON DELETE SET NULL,
-    message_type VARCHAR(50) NOT NULL DEFAULT 'text' CHECK(message_type IN ('text', 'cheer', 'system')),
-    content TEXT NOT NULL,
-    cheer_type VARCHAR(50) CHECK(cheer_type IN ('HEART', 'FLAME', 'STAR', 'CLAP', 'POWER')),
-    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE buddy_connections (
-    id VARCHAR(255) PRIMARY KEY,
-    user_id VARCHAR(255) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    buddy_user_id VARCHAR(255) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    status VARCHAR(50) NOT NULL DEFAULT 'ACCEPTED' CHECK(status IN ('PENDING', 'ACCEPTED', 'REJECTED', 'BLOCKED')),
-    shared_streak_count INTEGER NOT NULL DEFAULT 0,
-    this_week_user_status VARCHAR(50) NOT NULL DEFAULT 'pending' CHECK(this_week_user_status IN ('recorded', 'missed', 'pending')),
-    this_week_buddy_status VARCHAR(50) NOT NULL DEFAULT 'pending' CHECK(this_week_buddy_status IN ('recorded', 'missed', 'pending')),
-    last_synced_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT chk_different_users CHECK(user_id != buddy_user_id),
-    CONSTRAINT uq_buddy_pair UNIQUE(user_id, buddy_user_id)
-);
-
-CREATE TABLE buddy_activities (
-    id VARCHAR(255) PRIMARY KEY,
-    connection_id VARCHAR(255) NOT NULL REFERENCES buddy_connections(id) ON DELETE CASCADE,
-    actor_id VARCHAR(255) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    action_type VARCHAR(100) NOT NULL,
-    action_text TEXT NOT NULL,
-    icon_type VARCHAR(50) NOT NULL DEFAULT 'check' CHECK(icon_type IN ('check', 'flame', 'heart', 'alert')),
-    is_positive BOOLEAN NOT NULL DEFAULT TRUE,
-    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE buddy_cheers (
-    id VARCHAR(255) PRIMARY KEY,
-    connection_id VARCHAR(255) NOT NULL REFERENCES buddy_connections(id) ON DELETE CASCADE,
-    sender_id VARCHAR(255) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    receiver_id VARCHAR(255) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    cheer_type VARCHAR(50) NOT NULL DEFAULT 'HEART' CHECK(cheer_type IN ('HEART', 'FLAME', 'STAR', 'CLAP')),
-    message TEXT,
-    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
-
--- 7. EDUCATION ARTICLES & SECTIONS
+-- 6. EDUCATION ARTICLES (KONTEN TUNGGAL TERPADU)
 CREATE TABLE articles (
     id VARCHAR(255) PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     category VARCHAR(100) NOT NULL CHECK (btrim(category) <> ''),
     summary TEXT NOT NULL,
+    content TEXT,
     lead_paragraph TEXT,
     image_url TEXT NOT NULL,
     image_caption TEXT,
@@ -264,19 +194,6 @@ CREATE TABLE articles (
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE article_sections (
-    id SERIAL PRIMARY KEY,
-    article_id VARCHAR(255) NOT NULL REFERENCES articles(id) ON DELETE CASCADE,
-    order_index INTEGER NOT NULL DEFAULT 1,
-    heading VARCHAR(255),
-    subheading VARCHAR(255),
-    paragraphs TEXT NOT NULL,
-    callout_type VARCHAR(50) CHECK(callout_type IN ('tip', 'quote', 'warning')),
-    callout_title VARCHAR(255),
-    callout_text TEXT,
-    bullet_points TEXT
-);
-
 CREATE TABLE user_bookmarks (
     id SERIAL PRIMARY KEY,
     user_id VARCHAR(255) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -285,7 +202,7 @@ CREATE TABLE user_bookmarks (
     UNIQUE(user_id, article_id)
 );
 
--- 8. ADMIN NUDGES (PERSONAL MANUAL REMINDERS)
+-- 7. ADMIN NUDGES (PERSONAL MANUAL REMINDERS)
 CREATE TABLE admin_nudges (
     id VARCHAR(255) PRIMARY KEY,
     user_id VARCHAR(255) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -298,6 +215,7 @@ CREATE TABLE admin_nudges (
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+-- 8. PUSH NOTIFICATION SUBSCRIPTIONS
 CREATE TABLE push_subscriptions (
     id SERIAL PRIMARY KEY,
     user_id VARCHAR(255) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -317,36 +235,11 @@ CREATE INDEX idx_profiles_school ON user_profiles(school_or_org);
 CREATE INDEX idx_immunization_records_user ON immunization_records(user_id, vaccine_date);
 CREATE INDEX idx_immunization_records_user_dose ON immunization_records(user_id, dose_level);
 CREATE INDEX idx_immunization_attachments_record ON immunization_attachments(record_id);
-
--- Verifikasi tanda tangan sertifikat imunisasi. Hanya admin (tenaga kesehatan)
--- yang boleh menyetujui; pengguna hanya dapat mengajukan.
-CREATE TABLE certificate_verifications (
-    user_id VARCHAR(255) PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
-    status VARCHAR(20) NOT NULL DEFAULT 'DRAFT'
-      CHECK (status IN ('DRAFT', 'PENDING', 'APPROVED', 'REJECTED')),
-    certificate_number VARCHAR(100),
-    note TEXT,
-    requested_at TIMESTAMP WITH TIME ZONE,
-    reviewed_by VARCHAR(255),
-    reviewed_at TIMESTAMP WITH TIME ZONE,
-    signer_name VARCHAR(255),
-    signer_sip VARCHAR(100),
-    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
 CREATE INDEX idx_certificate_verifications_status ON certificate_verifications(status);
 CREATE INDEX idx_schedules_user_status ON reminder_schedules(user_id, status);
 CREATE INDEX idx_schedules_user_date ON reminder_schedules(user_id, scheduled_date);
 CREATE INDEX idx_logs_user_date ON consumption_logs(user_id, scheduled_date);
-CREATE INDEX idx_buddy_user ON buddy_connections(user_id, status);
-CREATE INDEX idx_buddy_pair ON buddy_connections(buddy_user_id, status);
-CREATE INDEX idx_buddy_activities_conn ON buddy_activities(connection_id, created_at DESC);
-CREATE INDEX idx_group_members_user ON buddy_group_members(user_id);
-CREATE INDEX idx_group_members_group ON buddy_group_members(group_id);
-CREATE INDEX idx_group_messages_group_date ON buddy_group_messages(group_id, created_at ASC);
-CREATE INDEX idx_group_code ON buddy_groups(group_code);
 CREATE INDEX idx_articles_category ON articles(category, status);
-CREATE INDEX idx_article_sections_order ON article_sections(article_id, order_index);
 CREATE INDEX idx_bookmarks_user ON user_bookmarks(user_id);
 CREATE INDEX idx_nudges_user_unread ON admin_nudges(user_id, status);
 CREATE INDEX idx_push_subscriptions_user ON push_subscriptions(user_id);

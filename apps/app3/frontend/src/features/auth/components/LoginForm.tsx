@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
-import { Eye, EyeOff, Mail, Lock, ArrowRight, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, ArrowRight, CheckCircle2, AlertCircle, Heart } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 export interface LoginFormProps {
@@ -8,7 +8,7 @@ export interface LoginFormProps {
   hideHeader?: boolean;
 }
 
-export function LoginForm({ hideHeader = false }: LoginFormProps) {
+export function LoginForm({ onSwitchTab, hideHeader = false }: LoginFormProps) {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const redirectParam = searchParams.get('redirect');
@@ -26,7 +26,12 @@ export function LoginForm({ hideHeader = false }: LoginFormProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim()) {
-      setErrorMessage('Silakan masukkan email Anda.');
+      setErrorMessage('Silakan masukkan alamat email Anda.');
+      return;
+    }
+
+    if (!password) {
+      setErrorMessage('Silakan masukkan kata sandi Anda.');
       return;
     }
 
@@ -35,7 +40,7 @@ export function LoginForm({ hideHeader = false }: LoginFormProps) {
 
     try {
       const res = await login({
-        email,
+        email: email.trim(),
         password,
       });
 
@@ -61,28 +66,39 @@ export function LoginForm({ hideHeader = false }: LoginFormProps) {
   return (
     <div className='w-full'>
       {!hideHeader && (
-        <div className='mb-6 text-left'>
-          <h2 className='text-2xl font-extrabold text-[#121c2a] tracking-tight mb-1'>
-            Masuk ke TEMANI
+        <div className='mb-4 sm:mb-5 text-left'>
+          <div className='inline-flex items-center gap-1.5 mb-1.5'>
+            <div className='w-6 h-6 rounded-md bg-[#fff0f2] border border-[#ffd9de] text-[#aa294d] flex items-center justify-center'>
+              <Heart size={12} className='fill-[#aa294d]' />
+            </div>
+            <span className='text-[10px] font-bold text-[#8c0f39] uppercase tracking-wider'>
+              Portal Masuk
+            </span>
+          </div>
+          <h2 className='text-xl sm:text-2xl font-black text-[#121c2a] tracking-tight mb-1'>
+            Masuk ke Akun
           </h2>
-          <p className='text-xs sm:text-sm text-[#574144]'>
-            Masukkan kredensial akun Calon Pengantin atau Petugas Faskes Anda.
+          <p className='text-xs text-[#574144] leading-relaxed'>
+            Masuk untuk mengakses layanan dan akun Anda.
           </p>
         </div>
       )}
 
       {isJustRegistered && !errorMessage && !successRole && (
-        <div className='mb-4 p-3.5 rounded-2xl bg-[#ecfdf5] border border-[#aff1d0] text-[#166534] text-xs sm:text-sm font-semibold flex items-center gap-2 animate-fade-in'>
+        <div
+          role='status'
+          className='mb-3 p-3 rounded-xl bg-[#ecfdf5] border border-[#aff1d0] text-[#166534] text-xs font-medium flex items-center gap-2 animate-fade-in'
+        >
           <CheckCircle2 size={16} className='text-[#2a6950] shrink-0' />
-          <span>
-            Akun Calon Pengantin berhasil dibuat! Silakan masuk menggunakan email dan kata sandi
-            Anda.
-          </span>
+          <span>Akun berhasil dibuat! Silakan masuk dengan email dan kata sandi Anda.</span>
         </div>
       )}
 
       {errorMessage && (
-        <div className='mb-4 p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs sm:text-sm font-semibold flex items-center gap-2 animate-fade-in'>
+        <div
+          role='alert'
+          className='mb-3 p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-semibold flex items-center gap-2 animate-fade-in'
+        >
           <AlertCircle size={16} className='text-rose-600 shrink-0' />
           <span>
             {typeof errorMessage === 'string'
@@ -93,7 +109,10 @@ export function LoginForm({ hideHeader = false }: LoginFormProps) {
       )}
 
       {successRole && (
-        <div className='mb-4 p-3.5 rounded-2xl bg-[#ecfdf5] border border-[#aff1d0] text-[#166534] text-xs sm:text-sm font-semibold flex items-center gap-2 animate-fade-in'>
+        <div
+          role='status'
+          className='mb-3 p-3 rounded-xl bg-[#ecfdf5] border border-[#aff1d0] text-[#166534] text-xs font-semibold flex items-center gap-2 animate-fade-in'
+        >
           <CheckCircle2 size={16} className='text-[#2a6950] shrink-0' />
           <span>
             Berhasil masuk sebagai <strong>{successRole}</strong>. Mengalihkan...
@@ -101,91 +120,106 @@ export function LoginForm({ hideHeader = false }: LoginFormProps) {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
+      <form onSubmit={handleSubmit} noValidate className='flex flex-col gap-3 sm:gap-3.5'>
         <div>
-          <label className='text-xs font-bold text-[#121c2a] mb-1.5 block'>Email Terdaftar</label>
+          <label htmlFor='login-email' className='text-[11px] sm:text-xs font-bold text-[#121c2a] mb-1 block'>
+            Alamat email
+          </label>
           <div className='relative flex items-center'>
-            <div className='absolute left-3.5 w-8 h-8 rounded-full bg-[#ffd9de]/50 flex items-center justify-center text-[#aa294d]'>
-              <Mail size={15} />
+            <div className='absolute left-2.5 w-7 h-7 rounded-full bg-[#ffd9de]/50 flex items-center justify-center text-[#aa294d] pointer-events-none'>
+              <Mail size={13} />
             </div>
             <input
+              id='login-email'
               type='email'
               inputMode='email'
-              placeholder='calonpengantin@gmail.com'
+              placeholder='nama@gmail.com'
               value={email}
               onChange={e => setEmail(e.target.value)}
               required
               autoComplete='email'
-              className='w-full min-h-[48px] bg-white text-base sm:text-sm text-[#121c2a] rounded-full border border-slate-200 pl-13 pr-4 py-3 outline-none focus:border-[#aa294d] focus:ring-1 focus:ring-[#aa294d] transition-colors shadow-2xs'
+              className='w-full min-h-[42px] sm:min-h-[44px] bg-white text-base sm:text-sm text-[#121c2a] rounded-full border border-slate-200 pl-10 pr-3.5 py-2 sm:py-2.5 outline-none focus:border-[#aa294d] focus:ring-2 focus:ring-[#ffd9de] transition-all shadow-2xs'
             />
           </div>
         </div>
 
         <div>
-          <label className='text-xs font-bold text-[#121c2a] mb-1.5 block'>Kata Sandi</label>
+          <div className='flex items-center justify-between mb-1'>
+            <label htmlFor='login-password' className='text-[11px] sm:text-xs font-bold text-[#121c2a]'>
+              Kata sandi
+            </label>
+            <Link
+              to='#'
+              onClick={e => {
+                e.preventDefault();
+                alert('Silakan hubungi administrator fasilitas kesehatan untuk mereset kata sandi Anda.');
+              }}
+              className='text-[11px] text-[#aa294d] hover:text-[#8c0f39] font-medium transition-colors cursor-pointer'
+            >
+              Lupa kata sandi?
+            </Link>
+          </div>
           <div className='relative flex items-center'>
-            <div className='absolute left-3.5 w-8 h-8 rounded-full bg-[#ffd9de]/50 flex items-center justify-center text-[#aa294d]'>
-              <Lock size={15} />
+            <div className='absolute left-2.5 w-7 h-7 rounded-full bg-[#ffd9de]/50 flex items-center justify-center text-[#aa294d] pointer-events-none'>
+              <Lock size={13} />
             </div>
             <input
+              id='login-password'
               type={showPassword ? 'text' : 'password'}
-              placeholder='••••••••'
+              placeholder='Masukkan kata sandi'
               value={password}
               onChange={e => setPassword(e.target.value)}
               required
               autoComplete='current-password'
-              className='w-full min-h-[48px] bg-white text-base sm:text-sm text-[#121c2a] rounded-full border border-slate-200 pl-13 pr-11 py-3 outline-none focus:border-[#aa294d] focus:ring-1 focus:ring-[#aa294d] transition-colors shadow-2xs'
+              className='w-full min-h-[42px] sm:min-h-[44px] bg-white text-base sm:text-sm text-[#121c2a] rounded-full border border-slate-200 pl-10 pr-10 py-2 sm:py-2.5 outline-none focus:border-[#aa294d] focus:ring-2 focus:ring-[#ffd9de] transition-all shadow-2xs'
             />
             <button
               type='button'
               onClick={() => setShowPassword(!showPassword)}
-              className='absolute right-2.5 min-w-[40px] min-h-[40px] flex items-center justify-center text-slate-400 hover:text-slate-600 cursor-pointer p-1 active:scale-90'
+              className='absolute right-1.5 min-w-[36px] min-h-[36px] flex items-center justify-center text-slate-400 hover:text-slate-600 cursor-pointer p-1 active:scale-90 transition-transform'
               aria-label={showPassword ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'}
             >
-              {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+              {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
             </button>
           </div>
         </div>
 
-        <div className='flex flex-col sm:flex-row-reverse sm:items-center sm:justify-between gap-3 mt-3 pt-1'>
+        <div className='pt-1'>
           <button
             type='submit'
             disabled={loading}
-            className='w-full sm:w-auto px-8 min-h-[48px] py-3 bg-[#aa294d] hover:bg-[#8c0f39] text-white rounded-full text-sm sm:text-base font-bold shadow-md shadow-rose-950/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50'
+            className='w-full min-h-[42px] sm:min-h-[44px] py-2.5 px-5 bg-[#aa294d] hover:bg-[#8c0f39] text-white rounded-full text-xs sm:text-sm font-bold shadow-md shadow-rose-950/20 active:scale-[0.98] transition-all flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50'
           >
             {loading ? (
-              <span>Masuk...</span>
+              <span>Memproses Masuk...</span>
             ) : (
               <>
-                <span>Masuk Sekarang</span>
-                <ArrowRight size={16} />
+                <span>Masuk ke Akun</span>
+                <ArrowRight size={15} />
               </>
             )}
           </button>
-
-          <Link
-            to='#'
-            onClick={e => {
-              e.preventDefault();
-              alert(
-                'Silakan hubungi administrator fasilitas kesehatan untuk mereset kata sandi Anda.',
-              );
-            }}
-            className='text-xs text-[#574144] hover:text-[#aa294d] font-medium transition-colors text-center sm:text-left py-2'
-          >
-            Lupa kata sandi?
-          </Link>
         </div>
 
-        <div className='mt-6 pt-4 border-t border-slate-100 text-center'>
-          <p className='text-xs sm:text-sm text-[#574144]'>
+        <div className='mt-2.5 pt-3 border-t border-slate-100 text-center'>
+          <p className='text-xs text-[#574144]'>
             Belum punya akun?{' '}
-            <Link
-              to='/auth/register'
-              className='font-bold text-[#aa294d] hover:text-[#8c0f39] transition-colors underline decoration-[#ffd9de] underline-offset-4'
-            >
-              Daftar Sekarang
-            </Link>
+            {onSwitchTab ? (
+              <button
+                type='button'
+                onClick={onSwitchTab}
+                className='font-bold text-[#aa294d] hover:text-[#8c0f39] transition-colors underline decoration-[#ffd9de] underline-offset-4 cursor-pointer'
+              >
+                Buat akun di sini
+              </button>
+            ) : (
+              <Link
+                to='/auth/register'
+                className='font-bold text-[#aa294d] hover:text-[#8c0f39] transition-colors underline decoration-[#ffd9de] underline-offset-4'
+              >
+                Buat akun di sini
+              </Link>
+            )}
           </p>
         </div>
       </form>
