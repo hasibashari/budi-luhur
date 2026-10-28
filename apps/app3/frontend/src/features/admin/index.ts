@@ -4,7 +4,6 @@ export { default as AdminMobileBottomNav } from './components/AdminMobileBottomN
 export { default as AdminLayout } from './components/AdminLayout';
 export { default as AdminDashboardView } from './views/AdminDashboardView';
 export { default as UserManagementView } from './views/UserManagementView';
-export { default as ScheduleManagementView } from './views/ScheduleManagementView';
 export { default as CertificateVerificationView } from './views/CertificateVerificationView';
 export { default as ArticleManagementView } from './views/ArticleManagementView';
 export { default as ReportAnalyticsView } from './views/ReportAnalyticsView';

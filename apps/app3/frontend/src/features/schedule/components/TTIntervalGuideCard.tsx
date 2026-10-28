@@ -17,7 +17,7 @@ export function TTIntervalGuideCard() {
                 Aturan Interval Dosis TT
               </h4>
               <span className='text-[10px] sm:text-[11px] text-[#574144] font-normal block truncate'>
-                Standar Resmi Kementerian Kesehatan RI
+                Standar Pelayanan Imunisasi Pranikah
               </span>
             </div>
           </div>
@@ -55,9 +55,7 @@ export function TTIntervalGuideCard() {
                 <p className='text-[11px] text-[#574144] mt-0.5 leading-snug'>
                   <strong>Interval:</strong> {dose.interval}
                 </p>
-                <p className='text-[10px] text-[#8b7074] mt-0.5 italic'>
-                  {dose.kemenkesRecommendation}
-                </p>
+                <p className='text-[10px] text-[#8b7074] mt-0.5 italic'>{dose.recommendation}</p>
               </div>
             </div>
           ))}
@@ -67,12 +65,12 @@ export function TTIntervalGuideCard() {
         <div className='p-3 sm:p-3.5 rounded-xl bg-[#ffd9de]/50 border border-[#ffd9de] text-[#8c0f39] text-xs flex items-start gap-2.5'>
           <Info size={16} className='text-[#aa294d] shrink-0 mt-0.5' />
           <p className='text-[11px] leading-relaxed'>
-            <strong>Penting Bagi Catin:</strong> Dosis TT2 wajib diterima minimal{' '}
-            <strong>30 hari sebelum akad nikah</strong> agar antibodi protektif terhadap bakteri{' '}
-            <em>Clostridium tetani</em> telah matang untuk melindungi ibu dan calon bayi.
+            <strong>Pengingat Imunisasi:</strong> Sesuaikan jadwal imunisasi Tetanus Toksoid (TT)
+            selanjutnya sesuai interval yang di anjurkan. Pastikan jadwal imunisasimu tercatat agar
+            tidak terlewat.
           </p>
         </div>
-        <p className='text-[10px] text-[#8b7074] italic'>Sumber: Kemenkes, 2021</p>
+        <p className='text-[10px] text-[#8b7074] italic'>Sumber: Pedoman Imunisasi Terpadu</p>
       </div>
     </Card>
   );

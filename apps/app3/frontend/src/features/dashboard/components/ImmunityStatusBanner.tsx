@@ -28,7 +28,7 @@ export function ImmunityStatusBanner({
 
   if (safeDose >= 5) {
     protectionText = 'Perlindungan Seumur Hidup (>25 Tahun)';
-    protectionDetail = 'Status T5 Lengkap resmi Kemenkes RI terhadap infeksi Tetanus.';
+    protectionDetail = 'Status T5 Lengkap terhadap perlindungan infeksi Tetanus.';
   } else if (safeDose === 4) {
     protectionText = `Perlindungan aktif hingga ${currentYear + 10}`;
     protectionDetail = 'Durasi proteksi 10 tahun terhadap infeksi Tetanus maternal & neonatal.';

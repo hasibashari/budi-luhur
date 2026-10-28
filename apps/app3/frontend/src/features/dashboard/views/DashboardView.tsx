@@ -494,7 +494,7 @@ export default function DashboardView() {
           <div className='py-2 flex items-center justify-center gap-2 text-[#574144]/80 text-xs'>
             <ShieldCheck size={16} className='text-[#2a6950]' />
             <span className='font-semibold'>
-              Standar Pelayanan Kesehatan Kementerian Kesehatan RI
+              Standar Pelayanan Kesehatan Pranikah
             </span>
           </div>
         </div>
@@ -510,7 +510,7 @@ export default function DashboardView() {
             />
           </section>
 
-          {/* 2. Standar Skrining Catin Kemenkes Box */}
+          {/* 2. Panduan Imunisasi TT Box */}
           <Card
             padding='md'
             className='bg-linear-to-br from-[#aff1d0]/25 to-[#eff4ff] border-[#aff1d0]/40'
@@ -520,15 +520,14 @@ export default function DashboardView() {
                 <Award size={18} />
               </div>
               <div>
-                <h4 className='text-xs font-bold text-[#121c2a]'>Standar Skrining Catin</h4>
+                <h4 className='text-xs font-bold text-[#121c2a]'>Panduan Imunisasi TT</h4>
                 <span className='text-[11px] font-semibold text-[#2a6950]'>
-                  Pedoman Kemenkes RI
+                  Edukasi Calon Pengantin
                 </span>
               </div>
             </div>
             <p className='text-xs text-[#574144] leading-relaxed'>
-              Pemeriksaan pranikah meliputi skrining imunisasi TT (5 dosis), status gizi (LILA min.
-              23.5 cm), serta edukasi kesiapan kesehatan pranikah untuk generasi bebas stunting.
+              Pastikan kelengkapan 5 dosis imunisasi Tetanus Toksoid untuk perlindungan optimal calon ibu dan buah hati menjelang hari pernikahan.
             </p>
             <div className='mt-3 pt-2.5 border-t border-[#aff1d0]/50 flex items-center justify-between'>
               <Link
@@ -536,7 +535,7 @@ export default function DashboardView() {
                 className='text-[11px] font-bold text-[#2a6950] hover:underline inline-flex items-center gap-1'
               >
                 <BookOpen size={12} />
-                <span>Pelajari Buku Saku Catin</span>
+                <span>Pelajari Materi Edukasi</span>
               </Link>
             </div>
           </Card>

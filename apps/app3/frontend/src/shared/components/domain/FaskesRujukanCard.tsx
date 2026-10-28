@@ -15,7 +15,7 @@ export interface FaskesRujukanCardProps {
 export function FaskesRujukanCard({
   faskesName = '',
   className = '',
-  subtitle = 'Tersinkron BPJS',
+  subtitle = 'Fasilitas Terdaftar',
   address = '',
   hours = '',
   distance = '',

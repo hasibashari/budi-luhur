@@ -115,24 +115,23 @@ export default function AdminDashboardView() {
       <div className='mb-6 p-4 sm:p-6 rounded-3xl border border-[#ffd9de]/80 bg-linear-to-r from-white via-[#eff4ff] to-[#ffd9de]/30 shadow-xs flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4'>
         <div className='flex items-center gap-4'>
           <div className='w-12 h-12 rounded-2xl bg-[#ffd9de]/60 text-[#aa294d] flex items-center justify-center shrink-0 border border-[#ffd9de]'>
-            <CalendarCheck size={26} />
+            <Users size={26} />
           </div>
           <div>
             <h3 className='font-bold text-[#121c2a] text-sm sm:text-base leading-tight'>
-              Pengelolaan Jadwal Imunisasi TT & Skrining Pranikah
+              Manajemen Calon Pengantin & Pemantauan TT
             </h3>
             <p className='text-xs sm:text-sm text-[#574144] mt-1 leading-relaxed'>
-              Akses konfigurasi dosis vaksin TT1–TT5, jadwal kunjungan faskes, dan pemantauan
-              kepatuhan catin.
+              Pantau status dosis imunisasi TT1–TT5, kesiapan akad nikah, serta kirim pengingat langsung ke calon pengantin.
             </p>
           </div>
         </div>
 
         <Link
-          to='/admin/schedules'
+          to='/admin/users'
           className='inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-xl bg-[#aa294d] text-white font-bold text-sm hover:bg-[#cb4364] shadow-md shadow-[#aa294d]/20 transition-all cursor-pointer whitespace-nowrap'
         >
-          <span>Buka Jadwal</span>
+          <span>Kelola Data Catin</span>
           <ChevronRight size={16} />
         </Link>
       </div>

@@ -1,7 +1,7 @@
 /**
  * Validasi & peringatan interval imunisasi Tetanus Toxoid (TT).
  *
- * Aturan mengikuti pedoman Kemenkes:
+ * Aturan mengikuti pedoman interval medis:
  * - TT1 → TT2 : minimal 28 hari
  * - TT2 → TT3 : minimal 180 hari (6 bulan)
  * - TT3 → TT4 : minimal 365 hari (1 tahun)

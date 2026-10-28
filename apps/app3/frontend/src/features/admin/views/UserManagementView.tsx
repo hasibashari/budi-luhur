@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Search,
@@ -8,6 +8,7 @@ import {
   Trash2,
   Phone,
   Calendar,
+  CalendarCheck,
   Heart,
   CheckCircle2,
   Clock,
@@ -28,12 +29,13 @@ import { useToast } from '@/src/shared/hooks/useToast';
 import { publishRealtimeEvent } from '@/src/shared/utils/realtimeSync';
 import {
   getUsersAction,
+  getSchedulesAction,
   createUserAction,
   updateUserAction,
   deleteUserAction,
   sendUserReminderAction,
 } from '../api/userManagementRepository';
-import { ManagedUser } from '../types/admin.types';
+import { ManagedUser, MedicationSchedule } from '../types/admin.types';
 import {
   INITIAL_USER_FORM_DATA,
   UserFormData,
@@ -48,8 +50,20 @@ import {
   KUAStatus,
 } from '../constants/user.constants';
 
+function formatScheduleDate(dateStr?: string) {
+  if (!dateStr) return '';
+  const date = new Date(`${dateStr}T00:00:00`);
+  if (Number.isNaN(date.getTime())) return dateStr;
+  return new Intl.DateTimeFormat('id-ID', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  }).format(date);
+}
+
 export default function UserManagementView() {
   const [users, setUsers] = useState<ManagedUser[]>([]);
+  const [schedules, setSchedules] = useState<MedicationSchedule[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [kuaFilter, setKuaFilter] = useState<string>('Semua');
   const [ttFilter, setTtFilter] = useState<string>('Semua');
@@ -94,26 +108,30 @@ export default function UserManagementView() {
   });
 
   const loadUsers = useCallback(async () => {
-    const data = await getUsersAction();
-    setUsers(data);
+    const [u, s] = await Promise.all([getUsersAction(), getSchedulesAction()]);
+    setUsers(u);
+    setSchedules(s);
   }, []);
 
   useEffect(() => {
     let isMounted = true;
-    const fetchUsers = async () => {
-      const data = await getUsersAction();
-      if (isMounted) setUsers(data);
+    const fetchData = async () => {
+      const [u, s] = await Promise.all([getUsersAction(), getSchedulesAction()]);
+      if (isMounted) {
+        setUsers(u);
+        setSchedules(s);
+      }
     };
-    fetchUsers();
+    fetchData();
 
     const interval = setInterval(() => {
       if (typeof document !== 'undefined' && document.visibilityState === 'visible') {
-        fetchUsers();
+        fetchData();
       }
     }, 8000);
 
     const handleFocus = () => {
-      fetchUsers();
+      fetchData();
     };
     window.addEventListener('focus', handleFocus);
 
@@ -123,6 +141,19 @@ export default function UserManagementView() {
       window.removeEventListener('focus', handleFocus);
     };
   }, []);
+
+  const schedulesByUser = useMemo(() => {
+    const map = new Map<string, MedicationSchedule>();
+    schedules.forEach(s => {
+      const uid = s.userId || s.patientId || '';
+      if (!uid) return;
+      const existing = map.get(uid);
+      if (!existing || (existing.status !== 'Aktif' && s.status === 'Aktif')) {
+        map.set(uid, s);
+      }
+    });
+    return map;
+  }, [schedules]);
 
   const filteredUsers = users.filter(u => {
     const q = searchQuery.toLowerCase();
@@ -315,12 +346,11 @@ export default function UserManagementView() {
     },
     {
       id: 'ttStatus',
-      label: 'Status Dosis TT',
-      width: '20%',
+      label: 'Dosis & Jadwal TT',
+      width: '22%',
       renderCell: user => {
         const tt = user.ttStatus || 'TT0';
         const ttStyle = TT_STATUS_COLORS[tt] || TT_STATUS_COLORS.TT1;
-        const rate = user.adherenceRate;
 
         const ttLabels: Record<string, string> = {
           TT0: 'Belum Vaksin',
@@ -330,6 +360,10 @@ export default function UserManagementView() {
           TT4: 'Dosis 4 • Proteksi 10 Th',
           TT5: 'Dosis 5 • Proteksi 25 Th',
         };
+
+        const userSched = schedulesByUser.get(user.id);
+        const schedDate = userSched?.scheduledDate || userSched?.startDate;
+        const schedTime = userSched?.timeSlots?.[0] || '09:00';
 
         return (
           <div>
@@ -348,22 +382,27 @@ export default function UserManagementView() {
                 {ttLabels[tt] || tt}
               </span>
             </div>
-            <div className='flex items-center gap-2 mt-1.5'>
-              <div className='w-20 bg-[#dee9fc] rounded-full h-1.5 overflow-hidden'>
-                <div
-                  className={`h-full rounded-full ${
-                    (rate ?? 0) >= 90
-                      ? 'bg-[#2a6950]'
-                      : (rate ?? 0) >= 80
-                        ? 'bg-amber-500'
-                        : 'bg-[#aa294d]'
-                  }`}
-                  style={{ width: `${Math.min(100, Math.max(0, rate ?? 0))}%` }}
-                />
-              </div>
-              <span className='text-[10px] font-bold text-[#574144]'>
-                {rate === null ? 'Belum ada data' : `${rate}%`}
-              </span>
+
+            <div className='mt-1.5'>
+              {userSched && schedDate ? (
+                <div className='flex items-center gap-1.5 text-xs text-[#0a5139] font-medium'>
+                  <CalendarCheck size={13} className='text-[#2a6950] shrink-0' />
+                  <span className='truncate font-semibold'>
+                    {userSched.ttLevel ? `${userSched.ttLevel}: ` : ''}
+                    {formatScheduleDate(schedDate)} • {schedTime} WIB
+                  </span>
+                </div>
+              ) : tt === 'TT5' ? (
+                <div className='flex items-center gap-1.5 text-xs text-[#2a6950] font-semibold'>
+                  <CheckCircle2 size={13} className='shrink-0' />
+                  <span>Imunisasi Lengkap</span>
+                </div>
+              ) : (
+                <div className='flex items-center gap-1.5 text-xs text-amber-700 font-medium'>
+                  <AlertCircle size={13} className='text-amber-600 shrink-0' />
+                  <span>Belum Menjadwalkan</span>
+                </div>
+              )}
             </div>
           </div>
         );
@@ -617,14 +656,48 @@ export default function UserManagementView() {
                   </span>
                 </div>
 
-                <div className='col-span-2 pt-1 border-t border-[#eff4ff]'>
-                  <span className='text-[#8b7074] block text-[11px] font-medium'>
-                    Faskes Rujukan
-                  </span>
-                  <span className='font-bold text-[#121c2a] truncate block mt-0.5'>
-                    {user.schoolOrOrg || 'Faskes belum diisi'}
-                  </span>
-                </div>
+                {(() => {
+                  const userSched = schedulesByUser.get(user.id);
+                  const schedDate = userSched?.scheduledDate || userSched?.startDate;
+                  const schedTime = userSched?.timeSlots?.[0] || '09:00';
+
+                  return (
+                    <div className='col-span-2 pt-1.5 border-t border-[#eff4ff] flex items-center justify-between gap-2'>
+                      <div className='min-w-0'>
+                        <span className='text-[#8b7074] block text-[11px] font-medium'>
+                          Faskes Rujukan
+                        </span>
+                        <span className='font-bold text-[#121c2a] truncate block mt-0.5'>
+                          {user.schoolOrOrg || 'Faskes belum diisi'}
+                        </span>
+                      </div>
+                      <div className='text-right shrink-0 max-w-[55%]'>
+                        <span className='text-[#8b7074] block text-[11px] font-medium'>
+                          Rencana Kunjungan TT
+                        </span>
+                        {userSched && schedDate ? (
+                          <span className='font-bold text-xs text-[#0a5139] inline-flex items-center gap-1 mt-0.5 truncate'>
+                            <CalendarCheck size={11} className='text-[#2a6950] shrink-0' />
+                            <span className='truncate'>
+                              {userSched.ttLevel ? `${userSched.ttLevel}: ` : ''}
+                              {formatScheduleDate(schedDate)} • {schedTime} WIB
+                            </span>
+                          </span>
+                        ) : tt === 'TT5' ? (
+                          <span className='font-bold text-xs text-[#2a6950] inline-flex items-center gap-1 mt-0.5'>
+                            <CheckCircle2 size={11} />
+                            <span>Imunisasi Lengkap</span>
+                          </span>
+                        ) : (
+                          <span className='font-bold text-xs text-amber-700 inline-flex items-center gap-1 mt-0.5'>
+                            <AlertCircle size={11} className='text-amber-600 shrink-0' />
+                            <span>Belum Menjadwalkan</span>
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })()}
               </div>
 
               {/* Actions Row */}

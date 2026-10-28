@@ -114,7 +114,7 @@ export function WeddingCountdownWidget({
         <div className='flex-1 text-[11px] leading-relaxed'>
           {isUrgent ? (
             <p>
-              <strong>Batas Waktu TT2 Kritis!</strong> Kemenkes mensyaratkan vaksin TT2 minimal 30
+              <strong>Batas Waktu TT2 Kritis!</strong> Vaksin TT2 disyaratkan minimal 30
               hari sebelum hari pernikahan agar antibodi tetanus protektif optimal.
             </p>
           ) : (

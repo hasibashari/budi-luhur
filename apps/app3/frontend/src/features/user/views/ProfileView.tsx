@@ -324,7 +324,7 @@ export default function ProfileView() {
     },
     {
       id: 'certificate',
-      label: 'Sertifikat Vaksin Catin',
+      label: 'Sertifikat Tetanus Toksoid',
       value:
         certificate?.status === 'APPROVED'
           ? 'Sah & Terverifikasi'
@@ -336,7 +336,7 @@ export default function ProfileView() {
       subtitle:
         certificate?.status === 'APPROVED'
           ? `Ditandatangani ${certificate.signerName || certificate.reviewedBy || 'petugas faskes'}`
-          : 'Kartu Imunisasi Resmi Kemenkes RI',
+          : 'Kartu Imunisasi Resmi',
       icon: ShieldCheck,
       iconBgColor: 'bg-[#ffd9de] border border-[#ffc2cc]',
       iconColor: 'text-[#aa294d]',
@@ -415,7 +415,7 @@ export default function ProfileView() {
           Profil Calon Pengantin
         </h2>
         <p className='text-xs sm:text-sm text-slate-500 mt-0.5'>
-          Informasi identitas pranikah, status imunisasi TT Kemenkes, dan preferensi layanan TEMANI
+          Informasi identitas pranikah, status imunisasi TT, dan preferensi layanan TEMANI
         </p>
       </div>
 
@@ -434,8 +434,8 @@ export default function ProfileView() {
 
       {/* 2. 3-Column Metrics Grid */}
       <ProfileMetricsGrid
-        title='Status Imunisasi & Skrining Pranikah'
-        subtitle='Berdasarkan catatan kohort imunisasi Kemenkes RI dan pemeriksaan pranikah'
+        title='Status Imunisasi Tetanus Toksoid'
+        subtitle='Berdasarkan catatan kohort imunisasi fasilitas kesehatan'
         metrics={userMetrics}
         columns={3}
       />
@@ -450,7 +450,7 @@ export default function ProfileView() {
       {/* 4. Faskes Rujukan Terpilih */}
       <FaskesRujukanCard faskesName={userProfile.schoolOrOrg || undefined} />
 
-      {/* 4b. Kartu Vaksin & E-Sertifikat Imunisasi TT */}
+      {/* 4b. Kartu Vaksin & Sertifikat Tetanus Toksoid */}
       <button
         type='button'
         onClick={() => setIsCertificateModalOpen(true)}
@@ -461,14 +461,14 @@ export default function ProfileView() {
         </span>
         <span className='flex-1 min-w-0'>
           <span className='block text-xs sm:text-sm font-bold text-[#121c2a] group-hover:text-[#aa294d] transition-colors'>
-            Lihat Kartu Vaksin Catin (E-Sertifikat TT)
+            Lihat Sertifikat Tetanus Toksoid
           </span>
           <span className='block text-[11px] text-[#574144]'>
             {certificate?.status === 'APPROVED'
               ? `Terverifikasi resmi ${certificate.signerName ? `oleh ${certificate.signerName}` : 'oleh faskes'}`
               : certificate?.status === 'PENDING'
                 ? 'Sedang dalam antrean verifikasi petugas faskes'
-                : 'Kartu imunisasi resmi standar Kementerian Kesehatan RI'}
+                : 'Kartu imunisasi resmi standar fasilitas kesehatan'}
           </span>
         </span>
         <span className='inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-[#aa294d] text-white text-[11px] font-bold shrink-0 shadow-2xs group-hover:bg-[#8c0f39] transition-colors'>

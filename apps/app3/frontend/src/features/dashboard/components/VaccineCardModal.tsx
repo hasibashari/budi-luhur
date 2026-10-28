@@ -105,12 +105,12 @@ export function VaccineCardModal({
                   id='vaccine-card-title'
                   className='text-sm sm:text-base font-bold leading-tight'
                 >
-                  Kartu Vaksin Catin Kemenkes RI
+                  Kartu Vaksin Calon Pengantin
                 </h3>
                 <p className='text-[11px] sm:text-xs text-rose-100 mt-0.5 font-medium'>
                   {certNumber
-                    ? `No: ${certNumber} • E-Sertifikat Imunisasi TT Pranikah`
-                    : 'Sertifikat Imunisasi Tetanus Toxoid Pranikah Resmi'}
+                    ? `No: ${certNumber} • Sertifikat Tetanus Toksoid`
+                    : 'Sertifikat Tetanus Toksoid'}
                 </p>
               </div>
             </div>
@@ -136,7 +136,7 @@ export function VaccineCardModal({
                 </div>
                 <div>
                   <span className='font-bold text-slate-900 block text-xs tracking-wide uppercase'>
-                    KEMENTERIAN KESEHATAN REPUBLIK INDONESIA
+                    SERTIFIKAT TETANUS TOKSOID
                   </span>
                   <span className='text-[10px] text-slate-500 block'>
                     Standar Pelayanan Skrining Kesehatan Calon Pengantin • Faskes:{' '}
@@ -267,7 +267,7 @@ export function VaccineCardModal({
                   <p className='text-[11px] text-slate-600 leading-relaxed mt-0.5'>
                     {currentTTLevel >= 5
                       ? 'Perlindungan seumur hidup sudah terbentuk. Tetap jaga kesehatan dan lakukan pemeriksaan pranikah secara berkala bersama pasangan.'
-                      : 'Setiap dosis yang diselesaikan adalah perlindungan nyata bagi dirimu, pasangan, dan calon buah hati. Lanjutkan sampai TT5 sesuai jadwal dari tenaga kesehatan.'}
+                      : 'Setiap dosis yang diselesaikan adalah perlindungan nyata bagi dirimu, pasangan, dan calon buah hati.'}
                   </p>
                   <p className='text-[10px] font-bold text-[#2a6950] mt-1'>
                     Progres: TT{Math.min(currentTTLevel, 5)} dari TT5

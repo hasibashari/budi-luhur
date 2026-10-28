@@ -20,7 +20,7 @@ export const ONBOARDING_SLIDES: OnboardingSlide[] = [
     title: 'Imunisasi TT Calon Pengantin',
     tagline: 'Perlindungan Tetanus 5 Dosis',
     description:
-      'Cegah risiko tetanus maternal dan neonatal pada calon ibu dan buah hati melalui 5 dosis imunisasi Tetanus Toxoid berstandar Kemenkes RI.',
+      'Cegah risiko tetanus maternal dan neonatal pada calon ibu dan buah hati melalui 5 dosis imunisasi Tetanus Toxoid berstandar pelayanan faskes.',
     illustration: ReminderIllustration,
     accentColor: 'ruby',
   },
@@ -35,10 +35,10 @@ export const ONBOARDING_SLIDES: OnboardingSlide[] = [
   },
   {
     id: 'tt_certificate',
-    title: 'Sertifikat Imunisasi Tetanus Toxoid',
+    title: 'Sertifikat Tetanus Toksoid',
     tagline: 'Bukti Resmi & Kesiapan Pranikah',
     description:
-      'Peroleh sertifikat imunisasi TT resmi dari faskes untuk melengkapi syarat administrasi pernikahan serta menjamin perlindungan ibu dan buah hati.',
+      'Peroleh Sertifikat Tetanus Toksoid resmi dari faskes untuk melengkapi syarat administrasi pernikahan serta menjamin perlindungan ibu dan buah hati.',
     illustration: BuddyIllustration,
     accentColor: 'sage',
   },

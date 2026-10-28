@@ -216,7 +216,7 @@ export class UserProfileService {
             author: article.author_name
               ? {
                   name: article.author_name,
-                  role: article.author_role || 'Tim Medis Kemenkes',
+                  role: article.author_role || 'Tim Medis Faskes',
                 }
               : undefined,
           }

@@ -1,10 +1,11 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Home, BookOpen, User, LogOut, ShieldCheck } from 'lucide-react';
+import { Home, Calendar, BookOpen, User, LogOut, ShieldCheck } from 'lucide-react';
 import { Avatar } from '@/src/shared/components/ui/Avatar';
 import { useAuth } from '@/src/features/auth';
 
 export const USER_NAV_ITEMS = [
   { name: 'Beranda', href: '/user/dashboard', icon: Home },
+  { name: 'Jadwal', href: '/user/schedule', icon: Calendar },
   { name: 'Riwayat TT', href: '/user/imunisasi?tab=riwayat', icon: ShieldCheck },
   { name: 'Edukasi', href: '/user/education', icon: BookOpen },
   { name: 'Profil & Akun', href: '/user/profile', icon: User },

@@ -26,7 +26,7 @@ export function ProfileHeaderCard({
   roleBadgeColor = 'user',
   subtitle,
   verified = true,
-  verifiedText = 'Terverifikasi Kemenkes',
+  verifiedText = 'Terverifikasi',
   canEdit = true,
   onEditClick,
   onSaveAvatar,

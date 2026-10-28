@@ -82,7 +82,7 @@
   --color-on-error: #ffffff;
   --color-on-error-container: #93000a;
 
-  /* 7. Status Dosis Imunisasi Tetanus Toxoid (Kemenkes RI) */
+  /* 7. Status Dosis Imunisasi Tetanus Toxoid */
   --color-status-recorded: #2a6950;
   /* Dosis telah diverifikasi / Terlindungi */
   --color-status-missed: #ba1a1a;

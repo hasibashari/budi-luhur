@@ -91,13 +91,7 @@ export default function Navbar() {
             href='/#schedule'
             className='text-sm font-medium text-[#475569] hover:text-[#aa294d] transition-colors'
           >
-            Jadwal 5 Dosis Kemenkes
-          </a>
-          <a
-            href='/#screening'
-            className='text-sm font-medium text-[#475569] hover:text-[#aa294d] transition-colors'
-          >
-            Skrining Pranikah
+            Jadwal 5 Dosis TT
           </a>
           <a
             href='/#faq'
@@ -216,14 +210,7 @@ export default function Navbar() {
             onClick={() => setIsMobileMenuOpen(false)}
             className='text-base font-medium text-slate-700 py-2 border-b border-slate-100 hover:text-[#aa294d]'
           >
-            Jadwal 5 Dosis Kemenkes
-          </a>
-          <a
-            href='/#screening'
-            onClick={() => setIsMobileMenuOpen(false)}
-            className='text-base font-medium text-slate-700 py-2 border-b border-slate-100 hover:text-[#aa294d]'
-          >
-            Skrining Pranikah
+            Jadwal 5 Dosis TT
           </a>
           <a
             href='/#faq'

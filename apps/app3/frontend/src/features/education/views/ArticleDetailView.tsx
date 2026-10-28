@@ -118,7 +118,7 @@ export default function ArticleDetailView({
         if (navigator.share) {
           await navigator.share({
             title: article?.title || 'Edukasi Imunisasi TT - TEMANI',
-            text: article?.summary || 'Panduan kesehatan pranikah resmi Kemenkes RI.',
+            text: article?.summary || 'Panduan kesehatan pranikah untuk calon pengantin.',
             url: window.location.href,
           });
         } else {
@@ -167,7 +167,7 @@ export default function ArticleDetailView({
       ? article.summary
       : article?.leadParagraph && !article.leadParagraph.startsWith('#')
         ? article.leadParagraph
-        : 'Panduan kesehatan pranikah resmi Kementerian Kesehatan RI untuk calon pengantin.';
+        : 'Panduan kesehatan pranikah resmi untuk calon pengantin.';
 
   // Check if sections are custom structured (not just the automated split duplicate)
   const hasCustomSections =
@@ -201,7 +201,7 @@ export default function ArticleDetailView({
 
         <div className='text-center truncate px-2'>
           <h1 className='text-base font-bold text-[#121c2a] truncate'>Artikel Edukasi</h1>
-          <p className='text-[11px] text-[#574144]'>Pedoman Resmi Kemenkes RI</p>
+          <p className='text-[11px] text-[#574144]'>Pedoman Edukasi Kesehatan</p>
         </div>
 
         <div className='flex items-center gap-2'>
@@ -286,10 +286,10 @@ export default function ArticleDetailView({
                 </div>
                 <div className='flex flex-col min-w-0'>
                   <span className='text-xs font-bold text-[#121c2a] truncate'>
-                    {article?.author?.name || 'Tim Medis Faskes / Kemenkes RI'}
+                    {article?.author?.name || 'Tim Medis Faskes'}
                   </span>
                   <span className='text-[11px] text-[#574144] truncate'>
-                    {article?.author?.role || 'Puskesmas Mitra Pranikah Kemenkes RI'}
+                    {article?.author?.role || 'Puskesmas Mitra Pranikah'}
                     {article?.publishedAt ? ` • ${article.publishedAt}` : ''}
                   </span>
                 </div>
@@ -411,12 +411,12 @@ export default function ArticleDetailView({
             </div>
             <div className='flex flex-col'>
               <span className='text-xs font-bold text-[#0a5139] mb-1'>
-                Kapan Sebaiknya Menerima Vaksin TT?
+                Selangkah Lebih Siap, Selangkah Lebih Sehat
               </span>
               <p className='text-xs text-[#121c2a] leading-relaxed'>
-                Sebaiknya dilakukan <strong>minimal 1 bulan</strong> sebelum hari pernikahan di
-                Puskesmas atau faskes terdekat agar sertifikat imunisasi resmi siap digunakan untuk
-                kelengkapan administrasi pernikahan.
+                Setiap informasi yang kamu pelajari adalah langkah kecil menuju masa depan yang
+                lebih baik. Terus tingkatkan pengetahuanmu untuk menjaga kesehatan diri dan
+                merencanakan keluarga yang sehat.
               </p>
             </div>
           </div>

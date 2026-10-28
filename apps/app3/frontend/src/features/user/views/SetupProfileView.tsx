@@ -235,7 +235,7 @@ export function SetupProfileView() {
               <div className='p-3 rounded-2xl bg-[#ecfdf5] border border-[#aff1d0] flex items-start gap-2.5'>
                 <Activity size={16} className='text-[#2a6950] shrink-0 mt-0.5' />
                 <p className='text-[11px] text-[#166534] leading-relaxed'>
-                  Pemeriksaan status fisik dan skrining kesehatan pranikah sangat penting bagi calon pengantin untuk memastikan kesiapan kesehatan keluarga dan keturunan.
+                  Pencatatan imunisasi pranikah sangat penting bagi calon pengantin untuk memastikan kesiapan kesehatan keluarga dan perlindungan calon ibu serta buah hati.
                 </p>
               </div>
             </div>

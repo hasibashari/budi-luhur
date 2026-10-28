@@ -37,7 +37,7 @@ Imunisasi Tetanus Toxoid (TT) wajib dijalani oleh calon pengantin wanita untuk m
 
 > Tips Medis Pranikah: Pastikan imunisasi TT2 diselesaikan minimal 4 minggu sebelum akad nikah untuk kekebalan protektif 3 tahun!
 
-### Jadwal 5 Dosis Imunisasi TT Kemenkes:
+### Jadwal 5 Dosis Imunisasi TT:
 - **TT1**: Langkah awal (skrining saat pendaftaran catin di faskes)
 - **TT2**: 4 minggu setelah TT1 (masa perlindungan 3 tahun)
 - **TT3**: 6 bulan setelah TT2 (masa perlindungan 5 tahun)

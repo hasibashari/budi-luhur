@@ -150,7 +150,7 @@ export default function ReportAnalyticsView() {
           </div>
           <div className='text-xl sm:text-2xl font-black text-[#2a6950] mb-1'>Sangat Baik (A)</div>
           <p className='text-xs font-medium text-[#8b7074]'>
-            Berdasarkan Pedoman Imunisasi TT Kemenkes RI
+            Berdasarkan Pedoman Imunisasi TT Terpadu
           </p>
         </div>
       </div>

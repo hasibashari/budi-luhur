@@ -109,7 +109,7 @@ export default function AdminProfileView() {
       id: 'access',
       label: 'Level Hak Akses',
       value: 'Full Control',
-      subtitle: 'Data Catin, Jadwal TT, Edukasi, Laporan',
+      subtitle: 'Data Catin, Sertifikat TT, Edukasi, Laporan',
       icon: Shield,
       iconBgColor: 'bg-[#ffd9de]',
       iconColor: 'text-[#aa294d]',

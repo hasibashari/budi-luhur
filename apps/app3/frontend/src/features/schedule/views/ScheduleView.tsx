@@ -840,7 +840,7 @@ export default function ScheduleView() {
           <span className='text-xs font-bold text-[#121c2a] mb-0.5'>Catatan Bidan & Faskes</span>
           <p className='text-[11px] text-[#574144] leading-relaxed'>
             Pastikan kamu menerima vaksin sesuai interval minimal agar respons antibodi optimal.
-            Tunjukkan jadwal ini kepada bidan desa atau dokter saat skrining berkala.
+            Tunjukkan jadwal ini kepada bidan atau petugas faskes saat kunjungan imunisasi berkala.
           </p>
         </div>
       </div>

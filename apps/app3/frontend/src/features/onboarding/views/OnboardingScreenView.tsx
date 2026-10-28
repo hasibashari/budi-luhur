@@ -52,7 +52,7 @@ export function OnboardingScreenView({
         </div>
         <span className='text-xs text-[#574144] font-semibold tracking-wide'>{statusText}</span>
         <span className='text-[10px] text-[#64748b] tracking-wider uppercase font-medium mt-1 text-center'>
-          Standar Pelayanan Calon Pengantin Kemenkes RI
+          Standar Pelayanan Calon Pengantin
         </span>
       </div>
     </div>

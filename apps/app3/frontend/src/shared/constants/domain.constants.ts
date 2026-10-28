@@ -1,7 +1,7 @@
 /**
  * Domain Constants
  * Centralized static domain rules, enumerations, and metadata for TEMANI.
- * (Premarital Health & Tetanus Toxoid Immunization Standards - Kemenkes RI)
+ * (Premarital Health & Tetanus Toxoid Immunization Standards)
  */
 
 export const DAYS_OF_WEEK = [
@@ -30,7 +30,7 @@ export interface TTLevelInfo {
   badgeColor: string;
   textColor: string;
   description: string;
-  kemenkesRecommendation: string;
+  recommendation: string;
 }
 
 export const TT_DOSAGE_LEVELS: Record<string, TTLevelInfo> = {
@@ -42,7 +42,7 @@ export const TT_DOSAGE_LEVELS: Record<string, TTLevelInfo> = {
     badgeColor: 'bg-amber-50 text-amber-800 border-amber-200',
     textColor: 'text-amber-700',
     description: 'Menstimulasi sistem imun tubuh untuk mulai memproduksi antibodi terhadap bakteri Clostridium tetani.',
-    kemenkesRecommendation: 'Diberikan segera saat calon pengantin mendaftar pemeriksaan kesehatan di Puskesmas / Faskes.',
+    recommendation: 'Diberikan segera saat calon pengantin mendaftar pemeriksaan kesehatan di Puskesmas / Faskes.',
   },
   TT2: {
     level: 'TT2',
@@ -52,7 +52,7 @@ export const TT_DOSAGE_LEVELS: Record<string, TTLevelInfo> = {
     badgeColor: 'bg-emerald-50 text-emerald-800 border-emerald-200',
     textColor: 'text-emerald-700',
     description: 'Memberikan proteksi dasar terhadap infeksi tetanus maternal dan tetanus neonatorum pada persalinan.',
-    kemenkesRecommendation: 'Wajib diselesaikan minimal 2–4 minggu sebelum hari pernikahan (ijab qobul/pemberkatan).',
+    recommendation: 'Wajib diselesaikan minimal 2–4 minggu sebelum hari pernikahan (ijab qobul/pemberkatan).',
   },
   TT3: {
     level: 'TT3',
@@ -62,7 +62,7 @@ export const TT_DOSAGE_LEVELS: Record<string, TTLevelInfo> = {
     badgeColor: 'bg-teal-50 text-teal-800 border-teal-200',
     textColor: 'text-teal-700',
     description: 'Memperkuat daya tahan tubuh dan memperpanjang masa kekebalan hingga 5 tahun penuh.',
-    kemenkesRecommendation: 'Diberikan pada masa awal pernikahan atau saat masa kehamilan berikutnya.',
+    recommendation: 'Diberikan pada masa awal pernikahan atau saat masa kehamilan berikutnya.',
   },
   TT4: {
     level: 'TT4',
@@ -72,7 +72,7 @@ export const TT_DOSAGE_LEVELS: Record<string, TTLevelInfo> = {
     badgeColor: 'bg-indigo-50 text-indigo-800 border-indigo-200',
     textColor: 'text-indigo-700',
     description: 'Memberikan perlindungan jangka panjang hingga 10 tahun bagi ibu dan kehamilan berikutnya.',
-    kemenkesRecommendation: 'Dianjurkan bagi wanita usia subur untuk perlindungan berkelanjutan.',
+    recommendation: 'Dianjurkan bagi wanita usia subur untuk perlindungan berkelanjutan.',
   },
   TT5: {
     level: 'TT5',
@@ -82,32 +82,11 @@ export const TT_DOSAGE_LEVELS: Record<string, TTLevelInfo> = {
     badgeColor: 'bg-emerald-100 text-emerald-900 border-emerald-300',
     textColor: 'text-emerald-800',
     description: 'Mencapai status T5 Lengkap dengan kekebalan seumur hidup terhadap infeksi tetanus.',
-    kemenkesRecommendation: 'Mencapai perlindungan lebih dari 25 tahun sesuai standar Kementerian Kesehatan RI.',
+    recommendation: 'Mencapai perlindungan lebih dari 25 tahun untuk perlindungan jangka panjang seumur hidup.',
   },
 };
 
 export const TT_DOSAGE_LIST = Object.values(TT_DOSAGE_LEVELS);
-
-export const PREMARITAL_SCREENING_TESTS = [
-  {
-    key: 'blood_type_rhesus',
-    name: 'Golongan Darah & Rhesus',
-    purpose: 'Mencegah ketidakcocokan rhesus (inkompatibilitas rhesus) antara ibu dan calon janin.',
-    normalRange: 'A / B / AB / O (Rhesus Positif / Negatif)',
-  },
-  {
-    key: 'lila',
-    name: 'Lingkar Lengan Atas (LILA)',
-    purpose: 'Menilai status gizi dan risiko Kurang Energi Kronis (KEK).',
-    normalRange: '≥ 23.5 cm (Normal / Tidak KEK)',
-  },
-  {
-    key: 'imt',
-    name: 'Indeks Massa Tubuh (IMT)',
-    purpose: 'Mengetahui status kecukupan berat badan ideal calon pengantin.',
-    normalRange: '18.5 - 25.0 kg/m²',
-  },
-];
 
 export const DEFAULT_TT_TARGET = 5; // Standar 5 Dosis Tetanus Toxoid
 export const DEFAULT_VACCINE_DESCRIPTION = 'Vaksin Tetanus Toxoid (TT) 0.5 mL intramuskular pada lengan atas';

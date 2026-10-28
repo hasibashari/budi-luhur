@@ -150,7 +150,7 @@ export default function EducationView() {
         })}
       </div>
 
-      {/* 4. Banner Program Wajib Kemenkes RI (Stitch Screen 3) */}
+      {/* 4. Banner Program Wajib Pranikah (Stitch Screen 3) */}
       <Link
         to='/user/imunisasi'
         className='bg-linear-to-r from-[#ffd9de]/60 via-[#eff4ff] to-[#aff1d0]/50 rounded-2xl p-4 flex items-center justify-between shadow-xs border border-[#ffd9de]/60 transition-all hover:shadow-md group cursor-pointer'
@@ -161,10 +161,10 @@ export default function EducationView() {
           </div>
           <div className='flex-1 min-w-0'>
             <span className='text-[10px] sm:text-[11px] text-[#aa294d] uppercase tracking-wider font-bold block'>
-              Program Wajib Kemenkes RI
+              Program Wajib Pranikah
             </span>
             <h4 className='text-xs sm:text-sm font-bold text-[#121c2a] truncate'>
-              Sertifikat Bebas Tetanus
+              Sertifikat Tetanus Toksoid
             </h4>
             <p className='text-[11px] text-[#574144] line-clamp-1 mt-0.5'>
               Syarat wajib pendaftaran nikah di Dukcapil.

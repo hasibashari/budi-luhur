@@ -45,7 +45,7 @@ export function AuthCardLayout({ children }: AuthCardLayoutProps) {
         <div className='w-full max-w-[380px] sm:max-w-[400px] mx-auto pt-2.5 pb-1 border-t border-slate-100 flex items-center justify-center gap-1.5 text-center text-[#64748b]'>
           <ShieldCheck size={14} className='text-[#2a6950] shrink-0' />
           <span className='text-[10px] sm:text-[11px] font-medium leading-tight'>
-            Standar Pemantauan Imunisasi &amp; Kesehatan Pranikah Kemenkes RI
+            Standar Pemantauan Imunisasi &amp; Kesehatan Pranikah
           </span>
         </div>
       </div>

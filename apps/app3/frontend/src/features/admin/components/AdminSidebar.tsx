@@ -1,7 +1,6 @@
 import {
   LayoutDashboard,
   Users,
-  Calendar,
   FileText,
   BookOpen,
   LogOut,
@@ -15,7 +14,6 @@ import { useAuth } from '@/src/features/auth';
 const ADMIN_NAVIGATION_ITEMS: NavItem[] = [
   { name: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
   { name: 'Data Catin', href: '/admin/users', icon: Users },
-  { name: 'Jadwal', href: '/admin/schedules', icon: Calendar },
   { name: 'Verifikasi', href: '/admin/certificates', icon: Award },
   { name: 'Laporan', href: '/admin/reports', icon: FileText },
   { name: 'Artikel', href: '/admin/articles', icon: BookOpen },
