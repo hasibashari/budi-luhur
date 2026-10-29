@@ -1,11 +1,16 @@
 import dns from 'dns';
 import fs from 'fs';
+import net from 'net';
 import { Pool, PoolClient, QueryResult, QueryResultRow } from 'pg';
 import { config } from './env.js';
 
-// Prioritize IPv4 to avoid ENETUNREACH errors on WSL/environments lacking IPv6 routes
+// Prioritize IPv4 and disable autoSelectFamily (Happy Eyeballs) to avoid ETIMEDOUT
+// on high-latency cloud connections (e.g. AWS Neon in US) where handshake > 250ms
 try {
   dns.setDefaultResultOrder('ipv4first');
+  if (typeof net.setDefaultAutoSelectFamily === 'function') {
+    net.setDefaultAutoSelectFamily(false);
+  }
 } catch {
   // Ignore in environments where not supported
 }
@@ -18,6 +23,8 @@ export function getDatabasePool(): Pool {
   let connectionString = (config.databaseUrl || '').trim();
   // Strip unsupported channel_binding for pg compatibility
   connectionString = connectionString.replace(/[?&]channel_binding=[^&]+/g, '');
+  // Modern pg prefers sslmode=verify-full over sslmode=require to avoid deprecation warnings
+  connectionString = connectionString.replace(/sslmode=require\b/g, 'sslmode=verify-full');
 
   // In local environments where localhost TCP is restricted or using local socket
   if (
