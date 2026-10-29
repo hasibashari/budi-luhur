@@ -1,5 +1,17 @@
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
+import path from 'path';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const uploadsDir = path.resolve(__dirname, '../public/uploads');
+
+// Ensure uploads directory exists
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
 
 export const app = express();
 
@@ -31,6 +43,10 @@ app.use((req: Request, _res: Response, next: NextFunction) => {
   }
   next();
 });
+
+// Serve static uploaded files
+app.use('/uploads', express.static(uploadsDir));
+app.use('/api/v1/uploads', express.static(uploadsDir));
 
 // Health Check
 app.get(

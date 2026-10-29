@@ -11,6 +11,7 @@
     "db:init": "tsx src/db/init.ts",
     "db:migrate": "tsx src/db/migrate.ts",
     "db:seed": "tsx src/db/seed.ts",
+    "db:import-articles": "tsx src/db/importArticles.ts",
     "test": "CI=true NODE_OPTIONS='--experimental-vm-modules' jest",
     "test:coverage": "CI=true NODE_OPTIONS='--experimental-vm-modules' jest --coverage"
   },

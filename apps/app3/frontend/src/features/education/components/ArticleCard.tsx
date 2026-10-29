@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Article } from '../types';
 import { Clock, Tag, ArrowRight, Check } from 'lucide-react';
 import { useReadArticles } from '../utils/readArticles';
+import { resolveImageUrl } from '@/src/shared/utils/imageUrl';
 
 interface ArticleCardProps {
   article: Article;
@@ -44,7 +45,7 @@ export default function ArticleCard({ article }: ArticleCardProps) {
         </div>
         {article.imageUrl ? (
           <img
-            src={article.imageUrl}
+            src={resolveImageUrl(article.imageUrl)}
             alt={article.title}
             className={`w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 ${
               read ? 'grayscale-[35%] group-hover:grayscale-0' : ''

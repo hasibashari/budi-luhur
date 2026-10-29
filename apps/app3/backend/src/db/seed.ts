@@ -191,22 +191,30 @@ export async function seedDatabase() {
         updated_at = CURRENT_TIMESTAMP
     `;
 
-    for (const art of seedData.articles) {
-      const artContent = (art as any).content ?? art.leadParagraph ?? art.summary;
-      await client.query(insertArticleQuery, [
-        art.id,
-        art.title,
-        art.category,
-        art.summary,
-        artContent,
-        art.imageUrl,
-        art.readTime,
-        art.status ?? 'Terbit',
-        art.isFeatured ?? false,
-        art.views ?? 0,
-        art.publishedAt,
-        art.authorName ?? 'Tim Medis Faskes',
-      ]);
+    if (seedData.articles && seedData.articles.length > 0) {
+      for (const art of seedData.articles) {
+        const artContent = (art as any).content ?? art.leadParagraph ?? art.summary;
+        await client.query(insertArticleQuery, [
+          art.id,
+          art.title,
+          art.category,
+          art.summary,
+          artContent,
+          art.imageUrl,
+          art.readTime,
+          art.status ?? 'Terbit',
+          art.isFeatured ?? false,
+          art.views ?? 0,
+          art.publishedAt,
+          art.authorName ?? 'Tim Medis Faskes',
+        ]);
+      }
+    } else {
+      const articlesSqlPath = path.resolve(__dirname, '../../articles.sql');
+      if (fs.existsSync(articlesSqlPath)) {
+        const articlesSql = fs.readFileSync(articlesSqlPath, 'utf8');
+        await client.query(articlesSql);
+      }
     }
 
     // 10. Admin Nudges

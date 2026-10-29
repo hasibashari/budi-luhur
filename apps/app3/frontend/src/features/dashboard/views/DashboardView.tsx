@@ -33,6 +33,7 @@ import {
 } from '@/src/features/schedule/api/scheduleRepository';
 import { AdminNudge } from '@/src/features/schedule/types';
 import { useTTSchedules } from '@/src/features/schedule/hooks/useTTSchedules';
+import { resolveImageUrl } from '@/src/shared/utils/imageUrl';
 import { Article } from '@/src/features/education/types';
 import { useReadArticles } from '@/src/features/education/utils/readArticles';
 
@@ -399,7 +400,7 @@ export default function DashboardView() {
                     className={`w-full h-full object-cover group-hover:scale-105 transition-all duration-300 ${
                       isRead(featuredArticle.id) ? 'grayscale-[35%] group-hover:grayscale-0' : ''
                     }`}
-                    src={featuredArticle.imageUrl}
+                    src={resolveImageUrl(featuredArticle.imageUrl)}
                     alt={featuredArticle.title}
                   />
                   <div className='absolute inset-0 bg-linear-to-t from-[#121c2a]/85 via-[#121c2a]/20 to-transparent' />

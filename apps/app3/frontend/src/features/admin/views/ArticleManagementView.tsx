@@ -17,6 +17,7 @@ import {
   deleteAdminArticleAction,
 } from '../api/articleRepository';
 import { HealthArticle, ArticleCategory } from '../types/admin.types';
+import { resolveImageUrl } from '@/src/shared/utils/imageUrl';
 
 const ARTICLE_CATEGORY_COLORS: Record<string, { bg: string; text: string; border: string }> = {
   'Imunisasi TT': { bg: '#ffd9de', text: '#8c0f39', border: '#ffd9de' },
@@ -202,7 +203,7 @@ export default function ArticleManagementView() {
         <div className='flex items-center gap-3'>
           {article.imageUrl ? (
             <img
-              src={article.imageUrl}
+              src={resolveImageUrl(article.imageUrl)}
               alt={article.title}
               className='w-12 h-12 rounded-xl object-cover shrink-0 border border-[#eff4ff] shadow-2xs'
             />
@@ -323,7 +324,7 @@ export default function ArticleManagementView() {
         <div className='flex gap-3'>
           {article.imageUrl ? (
             <img
-              src={article.imageUrl}
+              src={resolveImageUrl(article.imageUrl)}
               alt={article.title}
               className='w-16 h-16 rounded-xl object-cover shrink-0 border border-[#eff4ff]'
             />

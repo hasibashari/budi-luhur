@@ -16,6 +16,7 @@ import { getArticlesAction } from '../api/educationRepository';
 import { Article } from '../types';
 import { normalizeArticleCategory } from '../constants/education.constants';
 import { useReadArticles } from '../utils/readArticles';
+import { resolveImageUrl } from '@/src/shared/utils/imageUrl';
 
 export default function EducationView() {
   const navigate = useNavigate();
@@ -219,7 +220,7 @@ export default function EducationView() {
                 <div className='relative w-20 h-20 sm:w-24 sm:h-24 rounded-xl overflow-hidden shrink-0 bg-[#eff4ff]'>
                   {art.imageUrl ? (
                     <img
-                      src={art.imageUrl}
+                      src={resolveImageUrl(art.imageUrl)}
                       alt={art.title}
                       className={`w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 ${
                         read ? 'grayscale-[35%] group-hover:grayscale-0' : ''

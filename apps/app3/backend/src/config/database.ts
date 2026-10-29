@@ -1,4 +1,5 @@
 import dns from 'dns';
+import fs from 'fs';
 import { Pool, PoolClient, QueryResult, QueryResultRow } from 'pg';
 import { config } from './env.js';
 
@@ -17,6 +18,16 @@ export function getDatabasePool(): Pool {
   let connectionString = (config.databaseUrl || '').trim();
   // Strip unsupported channel_binding for pg compatibility
   connectionString = connectionString.replace(/[?&]channel_binding=[^&]+/g, '');
+
+  // In local environments where localhost TCP is restricted or using local socket
+  if (
+    (connectionString.includes('localhost') || connectionString.includes('127.0.0.1')) &&
+    fs.existsSync('/tmp/.s.PGSQL.5432') &&
+    !connectionString.includes('host=')
+  ) {
+    const separator = connectionString.includes('?') ? '&' : '?';
+    connectionString = `${connectionString}${separator}host=/tmp`;
+  }
 
   if (!connectionString) {
     console.warn('⚠️ WARNING: DATABASE_URL is not set. Database operations will fail gracefully.');

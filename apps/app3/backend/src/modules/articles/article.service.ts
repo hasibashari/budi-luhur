@@ -171,7 +171,7 @@ export class ArticleService {
     }
 
     const res = await db.query<any>(
-      `SELECT id, title, summary, image_url, read_time, category, published_at, author_name, author_avatar_url
+      `SELECT id, title, summary, image_url, read_time, category, published_at, author_name
        FROM articles 
        WHERE id != $1
          AND status = 'Terbit'
@@ -198,7 +198,7 @@ export class ArticleService {
       author: r.author_name
         ? {
             name: r.author_name,
-            avatarUrl: r.author_avatar_url || '',
+            avatarUrl: '',
           }
         : undefined,
     }));

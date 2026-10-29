@@ -9,6 +9,7 @@ import {
 import { useAuth } from '@/src/features/auth/context/AuthContext';
 import { MarkdownRenderer } from '@/src/shared/components/markdown';
 import { useReadArticles, markArticleAsRead } from '../utils/readArticles';
+import { resolveImageUrl } from '@/src/shared/utils/imageUrl';
 import {
   ArrowLeft,
   Clock,
@@ -149,7 +150,7 @@ export default function ArticleDetailView({
   // Fallback featured image
   const featuredImage =
     article?.imageUrl && article.imageUrl.trim() !== ''
-      ? article.imageUrl
+      ? resolveImageUrl(article.imageUrl)
       : DEFAULT_CATEGORY_IMAGES[category] || DEFAULT_CATEGORY_IMAGES.default;
 
   // Determine Markdown Content vs Sections:
@@ -421,7 +422,7 @@ export default function ArticleDetailView({
                         <img
                           src={
                             rel.imageUrl && rel.imageUrl.trim() !== ''
-                              ? rel.imageUrl
+                              ? resolveImageUrl(rel.imageUrl)
                               : DEFAULT_CATEGORY_IMAGES[rel.category] ||
                                 DEFAULT_CATEGORY_IMAGES.default
                           }
