@@ -153,8 +153,7 @@ export default function ArticleDetailView({
       : DEFAULT_CATEGORY_IMAGES[category] || DEFAULT_CATEGORY_IMAGES.default;
 
   // Determine Markdown Content vs Sections:
-  // Admin stores full markdown text in content or leadParagraph.
-  const rawBodyContent = article?.content || article?.leadParagraph || '';
+  const rawBodyContent = article?.content || article?.summary || '';
   const isMarkdownArticle =
     rawBodyContent.includes('#') ||
     rawBodyContent.includes('**') ||
@@ -165,9 +164,7 @@ export default function ArticleDetailView({
   const summaryText =
     article?.summary && !article.summary.startsWith('#')
       ? article.summary
-      : article?.leadParagraph && !article.leadParagraph.startsWith('#')
-        ? article.leadParagraph
-        : 'Panduan kesehatan pranikah resmi untuk calon pengantin.';
+      : 'Panduan kesehatan pranikah resmi untuk calon pengantin.';
 
   // Check if sections are custom structured (not just the automated split duplicate)
   const hasCustomSections =
@@ -300,11 +297,6 @@ export default function ArticleDetailView({
           {/* Featured Hero Banner Image */}
           <div className='relative w-full h-48 sm:h-72 rounded-2xl sm:rounded-3xl overflow-hidden shadow-sm border border-[#ffd9de]/50 mb-5 bg-stone-100'>
             <img src={featuredImage} alt={title} className='w-full h-full object-cover' />
-            {article?.imageCaption && (
-              <div className='absolute bottom-0 inset-x-0 bg-linear-to-t from-black/70 via-black/30 to-transparent p-3 text-white text-[11px] sm:text-xs'>
-                {article.imageCaption}
-              </div>
-            )}
           </div>
 
           {/* Clinical Summary / Intisari Artikel */}
@@ -319,29 +311,6 @@ export default function ArticleDetailView({
               <p className='text-xs sm:text-sm text-[#121c2a] leading-relaxed font-medium'>
                 {summaryText}
               </p>
-            </div>
-          )}
-
-          {/* Key Takeaways Highlight Box if present */}
-          {article?.keyTakeaways && article.keyTakeaways.length > 0 && (
-            <div className='bg-white rounded-2xl p-4 sm:p-5 border border-[#eff4ff] mb-5 shadow-xs'>
-              <div className='flex items-center gap-2 mb-2.5 text-[#aa294d]'>
-                <CheckCircle2 size={18} />
-                <span className='text-xs font-bold uppercase tracking-wider'>
-                  Poin Kunci Edukasi
-                </span>
-              </div>
-              <ul className='space-y-2'>
-                {article.keyTakeaways.map((point, kIdx) => (
-                  <li
-                    key={kIdx}
-                    className='text-xs sm:text-sm text-[#121c2a] flex items-start gap-2.5'
-                  >
-                    <span className='w-1.5 h-1.5 rounded-full bg-[#aa294d] mt-1.5 shrink-0' />
-                    <span className='leading-relaxed'>{point}</span>
-                  </li>
-                ))}
-              </ul>
             </div>
           )}
 

@@ -96,6 +96,19 @@ async function migrate() {
       ON certificate_verifications(status);
   `);
 
+  // Perampingan tabel articles: hapus kolom yang tidak digunakan
+  await db.query(`
+    ALTER TABLE articles
+      DROP COLUMN IF EXISTS lead_paragraph,
+      DROP COLUMN IF EXISTS image_caption,
+      DROP COLUMN IF EXISTS author_id,
+      DROP COLUMN IF EXISTS author_role,
+      DROP COLUMN IF EXISTS author_avatar_url,
+      DROP COLUMN IF EXISTS author_bio,
+      DROP COLUMN IF EXISTS key_takeaways,
+      DROP COLUMN IF EXISTS tags;
+  `);
+
   console.log('✅ App 3 database migrations completed successfully.');
 }
 

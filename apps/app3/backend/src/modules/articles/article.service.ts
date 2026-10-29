@@ -3,7 +3,7 @@ import db from '../../config/database.js';
 export interface Author {
   name: string;
   role?: string;
-  avatarUrl: string;
+  avatarUrl?: string;
   bio?: string;
 }
 
@@ -57,8 +57,7 @@ export class ArticleService {
     }
 
     let sql = `
-      SELECT id, title, summary, lead_paragraph, image_url, image_caption, read_time, category, status, views, published_at,
-             author_id, author_name, author_role, author_avatar_url, author_bio, key_takeaways, tags
+      SELECT id, title, summary, content, image_url, read_time, category, status, views, published_at, author_name
       FROM articles
       WHERE status = 'Terbit' AND btrim(category) <> ''
     `;
@@ -78,9 +77,7 @@ export class ArticleService {
       if (r.author_name) {
         author = {
           name: r.author_name,
-          role: r.author_role || 'Tim Medis Faskes TEMANI',
-          avatarUrl: r.author_avatar_url || '',
-          bio: r.author_bio || undefined,
+          role: 'Tim Medis Faskes TEMANI',
         };
       }
 
@@ -88,10 +85,8 @@ export class ArticleService {
         id: r.id,
         title: r.title,
         summary: r.summary,
-        leadParagraph: r.lead_paragraph || undefined,
-        content: r.lead_paragraph || r.summary,
+        content: r.content || r.summary,
         imageUrl: r.image_url,
-        imageCaption: r.image_caption || undefined,
         readTime: r.read_time,
         category: r.category === 'Kesehatan Pranikah' ? 'Catin' : r.category,
         publishedAt:
@@ -99,12 +94,6 @@ export class ArticleService {
             ? r.published_at
             : new Date(r.published_at).toISOString().split('T')[0],
         author,
-        keyTakeaways: r.key_takeaways
-          ? typeof r.key_takeaways === 'string'
-            ? JSON.parse(r.key_takeaways)
-            : r.key_takeaways
-          : undefined,
-        tags: r.tags ? (typeof r.tags === 'string' ? JSON.parse(r.tags) : r.tags) : undefined,
       };
     });
 
@@ -120,8 +109,7 @@ export class ArticleService {
 
     // Query article directly from single articles table
     const res = await db.query<any>(
-      `SELECT id, title, summary, content, lead_paragraph, image_url, image_caption, read_time, category, status, views, published_at,
-              author_id, author_name, author_role, author_avatar_url, author_bio, key_takeaways, tags
+      `SELECT id, title, summary, content, image_url, read_time, category, status, views, published_at, author_name
        FROM articles 
        WHERE id = $1 AND btrim(category) <> ''`,
       [id],
@@ -130,7 +118,7 @@ export class ArticleService {
     const row = res.rows[0];
     if (!row) return null;
 
-    const fullContent = row.content || row.lead_paragraph || row.summary || '';
+    const fullContent = row.content || row.summary || '';
     const paragraphs = fullContent
       .split('\n\n')
       .map((p: string) => p.trim())
@@ -147,9 +135,7 @@ export class ArticleService {
     if (row.author_name) {
       author = {
         name: row.author_name,
-        role: row.author_role || 'Tim Medis Faskes TEMANI',
-        avatarUrl: row.author_avatar_url || '',
-        bio: row.author_bio || undefined,
+        role: 'Tim Medis Faskes TEMANI',
       };
     }
 
@@ -157,10 +143,8 @@ export class ArticleService {
       id: row.id,
       title: row.title,
       summary: row.summary,
-      leadParagraph: row.lead_paragraph || undefined,
       content: fullContent,
       imageUrl: row.image_url,
-      imageCaption: row.image_caption || undefined,
       readTime: row.read_time,
       category: row.category === 'Kesehatan Pranikah' ? 'Catin' : row.category,
       publishedAt:
@@ -169,12 +153,6 @@ export class ArticleService {
           : new Date(row.published_at).toISOString().split('T')[0],
       author,
       sections,
-      keyTakeaways: row.key_takeaways
-        ? typeof row.key_takeaways === 'string'
-          ? JSON.parse(row.key_takeaways)
-          : row.key_takeaways
-        : undefined,
-      tags: row.tags ? (typeof row.tags === 'string' ? JSON.parse(row.tags) : row.tags) : undefined,
     };
   }
 

@@ -1,4 +1,3 @@
-import React from 'react';
 import { ShieldCheck, CheckCircle2, Calendar, FileBadge } from 'lucide-react';
 import { TT_DOSAGE_LEVELS, TTLevelInfo } from '@/src/shared/constants/domain.constants';
 
@@ -11,7 +10,7 @@ export interface ImmunityStatusBannerProps {
 }
 
 export function ImmunityStatusBanner({
-  currentDoseLevel = 3,
+  currentDoseLevel = 0,
   nextAppointmentDate,
   onDownloadCard,
 }: ImmunityStatusBannerProps) {
@@ -38,9 +37,12 @@ export function ImmunityStatusBanner({
   } else if (safeDose === 2) {
     protectionText = `Perlindungan aktif hingga ${currentYear + 3}`;
     protectionDetail = 'Durasi proteksi 3 tahun terhadap infeksi Tetanus maternal & neonatal.';
-  } else {
+  } else if (safeDose === 1) {
     protectionText = 'Tahap awal pembentukan antibodi';
     protectionDetail = 'Segera lengkapi dosis TT2 minimal 30 hari sebelum akad nikah.';
+  } else {
+    protectionText = 'Belum memiliki perlindungan aktif';
+    protectionDetail = 'Segera jadwalkan suntik dosis TT1 di Puskesmas atau faskes terdekat.';
   }
 
   const nextDoseNumber = Math.min(5, safeDose + 1);
@@ -77,7 +79,7 @@ export function ImmunityStatusBanner({
                 isProtected ? 'bg-[#2a6950] animate-pulse' : 'bg-[#aa294d]'
               }`}
             />
-            {isProtected ? 'Terlindungi' : 'Perlu Dosis TT2'}
+            {isProtected ? 'Terlindungi' : safeDose === 1 ? 'Perlu Dosis TT2' : 'Perlu Dosis TT1'}
           </span>
         </div>
 

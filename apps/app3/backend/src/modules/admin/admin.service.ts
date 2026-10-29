@@ -445,8 +445,8 @@ export class AdminService {
       canonicalCategory = await AdminService.resolveCategory(client, category);
       await client.query(
         `INSERT INTO articles (
-          id, title, summary, content, lead_paragraph, image_url, read_time, category, status, views, published_at, author_name
-        ) VALUES ($1, $2, $3, $4, $4, $5, $6, $7, $8, 0, $9, $10)`,
+          id, title, summary, content, image_url, read_time, category, status, views, published_at, author_name
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 0, $9, $10)`,
         [
           newId,
           data.title,
@@ -497,7 +497,6 @@ export class AdminService {
            author_name = COALESCE($6, author_name),
            image_url = COALESCE($7, image_url),
            content = COALESCE($8, content),
-           lead_paragraph = COALESCE($8, lead_paragraph),
            updated_at = CURRENT_TIMESTAMP
          WHERE id = $9`,
         [

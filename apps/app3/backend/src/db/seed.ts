@@ -174,27 +174,20 @@ export async function seedDatabase() {
     console.log('  -> Seeding articles...');
     const insertArticleQuery = `
       INSERT INTO articles (
-        id, title, category, summary, content, lead_paragraph, image_url, image_caption, read_time, status, is_featured, views, published_at, author_id, author_name, author_role, author_avatar_url, key_takeaways, tags
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)
+        id, title, category, summary, content, image_url, read_time, status, is_featured, views, published_at, author_name
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
       ON CONFLICT (id) DO UPDATE SET
         title = EXCLUDED.title,
         category = EXCLUDED.category,
         summary = EXCLUDED.summary,
         content = EXCLUDED.content,
-        lead_paragraph = EXCLUDED.lead_paragraph,
         image_url = EXCLUDED.image_url,
-        image_caption = EXCLUDED.image_caption,
         read_time = EXCLUDED.read_time,
         status = EXCLUDED.status,
         is_featured = EXCLUDED.is_featured,
         views = EXCLUDED.views,
         published_at = EXCLUDED.published_at,
-        author_id = EXCLUDED.author_id,
         author_name = EXCLUDED.author_name,
-        author_role = EXCLUDED.author_role,
-        author_avatar_url = EXCLUDED.author_avatar_url,
-        key_takeaways = EXCLUDED.key_takeaways,
-        tags = EXCLUDED.tags,
         updated_at = CURRENT_TIMESTAMP
     `;
 
@@ -206,20 +199,13 @@ export async function seedDatabase() {
         art.category,
         art.summary,
         artContent,
-        art.leadParagraph ?? null,
         art.imageUrl,
-        art.imageCaption ?? null,
         art.readTime,
         art.status ?? 'Terbit',
         art.isFeatured ?? false,
         art.views ?? 0,
         art.publishedAt,
-        art.authorId ?? null,
-        art.authorName ?? null,
-        art.authorRole ?? null,
-        art.authorAvatarUrl ?? null,
-        art.keyTakeaways ?? null,
-        art.tags ?? null,
+        art.authorName ?? 'Tim Medis Faskes',
       ]);
     }
 
