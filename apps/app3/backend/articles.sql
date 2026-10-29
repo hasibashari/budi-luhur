@@ -50,7 +50,7 @@ Jika kamu mengalami nyeri panggul berulang, gangguan menstruasi, luka pada organ
 Ingat, menjaga kesehatan reproduksi merupakan tanggung jawab bersama. Dengan mengenali tubuh dan memperoleh informasi yang benar sejak sebelum menikah, kamu dapat mempersiapkan kehidupan berkeluarga dengan lebih sehat.
 
 [Efektifitas Komunikasi Informasi dan Edukasi (KIE) tentang Kesehatan Reproduksi pada Calon Pengantin (Catin) dalam Mempersiapkan Pernikahan dan Kehamilan](https://jurnal.itkeswhs.ac.id/index.php/medika/id/article/view/638)',
-  '/uploads/articles/art_0541.png',
+  'https://br-old-cloud-b5qyupmk.storage.c-7.us-east-2.aws.neon.tech/app3-storage/articles/art_0541.png',
   '3 min read',
   'Terbit',
   FALSE,
@@ -153,7 +153,7 @@ Sebelum vaksin diberikan, informasikan kepada tenaga kesehatan jika pernah menga
 [pengaruh edukasi terhadap pengetahuan calon pengantin](https://jurnal.umsb.ac.id/index.php/menarailmu/article/view/7652)
 [penyuluhan imunisasi TT bagi calon pengantin dan wanita usia subur](https://doi.org/10.25105/juara.v4i2.13965)
 [pengaruh konseling imunisasi TT terhadap pengetahuan calon pengantin](https://www.jurnal-id.com/index.php/jupin/article/view/666)',
-  '/uploads/articles/art_5824.png',
+  'https://br-old-cloud-b5qyupmk.storage.c-7.us-east-2.aws.neon.tech/app3-storage/articles/art_5824.png',
   '5 min read',
   'Terbit',
   FALSE,
@@ -245,7 +245,7 @@ Dengan menerapkan pola makan bergizi seimbang dan melakukan pemeriksaan kesehata
 
 [Edukasi Gizi Prakonsepsi dan Makanan Fertilitas untuk Persiapan Kehamilan Sehat Calon Pengantin](https://ejournal.abcollab.id/index.php/Mosaic/article/view/269)
 [Penyuluhan tentang Gizi Prakonsepsi dan Pemberian Tablet Asam Folat kepada Calon Pengantin](https://www.jurnal.globalhealthsciencegroup.com/index.php/JPM/article/view/1393)',
-  '/uploads/articles/art_6106.png',
+  'https://br-old-cloud-b5qyupmk.storage.c-7.us-east-2.aws.neon.tech/app3-storage/articles/art_6106.png',
   '4 min read',
   'Terbit',
   FALSE,
@@ -312,7 +312,7 @@ Dengan perencanaan yang tepat, calon pengantin dapat mempersiapkan kehamilan sec
 
 [Pelaksanaan Skrining Prakonsepsi pada Calon Pengantin Perempuan](https://doi.org/10.22146/jkr.55481)
 [World Health Organization. (2023). Periconceptional Folic Acid Supplementation to Prevent Neural Tube Defects](https://www.who.int/tools/elena/interventions/folate-periconceptional)',
-  '/uploads/articles/art_7852.png',
+  'https://br-old-cloud-b5qyupmk.storage.c-7.us-east-2.aws.neon.tech/app3-storage/articles/art_7852.png',
   '4 min read',
   'Terbit',
   FALSE,
@@ -392,7 +392,7 @@ Dengan mempersiapkan kesehatan mental sejak sebelum menikah, calon pengantin dap
 
 [Skrining Kesehatan Mental bagi Pasangan Calon Pengantin dalam Persiapan Kehamilan Sehat](https://thejnp.org/index.php/jnp/article/view/958)
 [World Health Organization. (2020). Doing What Matters in Times of Stress: An Illustrated Guide. WHO](https://www.who.int/publications/i/item/9789240003927)',
-  '/uploads/articles/art_8206.png',
+  'https://br-old-cloud-b5qyupmk.storage.c-7.us-east-2.aws.neon.tech/app3-storage/articles/art_8206.png',
   '4 min read',
   'Terbit',
   FALSE,
@@ -464,7 +464,7 @@ Dengan memahami pencegahan infeksi dan melakukan pemeriksaan kesehatan, calon pe
 [Petunjuk Pelaksanaan KIE Kesehatan Reproduksi dan Seksual bagi Calon Pengantin](https://repository.stikesbcm.ac.id/id/eprint/387/)
 [Upaya Pencegahan IMS melalui Skrining Triple Eliminasi pada Calon Pengantin](https://naluriedukasi.com/index.php/cjcs/article/view/582)
 [World Health Organization](https://www.who.int/news-room/fact-sheets/detail/sexually-transmitted-infections-%28STIs%29)',
-  '/uploads/articles/art_9959.png',
+  'https://br-old-cloud-b5qyupmk.storage.c-7.us-east-2.aws.neon.tech/app3-storage/articles/art_9959.png',
   '4 min read',
   'Terbit',
   FALSE,
