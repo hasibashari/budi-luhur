@@ -12,17 +12,79 @@ export function WeddingCountdownWidget({
   partnerName,
   currentTTLevel = 2,
 }: WeddingCountdownWidgetProps) {
-  // Parse or compute fallback date (approx 75 days from now if not set)
-  let targetDate = new Date();
-  let hasCustomDate = false;
+  const hasWeddingDate = Boolean(weddingDateStr && !isNaN(Date.parse(weddingDateStr)));
 
-  if (weddingDateStr && !isNaN(Date.parse(weddingDateStr))) {
-    targetDate = new Date(weddingDateStr);
-    hasCustomDate = true;
-  } else {
-    targetDate.setDate(targetDate.getDate() + 75);
+  if (!hasWeddingDate) {
+    return (
+      <div className='w-full rounded-3xl bg-white border border-stone-200 p-5 shadow-sm shadow-stone-900/5 relative overflow-hidden'>
+        {/* Top Accent Bar */}
+        <div className='flex items-center justify-between pb-3.5 border-b border-stone-100'>
+          <div className='flex items-center gap-2'>
+            <div className='w-8 h-8 rounded-full bg-stone-100 text-stone-600 flex items-center justify-center'>
+              <Heart size={16} className='text-stone-500' />
+            </div>
+            <div>
+              <h4 className='text-xs font-bold text-slate-900'>Hitung Mundur Hari Bahagia</h4>
+              <span className='text-[10px] text-slate-500'>
+                {partnerName ? `Bersama ${partnerName}` : 'Rencana Pernikahan'}
+              </span>
+            </div>
+          </div>
+
+          <span className='text-[10px] font-bold px-2.5 py-0.5 rounded-full border bg-stone-100 border-stone-200 text-slate-600'>
+            Belum Diatur
+          </span>
+        </div>
+
+        {/* Empty State Prompt */}
+        <div className='py-4 px-1 text-center flex flex-col items-center justify-center'>
+          <div className='w-11 h-11 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mb-2.5'>
+            <Calendar size={20} />
+          </div>
+          <h5 className='text-xs font-bold text-slate-900 mb-1'>
+            Tanggal Pernikahan Belum Diatur
+          </h5>
+          <p className='text-[11px] text-slate-500 max-w-xs leading-relaxed mb-3.5'>
+            Atur tanggal rencana pernikahan Anda di profil untuk mengaktifkan hitung mundur dan memantau batas aman vaksinasi TT pranikah.
+          </p>
+          <Link
+            to='/user/profile'
+            className='inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#2a6950] text-white text-xs font-semibold hover:bg-[#0a5139] active:scale-95 transition-all shadow-xs'
+          >
+            <Calendar size={13} />
+            <span>Atur Tanggal Pernikahan</span>
+          </Link>
+        </div>
+
+        {/* Clinical Guidance Box */}
+        <div className='p-3 rounded-2xl border text-xs flex items-start gap-2.5 bg-amber-50/70 border-amber-200/80 text-amber-900'>
+          <Clock size={16} className='text-amber-600 shrink-0 mt-0.5' />
+          <div className='flex-1 text-[11px] leading-relaxed'>
+            <p>
+              <strong>Informasi Klinis:</strong> Vaksin TT2 disyaratkan minimal 30 hari sebelum akad nikah agar pembentukan antibodi tetanus optimal sebelum hari-H.
+            </p>
+          </div>
+        </div>
+
+        {/* Footer Action */}
+        <div className='mt-3.5 pt-3 border-t border-stone-100 flex items-center justify-between text-xs'>
+          <div className='flex items-center gap-1.5 text-slate-500 text-[11px]'>
+            <Clock size={12} />
+            <span>Faskes buka Senin–Sabtu</span>
+          </div>
+          <Link
+            to='/user/schedule'
+            className='inline-flex items-center gap-1 font-bold text-[#2a6950] hover:text-[#0a5139] active:scale-95 transition-transform'
+          >
+            <span>Atur Janji Suntik</span>
+            <ArrowRight size={13} />
+          </Link>
+        </div>
+      </div>
+    );
   }
 
+  const targetDate = new Date(weddingDateStr!);
   const today = new Date();
   const diffTime = targetDate.getTime() - today.getTime();
   const diffDays = Math.max(0, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
@@ -93,7 +155,7 @@ export function WeddingCountdownWidget({
             <span className='truncate'>{formattedDate}</span>
           </div>
           <span className='text-[10px] text-slate-500 block mt-0.5 leading-tight'>
-            {hasCustomDate ? 'Tanggal Akad Terdaftar' : 'Estimasi (sesuaikan di Profil)'}
+            Tanggal Akad Terdaftar
           </span>
         </div>
       </div>

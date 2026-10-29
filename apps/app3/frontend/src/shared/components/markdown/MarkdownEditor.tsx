@@ -32,10 +32,12 @@ interface MarkdownEditorProps {
 const TEMPLATES = [
   {
     title: 'Panduan Imunisasi Tetanus Toxoid (TT) Pranikah',
-    content: `## Pentingnya Imunisasi TT bagi Calon Pengantin
-Imunisasi Tetanus Toxoid (TT) wajib dijalani oleh calon pengantin wanita untuk mencegah infeksi Tetanus Neonatorum pada bayi yang kelak dilahirkan serta melindungi calon ibu saat bersalin.
+    content: `## Pentingnya Imunisasi Tetanus bagi Calon Pengantin
+Imunisasi Tetanus Toxoid (TT) merupakan salah satu upaya perlindungan terhadap penyakit tetanus yang perlu diperhatikan dalam persiapan kesehatan pranikah. Pemahaman mengenai imunisasi tetanus dapat membantu calon pengantin mengetahui pentingnya perlindungan sebelum kehamilan serta upaya pencegahan tetanus pada ibu dan bayi baru lahir.
 
-> Tips Medis Pranikah: Pastikan imunisasi TT2 diselesaikan minimal 4 minggu sebelum akad nikah untuk kekebalan protektif 3 tahun!
+> Tips Medis Pranikah: Yuk, persiapkan pernikahan bukan hanya dengan kesiapan mental dan finansial, tetapi juga dengan menjaga kesehatan.
+Periksa status imunisasi tetanus dan
+konsultasikan dengan tenaga kesehatan untuk mengetahui kebutuhan serta jadwal imunisasi yang sesuai.
 
 ### Jadwal 5 Dosis Imunisasi TT:
 - **TT1**: Langkah awal (skrining saat pendaftaran catin di faskes)

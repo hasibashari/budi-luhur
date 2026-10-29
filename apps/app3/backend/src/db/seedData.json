@@ -7,7 +7,7 @@
       "passwordHash": "$2b$10$DfBOGQuKkeTjls.wkSdiUe2/Dp3yQ2ymEOA15OJJIejYkXmDyaj9y",
       "role": "admin",
       "phone": "0811-2233-4455",
-      "avatarUrl": "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?q=80&w=200&auto=format&fit=crop",
+      "avatarUrl": null,
       "gender": "Perempuan",
       "dateOfBirth": "1988-03-12"
     }

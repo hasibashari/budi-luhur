@@ -119,7 +119,7 @@ export default function ProfileView() {
               ...prev,
               name: data.user.name || prev.name,
               schoolOrOrg: data.user.schoolOrOrg || prev.schoolOrOrg,
-              avatarUrl: data.user.avatarUrl || prev.avatarUrl,
+              avatarUrl: data.user.avatarUrl || '',
               partnerName: data.user.partnerName,
               weddingDate: data.user.weddingDate,
               ttStatus: data.user.ttStatus,
