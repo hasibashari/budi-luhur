@@ -9,27 +9,15 @@
   ],
   "rewrites": [
     {
-      "source": "/app3/api/(.*)",
+      "source": "/app3/api/v1/:path*",
       "destination": "/api/index"
     },
     {
-      "source": "/app3/api",
+      "source": "/api/v1/:path*",
       "destination": "/api/index"
     },
     {
-      "source": "/api/app3/(.*)",
-      "destination": "/api/index"
-    },
-    {
-      "source": "/api/app3",
-      "destination": "/api/index"
-    },
-    {
-      "source": "/api/(.*)",
-      "destination": "/api/index"
-    },
-    {
-      "source": "/api",
+      "source": "/api/:path*",
       "destination": "/api/index"
     },
     {

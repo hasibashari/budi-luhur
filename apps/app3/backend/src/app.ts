@@ -6,11 +6,21 @@ import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const uploadsDir = path.resolve(__dirname, '../public/uploads');
 
-// Ensure uploads directory exists
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
+// Di Vercel serverless, filesystem adalah read-only kecuali /tmp.
+// Gunakan /tmp/uploads jika bukan lokal (production), agar tidak throw permission error.
+const isProduction = process.env.NODE_ENV === 'production';
+const uploadsDir = isProduction
+  ? '/tmp/uploads'
+  : path.resolve(__dirname, '../public/uploads');
+
+// Ensure uploads directory exists (hanya lokal; di Vercel pakai /tmp)
+try {
+  if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+  }
+} catch {
+  // Abaikan error pembuatan direktori (read-only fs di Vercel)
 }
 
 export const app = express();
