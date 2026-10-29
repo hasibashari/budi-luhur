@@ -68,6 +68,7 @@ export interface HealthArticle {
   title: string;
   category: ArticleCategory | string;
   author: string;
+  authorId?: string;
   publishDate: string;
   status: 'Terbit' | 'Draf';
   views: number;

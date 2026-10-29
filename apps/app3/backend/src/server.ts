@@ -72,6 +72,12 @@ async function start() {
     );
     CREATE INDEX IF NOT EXISTS idx_certificate_verifications_status
       ON certificate_verifications(status);
+
+    -- Kolom pembuat artikel edukasi untuk alur kontribusi pengguna (aman dijalankan berulang).
+    ALTER TABLE articles
+      ADD COLUMN IF NOT EXISTS author_id VARCHAR(255) REFERENCES users(id) ON DELETE SET NULL;
+    CREATE INDEX IF NOT EXISTS idx_articles_author_id
+      ON articles(author_id);
   `);
   app.listen(PORT, () => {
     console.log(`🚀 TEMANI Backend running on http://localhost:${PORT}`);

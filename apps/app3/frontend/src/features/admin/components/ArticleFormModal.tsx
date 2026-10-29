@@ -8,6 +8,7 @@ import {
   getArticlePresignedUrlAction,
   uploadFileDirectToStorage,
 } from '../api/adminRepository';
+import { getUserArticlePresignedUrlAction } from '@/src/features/education/api/educationRepository';
 
 export interface ArticleFormData {
   title: string;
@@ -29,6 +30,7 @@ interface ArticleFormModalProps {
   onSubmit: (overrideImageUrl?: string) => Promise<void>;
   updateFormData: (data: Partial<ArticleFormData>) => void;
   showToast: (msg: string, severity: 'success' | 'error') => void;
+  isUserMode?: boolean;
 }
 
 export default function ArticleFormModal({
@@ -40,6 +42,7 @@ export default function ArticleFormModal({
   onSubmit,
   updateFormData,
   showToast,
+  isUserMode = false,
 }: ArticleFormModalProps) {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -100,20 +103,21 @@ export default function ArticleFormModal({
   const handleFormSubmit = async () => {
     if (isUploadingImage) return;
 
-    // Jika admin memilih berkas baru: lakukan upload sekarang (Lazy Upload on Publish)
+    // Jika admin atau user memilih berkas baru: lakukan upload sekarang (Lazy Upload on Publish)
     if (selectedFile) {
       setIsUploadingImage(true);
       try {
         // 1. Minta Pre-Signed Upload URL ke Backend
-        const presigned = await getArticlePresignedUrlAction({
+        const presignFn = isUserMode ? getUserArticlePresignedUrlAction : getArticlePresignedUrlAction;
+        const presigned = await presignFn({
           filename: selectedFile.name,
           mimeType: selectedFile.type,
           fileSize: selectedFile.size,
           articleId: editingId || undefined,
         });
 
-        if (!presigned.success || !presigned.uploadUrl) {
-          throw new Error(presigned.error || 'Gagal menyiapkan sesi upload presigned.');
+        if (!presigned || presigned.success === false || !presigned.uploadUrl) {
+          throw new Error(presigned?.error || 'Gagal menyiapkan sesi upload presigned.');
         }
 
         // 2. Upload file langsung ke Cloud Storage (S3 HTTP PUT)
@@ -150,14 +154,26 @@ export default function ArticleFormModal({
     <CrudModalDialog
       open={open}
       onClose={onClose}
-      title={editingId ? 'Edit Artikel Edukasi Pranikah' : 'Tulis Artikel Edukasi Baru'}
+      title={
+        isUserMode
+          ? editingId
+            ? 'Edit Draf Artikel Saya'
+            : 'Tulis Draf Artikel Baru'
+          : editingId
+            ? 'Edit Artikel Edukasi Pranikah'
+            : 'Tulis Artikel Edukasi Baru'
+      }
       onSubmit={handleFormSubmit}
       submitText={
         isUploadingImage
           ? 'Mengunggah Foto Cover...'
           : editingId
-            ? 'Simpan Perubahan'
-            : 'Publikasikan Artikel'
+            ? isUserMode
+              ? 'Simpan Perubahan Draf'
+              : 'Simpan Perubahan'
+            : isUserMode
+              ? 'Ajukan Draf Artikel'
+              : 'Publikasikan Artikel'
       }
       submitting={submitting || isUploadingImage}
       maxWidth='md'
@@ -270,7 +286,7 @@ export default function ArticleFormModal({
         </div>
         <div>
           <label className='block text-xs font-bold text-[#121c2a] mb-1'>
-            Penulis / Petugas Faskes
+            {isUserMode ? 'Nama Penulis' : 'Penulis / Petugas Faskes'}
           </label>
           <input
             type='text'
@@ -284,18 +300,27 @@ export default function ArticleFormModal({
       <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
         <div>
           <label className='block text-xs font-bold text-[#121c2a] mb-1'>Status Publikasi</label>
-          <select
-            value={formData.status}
-            onChange={e =>
-              updateFormData({
-                status: e.target.value as ArticleFormData['status'],
-              })
-            }
-            className='w-full px-3.5 py-2.5 rounded-xl border border-[#dee9fc] bg-white text-base sm:text-sm text-[#121c2a] focus:outline-none focus:ring-2 focus:ring-[#ffd9de] focus:border-[#aa294d] transition-all cursor-pointer'
-          >
-            <option value='Terbit'>Terbit Langsung</option>
-            <option value='Draf'>Simpan Sebagai Draf</option>
-          </select>
+          {isUserMode ? (
+            <div className='flex items-center gap-2 px-3.5 py-2.5 rounded-xl border border-[#dee9fc] bg-[#f8f9ff] text-xs text-[#574144]'>
+              <span className='inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-extrabold bg-[#ffd9de] text-[#8c0f39] border border-[#fca5a5] shrink-0'>
+                Draf
+              </span>
+              <span>Otomatis disimpan sebagai draf dan menunggu persetujuan admin.</span>
+            </div>
+          ) : (
+            <select
+              value={formData.status}
+              onChange={e =>
+                updateFormData({
+                  status: e.target.value as ArticleFormData['status'],
+                })
+              }
+              className='w-full px-3.5 py-2.5 rounded-xl border border-[#dee9fc] bg-white text-base sm:text-sm text-[#121c2a] focus:outline-none focus:ring-2 focus:ring-[#ffd9de] focus:border-[#aa294d] transition-all cursor-pointer'
+            >
+              <option value='Terbit'>Terbit Langsung</option>
+              <option value='Draf'>Simpan Sebagai Draf</option>
+            </select>
+          )}
         </div>
       </div>
 

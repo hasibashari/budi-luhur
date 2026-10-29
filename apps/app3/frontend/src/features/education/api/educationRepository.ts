@@ -67,3 +67,78 @@ export async function toggleArticleBookmarkAction(
     return { success: false, isBookmarked: false };
   }
 }
+
+export async function getUserArticlesAction(): Promise<Article[]> {
+  const response = await apiClient.get<Article[]>('/articles/my-articles');
+  return response.data || [];
+}
+
+export async function createUserArticleAction(data: {
+  title: string;
+  category: string;
+  summary?: string;
+  content: string;
+  imageUrl?: string;
+  authorName?: string;
+}): Promise<{ success: boolean; article?: Article; error?: string }> {
+  try {
+    const response = await apiClient.post<{ success: boolean; article: Article }>('/articles', data);
+    return { success: true, article: response.data.article };
+  } catch (err: any) {
+    return {
+      success: false,
+      error: err.response?.data?.error || err.message || 'Gagal menyimpan draf artikel.',
+    };
+  }
+}
+
+export async function updateUserArticleAction(
+  id: string,
+  data: {
+    title?: string;
+    category?: string;
+    summary?: string;
+    content?: string;
+    imageUrl?: string;
+    authorName?: string;
+  },
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const response = await apiClient.put<{ success: boolean }>(`/articles/${id}`, data);
+    return { success: response.data?.success ?? true };
+  } catch (err: any) {
+    return {
+      success: false,
+      error: err.response?.data?.error || err.message || 'Gagal memperbarui artikel.',
+    };
+  }
+}
+
+export async function deleteUserArticleAction(id: string): Promise<{ success: boolean; error?: string }> {
+  try {
+    const response = await apiClient.delete<{ success: boolean }>(`/articles/${id}`);
+    return { success: response.data?.success ?? true };
+  } catch (err: any) {
+    return {
+      success: false,
+      error: err.response?.data?.error || err.message || 'Gagal menghapus artikel.',
+    };
+  }
+}
+
+export async function getUserArticlePresignedUrlAction(data: {
+  filename: string;
+  mimeType: string;
+  fileSize: number;
+  articleId?: string;
+}) {
+  try {
+    const res = await apiClient.post<any>('/articles/presign', data);
+    return res.data;
+  } catch (err: any) {
+    return {
+      success: false,
+      error: err.response?.data?.error || err.message || 'Gagal menyiapkan sesi upload.',
+    };
+  }
+}

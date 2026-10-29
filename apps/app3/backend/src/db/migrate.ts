@@ -101,6 +101,7 @@ async function migrate() {
     ALTER TABLE articles
       ADD COLUMN IF NOT EXISTS content TEXT,
       ADD COLUMN IF NOT EXISTS author_name VARCHAR(255) DEFAULT 'Tim Medis Faskes',
+      ADD COLUMN IF NOT EXISTS author_id VARCHAR(255) REFERENCES users(id) ON DELETE SET NULL,
       ADD COLUMN IF NOT EXISTS read_time VARCHAR(50) NOT NULL DEFAULT '3 Menit Baca',
       ADD COLUMN IF NOT EXISTS views INTEGER NOT NULL DEFAULT 0,
       ADD COLUMN IF NOT EXISTS is_featured BOOLEAN NOT NULL DEFAULT FALSE,
@@ -108,12 +109,12 @@ async function migrate() {
       ADD COLUMN IF NOT EXISTS status VARCHAR(50) NOT NULL DEFAULT 'Terbit',
       DROP COLUMN IF EXISTS lead_paragraph,
       DROP COLUMN IF EXISTS image_caption,
-      DROP COLUMN IF EXISTS author_id,
       DROP COLUMN IF EXISTS author_role,
       DROP COLUMN IF EXISTS author_avatar_url,
       DROP COLUMN IF EXISTS author_bio,
       DROP COLUMN IF EXISTS key_takeaways,
       DROP COLUMN IF EXISTS tags;
+    CREATE INDEX IF NOT EXISTS idx_articles_author_id ON articles(author_id);
   `);
 
   // Konversi otomatis artikel lama yang fotonya masih tersimpan sebagai Base64 di database

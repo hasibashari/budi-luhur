@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, Plus, Eye, Edit, Trash2, Clock, Image as ImageIcon, BookOpen, RotateCw } from 'lucide-react';
+import { Search, Plus, Eye, Edit, Trash2, Clock, Image as ImageIcon, BookOpen, RotateCw, CheckCircle2 } from 'lucide-react';
 import AdminHeader from '../components/AdminHeader';
 import ArticleFormModal, { ArticleFormData } from '../components/ArticleFormModal';
 import { DataTable, Column } from '@/src/shared/components/DataTable';
@@ -46,6 +46,7 @@ export default function ArticleManagementView() {
   const [articles, setArticles] = useState<HealthArticle[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('Semua');
+  const [statusFilter, setStatusFilter] = useState<'Semua' | 'Terbit' | 'Draf'>('Semua');
   const [submitting, setSubmitting] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -100,8 +101,28 @@ export default function ArticleManagementView() {
       a.author.toLowerCase().includes(searchQuery.toLowerCase()) ||
       a.summary?.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = categoryFilter === 'Semua' || a.category === categoryFilter;
-    return matchesSearch && matchesCategory;
+    const matchesStatus = statusFilter === 'Semua' || a.status === statusFilter;
+    return matchesSearch && matchesCategory && matchesStatus;
   });
+
+  const handleQuickPublish = async (article: HealthArticle) => {
+    try {
+      setSubmitting(true);
+      const res = await updateAdminArticleAction(article.id, {
+        status: 'Terbit',
+      });
+      if (res.success) {
+        await loadData();
+        showToast(`Artikel "${article.title}" berhasil diterbitkan ke publik!`, 'success');
+      } else {
+        showToast(res.error || 'Gagal menerbitkan artikel', 'error');
+      }
+    } catch (err: any) {
+      showToast(err.message || 'Terjadi kesalahan saat menerbitkan artikel', 'error');
+    } finally {
+      setSubmitting(false);
+    }
+  };
   const categoryOptions = [
     'Semua',
     ...Array.from(new Set(articles.map(article => article.category.trim()).filter(Boolean))).sort(
@@ -233,6 +254,11 @@ export default function ArticleManagementView() {
               <span>ID: {article.id}</span>
               <span>•</span>
               <span className='truncate max-w-[180px]'>✍️ {article.author}</span>
+              {article.authorId && (
+                <span className='inline-flex items-center px-1.5 py-0.2 rounded-md bg-[#eff4ff] text-[#1d4ed8] font-bold text-[10px] border border-[#dee9fc]'>
+                  Kiriman Pengguna
+                </span>
+              )}
             </div>
           </div>
         </div>
@@ -293,9 +319,21 @@ export default function ArticleManagementView() {
       id: 'aksi',
       label: 'Aksi',
       align: 'right',
-      width: '12%',
+      width: '15%',
       renderCell: article => (
         <div className='flex items-center justify-end gap-1'>
+          {article.status === 'Draf' && (
+            <button
+              type='button'
+              title='Terbitkan Artikel'
+              disabled={submitting}
+              onClick={() => void handleQuickPublish(article)}
+              className='inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#aff1d0] text-[#0a5139] border border-[#6ee7b7] hover:bg-[#6ee7b7] font-bold text-xs transition-all cursor-pointer disabled:opacity-50'
+            >
+              <CheckCircle2 size={13} />
+              <span>Terbitkan</span>
+            </button>
+          )}
           <button
             type='button'
             title='Pratinjau Artikel'
@@ -376,11 +414,30 @@ export default function ArticleManagementView() {
         </div>
 
         <div className='flex items-center justify-between bg-[#f8f9ff] rounded-xl p-2.5 text-xs border border-[#ffd9de]/60'>
-          <span className='font-bold text-[#121c2a] truncate max-w-[60%]'>✍️ {article.author}</span>
+          <span className='font-bold text-[#121c2a] truncate max-w-[60%]'>
+            ✍️ {article.author}
+            {article.authorId && (
+              <span className='ml-1.5 inline-flex items-center px-1.5 py-0.2 rounded-md bg-[#eff4ff] text-[#1d4ed8] font-bold text-[9px] border border-[#dee9fc]'>
+                Pengguna
+              </span>
+            )}
+          </span>
           <span className='flex items-center gap-1 text-[#8b7074] font-medium shrink-0'>
             <Clock size={12} className='text-[#aa294d]' /> {article.readTime}
           </span>
         </div>
+
+        {article.status === 'Draf' && (
+          <button
+            type='button'
+            disabled={submitting}
+            onClick={() => void handleQuickPublish(article)}
+            className='w-full py-2 px-3 rounded-xl bg-[#aff1d0] text-[#0a5139] border border-[#6ee7b7] font-bold text-xs flex items-center justify-center gap-1.5 hover:bg-[#6ee7b7] transition-all cursor-pointer disabled:opacity-50 shadow-2xs'
+          >
+            <CheckCircle2 size={15} />
+            <span>Terbitkan Artikel Ini ke Publik</span>
+          </button>
+        )}
 
         <div className='flex items-center justify-between pt-2.5 border-t border-[#eff4ff] gap-2'>
           <button
@@ -451,7 +508,23 @@ export default function ArticleManagementView() {
               />
             </div>
 
-            <div className='hidden sm:block sm:min-w-[210px]'>
+            <div className='hidden sm:block sm:min-w-[170px]'>
+              <select
+                value={statusFilter}
+                onChange={e => setStatusFilter(e.target.value as any)}
+                className='w-full px-3.5 py-2.5 rounded-xl border border-[#dee9fc] bg-[#f8f9ff] text-xs sm:text-sm font-medium text-[#121c2a] focus:outline-none focus:ring-2 focus:ring-[#ffd9de] focus:border-[#aa294d] focus:bg-white transition-all cursor-pointer min-h-[44px]'
+              >
+                <option value='Semua'>Semua Status</option>
+                <option value='Draf'>
+                  Hanya Draf ({articles.filter(a => a.status === 'Draf').length})
+                </option>
+                <option value='Terbit'>
+                  Hanya Terbit ({articles.filter(a => a.status === 'Terbit').length})
+                </option>
+              </select>
+            </div>
+
+            <div className='hidden sm:block sm:min-w-[190px]'>
               <select
                 value={categoryFilter}
                 onChange={e => setCategoryFilter(e.target.value)}
@@ -477,16 +550,36 @@ export default function ArticleManagementView() {
         </div>
 
         {/* Mobile Horizontal Filter Chips (< sm: 640px) */}
-        <div className='block sm:hidden border-t border-[#eff4ff] pt-2.5'>
-          <p className='text-[11px] font-bold text-[#8b7074] mb-1.5'>Kategori Edukasi:</p>
-          <MobileFilterChips
-            selectedValue={categoryFilter}
-            onSelect={setCategoryFilter}
-            options={categoryOptions.map(cat => ({
-              label: cat,
-              value: cat,
-            }))}
-          />
+        <div className='block sm:hidden border-t border-[#eff4ff] pt-2.5 space-y-2'>
+          <div>
+            <p className='text-[11px] font-bold text-[#8b7074] mb-1.5'>Status Publikasi:</p>
+            <MobileFilterChips
+              selectedValue={statusFilter}
+              onSelect={val => setStatusFilter(val as any)}
+              options={[
+                { label: 'Semua Status', value: 'Semua' },
+                {
+                  label: `Draf (${articles.filter(a => a.status === 'Draf').length})`,
+                  value: 'Draf',
+                },
+                {
+                  label: `Terbit (${articles.filter(a => a.status === 'Terbit').length})`,
+                  value: 'Terbit',
+                },
+              ]}
+            />
+          </div>
+          <div>
+            <p className='text-[11px] font-bold text-[#8b7074] mb-1.5'>Kategori Edukasi:</p>
+            <MobileFilterChips
+              selectedValue={categoryFilter}
+              onSelect={setCategoryFilter}
+              options={categoryOptions.map(cat => ({
+                label: cat,
+                value: cat,
+              }))}
+            />
+          </div>
         </div>
       </div>
 

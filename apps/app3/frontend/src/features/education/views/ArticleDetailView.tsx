@@ -258,6 +258,18 @@ export default function ArticleDetailView({
         </div>
       ) : (
         <>
+          {article.status === 'Draf' && (
+            <div className='mb-4 p-3.5 rounded-2xl bg-[#ffd9de]/80 border border-[#fca5a5] flex items-center gap-3 text-xs text-[#8c0f39] shadow-xs'>
+              <div className='w-8 h-8 rounded-xl bg-[#ffd9de] flex items-center justify-center shrink-0 font-bold text-sm'>
+                ⚠️
+              </div>
+              <div className='flex-1 leading-snug'>
+                <span className='font-bold block'>Pratinjau Draf Artikel</span>
+                Artikel ini masih berstatus Draf dan belum diterbitkan untuk publik oleh Admin Faskes.
+              </div>
+            </div>
+          )}
+
           {/* Editorial Article Header Card */}
           <div className='relative w-full rounded-2xl sm:rounded-3xl overflow-hidden bg-linear-to-br from-[#ffd9de]/80 via-[#eff4ff] to-[#aff1d0]/30 p-5 sm:p-6 shadow-xs mb-5 border border-[#ffd9de]/60'>
             <div className='flex flex-col gap-2.5'>

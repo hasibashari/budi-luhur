@@ -185,6 +185,7 @@ CREATE TABLE articles (
     views INTEGER NOT NULL DEFAULT 0,
     published_at DATE NOT NULL DEFAULT CURRENT_DATE,
     author_name VARCHAR(255) DEFAULT 'Tim Medis Faskes',
+    author_id VARCHAR(255) REFERENCES users(id) ON DELETE SET NULL,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
@@ -235,6 +236,7 @@ CREATE INDEX idx_schedules_user_status ON reminder_schedules(user_id, status);
 CREATE INDEX idx_schedules_user_date ON reminder_schedules(user_id, scheduled_date);
 CREATE INDEX idx_logs_user_date ON consumption_logs(user_id, scheduled_date);
 CREATE INDEX idx_articles_category ON articles(category, status);
+CREATE INDEX idx_articles_author ON articles(author_id);
 CREATE INDEX idx_bookmarks_user ON user_bookmarks(user_id);
 CREATE INDEX idx_nudges_user_unread ON admin_nudges(user_id, status);
 CREATE INDEX idx_push_subscriptions_user ON push_subscriptions(user_id);

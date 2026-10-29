@@ -28,6 +28,8 @@ export interface Article {
   category: string;
   publishedAt: string;
   author?: Author;
+  authorId?: string;
+  status?: 'Terbit' | 'Draf';
   content?: string;
   sections?: ContentSection[];
 }

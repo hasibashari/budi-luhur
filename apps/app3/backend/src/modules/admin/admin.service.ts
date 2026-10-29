@@ -48,6 +48,7 @@ export interface HealthArticle {
   title: string;
   category: string;
   author: string;
+  authorId?: string;
   publishDate: string;
   status: 'Terbit' | 'Draf';
   views: number;
@@ -413,6 +414,7 @@ export class AdminService {
         title: r.title,
         category: r.category === 'Kesehatan Pranikah' ? 'Catin' : r.category,
         author: r.author_name || 'dr. Sarah Jenkins',
+        authorId: r.author_id || undefined,
         publishDate: publishDateStr,
         status: r.status as HealthArticle['status'],
         views: Number(r.views) || 0,

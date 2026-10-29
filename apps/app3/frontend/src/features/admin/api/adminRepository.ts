@@ -244,13 +244,22 @@ export async function uploadArticleImageAction(
   articleId?: string,
 ): Promise<{ success: boolean; url?: string; error?: string }> {
   try {
-    const res = await apiClient.post<{ success: boolean; url: string }>('/admin/articles/upload', {
+    const res = await apiClient.post<{ success: boolean; url: string }>('/articles/upload', {
       image: base64Image,
       articleId,
     });
     return { success: true, url: res.data.url };
   } catch (err: any) {
-    return { success: false, error: err.response?.data?.error || err.message };
+    try {
+      // Fallback ke endpoint admin jika ada
+      const fallbackRes = await apiClient.post<{ success: boolean; url: string }>('/admin/articles/upload', {
+        image: base64Image,
+        articleId,
+      });
+      return { success: true, url: fallbackRes.data.url };
+    } catch {
+      return { success: false, error: err.response?.data?.error || err.message };
+    }
   }
 }
 
