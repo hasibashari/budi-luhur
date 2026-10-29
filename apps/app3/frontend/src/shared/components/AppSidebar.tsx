@@ -97,9 +97,11 @@ export default function AppSidebar({
       {/* Navigation List - Independent Scroll */}
       <nav className='flex-1 flex flex-col gap-1.5 overflow-y-auto overscroll-contain pr-1'>
         {navItems.map(item => {
-          const isActive =
-            pathname === item.href ||
-            (item.href !== '/admin/dashboard' && pathname?.startsWith(item.href));
+          const [baseItemPath, itemQuery] = item.href.split('?');
+          const isHome = item.href === brandHref || item.href === '/admin/dashboard' || item.href === '/user/dashboard';
+          const isActive = itemQuery
+            ? pathname === baseItemPath && location.search.includes(itemQuery)
+            : pathname === item.href || (!isHome && pathname?.startsWith(baseItemPath));
           const Icon = item.icon;
           return (
             <Link

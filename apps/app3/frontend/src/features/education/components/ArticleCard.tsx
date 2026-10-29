@@ -1,96 +1,86 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
+import { ChevronRight } from 'lucide-react';
 import { Article } from '../types';
-import { Clock, Tag, ArrowRight } from 'lucide-react';
 import { useReadArticles } from '../utils/readArticles';
 import { resolveImageUrl } from '@/src/shared/utils/imageUrl';
 
-interface ArticleCardProps {
+export interface ArticleCardProps {
   article: Article;
+  onRead?: (id: string) => void;
 }
 
-export default function ArticleCard({ article }: ArticleCardProps) {
+export default function ArticleCard({ article, onRead }: ArticleCardProps) {
   const { isRead, markAsRead } = useReadArticles();
   const read = isRead(article.id);
+
+  const handleClick = () => {
+    markAsRead(article.id);
+    onRead?.(article.id);
+  };
 
   return (
     <Link
       to={`/user/education/${article.id}`}
-      onClick={() => markAsRead(article.id)}
-      className={`group flex flex-col h-full rounded-3xl border overflow-hidden transition-all duration-300 cursor-pointer ${
+      onClick={handleClick}
+      className={`group rounded-2xl p-3.5 sm:p-4 border transition-all flex gap-3.5 items-start cursor-pointer active:scale-[0.98] ${
         read
-          ? 'bg-stone-50/80 border-stone-200/80 opacity-90 hover:opacity-100 hover:border-stone-300 hover:shadow-md'
-          : 'bg-white border-stone-200 shadow-2xs hover:shadow-xl hover:border-emerald-300 hover:-translate-y-1.5'
+          ? 'bg-stone-50/80 border-stone-200/80 opacity-90 hover:opacity-100 hover:border-stone-300'
+          : 'bg-white border-[#eff4ff] shadow-[0_2px_10px_-2px_rgba(31,41,55,0.04),0_4px_16px_-2px_rgba(217,78,111,0.03)] hover:shadow-md'
       }`}
     >
-      {/* Top Image Banner */}
-      <div className='relative h-[210px] w-full overflow-hidden bg-stone-100'>
-        <div className='absolute top-3.5 left-3.5 z-10 flex items-center gap-1.5 flex-wrap'>
-          <span
-            className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold shadow-xs border ${
-              read
-                ? 'bg-white/95 text-stone-600 border-stone-200'
-                : 'bg-white/95 text-emerald-800 border-emerald-100'
-            }`}
-          >
-            <Tag size={12} className={read ? 'text-stone-400' : 'text-emerald-600'} />
-            {article.category}
-          </span>
-        </div>
+      {/* Featured Thumbnail */}
+      <div className='relative w-20 h-20 sm:w-24 sm:h-24 rounded-xl overflow-hidden shrink-0 bg-[#eff4ff]'>
         {article.imageUrl ? (
           <img
             src={resolveImageUrl(article.imageUrl)}
             alt={article.title}
-            className={`w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 ${
+            className={`w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 ${
               read ? 'grayscale-[35%] group-hover:grayscale-0' : ''
             }`}
           />
         ) : (
-          <div className='w-full h-full flex items-center justify-center bg-stone-100 text-stone-300'>
-            <Tag size={36} />
+          <div className='w-full h-full flex items-center justify-center text-xl bg-[#eff4ff]'>
+            📚
           </div>
         )}
       </div>
 
-      {/* Card Content Body */}
-      <div className='p-5 flex flex-col flex-1'>
+      {/* Article Meta & Summary */}
+      <div className='flex-1 min-w-0'>
+        <div className='flex items-center gap-2 mb-1'>
+          <span className='inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-[#ffd9de] text-[#8c0f39]'>
+            {article.category}
+          </span>
+          <span className='text-[11px] text-[#8b7074]'>{article.readTime}</span>
+        </div>
+
         <h3
-          className={`text-base md:text-lg line-clamp-2 leading-snug mb-2 transition-colors ${
+          className={`text-sm sm:text-base transition-colors leading-snug line-clamp-2 ${
             read
               ? 'font-medium text-stone-500 group-hover:text-stone-700'
-              : 'font-bold text-slate-900 group-hover:text-emerald-700'
+              : 'font-bold text-[#121c2a] group-hover:text-[#aa294d]'
           }`}
         >
           {article.title}
         </h3>
 
-        <p
-          className={`text-xs sm:text-sm line-clamp-3 leading-relaxed mb-4 flex-1 ${
-            read ? 'text-stone-400' : 'text-slate-600'
-          }`}
-        >
+        <p className={`text-xs line-clamp-2 mt-1 ${read ? 'text-stone-400' : 'text-[#574144]'}`}>
           {article.summary}
         </p>
+      </div>
 
-        <div className='h-px bg-stone-100 my-3 w-full' />
-
-        {/* Footer info: Read time & Date */}
-        <div className='flex items-center justify-between text-xs text-slate-400 font-medium pt-0.5'>
-          <div className='flex items-center gap-1.5 text-slate-600 font-semibold'>
-            <Clock size={14} className={read ? 'text-stone-400' : 'text-emerald-600'} />
-            <span className={read ? 'text-stone-500' : 'text-slate-600'}>{article.readTime}</span>
-          </div>
-          <div className='flex items-center gap-1 text-slate-500'>
-            <span>{article.publishedAt}</span>
-            <ArrowRight
-              size={14}
-              className={`ml-1 transition-all duration-200 group-hover:translate-x-1 ${
-                read ? 'text-stone-400 group-hover:text-stone-600' : 'text-slate-400 group-hover:text-emerald-700'
-              }`}
-            />
-          </div>
-        </div>
+      {/* Right Action Chevron */}
+      <div
+        className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 self-center transition-all ${
+          read
+            ? 'text-stone-400 group-hover:text-stone-600'
+            : 'text-[#8b7074] group-hover:text-[#aa294d] group-hover:translate-x-0.5'
+        }`}
+      >
+        <ChevronRight size={20} />
       </div>
     </Link>
   );
 }
+
+export { ArticleCard };

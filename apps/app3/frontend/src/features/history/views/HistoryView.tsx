@@ -20,7 +20,7 @@ import { InputRiwayatTTModal, NewTTRiwayatData } from '../components/InputRiwaya
 import { RiwayatTTDetailModal } from '../components/RiwayatTTDetailModal';
 import { VerificationBadge } from '../components/VerificationBadge';
 import { VaccineCardModal } from '@/src/features/dashboard/components/VaccineCardModal';
-import { MonthlyEvaluationView } from '../components/MonthlyEvaluationView';
+import { TTVaccineBarChart } from '../components/TTVaccineBarChart';
 import {
   deleteImmunizationAttachmentAction,
   deleteImmunizationRecordAction,
@@ -732,14 +732,13 @@ export default function HistoryView() {
             </span>
           </div>
 
-          <MonthlyEvaluationView
-            stats={stats}
-            streakCount={dashboardData?.user.streakCount || 0}
-            streakUnit={dashboardData?.user.streakUnit || 'Minggu'}
-            logs={allLogs}
-            records={records}
-            schedules={schedules}
-          />
+          <div className='animate-fade-in'>
+            <TTVaccineBarChart
+              records={records}
+              schedules={schedules}
+              logs={allLogs}
+            />
+          </div>
         </div>
       </div>
     </div>

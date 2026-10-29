@@ -70,6 +70,39 @@ export function clearArticlesCache() {
 }
 
 export class ArticleService {
+  private static mapRowToArticle(
+    r: any,
+    includeContent: boolean = false,
+    customRole?: string,
+  ): Article {
+    let author: Author | undefined;
+    if (r.author_name) {
+      author = {
+        name: r.author_name,
+        role: customRole || (r.author_id ? 'Kontributor Edukasi Catin' : 'Tim Medis Faskes TEMANI'),
+      };
+    }
+
+    const fullContent = r.content || r.summary || '';
+
+    return {
+      id: r.id,
+      title: r.title,
+      summary: r.summary,
+      content: includeContent ? fullContent : r.summary,
+      imageUrl: r.image_url,
+      readTime: r.read_time,
+      category: r.category === 'Kesehatan Pranikah' ? 'Catin' : r.category,
+      publishedAt:
+        typeof r.published_at === 'string'
+          ? r.published_at
+          : new Date(r.published_at).toISOString().split('T')[0],
+      author,
+      authorId: r.author_id || undefined,
+      status: r.status,
+    };
+  }
+
   static async getArticles(category?: string): Promise<Article[]> {
     const cacheKey = category || 'ALL';
     const cached = articlesCache.get(cacheKey);
@@ -92,33 +125,7 @@ export class ArticleService {
     sql += ` ORDER BY published_at DESC, created_at DESC`;
 
     const res = await db.query<any>(sql, params);
-
-    const result = res.rows.map((r: any) => {
-      let author: Author | undefined;
-      if (r.author_name) {
-        author = {
-          name: r.author_name,
-          role: r.author_id ? 'Kontributor Edukasi Catin' : 'Tim Medis Faskes TEMANI',
-        };
-      }
-
-      return {
-        id: r.id,
-        title: r.title,
-        summary: r.summary,
-        content: r.summary,
-        imageUrl: r.image_url,
-        readTime: r.read_time,
-        category: r.category === 'Kesehatan Pranikah' ? 'Catin' : r.category,
-        publishedAt:
-          typeof r.published_at === 'string'
-            ? r.published_at
-            : new Date(r.published_at).toISOString().split('T')[0],
-        author,
-        authorId: r.author_id || undefined,
-        status: r.status,
-      };
-    });
+    const result = res.rows.map((r: any) => this.mapRowToArticle(r, false));
 
     articlesCache.set(cacheKey, { data: result, timestamp: Date.now() });
     return result;
@@ -167,29 +174,10 @@ export class ArticleService {
       },
     ];
 
-    let author: Author | undefined;
-    if (row.author_name) {
-      author = {
-        name: row.author_name,
-        role: row.author_id ? 'Kontributor Edukasi Catin' : 'Tim Medis Faskes TEMANI',
-      };
-    }
+    const baseArticle = this.mapRowToArticle(row, true);
 
     return {
-      id: row.id,
-      title: row.title,
-      summary: row.summary,
-      content: fullContent,
-      imageUrl: row.image_url,
-      readTime: row.read_time,
-      category: row.category === 'Kesehatan Pranikah' ? 'Catin' : row.category,
-      publishedAt:
-        typeof row.published_at === 'string'
-          ? row.published_at
-          : new Date(row.published_at).toISOString().split('T')[0],
-      author,
-      authorId: row.author_id || undefined,
-      status: row.status,
+      ...baseArticle,
       sections,
     };
   }
@@ -203,27 +191,9 @@ export class ArticleService {
       [userId],
     );
 
-    return res.rows.map((row: any) => ({
-      id: row.id,
-      title: row.title,
-      summary: row.summary,
-      content: row.content || row.summary || '',
-      imageUrl: row.image_url,
-      readTime: row.read_time,
-      category: row.category === 'Kesehatan Pranikah' ? 'Catin' : row.category,
-      publishedAt:
-        typeof row.published_at === 'string'
-          ? row.published_at
-          : new Date(row.published_at).toISOString().split('T')[0],
-      author: row.author_name
-        ? {
-            name: row.author_name,
-            role: 'Penulis Kontributor',
-          }
-        : undefined,
-      authorId: row.author_id,
-      status: row.status,
-    }));
+    return res.rows.map((row: any) =>
+      this.mapRowToArticle(row, true, 'Penulis Kontributor'),
+    );
   }
 
   static async createUserArticle(

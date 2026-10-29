@@ -4,24 +4,6 @@
  * (Premarital Health & Tetanus Toxoid Immunization Standards)
  */
 
-export const DAYS_OF_WEEK = [
-  'Senin',
-  'Selasa',
-  'Rabu',
-  'Kamis',
-  'Jumat',
-  'Sabtu',
-  'Minggu',
-] as const;
-
-export type DayOfWeek = (typeof DAYS_OF_WEEK)[number];
-
-export const CONSUMPTION_STATUS = {
-  TAKEN: 'taken',
-  MISSED: 'missed',
-  PENDING: 'pending',
-} as const;
-
 export interface TTLevelInfo {
   level: string;
   name: string;
@@ -87,6 +69,3 @@ export const TT_DOSAGE_LEVELS: Record<string, TTLevelInfo> = {
 };
 
 export const TT_DOSAGE_LIST = Object.values(TT_DOSAGE_LEVELS);
-
-export const DEFAULT_TT_TARGET = 5; // Standar 5 Dosis Tetanus Toxoid
-export const DEFAULT_VACCINE_DESCRIPTION = 'Vaksin Tetanus Toxoid (TT) 0.5 mL intramuskular pada lengan atas';

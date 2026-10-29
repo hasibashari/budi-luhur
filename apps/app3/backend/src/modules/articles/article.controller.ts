@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { ArticleService } from './article.service.js';
+import { AdminService } from '../admin/admin.service.js';
 import { AuthRequest } from '../../middlewares/auth.middleware.js';
 
 export class ArticleController {
@@ -133,7 +134,6 @@ export class ArticleController {
         res.status(400).json({ success: false, error: 'Ukuran berkas wajib disertakan.' });
         return;
       }
-      const { AdminService } = await import('../admin/admin.service.js');
       const presigned = await AdminService.generateArticlePresignedUpload({
         filename,
         mimeType,
@@ -157,7 +157,6 @@ export class ArticleController {
         return res.status(400).json({ success: false, error: 'Data gambar wajib disertakan.' });
       }
       const targetId = articleId || `art_${Date.now().toString().slice(-4)}`;
-      const { AdminService } = await import('../admin/admin.service.js');
       const url = await AdminService.processArticleImage(image, targetId);
       res.json({ success: true, url });
     } catch (error: any) {
