@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, Plus, Eye, Edit, Trash2, Clock, Image as ImageIcon, BookOpen } from 'lucide-react';
+import { Search, Plus, Eye, Edit, Trash2, Clock, Image as ImageIcon, BookOpen, RotateCw } from 'lucide-react';
 import AdminHeader from '../components/AdminHeader';
 import ArticleFormModal, { ArticleFormData } from '../components/ArticleFormModal';
 import { DataTable, Column } from '@/src/shared/components/DataTable';
@@ -47,6 +47,7 @@ export default function ArticleManagementView() {
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('Semua');
   const [submitting, setSubmitting] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   // Hook Form Modal Add/Edit
   const {
@@ -77,9 +78,17 @@ export default function ArticleManagementView() {
   } = useToast();
 
   const loadData = useCallback(async () => {
-    const data = await getAdminArticlesAction();
-    setArticles(data);
-  }, []);
+    setLoading(true);
+    try {
+      const data = await getAdminArticlesAction();
+      setArticles(data);
+    } catch (error) {
+      console.error('Gagal mengambil data artikel:', error);
+      showToast('Gagal mengambil data artikel dari server.', 'error');
+    } finally {
+      setLoading(false);
+    }
+  }, [showToast]);
 
   useEffect(() => {
     void loadData();
@@ -95,8 +104,8 @@ export default function ArticleManagementView() {
   });
   const categoryOptions = [
     'Semua',
-    ...Array.from(new Set(articles.map(article => article.category.trim()).filter(Boolean))).sort((a, b) =>
-      a.localeCompare(b, 'id'),
+    ...Array.from(new Set(articles.map(article => article.category.trim()).filter(Boolean))).sort(
+      (a, b) => a.localeCompare(b, 'id'),
     ),
   ];
 
@@ -117,7 +126,7 @@ export default function ArticleManagementView() {
     navigate(`/admin/articles/${articleId}`);
   };
 
-  const handleSaveArticle = async () => {
+  const handleSaveArticle = async (overrideImageUrl?: string) => {
     if (!formData.title.trim()) {
       showToast('Judul artikel wajib diisi', 'error');
       return;
@@ -126,6 +135,8 @@ export default function ArticleManagementView() {
       showToast('Kategori artikel wajib diisi', 'error');
       return;
     }
+
+    const finalImageUrl = overrideImageUrl !== undefined ? overrideImageUrl : formData.imageUrl;
 
     setSubmitting(true);
     try {
@@ -138,7 +149,7 @@ export default function ArticleManagementView() {
           content: formData.content,
           readTime: getAutomaticReadTime(formData.content, formData.summary),
           status: formData.status,
-          imageUrl: formData.imageUrl,
+          imageUrl: finalImageUrl,
         });
 
         if (res.success) {
@@ -159,7 +170,7 @@ export default function ArticleManagementView() {
           content: formData.content,
           readTime: getAutomaticReadTime(formData.content, formData.summary),
           status: formData.status,
-          imageUrl: formData.imageUrl,
+          imageUrl: finalImageUrl,
         });
 
         if (res.success) {
@@ -193,7 +204,9 @@ export default function ArticleManagementView() {
       id: 'no',
       label: 'No.',
       width: '5%',
-      renderCell: (_, index) => <span className='text-[#8b7074] text-xs font-semibold'>{index + 1}</span>,
+      renderCell: (_, index) => (
+        <span className='text-[#8b7074] text-xs font-semibold'>{index + 1}</span>
+      ),
     },
     {
       id: 'judul',
@@ -407,6 +420,18 @@ export default function ArticleManagementView() {
       <AdminHeader
         title='Manajemen Artikel Edukasi Pranikah'
         subtitle='Kelola materi edukasi imunisasi TT, kesehatan reproduksi catin, dan panduan pernikahan sehat.'
+        action={
+          <button
+            type='button'
+            onClick={() => void loadData()}
+            disabled={loading}
+            title='Segarkan data artikel'
+            className='inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border border-[#dee9fc] bg-white text-xs font-bold text-[#574144] hover:bg-[#f8f9ff] hover:text-[#aa294d] transition-all cursor-pointer disabled:opacity-50 shadow-2xs'
+          >
+            <RotateCw size={14} className={loading ? 'animate-spin text-[#aa294d]' : ''} />
+            <span>Segarkan</span>
+          </button>
+        }
       />
 
       {/* Filter Bar with MobileFilterChips */}
@@ -469,6 +494,8 @@ export default function ArticleManagementView() {
       <DataTable
         columns={columns}
         data={filteredArticles}
+        loading={loading}
+        loadingMessage='Memuat data artikel edukasi...'
         emptyMessage='Tidak ada artikel edukasi yang sesuai dengan pencarian.'
         renderMobileCard={renderMobileCard}
       />

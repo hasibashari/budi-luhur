@@ -96,9 +96,16 @@ async function migrate() {
       ON certificate_verifications(status);
   `);
 
-  // Perampingan tabel articles: hapus kolom yang tidak digunakan
+  // Penyesuaian tabel articles: pastikan kolom-kolom standar ada dan hapus kolom legacy
   await db.query(`
     ALTER TABLE articles
+      ADD COLUMN IF NOT EXISTS content TEXT,
+      ADD COLUMN IF NOT EXISTS author_name VARCHAR(255) DEFAULT 'Tim Medis Faskes',
+      ADD COLUMN IF NOT EXISTS read_time VARCHAR(50) NOT NULL DEFAULT '3 Menit Baca',
+      ADD COLUMN IF NOT EXISTS views INTEGER NOT NULL DEFAULT 0,
+      ADD COLUMN IF NOT EXISTS is_featured BOOLEAN NOT NULL DEFAULT FALSE,
+      ADD COLUMN IF NOT EXISTS published_at DATE NOT NULL DEFAULT CURRENT_DATE,
+      ADD COLUMN IF NOT EXISTS status VARCHAR(50) NOT NULL DEFAULT 'Terbit',
       DROP COLUMN IF EXISTS lead_paragraph,
       DROP COLUMN IF EXISTS image_caption,
       DROP COLUMN IF EXISTS author_id,
@@ -108,6 +115,28 @@ async function migrate() {
       DROP COLUMN IF EXISTS key_takeaways,
       DROP COLUMN IF EXISTS tags;
   `);
+
+  // Konversi otomatis artikel lama yang fotonya masih tersimpan sebagai Base64 di database
+  try {
+    const { AdminService } = await import('../modules/admin/admin.service.js');
+    const base64Articles = await db.query<{ id: string; image_url: string }>(
+      `SELECT id, image_url FROM articles WHERE image_url LIKE 'data:image/%'`,
+    );
+    if (base64Articles.rows.length > 0) {
+      console.log(`  -> Memindahkan ${base64Articles.rows.length} foto artikel dari database ke file storage...`);
+      for (const art of base64Articles.rows) {
+        try {
+          const storageUrl = await AdminService.processArticleImage(art.image_url, art.id);
+          await db.query(`UPDATE articles SET image_url = $1 WHERE id = $2`, [storageUrl, art.id]);
+          console.log(`     Foto artikel ${art.id} dipindahkan ke storage: ${storageUrl}`);
+        } catch (err) {
+          console.warn(`     Gagal memindahkan foto artikel ${art.id}:`, err);
+        }
+      }
+    }
+  } catch (err) {
+    console.warn('  -> Peringatan pemindahan foto base64:', err);
+  }
 
   console.log('✅ App 3 database migrations completed successfully.');
 }

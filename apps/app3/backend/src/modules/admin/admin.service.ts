@@ -1,5 +1,8 @@
 import db from '../../config/database.js';
 import { NotificationService } from '../notifications/notification.service.js';
+import { getStorageService } from '../../services/storage/index.js';
+import { LocalStorageService } from '../../services/storage/local.storage.js';
+import { detectAttachmentMime, isAllowedAttachmentSize } from '../../utils/fileValidation.js';
 
 function normalizeArticleCategory(category: string): string {
   const normalized = category.trim().replace(/\s+/g, ' ');
@@ -421,6 +424,134 @@ export class AdminService {
     });
   }
 
+  /**
+   * Menghasilkan Pre-Signed PUT URL (untuk S3) atau endpoint fallback (lokal)
+   * sehingga browser klien dapat mengunggah foto artikel langsung ke cloud storage
+   * tanpa membebani bandwidth & CPU server backend API.
+   */
+  static async generateArticlePresignedUpload(params: {
+    filename: string;
+    mimeType: string;
+    fileSize: number;
+    articleId?: string;
+  }): Promise<{
+    mode: 's3-presigned' | 'local-fallback';
+    uploadUrl: string;
+    fileUrl: string;
+    path: string;
+    headers?: Record<string, string>;
+    expiresIn?: number;
+  }> {
+    const { mimeType, fileSize, articleId } = params;
+
+    // Validasi ukuran berkas maksimal 3 MB
+    if (fileSize > 3 * 1024 * 1024) {
+      throw new Error('Ukuran gambar cover artikel maksimal 3MB.');
+    }
+
+    // Validasi tipe berkas hanya gambar
+    const allowedMimes = ['image/jpeg', 'image/png', 'image/webp'];
+    if (!allowedMimes.includes(mimeType.toLowerCase())) {
+      throw new Error('Format gambar harus berupa PNG, JPG, atau WebP.');
+    }
+
+    let ext = 'png';
+    if (mimeType.includes('jpeg') || mimeType.includes('jpg')) ext = 'jpg';
+    else if (mimeType.includes('webp')) ext = 'webp';
+    else if (mimeType.includes('png')) ext = 'png';
+
+    const cleanId = articleId
+      ? articleId.replace(/[^a-zA-Z0-9_-]/g, '')
+      : `art_${Date.now().toString().slice(-4)}`;
+    const destinationPath = `articles/${cleanId}_${Date.now()}.${ext}`;
+
+    const storage = getStorageService();
+    if (storage.getPresignedUploadUrl) {
+      try {
+        const presigned = await storage.getPresignedUploadUrl(destinationPath, mimeType, 300);
+        return presigned;
+      } catch (err) {
+        console.warn('Gagal generate S3 presigned URL, beralih ke local fallback:', err);
+      }
+    }
+
+    const localStorage = new LocalStorageService();
+    return localStorage.getPresignedUploadUrl(destinationPath, mimeType, 300);
+  }
+
+  /**
+   * Memproses foto artikel: jika berupa Data URL (Base64), berkas disimpan ke file storage
+   * (S3 atau direktori lokal /uploads/articles/) dan mengembalikan URL publiknya.
+   * Dengan ini, database PostgreSQL HANYA menyimpan URL/path string dan TIDAK menyimpan binary/Base64.
+   */
+  static async processArticleImage(
+    imageUrl: string | undefined | null,
+    articleId: string,
+  ): Promise<string> {
+    if (!imageUrl) return '';
+    const trimmed = imageUrl.trim();
+    if (!trimmed) return '';
+
+    // Jika sudah berupa URL HTTP/HTTPS atau path lokal uploads, simpan apa adanya
+    if (
+      trimmed.startsWith('http://') ||
+      trimmed.startsWith('https://') ||
+      trimmed.startsWith('/uploads/') ||
+      trimmed.startsWith('uploads/')
+    ) {
+      return trimmed;
+    }
+
+    // Deteksi apakah data berupa Data URL Base64 (data:image/...;base64,...)
+    const dataUriMatch = trimmed.match(/^data:([a-zA-Z0-9]+\/[a-zA-Z0-9+.-]+);base64,(.+)$/s);
+    if (!dataUriMatch) {
+      return trimmed;
+    }
+
+    const declaredMime = dataUriMatch[1].toLowerCase();
+    const base64Data = dataUriMatch[2].replace(/\s+/g, '');
+    const buffer = Buffer.from(base64Data, 'base64');
+
+    if (!isAllowedAttachmentSize(buffer.length)) {
+      throw new Error('Ukuran gambar cover artikel maksimal 3MB.');
+    }
+
+    // Validasi magic bytes agar aman dari injeksi berkas berbahaya
+    const detectedMime = detectAttachmentMime(buffer);
+    if (!detectedMime || !detectedMime.startsWith('image/')) {
+      throw new Error('Format berkas cover harus berupa gambar (PNG, JPG, atau WebP).');
+    }
+    const mimeType = detectedMime;
+
+    let ext = 'png';
+    if (mimeType.includes('jpeg') || mimeType.includes('jpg')) ext = 'jpg';
+    else if (mimeType.includes('webp')) ext = 'webp';
+    else if (mimeType.includes('gif')) ext = 'gif';
+    else if (mimeType.includes('png')) ext = 'png';
+
+    const cleanId = articleId.replace(/[^a-zA-Z0-9_-]/g, '') || `art_${Date.now()}`;
+    const destinationPath = `articles/${cleanId}_${Date.now()}.${ext}`;
+
+    try {
+      const storage = getStorageService();
+      const result = await storage.upload(buffer, destinationPath, mimeType);
+      return result.url;
+    } catch (storageError) {
+      console.warn(
+        'Gagal upload ke driver storage utama, beralih ke LocalStorageService fallback:',
+        storageError,
+      );
+      try {
+        const localStorage = new LocalStorageService();
+        const result = await localStorage.upload(buffer, destinationPath, mimeType);
+        return result.url;
+      } catch (fallbackError) {
+        console.error('Semua driver storage gagal menyimpan foto:', fallbackError);
+        throw new Error('Gagal menyimpan foto artikel ke media penyimpanan file.');
+      }
+    }
+  }
+
   static async createAdminArticle(data: {
     title: string;
     category: string;
@@ -436,7 +567,7 @@ export class AdminService {
 
     const newId = `art_${Date.now().toString().slice(-4)}`;
     const today = new Date().toISOString().split('T')[0];
-    const finalImageUrl = data.imageUrl?.trim() || '';
+    const finalImageUrl = await AdminService.processArticleImage(data.imageUrl, newId);
     const finalContent = data.content?.trim() || data.summary;
     const characterCount = finalContent.length;
     const readTime = `${Math.max(1, Math.ceil(characterCount / 1000))} min read`;
@@ -481,7 +612,18 @@ export class AdminService {
     const category =
       data.category !== undefined ? normalizeArticleCategory(data.category) : undefined;
 
+    let processedImageUrl: string | undefined = undefined;
+    if (data.imageUrl !== undefined) {
+      processedImageUrl = await AdminService.processArticleImage(data.imageUrl, articleId);
+    }
+
     await db.transaction(async (client) => {
+      // Dapatkan URL gambar lama sebelum diperbarui
+      const existingRes = await client.query(`SELECT image_url FROM articles WHERE id = $1`, [
+        articleId,
+      ]);
+      const oldImageUrl = existingRes.rows[0]?.image_url;
+
       const canonicalCategory =
         category === undefined
           ? undefined
@@ -506,11 +648,35 @@ export class AdminService {
           data.readTime ?? null,
           data.status ?? null,
           data.author ?? null,
-          data.imageUrl ?? null,
+          processedImageUrl ?? null,
           data.content ?? null,
           articleId,
         ],
       );
+
+      // Jika gambar diganti atau dihapus, otomatis hapus berkas gambar lama dari storage (S3 / lokal)
+      if (
+        processedImageUrl !== undefined &&
+        oldImageUrl &&
+        processedImageUrl !== oldImageUrl &&
+        (oldImageUrl.includes('/uploads/articles/') || oldImageUrl.includes('articles/art_'))
+      ) {
+        try {
+          const cleanKey = oldImageUrl.includes('/uploads/')
+            ? oldImageUrl.split('/uploads/')[1]
+            : oldImageUrl;
+
+          if (oldImageUrl.includes('/uploads/')) {
+            const localStorage = new LocalStorageService();
+            await localStorage.delete(cleanKey);
+          } else {
+            const storage = getStorageService();
+            await storage.delete(cleanKey);
+          }
+        } catch (cleanupErr) {
+          console.warn('Gagal menghapus berkas foto lama dari storage:', cleanupErr);
+        }
+      }
     });
 
     return { success: true };
@@ -518,6 +684,27 @@ export class AdminService {
 
   static async deleteAdminArticle(articleId: string) {
     await db.transaction(async client => {
+      const existing = await client.query(`SELECT image_url FROM articles WHERE id = $1`, [
+        articleId,
+      ]);
+      const imageUrl = existing.rows[0]?.image_url;
+      if (imageUrl && (imageUrl.includes('/uploads/articles/') || imageUrl.includes('articles/art_'))) {
+        try {
+          const cleanKey = imageUrl.includes('/uploads/')
+            ? imageUrl.split('/uploads/')[1]
+            : imageUrl;
+          if (imageUrl.includes('/uploads/')) {
+            const localStorage = new LocalStorageService();
+            await localStorage.delete(cleanKey);
+          } else {
+            const storage = getStorageService();
+            await storage.delete(cleanKey);
+          }
+        } catch (cleanupErr) {
+          console.warn('Gagal menghapus file gambar dari storage:', cleanupErr);
+        }
+      }
+
       await client.query(`DELETE FROM articles WHERE id = $1`, [articleId]);
       await AdminService.normalizeStoredCategories(client);
     });

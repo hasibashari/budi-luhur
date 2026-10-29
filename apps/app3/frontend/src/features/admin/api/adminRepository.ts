@@ -161,6 +161,99 @@ export async function getAdminArticlesAction(): Promise<HealthArticle[]> {
   }
 }
 
+export interface PresignedUploadResponse {
+  success: boolean;
+  mode?: 's3-presigned' | 'local-fallback';
+  uploadUrl?: string;
+  fileUrl?: string;
+  path?: string;
+  headers?: Record<string, string>;
+  error?: string;
+}
+
+export async function getArticlePresignedUrlAction(params: {
+  filename: string;
+  mimeType: string;
+  fileSize: number;
+  articleId?: string;
+}): Promise<PresignedUploadResponse> {
+  try {
+    const res = await apiClient.post<PresignedUploadResponse>('/admin/articles/presign', params);
+    return res.data;
+  } catch (err: any) {
+    return { success: false, error: err.response?.data?.error || err.message };
+  }
+}
+
+/**
+ * Mengunggah berkas gambar langsung ke storage (S3 Pre-signed URL atau fallback lokal)
+ * Pola Pre-signed URL mengunggah biner langsung via HTTP PUT ke S3 tanpa membebani server backend.
+ */
+export async function uploadFileDirectToStorage(
+  file: File,
+  presigned: PresignedUploadResponse,
+): Promise<{ success: boolean; fileUrl?: string; error?: string }> {
+  if (!presigned.uploadUrl) {
+    return { success: false, error: 'URL upload presigned tidak valid.' };
+  }
+
+  try {
+    if (presigned.mode === 's3-presigned') {
+      // Direct HTTP PUT to S3 / Cloud Storage (Bypass backend server completely)
+      const res = await fetch(presigned.uploadUrl, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': file.type,
+          ...(presigned.headers || {}),
+        },
+        body: file,
+      });
+
+      if (!res.ok) {
+        throw new Error(`Gagal mengunggah berkas ke cloud storage (status: ${res.status})`);
+      }
+
+      return { success: true, fileUrl: presigned.fileUrl };
+    } else {
+      // Fallback lokal development jika storage driver bukan S3
+      return new Promise(resolve => {
+        const reader = new FileReader();
+        reader.onload = async e => {
+          const base64 = e.target?.result as string;
+          const uploadRes = await uploadArticleImageAction(base64);
+          if (uploadRes.success && uploadRes.url) {
+            resolve({ success: true, fileUrl: uploadRes.url });
+          } else {
+            resolve({
+              success: false,
+              error: uploadRes.error || 'Gagal mengunggah ke storage lokal.',
+            });
+          }
+        };
+        reader.onerror = () => resolve({ success: false, error: 'Gagal membaca berkas lokal.' });
+        reader.readAsDataURL(file);
+      });
+    }
+  } catch (err: any) {
+    return { success: false, error: err.message || 'Gagal mengunggah berkas gambar.' };
+  }
+}
+
+export async function uploadArticleImageAction(
+  base64Image: string,
+  articleId?: string,
+): Promise<{ success: boolean; url?: string; error?: string }> {
+  try {
+    const res = await apiClient.post<{ success: boolean; url: string }>('/admin/articles/upload', {
+      image: base64Image,
+      articleId,
+    });
+    return { success: true, url: res.data.url };
+  } catch (err: any) {
+    return { success: false, error: err.response?.data?.error || err.message };
+  }
+}
+
 export async function createAdminArticleAction(data: {
   title: string;
   category: string;

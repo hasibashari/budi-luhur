@@ -1,6 +1,7 @@
 'use client';
 
 import React, { ReactNode, useState } from 'react';
+import { Loader2 } from 'lucide-react';
 import Pagination from './Pagination';
 
 export interface Column<T> {
@@ -15,6 +16,8 @@ export interface DataTableProps<T> {
   columns: Column<T>[];
   data: T[];
   emptyMessage?: string;
+  loading?: boolean;
+  loadingMessage?: string;
   pagination?: boolean;
   defaultPageSize?: number;
   pageSizeOptions?: number[];
@@ -30,6 +33,8 @@ export function DataTable<T extends { id: string | number }>({
   columns,
   data,
   emptyMessage = 'Tidak ada data.',
+  loading = false,
+  loadingMessage = 'Memuat data...',
   pagination = true,
   defaultPageSize = 10,
   pageSizeOptions = [5, 10, 20],
@@ -81,7 +86,12 @@ export function DataTable<T extends { id: string | number }>({
       {/* 1. Mobile-First Card View (< sm / mobile screens when renderMobileCard provided) */}
       {renderMobileCard && (
         <div className='flex sm:hidden flex-col gap-3 p-3 bg-[#fff5f7]'>
-          {paginatedData.length === 0 ? (
+          {loading ? (
+            <div className='py-12 flex flex-col items-center justify-center gap-2.5 bg-white rounded-xl border border-dashed border-[#fce7f3]'>
+              <Loader2 className='w-8 h-8 animate-spin text-[#aa294d]' />
+              <p className='text-xs font-semibold text-[#8b7074]'>{loadingMessage}</p>
+            </div>
+          ) : paginatedData.length === 0 ? (
             <div className='py-8 text-center bg-white rounded-xl border border-dashed border-[#fce7f3]'>
               <p className='text-xs text-[#64748b]'>{emptyMessage}</p>
             </div>
@@ -113,7 +123,16 @@ export function DataTable<T extends { id: string | number }>({
             </tr>
           </thead>
           <tbody className='divide-y divide-[#fce7f3]'>
-            {paginatedData.length === 0 ? (
+            {loading ? (
+              <tr>
+                <td colSpan={columns.length} className='py-16 text-center text-sm text-[#64748b]'>
+                  <div className='flex flex-col items-center justify-center gap-2.5'>
+                    <Loader2 className='w-8 h-8 animate-spin text-[#aa294d]' />
+                    <span className='text-xs font-semibold text-[#8b7074]'>{loadingMessage}</span>
+                  </div>
+                </td>
+              </tr>
+            ) : paginatedData.length === 0 ? (
               <tr>
                 <td colSpan={columns.length} className='py-12 text-center text-sm text-[#64748b]'>
                   {emptyMessage}
@@ -143,7 +162,7 @@ export function DataTable<T extends { id: string | number }>({
       </div>
 
       {/* Integrated Pagination Footer */}
-      {pagination && data.length > 0 && (
+      {pagination && !loading && data.length > 0 && (
         <div className='border-t border-[#fce7f3]'>
           <Pagination
             currentPage={activePage}

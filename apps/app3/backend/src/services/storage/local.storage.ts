@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { IStorageService, StorageUploadResult } from './storage.interface.js';
+import { IStorageService, StorageUploadResult, PresignedUploadResult } from './storage.interface.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -18,6 +18,26 @@ export class LocalStorageService implements IStorageService {
 
   public getBaseDir(): string {
     return this.baseDir;
+  }
+
+  public async getPresignedUploadUrl(
+    destinationPath: string,
+    mimeType: string,
+    expiresInSeconds: number = 300,
+  ): Promise<PresignedUploadResult> {
+    const cleanRelativePath = destinationPath.replace(/^(\/|uploads\/)+/, '');
+    const publicPath = `${this.urlPrefix}/${cleanRelativePath}`;
+
+    return {
+      mode: 'local-fallback',
+      uploadUrl: '/api/v1/admin/articles/upload',
+      fileUrl: publicPath,
+      path: cleanRelativePath,
+      headers: {
+        'Content-Type': mimeType,
+      },
+      expiresIn: expiresInSeconds,
+    };
   }
 
   public async upload(

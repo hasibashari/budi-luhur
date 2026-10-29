@@ -1,4 +1,4 @@
-import { IStorageService, StorageUploadResult } from './storage.interface.js';
+import { IStorageService, StorageUploadResult, PresignedUploadResult } from './storage.interface.js';
 
 export interface S3Config {
   region: string;
@@ -37,6 +37,70 @@ export class S3StorageService implements IStorageService {
         process.env.AWS_S3_ENDPOINT,
       customDomain: config?.customDomain || process.env.AWS_S3_CUSTOM_DOMAIN,
     };
+  }
+
+  public async getPresignedUploadUrl(
+    destinationPath: string,
+    mimeType: string,
+    expiresInSeconds: number = 300,
+  ): Promise<PresignedUploadResult> {
+    const cleanKey = destinationPath.replace(/^(\/|uploads\/)+/, '');
+
+    if (!this.config.bucket) {
+      throw new Error(
+        'S3 storage is selected but AWS_S3_BUCKET is not configured in environment variables.',
+      );
+    }
+
+    try {
+      // @ts-ignore
+      const { S3Client, PutObjectCommand } = await import('@aws-sdk/client-s3');
+      // @ts-ignore
+      const { getSignedUrl } = await import('@aws-sdk/s3-request-presigner');
+
+      const s3Client = new S3Client({
+        region: this.config.region,
+        endpoint: this.config.endpoint,
+        forcePathStyle: true,
+        credentials:
+          this.config.accessKeyId && this.config.secretAccessKey
+            ? {
+                accessKeyId: this.config.accessKeyId,
+                secretAccessKey: this.config.secretAccessKey,
+              }
+            : undefined,
+      });
+
+      const command = new PutObjectCommand({
+        Bucket: this.config.bucket,
+        Key: cleanKey,
+        ContentType: mimeType,
+      });
+
+      const uploadUrl = await getSignedUrl(s3Client, command, {
+        expiresIn: expiresInSeconds,
+      });
+
+      const fileUrl = this.getUrl(cleanKey);
+
+      return {
+        mode: 's3-presigned',
+        uploadUrl,
+        fileUrl,
+        path: cleanKey,
+        headers: {
+          'Content-Type': mimeType,
+        },
+        expiresIn: expiresInSeconds,
+      };
+    } catch (err: any) {
+      if (err.code === 'ERR_MODULE_NOT_FOUND' || err.message?.includes('Cannot find module')) {
+        throw new Error(
+          'AWS SDK presigner is not installed. Run `npm install @aws-sdk/s3-request-presigner` to enable presigned URLs.',
+        );
+      }
+      throw err;
+    }
   }
 
   public async upload(

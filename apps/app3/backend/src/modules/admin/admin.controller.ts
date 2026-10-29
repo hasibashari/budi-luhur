@@ -144,13 +144,67 @@ export class AdminController {
     }
   }
 
+  static async presignArticleUpload(req: AuthRequest, res: Response) {
+    try {
+      const { filename, mimeType, fileSize, articleId } = req.body;
+      if (!mimeType || typeof mimeType !== 'string') {
+        return res
+          .status(400)
+          .json({ success: false, error: 'Tipe MIME berkas wajib disertakan.' });
+      }
+      if (!fileSize || typeof fileSize !== 'number') {
+        return res.status(400).json({ success: false, error: 'Ukuran berkas wajib disertakan.' });
+      }
+
+      const result = await AdminService.generateArticlePresignedUpload({
+        filename: filename || 'cover.png',
+        mimeType,
+        fileSize,
+        articleId,
+      });
+
+      res.json({ success: true, ...result });
+    } catch (error: any) {
+      console.error('AdminController.presignArticleUpload error:', error);
+      res
+        .status(400)
+        .json({
+          success: false,
+          error: error.message || 'Gagal menghasilkan URL upload presigned.',
+        });
+    }
+  }
+
+  static async uploadArticleImage(req: AuthRequest, res: Response) {
+    try {
+      const { image, articleId } = req.body;
+      if (!image || typeof image !== 'string') {
+        return res.status(400).json({ success: false, error: 'Data gambar wajib disertakan.' });
+      }
+      const targetId = articleId || `art_${Date.now().toString().slice(-4)}`;
+      const url = await AdminService.processArticleImage(image, targetId);
+      res.json({ success: true, url });
+    } catch (error: any) {
+      console.error('AdminController.uploadArticleImage error:', error);
+      res
+        .status(400)
+        .json({ success: false, error: error.message || 'Gagal mengunggah gambar artikel.' });
+    }
+  }
+
   static async createArticle(req: AuthRequest, res: Response) {
     try {
       const article = await AdminService.createAdminArticle(req.body);
       res.status(201).json({ success: true, article });
     } catch (error: any) {
       console.error('AdminController.createArticle error:', error);
-      res.status(500).json({ success: false, error: 'Gagal membuat artikel.' });
+      const isClientError =
+        error.message?.includes('wajib') ||
+        error.message?.includes('maksimal') ||
+        error.message?.includes('Format berkas');
+      res
+        .status(isClientError ? 400 : 500)
+        .json({ success: false, error: error.message || 'Gagal membuat artikel.' });
     }
   }
 
@@ -161,7 +215,13 @@ export class AdminController {
       res.json(result);
     } catch (error: any) {
       console.error('AdminController.updateArticle error:', error);
-      res.status(500).json({ success: false, error: 'Gagal memperbarui artikel.' });
+      const isClientError =
+        error.message?.includes('wajib') ||
+        error.message?.includes('maksimal') ||
+        error.message?.includes('Format berkas');
+      res
+        .status(isClientError ? 400 : 500)
+        .json({ success: false, error: error.message || 'Gagal memperbarui artikel.' });
     }
   }
 

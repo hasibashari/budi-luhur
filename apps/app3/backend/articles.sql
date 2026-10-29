@@ -1,7 +1,7 @@
 -- ============================================================
 -- TEMANI Unified Education Articles Seed Data
 -- Schema: PostgreSQL 15+ articles table
--- Generated & Sanitized from Base64 to Local Storage
+-- S3 Storage: Neon Object Storage (Bucket: app3-storage)
 -- ============================================================
 
 INSERT INTO "articles" (

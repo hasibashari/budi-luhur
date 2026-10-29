@@ -32,6 +32,8 @@ adminRoutes.get('/certificates', AdminController.getCertificates as any);
 adminRoutes.patch('/certificates/:userId', AdminController.reviewCertificate as any);
 
 adminRoutes.get('/articles', AdminController.getArticles as any);
+adminRoutes.post('/articles/presign', AdminController.presignArticleUpload as any);
+adminRoutes.post('/articles/upload', AdminController.uploadArticleImage as any);
 adminRoutes.post('/articles', AdminController.createArticle as any);
 adminRoutes.put('/articles/:id', AdminController.updateArticle as any);
 adminRoutes.delete('/articles/:id', AdminController.deleteArticle as any);
