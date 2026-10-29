@@ -11,11 +11,6 @@
     "test:coverage": "CI=true NODE_OPTIONS='--experimental-vm-modules' jest --coverage"
   },
   "dependencies": {
-    "@tailwindcss/vite": "^4.0.9",
-    "@types/node": "^22.13.9",
-    "@types/react": "^19.0.10",
-    "@types/react-dom": "^19.0.4",
-    "@vitejs/plugin-react": "^4.3.4",
     "axios": "^1.7.9",
     "clsx": "^2.1.1",
     "lucide-react": "^1.28.0",
@@ -25,9 +20,15 @@
     "react-router-dom": "^7.3.0",
     "recharts": "^3.10.1",
     "tailwind-merge": "^3.6.0",
-    "tailwindcss": "^4.0.9",
+    "tailwindcss": "^4.0.9"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.0.9",
+    "@types/node": "^22.13.9",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
+    "@vitejs/plugin-react": "^4.3.4",
     "typescript": "^5.8.2",
     "vite": "^6.2.0"
-  },
-  "devDependencies": {}
+  }
 }

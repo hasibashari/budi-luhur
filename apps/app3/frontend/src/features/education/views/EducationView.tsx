@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import {
   Search,
   X,
@@ -19,7 +19,6 @@ import { useReadArticles } from '../utils/readArticles';
 import { resolveImageUrl } from '@/src/shared/utils/imageUrl';
 
 export default function EducationView() {
-  const navigate = useNavigate();
   const [articles, setArticles] = useState<Article[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('Semua');

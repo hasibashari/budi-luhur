@@ -39,7 +39,7 @@ export function authMiddleware(req: AuthRequest, res: Response, next: NextFuncti
   }
 }
 
-export function optionalAuthMiddleware(req: AuthRequest, res: Response, next: NextFunction): void {
+export function optionalAuthMiddleware(req: AuthRequest, _res: Response, next: NextFunction): void {
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith('Bearer ')) {

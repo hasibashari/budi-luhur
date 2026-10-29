@@ -105,11 +105,6 @@ export function TTVaccineBarChart({
 
   // Hitung ringkasan capaian
   const completedCount = dosageData.filter(d => d.isCompleted).length;
-  const pendingCount = dosageData.filter(d => d.isPending).length;
-  const completionPercentage = Math.round((completedCount / 5) * 100);
-
-  // Status proteksi aktif tertinggi
-  const highestCompletedStage = [...dosageData].reverse().find(d => d.isCompleted);
 
   // 2. Data diagram batang untuk tren sesi kunjungan / logs
   const visitTrendData = useMemo(() => {

@@ -39,7 +39,6 @@ import { ManagedUser, MedicationSchedule } from '../types/admin.types';
 import {
   INITIAL_USER_FORM_DATA,
   UserFormData,
-  RISK_LEVEL_COLORS,
   UserGender,
   RiskLevel,
   TT_STATUS_COLORS,

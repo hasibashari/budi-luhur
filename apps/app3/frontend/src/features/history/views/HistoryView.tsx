@@ -1,5 +1,3 @@
-'use client';
-
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import {
@@ -7,7 +5,6 @@ import {
   CheckCircle2,
   Calendar,
   CalendarClock,
-  Share2,
   Printer,
   ArrowLeft,
   PlusCircle,

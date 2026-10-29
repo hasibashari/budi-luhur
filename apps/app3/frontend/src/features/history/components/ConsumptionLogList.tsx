@@ -1,7 +1,5 @@
-'use client';
-
-import React, { useState, useRef, useEffect } from 'react';
-import { CalendarCheck, Calendar as CalendarIcon, Filter, Check, Syringe, Building2, UserCheck } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import { CalendarCheck, Calendar as CalendarIcon, Filter, Check, Syringe, Building2 } from 'lucide-react';
 import { Card } from '@/src/shared/components/ui/Card';
 import { Badge } from '@/src/shared/components/ui/Badge';
 import { ConsumptionLog } from '../types';

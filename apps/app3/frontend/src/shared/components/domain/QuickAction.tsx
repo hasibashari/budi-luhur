@@ -87,18 +87,26 @@ export function QuickAction({
         {/* 3. Jadwal TT */}
         <Link
           to='/user/schedule'
+          title={nextScheduleDate ? `Jadwal: ${nextScheduleDate}` : undefined}
           className='flex flex-col justify-between p-3.5 sm:p-4 rounded-2xl bg-white border border-[#eff4ff] shadow-xs hover:shadow-md transition-all active:scale-[0.98] group'
         >
           <div className='w-11 h-11 rounded-xl bg-[#dee9fc] flex items-center justify-center text-[#cb4364] transition-transform group-hover:scale-105 shadow-2xs mb-3'>
             <CalendarClock size={20} />
           </div>
           <div className='flex items-center justify-between'>
-            <h3 className='text-xs sm:text-sm font-bold text-[#121c2a] group-hover:text-[#cb4364] transition-colors'>
-              Jadwal TT{nextLevel}
-            </h3>
+            <div className='min-w-0'>
+              <h3 className='text-xs sm:text-sm font-bold text-[#121c2a] group-hover:text-[#cb4364] transition-colors truncate'>
+                Jadwal TT{nextLevel}
+              </h3>
+              {nextScheduleDate && (
+                <p className='text-[10px] text-slate-500 truncate max-w-[100px]'>
+                  {nextScheduleDate.split('•')[0]}
+                </p>
+              )}
+            </div>
             <ChevronRight
               size={15}
-              className='text-[#8b7074] group-hover:text-[#cb4364] transition-colors'
+              className='text-[#8b7074] group-hover:text-[#cb4364] transition-colors shrink-0'
             />
           </div>
         </Link>

@@ -23,7 +23,6 @@ import type {
   TTVaccineType,
 } from '@/src/features/user/types';
 import {
-  MAX_ATTACHMENT_BYTES,
   validateAttachmentFile,
 } from '@/src/features/user/api/userRepository';
 

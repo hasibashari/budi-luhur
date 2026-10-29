@@ -14,7 +14,6 @@ import { TTSchedule } from '../types';
 
 const CHECK_INTERVAL_MS = 20 * 1000;
 const EXACT_WINDOW_MINUTES = 10;
-const EARLY_WINDOW_MINUTES = 15;
 const TIMEZONE = 'Asia/Jakarta';
 const STORAGE_PREFIX = 'temani_tt_reminder';
 

@@ -376,7 +376,7 @@ export function RegisterForm({ onSwitchTab, hideHeader = false }: RegisterFormPr
               />
               <button
                 type='button'
-                onClick={() => setShowPassword(!showConfirmPassword)}
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                 className='absolute right-1.5 min-w-[36px] min-h-[36px] flex items-center justify-center text-slate-400 hover:text-slate-600 cursor-pointer p-1 active:scale-90 transition-transform'
                 aria-label={
                   showConfirmPassword

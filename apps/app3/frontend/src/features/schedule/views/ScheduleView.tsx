@@ -604,7 +604,6 @@ export default function ScheduleView() {
   const [isDeleting, setIsDeleting] = useState(false);
 
   const userTTStatus = (user as { ttStatus?: string } | null)?.ttStatus;
-  const currentTTLevel = Number(String(userTTStatus || 'TT0').replace('TT', '')) || 0;
 
   const nextSchedule = useMemo(
     () =>

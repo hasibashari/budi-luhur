@@ -1,5 +1,4 @@
-import React from 'react';
-import { LogOut, KeyRound, Trash2, AlertTriangle } from 'lucide-react';
+import { LogOut, KeyRound, Trash2 } from 'lucide-react';
 import { Button } from '@/src/shared/components/ui/Button';
 
 export interface ProfileSecuritySectionProps {

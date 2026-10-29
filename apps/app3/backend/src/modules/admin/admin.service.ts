@@ -508,7 +508,7 @@ export class AdminService {
       return trimmed;
     }
 
-    const declaredMime = dataUriMatch[1].toLowerCase();
+    // Validasi format Data URL Base64
     const base64Data = dataUriMatch[2].replace(/\s+/g, '');
     const buffer = Buffer.from(base64Data, 'base64');
 
@@ -726,28 +726,43 @@ export class AdminService {
       ORDER BY s.scheduled_date ASC NULLS LAST, s.created_at DESC
     `);
     const rows = res.rows;
+    if (rows.length === 0) return [];
 
     const now = new Date();
     const todayStr = now.toLocaleDateString('en-CA', { timeZone: 'Asia/Jakarta' });
 
-    const logsRes = await db.query<any>(
-      `SELECT user_id, schedule_id, status, scheduled_date, taken_at 
-       FROM consumption_logs 
-       WHERE scheduled_date = $1 OR scheduled_date >= CURRENT_DATE - INTERVAL '6 days'
-       ORDER BY scheduled_date DESC`,
-      [todayStr],
-    );
+    const scheduleIds = rows.map((r: any) => r.id);
+    const [logsRes, allSlotsRes] = await Promise.all([
+      db.query<any>(
+        `SELECT user_id, schedule_id, status, scheduled_date, taken_at 
+         FROM consumption_logs 
+         WHERE scheduled_date = $1 OR scheduled_date >= CURRENT_DATE - INTERVAL '6 days'
+         ORDER BY scheduled_date DESC`,
+        [todayStr],
+      ),
+      db.query<any>(
+        `SELECT schedule_id, time FROM schedule_time_slots WHERE schedule_id = ANY($1) ORDER BY time ASC`,
+        [scheduleIds],
+      ),
+    ]);
     const recentLogs = logsRes.rows;
 
-    const allSlotsRes = await db.query<any>(
-      `SELECT schedule_id, time FROM schedule_time_slots ORDER BY time ASC`,
-    );
     const slotsByScheduleId: Record<string, string[]> = {};
     for (const slot of allSlotsRes.rows) {
       if (!slotsByScheduleId[slot.schedule_id]) {
         slotsByScheduleId[slot.schedule_id] = [];
       }
       slotsByScheduleId[slot.schedule_id].push(slot.time);
+    }
+
+    const logsByUser = new Map<string, any[]>();
+    for (const l of recentLogs) {
+      const existing = logsByUser.get(l.user_id);
+      if (existing) {
+        existing.push(l);
+      } else {
+        logsByUser.set(l.user_id, [l]);
+      }
     }
 
     const result: MedicationSchedule[] = [];
@@ -770,17 +785,17 @@ export class AdminService {
           ? 'Suplemen TTD'
           : 'TTD Rutin';
 
+      const userLogs = logsByUser.get(r.user_id) || [];
       const log = isDaily
-        ? recentLogs.find(
+        ? userLogs.find(
           (l: any) =>
-            l.user_id === r.user_id &&
             (l.schedule_id === r.id || !l.schedule_id) &&
             (typeof l.scheduled_date === 'string'
               ? l.scheduled_date.startsWith(todayStr)
               : new Date(l.scheduled_date).toISOString().split('T')[0] === todayStr),
         )
-        : recentLogs.find(
-          (l: any) => l.user_id === r.user_id && (l.schedule_id === r.id || !l.schedule_id),
+        : userLogs.find(
+          (l: any) => l.schedule_id === r.id || !l.schedule_id,
         );
 
       const isCompleted = log && (log.status === 'ON_TIME' || log.status === 'LATE');

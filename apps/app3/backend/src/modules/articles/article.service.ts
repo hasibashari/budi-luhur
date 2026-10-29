@@ -57,7 +57,7 @@ export class ArticleService {
     }
 
     let sql = `
-      SELECT id, title, summary, content, image_url, read_time, category, status, views, published_at, author_name
+      SELECT id, title, summary, image_url, read_time, category, status, views, published_at, author_name
       FROM articles
       WHERE status = 'Terbit' AND btrim(category) <> ''
     `;
@@ -85,7 +85,7 @@ export class ArticleService {
         id: r.id,
         title: r.title,
         summary: r.summary,
-        content: r.content || r.summary,
+        content: r.summary,
         imageUrl: r.image_url,
         readTime: r.read_time,
         category: r.category === 'Kesehatan Pranikah' ? 'Catin' : r.category,

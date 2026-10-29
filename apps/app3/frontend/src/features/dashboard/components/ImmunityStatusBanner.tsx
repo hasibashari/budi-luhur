@@ -1,5 +1,4 @@
 import { ShieldCheck, CheckCircle2, Calendar, FileBadge } from 'lucide-react';
-import { TT_DOSAGE_LEVELS, TTLevelInfo } from '@/src/shared/constants/domain.constants';
 
 export interface ImmunityStatusBannerProps {
   currentDoseLevel?: number; // 0 to 5
@@ -15,8 +14,6 @@ export function ImmunityStatusBanner({
   onDownloadCard,
 }: ImmunityStatusBannerProps) {
   const safeDose = Math.max(0, Math.min(currentDoseLevel, 5));
-  const activeLevelKey = `TT${safeDose || 1}`;
-  const activeLevelInfo: TTLevelInfo = TT_DOSAGE_LEVELS[activeLevelKey] || TT_DOSAGE_LEVELS.TT3;
   const isProtected = safeDose >= 2;
   const progressPercent = Math.round((safeDose / 5) * 100);
 
