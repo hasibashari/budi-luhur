@@ -7,6 +7,9 @@ export class ArticleController {
     try {
       const { category } = req.query;
       const articles = await ArticleService.getArticles(category as string | undefined);
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
       res.json(articles);
     } catch (error: any) {
       console.error('ArticleController.getArticles error:', error);

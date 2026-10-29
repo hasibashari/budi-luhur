@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import {
   BellRing,
   X,
-  Check,
   CheckCircle2,
   CalendarClock,
   ArrowRight,
@@ -408,11 +407,6 @@ export default function DashboardView() {
                     <span className='px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-md text-[#aa294d] text-[11px] font-bold shadow-xs'>
                       {featuredArticle.category || 'Wajib bagi Catin'}
                     </span>
-                    {isRead(featuredArticle.id) && (
-                      <span className='inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-stone-900/80 backdrop-blur-md text-stone-200 text-[11px] font-semibold shadow-xs'>
-                        <Check size={12} className='text-emerald-400' /> Sudah dibaca
-                      </span>
-                    )}
                   </div>
                 </Link>
 

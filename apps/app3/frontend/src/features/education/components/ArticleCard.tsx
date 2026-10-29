@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Article } from '../types';
-import { Clock, Tag, ArrowRight, Check } from 'lucide-react';
+import { Clock, Tag, ArrowRight } from 'lucide-react';
 import { useReadArticles } from '../utils/readArticles';
 import { resolveImageUrl } from '@/src/shared/utils/imageUrl';
 
@@ -36,12 +36,6 @@ export default function ArticleCard({ article }: ArticleCardProps) {
             <Tag size={12} className={read ? 'text-stone-400' : 'text-emerald-600'} />
             {article.category}
           </span>
-          {read && (
-            <span className='inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-stone-200/90 text-stone-600 shadow-2xs backdrop-blur-xs'>
-              <Check size={12} className='text-emerald-600' />
-              Sudah dibaca
-            </span>
-          )}
         </div>
         {article.imageUrl ? (
           <img

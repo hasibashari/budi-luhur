@@ -9,7 +9,6 @@ import {
   BookOpen,
   Award,
   Clock,
-  Check,
   CheckCircle2,
 } from 'lucide-react';
 import { getArticlesAction } from '../api/educationRepository';
@@ -247,12 +246,6 @@ export default function EducationView() {
                       >
                         {art.badge || art.category}
                       </span>
-                      {read && (
-                        <span className='inline-flex items-center gap-1 text-[10px] text-stone-500 font-medium bg-stone-200/60 px-1.5 py-0.5 rounded-md'>
-                          <Check size={11} className='text-emerald-600' />
-                          Sudah dibaca
-                        </span>
-                      )}
                     </div>
                     <span className='text-[11px] text-[#8b7074] flex items-center gap-1 shrink-0'>
                       <Clock size={12} /> {art.readTime || '4 mnt'}

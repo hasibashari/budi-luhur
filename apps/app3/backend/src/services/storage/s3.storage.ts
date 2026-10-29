@@ -1,4 +1,8 @@
-import { IStorageService, StorageUploadResult, PresignedUploadResult } from './storage.interface.js';
+import {
+  IStorageService,
+  StorageUploadResult,
+  PresignedUploadResult,
+} from './storage.interface.js';
 
 export interface S3Config {
   region: string;
@@ -31,12 +35,32 @@ export class S3StorageService implements IStorageService {
       bucket: config?.bucket || process.env.AWS_S3_BUCKET || 'app3-storage',
       accessKeyId: config?.accessKeyId || process.env.AWS_ACCESS_KEY_ID,
       secretAccessKey: config?.secretAccessKey || process.env.AWS_SECRET_ACCESS_KEY,
-      endpoint:
-        config?.endpoint ||
-        process.env.AWS_ENDPOINT_URL_S3 ||
-        process.env.AWS_S3_ENDPOINT,
+      endpoint: config?.endpoint || process.env.AWS_ENDPOINT_URL_S3 || process.env.AWS_S3_ENDPOINT,
       customDomain: config?.customDomain || process.env.AWS_S3_CUSTOM_DOMAIN,
     };
+  }
+
+  public extractKey(destinationPath: string): string {
+    if (!destinationPath) return '';
+    let key = destinationPath.trim();
+    if (key.startsWith('http://') || key.startsWith('https://')) {
+      try {
+        const parsed = new URL(key);
+        key = decodeURIComponent(parsed.pathname);
+      } catch {
+        // keep as is
+      }
+    }
+
+    // Hapus nama bucket jika ada di awal pathname (misal: /app3-storage/articles/...)
+    if (this.config.bucket) {
+      const bucketPattern = new RegExp(`^/?${this.config.bucket}/`, 'i');
+      key = key.replace(bucketPattern, '');
+    }
+
+    // Hapus awalan '/' atau 'uploads/' jika ada
+    key = key.replace(/^(\/|uploads\/)+/, '');
+    return key;
   }
 
   public async getPresignedUploadUrl(
@@ -44,7 +68,7 @@ export class S3StorageService implements IStorageService {
     mimeType: string,
     expiresInSeconds: number = 300,
   ): Promise<PresignedUploadResult> {
-    const cleanKey = destinationPath.replace(/^(\/|uploads\/)+/, '');
+    const cleanKey = this.extractKey(destinationPath);
 
     if (!this.config.bucket) {
       throw new Error(
@@ -108,7 +132,7 @@ export class S3StorageService implements IStorageService {
     destinationPath: string,
     mimeType: string,
   ): Promise<StorageUploadResult> {
-    const cleanKey = destinationPath.replace(/^(\/|uploads\/)+/, '');
+    const cleanKey = this.extractKey(destinationPath);
 
     if (!this.config.bucket) {
       throw new Error(
@@ -160,7 +184,7 @@ export class S3StorageService implements IStorageService {
   }
 
   public async delete(destinationPath: string): Promise<boolean> {
-    const cleanKey = destinationPath.replace(/^(\/|uploads\/)+/, '');
+    const cleanKey = this.extractKey(destinationPath);
     try {
       // @ts-ignore
       const { S3Client, DeleteObjectCommand } = await import('@aws-sdk/client-s3');
@@ -193,7 +217,7 @@ export class S3StorageService implements IStorageService {
     if (storedPath.startsWith('http://') || storedPath.startsWith('https://')) {
       return storedPath;
     }
-    const cleanKey = storedPath.replace(/^(\/|uploads\/)+/, '');
+    const cleanKey = this.extractKey(storedPath);
 
     if (this.config.customDomain) {
       return `${this.config.customDomain.replace(/\/+$/, '')}/${cleanKey}`;
@@ -207,7 +231,7 @@ export class S3StorageService implements IStorageService {
   }
 
   public async exists(destinationPath: string): Promise<boolean> {
-    const cleanKey = destinationPath.replace(/^(\/|uploads\/)+/, '');
+    const cleanKey = this.extractKey(destinationPath);
     try {
       // @ts-ignore
       const { S3Client, HeadObjectCommand } = await import('@aws-sdk/client-s3');
@@ -235,4 +259,3 @@ export class S3StorageService implements IStorageService {
     }
   }
 }
-

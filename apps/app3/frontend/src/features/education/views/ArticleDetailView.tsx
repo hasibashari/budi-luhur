@@ -16,7 +16,6 @@ import {
   Share2,
   Bookmark,
   BookmarkCheck,
-  Check,
   CheckCircle2,
   ShieldCheck,
   CalendarClock,
@@ -444,12 +443,6 @@ export default function ArticleDetailView({
                             {rel.category}
                           </span>
                           <span className='text-[10px] text-[#8b7074]'>{rel.readTime}</span>
-                          {read && (
-                            <span className='inline-flex items-center gap-1 text-[10px] text-stone-500 font-medium bg-stone-200/50 px-1.5 py-0.2 rounded-md'>
-                              <Check size={10} className='text-emerald-600' />
-                              Sudah dibaca
-                            </span>
-                          )}
                         </div>
                         <h4
                           className={`text-xs transition-colors line-clamp-1 ${

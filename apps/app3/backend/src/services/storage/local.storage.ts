@@ -20,12 +20,29 @@ export class LocalStorageService implements IStorageService {
     return this.baseDir;
   }
 
+  public extractKey(destinationPath: string): string {
+    if (!destinationPath) return '';
+    let key = destinationPath.trim();
+    if (key.startsWith('http://') || key.startsWith('https://')) {
+      try {
+        const parsed = new URL(key);
+        key = decodeURIComponent(parsed.pathname);
+      } catch {
+        // keep as is
+      }
+    }
+    if (key.includes('/uploads/')) {
+      key = key.split('/uploads/')[1];
+    }
+    return key.replace(/^(\/|uploads\/)+/, '');
+  }
+
   public async getPresignedUploadUrl(
     destinationPath: string,
     mimeType: string,
     expiresInSeconds: number = 300,
   ): Promise<PresignedUploadResult> {
-    const cleanRelativePath = destinationPath.replace(/^(\/|uploads\/)+/, '');
+    const cleanRelativePath = this.extractKey(destinationPath);
     const publicPath = `${this.urlPrefix}/${cleanRelativePath}`;
 
     return {
@@ -45,7 +62,7 @@ export class LocalStorageService implements IStorageService {
     destinationPath: string,
     mimeType: string,
   ): Promise<StorageUploadResult> {
-    const cleanRelativePath = destinationPath.replace(/^(\/|uploads\/)+/, '');
+    const cleanRelativePath = this.extractKey(destinationPath);
     const absolutePath = path.resolve(this.baseDir, cleanRelativePath);
 
     // Security check: ensure path does not escape baseDir
@@ -78,7 +95,7 @@ export class LocalStorageService implements IStorageService {
   }
 
   public async delete(destinationPath: string): Promise<boolean> {
-    const cleanRelativePath = destinationPath.replace(/^(\/|uploads\/)+/, '');
+    const cleanRelativePath = this.extractKey(destinationPath);
     const absolutePath = path.resolve(this.baseDir, cleanRelativePath);
 
     if (!absolutePath.startsWith(path.resolve(this.baseDir))) {
@@ -106,7 +123,7 @@ export class LocalStorageService implements IStorageService {
   }
 
   public async exists(destinationPath: string): Promise<boolean> {
-    const cleanRelativePath = destinationPath.replace(/^(\/|uploads\/)+/, '');
+    const cleanRelativePath = this.extractKey(destinationPath);
     const absolutePath = path.resolve(this.baseDir, cleanRelativePath);
     try {
       await fs.promises.access(absolutePath, fs.constants.F_OK);

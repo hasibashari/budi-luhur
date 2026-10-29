@@ -1,7 +1,7 @@
 import db from '../../config/database.js';
 import { NotificationService } from '../notifications/notification.service.js';
-import { getStorageService } from '../../services/storage/index.js';
-import { LocalStorageService } from '../../services/storage/local.storage.js';
+import { getStorageService, LocalStorageService, S3StorageService } from '../../services/storage/index.js';
+import { clearArticlesCache } from '../articles/article.service.js';
 import { detectAttachmentMime, isAllowedAttachmentSize } from '../../utils/fileValidation.js';
 
 function normalizeArticleCategory(category: string): string {
@@ -552,6 +552,48 @@ export class AdminService {
     }
   }
 
+  static async deleteArticleImageFromStorage(imageUrl: string | null | undefined): Promise<void> {
+    if (!imageUrl) return;
+    const trimmed = imageUrl.trim();
+    if (!trimmed) return;
+
+    // Abaikan gambar pihak ketiga (misal Unsplash) yang bukan milik storage sistem
+    const isOurStorage =
+      trimmed.includes('/uploads/') ||
+      trimmed.includes('articles/art_') ||
+      trimmed.includes('app3-storage') ||
+      trimmed.startsWith('articles/') ||
+      trimmed.includes('uploads/articles');
+
+    if (!isOurStorage) return;
+
+    try {
+      // 1. Hapus via LocalStorageService jika merupakan berkas lokal
+      if (trimmed.includes('/uploads/') || !trimmed.startsWith('http')) {
+        const localStorage = new LocalStorageService();
+        await localStorage.delete(trimmed);
+      }
+
+      // 2. Hapus via storage service utama (S3 atau Local)
+      const storage = getStorageService();
+      await storage.delete(trimmed);
+
+      // 3. Jika storage driver default bukan S3, namun URL mengarah ke Neon S3 / AWS S3,
+      // panggil S3StorageService secara langsung agar file di bucket cloud tetap terhapus
+      if (
+        !(storage instanceof S3StorageService) &&
+        (trimmed.includes('app3-storage') ||
+          trimmed.includes('.neon.tech') ||
+          trimmed.includes('.amazonaws.com'))
+      ) {
+        const s3 = new S3StorageService();
+        await s3.delete(trimmed);
+      }
+    } catch (cleanupErr) {
+      console.warn('Gagal menghapus file gambar artikel dari storage:', cleanupErr);
+    }
+  }
+
   static async createAdminArticle(data: {
     title: string;
     category: string;
@@ -592,6 +634,8 @@ export class AdminService {
         ],
       );
     });
+
+    clearArticlesCache();
 
     return {
       id: newId,
@@ -658,26 +702,13 @@ export class AdminService {
       if (
         processedImageUrl !== undefined &&
         oldImageUrl &&
-        processedImageUrl !== oldImageUrl &&
-        (oldImageUrl.includes('/uploads/articles/') || oldImageUrl.includes('articles/art_'))
+        processedImageUrl !== oldImageUrl
       ) {
-        try {
-          const cleanKey = oldImageUrl.includes('/uploads/')
-            ? oldImageUrl.split('/uploads/')[1]
-            : oldImageUrl;
-
-          if (oldImageUrl.includes('/uploads/')) {
-            const localStorage = new LocalStorageService();
-            await localStorage.delete(cleanKey);
-          } else {
-            const storage = getStorageService();
-            await storage.delete(cleanKey);
-          }
-        } catch (cleanupErr) {
-          console.warn('Gagal menghapus berkas foto lama dari storage:', cleanupErr);
-        }
+        await AdminService.deleteArticleImageFromStorage(oldImageUrl);
       }
     });
+
+    clearArticlesCache();
 
     return { success: true };
   }
@@ -688,26 +719,16 @@ export class AdminService {
         articleId,
       ]);
       const imageUrl = existing.rows[0]?.image_url;
-      if (imageUrl && (imageUrl.includes('/uploads/articles/') || imageUrl.includes('articles/art_'))) {
-        try {
-          const cleanKey = imageUrl.includes('/uploads/')
-            ? imageUrl.split('/uploads/')[1]
-            : imageUrl;
-          if (imageUrl.includes('/uploads/')) {
-            const localStorage = new LocalStorageService();
-            await localStorage.delete(cleanKey);
-          } else {
-            const storage = getStorageService();
-            await storage.delete(cleanKey);
-          }
-        } catch (cleanupErr) {
-          console.warn('Gagal menghapus file gambar dari storage:', cleanupErr);
-        }
+      if (imageUrl) {
+        await AdminService.deleteArticleImageFromStorage(imageUrl);
       }
 
       await client.query(`DELETE FROM articles WHERE id = $1`, [articleId]);
       await AdminService.normalizeStoredCategories(client);
     });
+
+    clearArticlesCache();
+
     return { success: true };
   }
 
