@@ -22,7 +22,7 @@ export default function AdminSidebar({ mobileOpen = false, onMobileClose }: Admi
 
   const adminBadge = (
     <span className='px-2.5 py-0.5 rounded-full bg-teal-700 text-white text-[10px] font-extrabold shadow-xs uppercase tracking-wide'>
-      BIDAN / FASKES
+      ADMIN
     </span>
   );
 

@@ -1,16 +1,20 @@
 import axios from 'axios';
 
-const rawApiUrl = import.meta.env.VITE_API_BASE_URL;
-export const API_BASE_URL =
-  import.meta.env.PROD
-    ? (rawApiUrl && !rawApiUrl.includes('localhost') && !rawApiUrl.includes('127.0.0.1')
-        ? rawApiUrl
-        : '/app2/api/v1')
-    : (rawApiUrl || 'http://localhost:4002/api/v1');
+const env =
+  typeof import.meta !== 'undefined' && (import.meta as any).env
+    ? (import.meta as any).env
+    : (typeof process !== 'undefined' ? process.env : {}) || {};
 
-export const AUTH_STORAGE_KEY = import.meta.env.VITE_AUTH_STORAGE_KEY || 'app2_auth_token';
+const rawApiUrl = env.VITE_API_BASE_URL;
+export const API_BASE_URL = env.PROD
+  ? rawApiUrl && !rawApiUrl.includes('localhost') && !rawApiUrl.includes('127.0.0.1')
+    ? rawApiUrl
+    : '/app2/api/v1'
+  : rawApiUrl || 'http://localhost:4002/api/v1';
 
-export const USER_STORAGE_KEY = import.meta.env.VITE_USER_STORAGE_KEY || 'app2_auth_user';
+export const AUTH_STORAGE_KEY = env.VITE_AUTH_STORAGE_KEY || 'app2_auth_token';
+
+export const USER_STORAGE_KEY = env.VITE_USER_STORAGE_KEY || 'app2_auth_user';
 
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,
