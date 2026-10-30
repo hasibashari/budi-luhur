@@ -17,14 +17,14 @@ export default function StatCard({
   title,
   value,
   icon: Icon,
-  iconBgColor = 'rgba(2, 132, 199, 0.08)',
-  iconColor = '#0284c7',
+  iconBgColor = 'rgba(13, 148, 136, 0.08)',
+  iconColor = '#0d9488',
   valueColor = '#0f172a',
   subtitle,
   extraContent,
 }: StatCardProps) {
   return (
-    <div className='p-4 bg-white rounded-2xl border border-[#fce7f3] shadow-xs hover:shadow-md transition-all flex flex-col justify-between'>
+    <div className='p-4 bg-white rounded-2xl border border-slate-200 shadow-xs hover:shadow-md transition-all flex flex-col justify-between'>
       <div className='flex items-center justify-between gap-2 mb-2'>
         <span className='text-xs font-semibold text-[#64748b] truncate'>{title}</span>
         <div

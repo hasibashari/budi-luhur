@@ -54,18 +54,18 @@ export default function AppSidebar({
   const sidebarInner = (
     <div className='flex flex-col h-full bg-white px-4 py-5'>
       {/* Header Section */}
-      <div className='flex items-center justify-between pb-4 mb-4 border-b border-[#FCE7F3]'>
+      <div className='flex items-center justify-between pb-4 mb-4 border-b border-slate-200'>
         <Link
           to={brandHref}
           onClick={onMobileClose}
           className='flex items-center gap-3 group min-w-0'
         >
           {BrandIcon ? (
-            <div className='w-10 h-10 rounded-xl bg-gradient-to-tr from-[#E94383] to-[#F58CB4] text-white flex items-center justify-center shadow-md shadow-pink-500/20 shrink-0 group-hover:scale-105 transition-transform'>
+            <div className='w-10 h-10 rounded-xl bg-gradient-to-tr from-[#0D9488] to-[#14B8A6] text-white flex items-center justify-center shadow-md shadow-teal-700/20 shrink-0 group-hover:scale-105 transition-transform'>
               <BrandIcon size={20} />
             </div>
           ) : (
-            <div className='w-10 h-10 rounded-xl bg-gradient-to-tr from-[#E94383] to-[#F58CB4] text-white flex items-center justify-center text-lg shadow-md shadow-pink-500/20 shrink-0 group-hover:scale-105 transition-transform'>
+            <div className='w-10 h-10 rounded-xl bg-gradient-to-tr from-[#0D9488] to-[#14B8A6] text-white flex items-center justify-center text-lg shadow-md shadow-teal-700/20 shrink-0 group-hover:scale-105 transition-transform'>
               🌸
             </div>
           )}
@@ -76,7 +76,7 @@ export default function AppSidebar({
               </span>
               {badge}
             </div>
-            <span className='text-[11px] font-bold text-[#E94383] uppercase tracking-wider leading-tight'>
+            <span className='text-[11px] font-bold text-[#0D9488] uppercase tracking-wider leading-tight'>
               {brandSubtitle}
             </span>
           </div>
@@ -87,7 +87,7 @@ export default function AppSidebar({
           <button
             type='button'
             onClick={onMobileClose}
-            className='md:hidden p-1.5 rounded-lg text-[#7E92AB] hover:bg-[#FFF1F5] hover:text-[#E94383] transition-colors cursor-pointer'
+            className='md:hidden p-1.5 rounded-lg text-[#7E92AB] hover:bg-[#F0FDFA] hover:text-[#0D9488] transition-colors cursor-pointer'
           >
             <X size={18} />
           </button>
@@ -108,13 +108,13 @@ export default function AppSidebar({
               onClick={onMobileClose}
               className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-150 select-none ${
                 isActive
-                  ? 'bg-[#FDE8F0] text-[#E94383] font-bold shadow-xs'
-                  : 'text-[#4A5E78] hover:bg-[#FFF1F5] hover:text-[#E94383]'
+                  ? 'bg-[#F0FDFA] text-[#0D9488] font-bold shadow-xs border-l-2 border-[#0D9488]'
+                  : 'text-[#4A5E78] hover:bg-[#F0FDFA] hover:text-[#0D9488]'
               }`}
             >
               <Icon
                 size={18}
-                className={isActive ? 'text-[#E94383] shrink-0' : 'text-[#7E92AB] shrink-0'}
+                className={isActive ? 'text-[#0D9488] shrink-0' : 'text-[#7E92AB] shrink-0'}
               />
               <span className='truncate'>{item.name}</span>
             </Link>
@@ -123,7 +123,7 @@ export default function AppSidebar({
       </nav>
 
       {/* Footer Action */}
-      {footerAction && <div className='pt-3 mt-3 border-t border-[#FCE7F3]'>{footerAction}</div>}
+      {footerAction && <div className='pt-3 mt-3 border-t border-slate-200'>{footerAction}</div>}
     </div>
   );
 
@@ -135,7 +135,7 @@ export default function AppSidebar({
           <div className='fixed inset-0 bg-slate-950/40 backdrop-blur-xs' onClick={onMobileClose} />
           <div
             style={{ width: drawerWidth }}
-            className='fixed top-0 bottom-0 left-0 bg-white shadow-2xl z-10 border-r border-[#fce7f3]'
+            className='fixed top-0 bottom-0 left-0 bg-white shadow-2xl z-10 border-r border-slate-200'
           >
             {sidebarInner}
           </div>
@@ -145,7 +145,7 @@ export default function AppSidebar({
       {/* Desktop Sticky Permanent Sidebar */}
       <aside
         style={{ width: drawerWidth }}
-        className='hidden md:flex flex-col sticky top-0 h-screen z-30 bg-white border-r border-[#fce7f3] shadow-2xs shrink-0 select-none'
+        className='hidden md:flex flex-col sticky top-0 h-screen z-30 bg-white border-r border-slate-200 shadow-2xs shrink-0 select-none'
       >
         {sidebarInner}
       </aside>

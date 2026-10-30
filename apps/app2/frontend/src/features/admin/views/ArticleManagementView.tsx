@@ -241,7 +241,7 @@ export default function ArticleManagementView() {
             type='button'
             title='Lihat Detail Artikel'
             onClick={() => handlePreviewArticle(article.id)}
-            className='p-1.5 rounded-lg text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer'
+            className='p-1.5 rounded-lg text-teal-700 hover:bg-teal-50 transition-colors cursor-pointer'
           >
             <Eye size={16} />
           </button>
@@ -257,7 +257,7 @@ export default function ArticleManagementView() {
             type='button'
             title='Hapus Artikel'
             onClick={() => handleDeleteRequest(article.id)}
-            className='p-1.5 rounded-lg text-rose-500 hover:bg-rose-50 hover:text-rose-700 transition-colors cursor-pointer'
+            className='p-1.5 rounded-lg text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors cursor-pointer'
           >
             <Trash2 size={16} />
           </button>
@@ -326,7 +326,7 @@ export default function ArticleManagementView() {
             type='button'
             title='Hapus Artikel'
             onClick={() => handleDeleteRequest(article.id)}
-            className='w-11 h-11 rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-100 flex items-center justify-center transition-colors cursor-pointer'
+            className='w-11 h-11 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 flex items-center justify-center transition-colors cursor-pointer'
           >
             <Trash2 size={16} />
           </button>

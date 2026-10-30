@@ -373,8 +373,8 @@ export default function ScheduleManagementView() {
       renderCell: schedule => {
         if (schedule.todayStatus === 'COMPLETED') {
           return (
-            <span className='inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-[#58AA96] border border-emerald-200 text-xs font-bold'>
-              <span className='w-1.5 h-1.5 rounded-full bg-[#58AA96]'></span>
+            <span className='inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-teal-50 text-teal-700 border border-teal-200 text-xs font-bold'>
+              <span className='w-1.5 h-1.5 rounded-full bg-teal-600'></span>
               Sudah Minum
             </span>
           );
@@ -414,7 +414,7 @@ export default function ScheduleManagementView() {
             type='button'
             title='Hapus Jadwal'
             onClick={() => handleDeleteRequest(schedule.id)}
-            className='p-1.5 rounded-lg text-rose-600 hover:bg-rose-50 hover:text-rose-700 transition-colors cursor-pointer'
+            className='p-1.5 rounded-lg text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors cursor-pointer'
           >
             <Trash2 size={16} />
           </button>
@@ -577,7 +577,7 @@ export default function ScheduleManagementView() {
                     type='button'
                     title='Hapus Jadwal'
                     onClick={() => handleDeleteRequest(schedule.id)}
-                    className='w-11 h-11 rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-100 flex items-center justify-center transition-colors cursor-pointer'
+                    className='w-11 h-11 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 flex items-center justify-center transition-colors cursor-pointer'
                   >
                     <Trash2 size={16} />
                   </button>

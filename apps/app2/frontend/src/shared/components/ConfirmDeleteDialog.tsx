@@ -50,21 +50,21 @@ export function ConfirmDeleteDialog({
           if (!loading) onClose();
         }}
       />
-      <div className='relative z-10 w-full max-w-sm bg-white rounded-2xl p-6 shadow-2xl border border-[#fce7f3] text-center flex flex-col items-center'>
-        <div className='w-14 h-14 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center mb-3 shadow-inner'>
+      <div className='relative z-10 w-full max-w-sm bg-white rounded-2xl p-6 shadow-2xl border border-slate-200 text-center flex flex-col items-center'>
+        <div className='w-14 h-14 rounded-full bg-red-100 text-red-600 flex items-center justify-center mb-3 shadow-inner'>
           <AlertTriangle size={26} />
         </div>
 
-        <h3 className='text-base sm:text-lg font-bold text-[#1e293b] leading-snug'>{title}</h3>
+        <h3 className='text-base sm:text-lg font-bold text-slate-800 leading-snug'>{title}</h3>
 
-        <p className='text-xs sm:text-sm text-[#64748b] mt-2 mb-6 leading-relaxed'>{message}</p>
+        <p className='text-xs sm:text-sm text-slate-500 mt-2 mb-6 leading-relaxed'>{message}</p>
 
         <div className='flex flex-col-reverse sm:flex-row items-center gap-2.5 w-full'>
           <button
             type='button'
             onClick={onClose}
             disabled={loading}
-            className='w-full sm:flex-1 py-2.5 px-4 text-xs sm:text-sm font-bold text-[#64748b] hover:text-[#1e293b] hover:bg-slate-100 rounded-xl transition-colors cursor-pointer disabled:opacity-50'
+            className='w-full sm:flex-1 py-2.5 px-4 text-xs sm:text-sm font-bold text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded-xl transition-colors cursor-pointer disabled:opacity-50'
           >
             {cancelText}
           </button>
@@ -72,7 +72,7 @@ export function ConfirmDeleteDialog({
             type='button'
             onClick={onConfirm}
             disabled={loading}
-            className='w-full sm:flex-1 py-2.5 px-4 text-xs sm:text-sm font-bold text-white bg-[#e11d48] hover:bg-[#be123c] rounded-xl shadow-sm transition-all cursor-pointer disabled:opacity-50'
+            className='w-full sm:flex-1 py-2.5 px-4 text-xs sm:text-sm font-bold text-white bg-red-600 hover:bg-red-700 rounded-xl shadow-xs transition-all cursor-pointer disabled:opacity-50'
           >
             {loading ? 'Menghapus...' : confirmText}
           </button>

@@ -38,7 +38,7 @@ export default function UserFormModal({
     >
       <div>
         <label className='block text-xs font-bold text-slate-700 mb-1'>
-          Nama Lengkap Akseptor <span className='text-rose-500'>*</span>
+          Nama Lengkap Akseptor <span className='text-red-500'>*</span>
         </label>
         <input
           type='text'

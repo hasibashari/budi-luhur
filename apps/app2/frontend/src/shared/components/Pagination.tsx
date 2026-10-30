@@ -101,7 +101,7 @@ export function Pagination({
             <select
               value={pageSize}
               onChange={e => onPageSizeChange(Number(e.target.value))}
-              className='text-xs font-semibold text-[#1e293b] bg-white border border-[#fce7f3] rounded-lg px-2 py-1 outline-none focus:border-[#e11d48]'
+              className='text-xs font-semibold text-slate-800 bg-white border border-slate-200 rounded-lg px-2 py-1 outline-none focus:border-teal-600 focus:ring-1 focus:ring-teal-600'
             >
               {pageSizeOptions.map(opt => (
                 <option key={opt} value={opt}>
@@ -121,7 +121,7 @@ export function Pagination({
             disabled={safeCurrentPage <= 1}
             onClick={() => onPageChange(1)}
             aria-label='First page'
-            className='w-8 h-8 rounded-lg border border-[#fce7f3] bg-white text-[#64748b] flex items-center justify-center disabled:opacity-40 disabled:cursor-not-allowed hover:not-disabled:bg-rose-50 hover:not-disabled:text-[#e11d48] transition-colors cursor-pointer'
+            className='w-8 h-8 rounded-lg border border-slate-200 bg-white text-slate-500 flex items-center justify-center disabled:opacity-40 disabled:cursor-not-allowed hover:not-disabled:bg-teal-50 hover:not-disabled:text-teal-700 hover:not-disabled:border-teal-200 transition-colors cursor-pointer'
           >
             <ChevronsLeft size={15} />
           </button>
@@ -132,7 +132,7 @@ export function Pagination({
           disabled={safeCurrentPage <= 1}
           onClick={() => onPageChange(safeCurrentPage - 1)}
           aria-label='Previous page'
-          className='w-8 h-8 rounded-lg border border-[#fce7f3] bg-white text-[#64748b] flex items-center justify-center disabled:opacity-40 disabled:cursor-not-allowed hover:not-disabled:bg-rose-50 hover:not-disabled:text-[#e11d48] transition-colors cursor-pointer'
+          className='w-8 h-8 rounded-lg border border-slate-200 bg-white text-slate-500 flex items-center justify-center disabled:opacity-40 disabled:cursor-not-allowed hover:not-disabled:bg-teal-50 hover:not-disabled:text-teal-700 hover:not-disabled:border-teal-200 transition-colors cursor-pointer'
         >
           <ChevronLeft size={16} />
         </button>
@@ -144,7 +144,7 @@ export function Pagination({
               return (
                 <span
                   key={`ellipsis-${idx}`}
-                  className='px-1 text-xs text-[#94a3b8] select-none'
+                  className='px-1 text-xs text-slate-400 select-none'
                 >
                   …
                 </span>
@@ -161,8 +161,8 @@ export function Pagination({
                 onClick={() => onPageChange(pageNum)}
                 className={`w-8 h-8 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center justify-center ${
                   isActive
-                    ? 'bg-[#e11d48] text-white shadow-sm shadow-rose-500/20'
-                    : 'bg-white border border-[#fce7f3] text-[#475569] hover:bg-rose-50 hover:text-[#e11d48]'
+                    ? 'bg-teal-600 text-white shadow-xs shadow-teal-700/20'
+                    : 'bg-white border border-slate-200 text-slate-600 hover:bg-teal-50 hover:text-teal-700 hover:border-teal-200'
                 }`}
               >
                 {pageNum}
@@ -176,7 +176,7 @@ export function Pagination({
           disabled={safeCurrentPage >= effectiveTotalPages}
           onClick={() => onPageChange(safeCurrentPage + 1)}
           aria-label='Next page'
-          className='w-8 h-8 rounded-lg border border-[#fce7f3] bg-white text-[#64748b] flex items-center justify-center disabled:opacity-40 disabled:cursor-not-allowed hover:not-disabled:bg-rose-50 hover:not-disabled:text-[#e11d48] transition-colors cursor-pointer'
+          className='w-8 h-8 rounded-lg border border-slate-200 bg-white text-slate-500 flex items-center justify-center disabled:opacity-40 disabled:cursor-not-allowed hover:not-disabled:bg-teal-50 hover:not-disabled:text-teal-700 hover:not-disabled:border-teal-200 transition-colors cursor-pointer'
         >
           <ChevronRight size={16} />
         </button>
@@ -187,7 +187,7 @@ export function Pagination({
             disabled={safeCurrentPage >= effectiveTotalPages}
             onClick={() => onPageChange(effectiveTotalPages)}
             aria-label='Last page'
-            className='w-8 h-8 rounded-lg border border-[#fce7f3] bg-white text-[#64748b] flex items-center justify-center disabled:opacity-40 disabled:cursor-not-allowed hover:not-disabled:bg-rose-50 hover:not-disabled:text-[#e11d48] transition-colors cursor-pointer'
+            className='w-8 h-8 rounded-lg border border-slate-200 bg-white text-slate-500 flex items-center justify-center disabled:opacity-40 disabled:cursor-not-allowed hover:not-disabled:bg-teal-50 hover:not-disabled:text-teal-700 hover:not-disabled:border-teal-200 transition-colors cursor-pointer'
           >
             <ChevronsRight size={15} />
           </button>

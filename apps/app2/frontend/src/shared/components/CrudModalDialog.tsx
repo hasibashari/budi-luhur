@@ -68,13 +68,13 @@ export function CrudModalDialog({
         } bg-white rounded-t-3xl sm:rounded-2xl shadow-2xl border border-[#fce7f3] flex flex-col max-h-[85dvh] sm:max-h-[85vh] overflow-hidden`}
       >
         {/* Header */}
-        <div className='flex items-center justify-between px-5 py-4 border-b border-[#fce7f3] bg-[#fff5f7]/50'>
-          <h3 className='text-base sm:text-lg font-bold text-[#1e293b] leading-snug'>{title}</h3>
+        <div className='flex items-center justify-between px-5 py-4 border-b border-slate-100 bg-slate-50/50'>
+          <h3 className='text-base sm:text-lg font-bold text-slate-800 leading-snug'>{title}</h3>
           <button
             type='button'
             onClick={onClose}
             disabled={submitting}
-            className='w-8 h-8 rounded-full bg-slate-100 text-[#64748b] hover:bg-rose-100 hover:text-[#e11d48] flex items-center justify-center transition-colors cursor-pointer disabled:opacity-50'
+            className='w-8 h-8 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-800 flex items-center justify-center transition-colors cursor-pointer disabled:opacity-50'
           >
             <X size={16} />
           </button>
@@ -85,7 +85,7 @@ export function CrudModalDialog({
 
         {/* Footer Actions */}
         <div
-          className='flex flex-col-reverse sm:flex-row items-center justify-end gap-2.5 px-5 py-3.5 border-t border-[#fce7f3] bg-[#fff5f7]/30'
+          className='flex flex-col-reverse sm:flex-row items-center justify-end gap-2.5 px-5 py-3.5 border-t border-slate-100 bg-slate-50/30'
           style={{
             paddingBottom: 'max(0.875rem, env(safe-area-inset-bottom, 0px))',
           }}
@@ -94,7 +94,7 @@ export function CrudModalDialog({
             type='button'
             onClick={onClose}
             disabled={submitting}
-            className='w-full sm:w-auto px-4 py-2.5 text-xs sm:text-sm font-bold text-[#64748b] hover:text-[#1e293b] hover:bg-slate-100 rounded-xl transition-colors cursor-pointer disabled:opacity-50'
+            className='w-full sm:w-auto px-4 py-2.5 text-xs sm:text-sm font-bold text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-xl transition-colors cursor-pointer disabled:opacity-50'
           >
             {cancelText}
           </button>
@@ -102,7 +102,7 @@ export function CrudModalDialog({
             type='button'
             onClick={onSubmit}
             disabled={submitting}
-            className='w-full sm:w-auto px-5 py-2.5 text-xs sm:text-sm font-bold text-white bg-[#e11d48] hover:bg-[#be123c] rounded-xl shadow-sm transition-all cursor-pointer disabled:opacity-50'
+            className='w-full sm:w-auto px-5 py-2.5 text-xs sm:text-sm font-bold text-white bg-teal-600 hover:bg-teal-700 rounded-xl shadow-xs transition-all cursor-pointer disabled:opacity-50'
           >
             {submitting ? 'Menyimpan...' : submitText}
           </button>

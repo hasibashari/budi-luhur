@@ -261,7 +261,7 @@ export default function UserManagementView() {
       renderCell: user => {
         const rate = user.adherenceRate ?? 100;
         const color =
-          rate >= 90 ? 'text-teal-600' : rate >= 80 ? 'text-amber-600' : 'text-rose-500';
+          rate >= 90 ? 'text-teal-600' : rate >= 80 ? 'text-amber-600' : 'text-red-500';
         return (
           <div>
             <div className='flex items-center gap-1.5'>
@@ -273,7 +273,7 @@ export default function UserManagementView() {
             <div className='w-24 bg-slate-100 rounded-full h-1.5 mt-1 overflow-hidden'>
               <div
                 className={`h-full rounded-full ${
-                  rate >= 90 ? 'bg-teal-600' : rate >= 80 ? 'bg-amber-400' : 'bg-rose-500'
+                  rate >= 90 ? 'bg-teal-600' : rate >= 80 ? 'bg-amber-400' : 'bg-red-500'
                 }`}
                 style={{ width: `${Math.min(100, Math.max(0, rate))}%` }}
               />
@@ -457,7 +457,7 @@ export default function UserManagementView() {
                         ? 'text-teal-600'
                         : user.adherenceRate >= 80
                           ? 'text-amber-600'
-                          : 'text-rose-600'
+                          : 'text-red-600'
                     }`}
                   >
                     {user.adherenceRate}% ({user.activeSchedulesCount || 0} Jadwal)
@@ -470,7 +470,7 @@ export default function UserManagementView() {
                 <button
                   type='button'
                   onClick={() => handleOpenReminder(user)}
-                  className='flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-rose-600 text-white font-bold text-xs hover:bg-rose-700 shadow-xs transition-all cursor-pointer min-h-[44px]'
+                  className='flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-teal-600 text-white font-bold text-xs hover:bg-teal-700 shadow-xs transition-all cursor-pointer min-h-[44px]'
                 >
                   <BellRing size={16} />
                   <span>Kirim Pengingat</span>
@@ -479,17 +479,17 @@ export default function UserManagementView() {
                 <div className='flex gap-1.5'>
                   <button
                     type='button'
-                    title='Edit Data Siswi'
+                    title='Edit Akseptor'
                     onClick={() => onOpenEdit(user)}
-                    className='w-11 h-11 rounded-xl bg-slate-100 text-slate-600 hover:bg-rose-50 hover:text-rose-600 flex items-center justify-center transition-colors cursor-pointer'
+                    className='w-11 h-11 rounded-xl bg-slate-100 text-slate-600 hover:bg-teal-50 hover:text-teal-700 flex items-center justify-center transition-colors cursor-pointer'
                   >
                     <Edit size={16} />
                   </button>
                   <button
                     type='button'
-                    title='Hapus Siswi'
+                    title='Hapus Akseptor'
                     onClick={() => handleDeleteRequest(user.id)}
-                    className='w-11 h-11 rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-100 flex items-center justify-center transition-colors cursor-pointer'
+                    className='w-11 h-11 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 flex items-center justify-center transition-colors cursor-pointer'
                   >
                     <Trash2 size={16} />
                   </button>

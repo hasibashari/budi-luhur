@@ -141,7 +141,7 @@ export default function ArticleFormModal({
 
       <div>
         <label className='block text-xs font-bold text-slate-700 mb-1'>
-          Judul Artikel <span className='text-rose-500'>*</span>
+          Judul Artikel <span className='text-red-500'>*</span>
         </label>
         <input
           type='text'

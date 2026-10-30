@@ -77,13 +77,13 @@ export function DataTable<T extends { id: string | number }>({
   };
 
   return (
-    <div className='w-full overflow-hidden bg-white border border-[#fce7f3] rounded-2xl shadow-xs'>
+    <div className='w-full overflow-hidden bg-white border border-slate-200 rounded-2xl shadow-xs'>
       {/* 1. Mobile-First Card View (< sm / mobile screens when renderMobileCard provided) */}
       {renderMobileCard && (
-        <div className='flex sm:hidden flex-col gap-3 p-3 bg-[#fff5f7]'>
+        <div className='flex sm:hidden flex-col gap-3 p-3 bg-slate-50/70'>
           {paginatedData.length === 0 ? (
-            <div className='py-8 text-center bg-white rounded-xl border border-dashed border-[#fce7f3]'>
-              <p className='text-xs text-[#64748b]'>{emptyMessage}</p>
+            <div className='py-8 text-center bg-white rounded-xl border border-dashed border-slate-200'>
+              <p className='text-xs text-slate-500'>{emptyMessage}</p>
             </div>
           ) : (
             paginatedData.map((row, index) => {
@@ -97,13 +97,13 @@ export function DataTable<T extends { id: string | number }>({
       {/* 2. Desktop/Tablet Table View (>= sm or when no renderMobileCard provided) */}
       <div className={`${renderMobileCard ? 'hidden sm:block' : 'block'} overflow-x-auto`}>
         <table className='min-w-[640px] w-full border-collapse text-left'>
-          <thead className='bg-[#fff5f7] border-b border-[#fce7f3]'>
+          <thead className='bg-[#F0FDFA] border-b border-teal-100/80'>
             <tr>
               {columns.map(col => (
                 <th
                   key={col.id}
                   style={col.width ? { width: col.width } : undefined}
-                  className={`py-3.5 px-4 text-xs font-bold text-[#1e293b] tracking-tight ${alignClass(
+                  className={`py-3.5 px-4 text-xs font-bold text-slate-800 tracking-tight ${alignClass(
                     col.align,
                   )}`}
                 >
@@ -112,10 +112,10 @@ export function DataTable<T extends { id: string | number }>({
               ))}
             </tr>
           </thead>
-          <tbody className='divide-y divide-[#fce7f3]'>
+          <tbody className='divide-y divide-slate-100'>
             {paginatedData.length === 0 ? (
               <tr>
-                <td colSpan={columns.length} className='py-12 text-center text-sm text-[#64748b]'>
+                <td colSpan={columns.length} className='py-12 text-center text-sm text-slate-500'>
                   {emptyMessage}
                 </td>
               </tr>
@@ -123,11 +123,11 @@ export function DataTable<T extends { id: string | number }>({
               paginatedData.map((row, index) => {
                 const globalIndex = pagination ? (activePage - 1) * activePageSize + index : index;
                 return (
-                  <tr key={row.id} className='hover:bg-[#fff5f7]/50 transition-colors'>
+                  <tr key={row.id} className='hover:bg-[#F0FDFA]/50 transition-colors'>
                     {columns.map(col => (
                       <td
                         key={col.id}
-                        className={`py-3 px-4 text-xs sm:text-sm text-[#1e293b] align-middle ${alignClass(
+                        className={`py-3 px-4 text-xs sm:text-sm text-slate-800 align-middle ${alignClass(
                           col.align,
                         )}`}
                       >
@@ -144,7 +144,7 @@ export function DataTable<T extends { id: string | number }>({
 
       {/* Integrated Pagination Footer */}
       {pagination && data.length > 0 && (
-        <div className='border-t border-[#fce7f3]'>
+        <div className='border-t border-slate-200'>
           <Pagination
             currentPage={activePage}
             totalPages={totalPages}

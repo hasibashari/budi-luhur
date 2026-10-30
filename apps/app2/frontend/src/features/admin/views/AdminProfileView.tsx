@@ -111,21 +111,21 @@ export default function AdminProfileView() {
       value: 'Full Control',
       subtitle: 'Pengguna, Jadwal, Edukasi, Laporan',
       icon: Shield,
-      iconBgColor: 'bg-rose-100',
-      iconColor: 'text-rose-600',
+      iconBgColor: 'bg-teal-100',
+      iconColor: 'text-teal-700',
       badgeText: 'Root Admin',
-      badgeColor: 'bg-rose-100 text-rose-700',
+      badgeColor: 'bg-teal-100 text-teal-800',
     },
     {
       id: 'system',
       label: 'Sistem Pengelola',
-      value: 'UKS / Puskesmas',
-      subtitle: 'Portal Terpadu TTD Remaja',
+      value: 'Puskesmas / Bidan',
+      subtitle: 'Portal Terpadu Pilluna KB & SADARI',
       icon: Building,
-      iconBgColor: 'bg-indigo-100',
-      iconColor: 'text-indigo-600',
+      iconBgColor: 'bg-teal-50',
+      iconColor: 'text-teal-600',
       badgeText: 'Aktif',
-      badgeColor: 'bg-indigo-100 text-indigo-700',
+      badgeColor: 'bg-teal-50 text-teal-700',
     },
     {
       id: 'status',
@@ -155,7 +155,7 @@ export default function AdminProfileView() {
       icon: Building,
       label: 'Unit Kerja / Fasilitas',
       value: profileData.department,
-      fallbackValue: 'Manajemen Program TTD & UKS',
+      fallbackValue: 'Layanan Kontrasepsi & Kesehatan Reproduksi',
     },
   ];
 
@@ -233,7 +233,7 @@ export default function AdminProfileView() {
             value={editForm.name}
             onChange={e => setEditForm(prev => ({ ...prev, name: e.target.value }))}
             required
-            className='w-full px-3.5 py-2.5 rounded-xl border border-rose-200 bg-slate-50 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:bg-white'
+            className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:bg-white'
           />
         </div>
 
@@ -244,7 +244,7 @@ export default function AdminProfileView() {
             value={editForm.email}
             onChange={e => setEditForm(prev => ({ ...prev, email: e.target.value }))}
             required
-            className='w-full px-3.5 py-2.5 rounded-xl border border-rose-200 bg-slate-50 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:bg-white'
+            className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:bg-white'
           />
         </div>
 
@@ -257,7 +257,7 @@ export default function AdminProfileView() {
             value={editForm.phone}
             onChange={e => setEditForm(prev => ({ ...prev, phone: e.target.value }))}
             required
-            className='w-full px-3.5 py-2.5 rounded-xl border border-rose-200 bg-slate-50 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:bg-white'
+            className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:bg-white'
           />
         </div>
       </ProfileEditModal>

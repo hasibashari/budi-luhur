@@ -53,7 +53,7 @@ export default function ScheduleFormModal({
     >
       <div>
         <label className='block text-xs font-bold text-slate-700 mb-1'>
-          Akseptor (Pengguna) <span className='text-rose-500'>*</span>
+          Akseptor (Pengguna) <span className='text-red-500'>*</span>
         </label>
         <select
           value={formData.userId || formData.patientId || ''}
@@ -75,7 +75,7 @@ export default function ScheduleFormModal({
 
       <div>
         <label className='block text-xs font-bold text-slate-700 mb-1'>
-          Kategori Program <span className='text-rose-500'>*</span>
+          Kategori Program <span className='text-red-500'>*</span>
         </label>
         <select
           value={formData.category}
@@ -92,7 +92,7 @@ export default function ScheduleFormModal({
 
       <div>
         <label className='block text-xs font-bold text-slate-700 mb-1'>
-          Nama Pil KB / Suplemen <span className='text-rose-500'>*</span>
+          Nama Pil KB / Suplemen <span className='text-red-500'>*</span>
         </label>
         <input
           type='text'
@@ -136,7 +136,7 @@ export default function ScheduleFormModal({
         <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
           <div>
             <label className='block text-xs font-bold text-slate-700 mb-1'>
-              Hari Minum <span className='text-rose-500'>*</span>
+              Hari Minum <span className='text-red-500'>*</span>
             </label>
             <select
               value={formData.dayOfWeek || 'Sabtu'}
@@ -152,7 +152,7 @@ export default function ScheduleFormModal({
           </div>
           <div>
             <label className='block text-xs font-bold text-slate-700 mb-1'>
-              Jam Pengingat (HH:MM) <span className='text-rose-500'>*</span>
+              Jam Pengingat (HH:MM) <span className='text-red-500'>*</span>
             </label>
             <input
               type='text'
@@ -166,7 +166,7 @@ export default function ScheduleFormModal({
       ) : (
         <div>
           <label className='block text-xs font-bold text-slate-700 mb-1'>
-            Jam Pengingat Harian (HH:MM) <span className='text-rose-500'>*</span>
+            Jam Pengingat Harian (HH:MM) <span className='text-red-500'>*</span>
           </label>
           <input
             type='text'

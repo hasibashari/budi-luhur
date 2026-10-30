@@ -6,14 +6,14 @@ import MobileTopBar from '@/src/shared/components/MobileTopBar';
 
 export default function AdminLayout() {
   const adminBadge = (
-    <span className="px-2 py-0.5 rounded-full bg-rose-600 text-white text-[10px] font-extrabold shadow-sm shadow-rose-200 uppercase tracking-wide">
+    <span className="px-2.5 py-0.5 rounded-full bg-teal-700 text-white text-[10px] font-extrabold shadow-xs uppercase tracking-wide">
       ADMIN
     </span>
   );
 
   return (
     <AuthGuard requiredRole='admin'>
-      <div className="flex flex-col min-h-screen bg-[#FFF1F5]">
+      <div className="flex flex-col min-h-screen bg-[#F8FAFC]">
         {/* Mobile Top App Bar (< md) */}
         <div className="block md:hidden">
           <MobileTopBar
