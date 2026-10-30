@@ -17,6 +17,11 @@ async function migrate() {
     )
   `);
 
+  if (!fs.existsSync(migrationsDirectory)) {
+    console.log('ℹ️ Migrations directory does not exist, nothing to migrate.');
+    return;
+  }
+
   const files = fs
     .readdirSync(migrationsDirectory)
     .filter(file => file.endsWith('.sql'))

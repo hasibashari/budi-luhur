@@ -38,7 +38,7 @@ export class UserService {
   static async getDashboardData(userId: string): Promise<UserDashboardData | null> {
     const todayStr = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Jakarta' });
 
-    const [userRes, scheduleRes, todayLogRes, articleRes, groupRes] = await Promise.all([
+    const [userRes, scheduleRes, todayLogRes, articleRes] = await Promise.all([
       db.query<{
         name: string;
         email: string;
@@ -94,21 +94,6 @@ export class UserService {
          WHERE status = 'Terbit' 
          ORDER BY is_featured DESC, published_at DESC LIMIT 1`,
       ),
-      db.query<{
-        id: string;
-        name: string;
-        group_code: string;
-        streak_count: number;
-        avatar_url: string | null;
-      }>(
-        `SELECT g.id, g.name, g.group_code, g.streak_count, g.avatar_url
-         FROM buddy_groups g
-         JOIN buddy_group_members gm ON g.id = gm.group_id
-         WHERE gm.user_id = $1
-         ORDER BY g.updated_at DESC, g.created_at DESC
-         LIMIT 1`,
-        [userId],
-      ),
     ]);
 
     const userRow = userRes.rows[0];
@@ -159,7 +144,6 @@ export class UserService {
     }
 
     const article = articleRes.rows[0];
-    const group = groupRes.rows[0];
 
     return {
       user: {
@@ -190,20 +174,7 @@ export class UserService {
           }
         : null,
       activeBuddy: null,
-      primaryGroup: group
-        ? {
-            id: group.id,
-            name: group.name,
-            groupCode: group.group_code,
-            streakCount: group.streak_count,
-            memberCount: 1,
-            membersSummary: [userRow.name],
-            weeklyCompletedCount: todayStatus === 'recorded' ? 1 : 0,
-            weeklyTotalCount: 1,
-            weeklyCompletionRate: todayStatus === 'recorded' ? 100 : 0,
-            avatarUrl: group.avatar_url || undefined,
-          }
-        : null,
+      primaryGroup: null,
     };
   }
 

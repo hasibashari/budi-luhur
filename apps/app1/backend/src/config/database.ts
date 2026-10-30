@@ -44,6 +44,15 @@ export const pool = {
   connect: () => getDatabasePool().connect(),
   on: (event: any, listener: (...args: any[]) => void) =>
     (getDatabasePool() as any).on(event, listener),
+  end: (callback?: () => void) => {
+    if (poolInstance) {
+      const p = poolInstance;
+      poolInstance = null;
+      return callback ? p.end(callback) : p.end();
+    }
+    if (callback) callback();
+    return Promise.resolve();
+  },
 } as unknown as Pool;
 
 export async function query<T extends QueryResultRow = QueryResultRow>(

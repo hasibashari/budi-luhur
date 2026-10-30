@@ -9,12 +9,6 @@ DROP TABLE IF EXISTS push_subscriptions CASCADE;
 DROP TABLE IF EXISTS user_bookmarks CASCADE;
 DROP TABLE IF EXISTS article_sections CASCADE;
 DROP TABLE IF EXISTS articles CASCADE;
-DROP TABLE IF EXISTS buddy_cheers CASCADE;
-DROP TABLE IF EXISTS buddy_activities CASCADE;
-DROP TABLE IF EXISTS buddy_connections CASCADE;
-DROP TABLE IF EXISTS buddy_group_messages CASCADE;
-DROP TABLE IF EXISTS buddy_group_members CASCADE;
-DROP TABLE IF EXISTS buddy_groups CASCADE;
 DROP TABLE IF EXISTS consumption_logs CASCADE;
 DROP TABLE IF EXISTS daily_health_logs CASCADE;
 DROP TABLE IF EXISTS schedule_time_slots CASCADE;
@@ -134,75 +128,7 @@ CREATE TABLE daily_health_logs (
     CONSTRAINT uq_daily_health_log_user_date UNIQUE(user_id, log_date)
 );
 
--- 6. BUDDY STREAK SYSTEM (BUDDY GROUPS, MEMBERS, MESSAGES, CONNECTIONS)
-CREATE TABLE buddy_groups (
-    id VARCHAR(255) PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    description TEXT,
-    group_code VARCHAR(50) NOT NULL UNIQUE,
-    creator_id VARCHAR(255) REFERENCES users(id) ON DELETE SET NULL,
-    streak_count INTEGER NOT NULL DEFAULT 0,
-    avatar_url TEXT,
-    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE buddy_group_members (
-    id VARCHAR(255) PRIMARY KEY,
-    group_id VARCHAR(255) NOT NULL REFERENCES buddy_groups(id) ON DELETE CASCADE,
-    user_id VARCHAR(255) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    role VARCHAR(50) NOT NULL DEFAULT 'member' CHECK(role IN ('admin', 'member')),
-    joined_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT uq_group_member UNIQUE(group_id, user_id)
-);
-
-CREATE TABLE buddy_group_messages (
-    id VARCHAR(255) PRIMARY KEY,
-    group_id VARCHAR(255) NOT NULL REFERENCES buddy_groups(id) ON DELETE CASCADE,
-    sender_id VARCHAR(255) REFERENCES users(id) ON DELETE SET NULL,
-    message_type VARCHAR(50) NOT NULL DEFAULT 'text' CHECK(message_type IN ('text', 'cheer', 'system')),
-    content TEXT NOT NULL,
-    cheer_type VARCHAR(50) CHECK(cheer_type IN ('HEART', 'FLAME', 'STAR', 'CLAP', 'POWER')),
-    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE buddy_connections (
-    id VARCHAR(255) PRIMARY KEY,
-    user_id VARCHAR(255) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    buddy_user_id VARCHAR(255) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    status VARCHAR(50) NOT NULL DEFAULT 'ACCEPTED' CHECK(status IN ('PENDING', 'ACCEPTED', 'REJECTED', 'BLOCKED')),
-    shared_streak_count INTEGER NOT NULL DEFAULT 0,
-    this_week_user_status VARCHAR(50) NOT NULL DEFAULT 'pending' CHECK(this_week_user_status IN ('recorded', 'missed', 'pending')),
-    this_week_buddy_status VARCHAR(50) NOT NULL DEFAULT 'pending' CHECK(this_week_buddy_status IN ('recorded', 'missed', 'pending')),
-    last_synced_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT chk_different_users CHECK(user_id != buddy_user_id),
-    CONSTRAINT uq_buddy_pair UNIQUE(user_id, buddy_user_id)
-);
-
-CREATE TABLE buddy_activities (
-    id VARCHAR(255) PRIMARY KEY,
-    connection_id VARCHAR(255) NOT NULL REFERENCES buddy_connections(id) ON DELETE CASCADE,
-    actor_id VARCHAR(255) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    action_type VARCHAR(100) NOT NULL,
-    action_text TEXT NOT NULL,
-    icon_type VARCHAR(50) NOT NULL DEFAULT 'check' CHECK(icon_type IN ('check', 'flame', 'heart', 'alert')),
-    is_positive BOOLEAN NOT NULL DEFAULT TRUE,
-    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE buddy_cheers (
-    id VARCHAR(255) PRIMARY KEY,
-    connection_id VARCHAR(255) NOT NULL REFERENCES buddy_connections(id) ON DELETE CASCADE,
-    sender_id VARCHAR(255) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    receiver_id VARCHAR(255) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    cheer_type VARCHAR(50) NOT NULL DEFAULT 'HEART' CHECK(cheer_type IN ('HEART', 'FLAME', 'STAR', 'CLAP')),
-    message TEXT,
-    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
-
--- 7. EDUCATION ARTICLES & SECTIONS
+-- 6. EDUCATION ARTICLES & SECTIONS
 CREATE TABLE articles (
     id VARCHAR(255) PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
@@ -279,13 +205,6 @@ CREATE INDEX idx_profiles_friend_code ON user_profiles(friend_code);
 CREATE INDEX idx_profiles_school ON user_profiles(school_or_org);
 CREATE INDEX idx_schedules_user_status ON reminder_schedules(user_id, status);
 CREATE INDEX idx_logs_user_date ON consumption_logs(user_id, scheduled_date);
-CREATE INDEX idx_buddy_user ON buddy_connections(user_id, status);
-CREATE INDEX idx_buddy_pair ON buddy_connections(buddy_user_id, status);
-CREATE INDEX idx_buddy_activities_conn ON buddy_activities(connection_id, created_at DESC);
-CREATE INDEX idx_group_members_user ON buddy_group_members(user_id);
-CREATE INDEX idx_group_members_group ON buddy_group_members(group_id);
-CREATE INDEX idx_group_messages_group_date ON buddy_group_messages(group_id, created_at ASC);
-CREATE INDEX idx_group_code ON buddy_groups(group_code);
 CREATE INDEX idx_articles_category ON articles(category, status);
 CREATE INDEX idx_article_sections_order ON article_sections(article_id, order_index);
 CREATE INDEX idx_bookmarks_user ON user_bookmarks(user_id);

@@ -20,12 +20,16 @@ export async function initializeDatabase() {
 if (process.argv[1]?.includes('init.ts') || process.argv[1]?.includes('init.js')) {
   initializeDatabase()
     .then(async () => {
-      await pool.end();
+      if (typeof pool.end === 'function') {
+        await pool.end();
+      }
       process.exit(0);
     })
     .catch(async error => {
       console.error('❌ Failed to initialize PostgreSQL database:', error);
-      await pool.end();
+      if (typeof pool.end === 'function') {
+        await pool.end();
+      }
       process.exit(1);
     });
 }

@@ -1,14 +1,14 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { getDatabasePool, pool } from '../config/database.js';
+import { pool } from '../config/database.js';
 import { initializeDatabase } from './init.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export async function seedDatabase() {
-  console.log('🌱 Starting PostgreSQL database seeding for FEMORY (2-Role & Buddy Streak)...');
+  console.log('🌱 Starting PostgreSQL database seeding...');
 
   // Ensure schema exists
   await initializeDatabase();
@@ -204,155 +204,7 @@ export async function seedDatabase() {
       ]);
     }
 
-    // 6. Buddy Connections
-    console.log('  -> Seeding buddy connections...');
-    const insertBuddyConnQuery = `
-      INSERT INTO buddy_connections (
-        id, user_id, buddy_user_id, status, shared_streak_count, this_week_user_status, this_week_buddy_status
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7)
-      ON CONFLICT (id) DO UPDATE SET
-        status = EXCLUDED.status,
-        shared_streak_count = EXCLUDED.shared_streak_count,
-        this_week_user_status = EXCLUDED.this_week_user_status,
-        this_week_buddy_status = EXCLUDED.this_week_buddy_status,
-        updated_at = CURRENT_TIMESTAMP
-    `;
-
-    for (const bc of seedData.buddyConnections) {
-      await client.query(insertBuddyConnQuery, [
-        bc.id,
-        bc.userId,
-        bc.buddyUserId,
-        bc.status ?? 'ACCEPTED',
-        bc.sharedStreakCount ?? 0,
-        bc.thisWeekUserStatus ?? 'pending',
-        bc.thisWeekBuddyStatus ?? 'pending',
-      ]);
-    }
-
-    // 7. Buddy Activities
-    console.log('  -> Seeding buddy activities...');
-    const insertBuddyActQuery = `
-      INSERT INTO buddy_activities (
-        id, connection_id, actor_id, action_type, action_text, icon_type, is_positive
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7)
-      ON CONFLICT (id) DO UPDATE SET
-        action_type = EXCLUDED.action_type,
-        action_text = EXCLUDED.action_text,
-        icon_type = EXCLUDED.icon_type,
-        is_positive = EXCLUDED.is_positive
-    `;
-
-    for (const act of seedData.buddyActivities) {
-      await client.query(insertBuddyActQuery, [
-        act.id,
-        act.connectionId,
-        act.actorId,
-        act.actionType,
-        act.actionText,
-        act.iconType ?? 'check',
-        act.isPositive ?? true,
-      ]);
-    }
-
-    // 8. Buddy Cheers
-    console.log('  -> Seeding buddy cheers...');
-    const insertBuddyCheerQuery = `
-      INSERT INTO buddy_cheers (
-        id, connection_id, sender_id, receiver_id, cheer_type, message
-      ) VALUES ($1, $2, $3, $4, $5, $6)
-      ON CONFLICT (id) DO UPDATE SET
-        cheer_type = EXCLUDED.cheer_type,
-        message = EXCLUDED.message
-    `;
-
-    for (const chr of seedData.buddyCheers) {
-      await client.query(insertBuddyCheerQuery, [
-        chr.id,
-        chr.connectionId,
-        chr.senderId,
-        chr.receiverId,
-        chr.cheerType ?? 'HEART',
-        chr.message ?? null,
-      ]);
-    }
-
-    // 8b. Buddy Groups
-    console.log('  -> Seeding buddy groups...');
-    const insertGroupQuery = `
-      INSERT INTO buddy_groups (
-        id, name, description, group_code, creator_id, streak_count, avatar_url
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7)
-      ON CONFLICT (id) DO UPDATE SET
-        name = EXCLUDED.name,
-        description = EXCLUDED.description,
-        group_code = EXCLUDED.group_code,
-        creator_id = EXCLUDED.creator_id,
-        streak_count = EXCLUDED.streak_count,
-        avatar_url = EXCLUDED.avatar_url,
-        updated_at = CURRENT_TIMESTAMP
-    `;
-
-    if (seedData.buddyGroups) {
-      for (const grp of seedData.buddyGroups) {
-        await client.query(insertGroupQuery, [
-          grp.id,
-          grp.name,
-          grp.description ?? null,
-          grp.groupCode,
-          grp.creatorId ?? null,
-          grp.streakCount ?? 0,
-          grp.avatarUrl ?? null,
-        ]);
-      }
-    }
-
-    // 8c. Buddy Group Members
-    console.log('  -> Seeding buddy group members...');
-    const insertGroupMemberQuery = `
-      INSERT INTO buddy_group_members (
-        id, group_id, user_id, role
-      ) VALUES ($1, $2, $3, $4)
-      ON CONFLICT (id) DO UPDATE SET
-        role = EXCLUDED.role
-    `;
-
-    if (seedData.buddyGroupMembers) {
-      for (const gmb of seedData.buddyGroupMembers) {
-        await client.query(insertGroupMemberQuery, [
-          gmb.id,
-          gmb.groupId,
-          gmb.userId,
-          gmb.role ?? 'member',
-        ]);
-      }
-    }
-
-    // 8d. Buddy Group Messages
-    console.log('  -> Seeding buddy group messages...');
-    const insertGroupMsgQuery = `
-      INSERT INTO buddy_group_messages (
-        id, group_id, sender_id, message_type, content, cheer_type
-      ) VALUES ($1, $2, $3, $4, $5, $6)
-      ON CONFLICT (id) DO UPDATE SET
-        content = EXCLUDED.content,
-        cheer_type = EXCLUDED.cheer_type
-    `;
-
-    if (seedData.buddyGroupMessages) {
-      for (const gmsg of seedData.buddyGroupMessages) {
-        await client.query(insertGroupMsgQuery, [
-          gmsg.id,
-          gmsg.groupId,
-          gmsg.senderId ?? null,
-          gmsg.messageType ?? 'text',
-          gmsg.content,
-          gmsg.cheerType ?? null,
-        ]);
-      }
-    }
-
-    // 9. Articles & Sections
+    // 6. Articles & Sections
     console.log('  -> Seeding articles...');
     const insertArticleQuery = `
       INSERT INTO articles (
@@ -424,7 +276,7 @@ export async function seedDatabase() {
       }
     }
 
-    // 10. Admin Nudges
+    // 7. Admin Nudges
     console.log('  -> Seeding admin nudges...');
     const insertNudgeQuery = `
       INSERT INTO admin_nudges (
@@ -451,7 +303,7 @@ export async function seedDatabase() {
     }
 
     await client.query('COMMIT');
-    console.log('✅ FEMORY Database seeding completed successfully with 2-Role & Buddy Streak!');
+    console.log('✅ Database seeding completed successfully!');
   } catch (error) {
     await client.query('ROLLBACK');
     console.error('❌ Error seeding database:', error);
@@ -465,12 +317,12 @@ export async function seedDatabase() {
 if (process.argv[1]?.includes('seed.ts') || process.argv[1]?.includes('seed.js')) {
   seedDatabase()
     .then(async () => {
-      await getDatabasePool().end();
+      await pool.end();
       process.exit(0);
     })
     .catch(async error => {
       console.error('Failed to seed:', error);
-      await getDatabasePool().end();
+      await pool.end();
       process.exit(1);
     });
 }
