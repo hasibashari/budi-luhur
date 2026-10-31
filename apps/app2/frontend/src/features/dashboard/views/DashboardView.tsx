@@ -86,15 +86,30 @@ export default function DashboardView() {
         }
       } else if (event.type === 'NUDGE_DISMISSED') {
         if (isMounted) setActiveNudge(null);
-      } else if (event.type === 'MEDICATION_TAKEN' && event.patientId === userId) {
+      } else if (
+        (event.type === 'MEDICATION_TAKEN' || event.type === 'SCHEDULE_UPDATED') &&
+        (!event.patientId || event.patientId === userId)
+      ) {
         const freshData = await getUserDashboardDataAction(userId);
         if (freshData && isMounted) setDashboardData(freshData);
       }
     });
 
+    const handleLocalScheduleUpdate = async () => {
+      const freshData = await getUserDashboardDataAction(userId);
+      if (freshData && isMounted) setDashboardData(freshData);
+    };
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('schedule:updated', handleLocalScheduleUpdate);
+    }
+
     return () => {
       isMounted = false;
       unsubscribe();
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('schedule:updated', handleLocalScheduleUpdate);
+      }
     };
   }, [userId]);
 
@@ -387,6 +402,7 @@ export default function DashboardView() {
             <ActiveBlisterStripWidget
               streakCount={currentUser.streakCount}
               todayStatus={dashboardData?.todayStatus || 'pending'}
+              consecutiveDates={currentUser.consecutiveDates}
             />
           </section>
 

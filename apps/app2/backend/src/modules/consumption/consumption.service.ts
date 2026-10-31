@@ -2,6 +2,18 @@ import db from '../../config/database.js';
 import { UserService } from '../users/user.service.js';
 import { calculateChronologicalStreak } from '../../utils/streakCalculator.js';
 
+function formatDbDateKey(val: any): string {
+  if (!val) return '';
+  if (typeof val === 'string') return val.split('T')[0];
+  if (val instanceof Date) {
+    const year = val.getFullYear();
+    const month = String(val.getMonth() + 1).padStart(2, '0');
+    const day = String(val.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+  return String(val);
+}
+
 export class ConsumptionService {
   static async recordConsumption(
     userId: string,
@@ -16,7 +28,9 @@ export class ConsumptionService {
       hour12: false,
     });
     const nowTimeStr = timeFormatter.format(new Date()) + ' WIB';
-    const finalTargetDate = targetDate || new Date().toLocaleDateString('en-CA');
+    const finalTargetDate =
+      targetDate ||
+      new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Jakarta' }).format(new Date());
 
     // Get active schedule
     const schedRes = await db.query<{ id: string; tablet_name: string; dosage: string; frequency: string; category?: string }>(
@@ -85,19 +99,22 @@ export class ConsumptionService {
   static async getMonitoringSummary(userId: string) {
     const [logsRes, schedRes] = await Promise.all([
       db.query<any>(
-        `SELECT id, schedule_id, title, category, dosage, scheduled_date, scheduled_time, taken_at, status, notes, taken_by
+        `SELECT id, schedule_id, title, category, dosage, scheduled_date::text AS scheduled_date, scheduled_time, taken_at, status, notes, taken_by, created_at
          FROM consumption_logs
          WHERE user_id = $1
          ORDER BY scheduled_date DESC, scheduled_time DESC`,
         [userId],
       ),
-      db.query<{ frequency: string }>(
-        `SELECT frequency FROM reminder_schedules WHERE user_id = $1 AND status = 'Aktif' LIMIT 1`,
+      db.query<{ id: string; frequency: string; created_at: Date | string }>(
+        `SELECT id, frequency, created_at FROM reminder_schedules WHERE user_id = $1 AND status = 'Aktif' LIMIT 1`,
         [userId],
       ),
     ]);
 
-    const schedFreq = (schedRes.rows[0]?.frequency as 'daily' | 'weekly') || 'weekly';
+    const activeSched = schedRes.rows[0];
+    const activeSchedId = activeSched?.id;
+    const activeSchedCreatedAt = activeSched?.created_at ? new Date(activeSched.created_at) : null;
+    const schedFreq = (activeSched?.frequency as 'daily' | 'weekly') || 'weekly';
     const rows = logsRes.rows;
 
     const activityMap: Record<string, any> = {};
@@ -107,23 +124,31 @@ export class ConsumptionService {
     let missedCount = 0;
 
     const logs = rows.map((r: any) => {
-      const dateStr =
-        typeof r.scheduled_date === 'string'
-          ? r.scheduled_date.split('T')[0]
-          : new Date(r.scheduled_date).toISOString().split('T')[0];
+      const dateStr = formatDbDateKey(r.scheduled_date);
 
-      const isCompleted = r.status === 'ON_TIME' || r.status === 'LATE';
+      // Check whether this log was recorded under a previous deleted schedule before the active schedule was created
+      const isFromOldSchedule = Boolean(
+        activeSchedId &&
+        r.schedule_id &&
+        r.schedule_id !== activeSchedId &&
+        activeSchedCreatedAt &&
+        r.created_at &&
+        new Date(r.created_at) < activeSchedCreatedAt
+      );
+
+      const isCompleted = (r.status === 'ON_TIME' || r.status === 'LATE') && !isFromOldSchedule;
       if (isCompleted) {
         completedDates.push(dateStr);
         if (r.status === 'ON_TIME') onTimeCount++;
         else lateCount++;
-      } else if (r.status === 'MISSED' || r.status === 'SKIPPED') {
+      } else if ((r.status === 'MISSED' || r.status === 'SKIPPED') && !isFromOldSchedule) {
         missedCount++;
       }
 
       const info = {
         id: r.id,
-        status: isCompleted ? 'recorded' : r.status === 'MISSED' ? 'missed' : 'pending',
+        scheduleId: r.schedule_id || undefined,
+        status: isCompleted ? 'recorded' : r.status === 'MISSED' && !isFromOldSchedule ? 'missed' : 'pending',
         rawStatus: r.status,
         title: r.title,
         category: r.category,
@@ -134,7 +159,7 @@ export class ConsumptionService {
         notes: r.notes || undefined,
       };
 
-      if (!activityMap[dateStr]) {
+      if (!isFromOldSchedule && !activityMap[dateStr]) {
         activityMap[dateStr] = info;
       }
 
@@ -181,7 +206,7 @@ export class ConsumptionService {
     dateFilter?: string,
   ) {
     let sql = `
-      SELECT id, schedule_id, title, category, dosage, scheduled_date, scheduled_time, taken_at, status, notes, taken_by 
+      SELECT id, schedule_id, title, category, dosage, scheduled_date::text AS scheduled_date, scheduled_time, taken_at, status, notes, taken_by 
       FROM consumption_logs 
       WHERE user_id = $1
     `;
@@ -216,10 +241,7 @@ export class ConsumptionService {
       title: r.title,
       category: r.category || 'MEDICATION',
       dosage: r.dosage || undefined,
-      scheduledDate:
-        typeof r.scheduled_date === 'string'
-          ? r.scheduled_date.split('T')[0]
-          : new Date(r.scheduled_date).toISOString().split('T')[0],
+      scheduledDate: formatDbDateKey(r.scheduled_date),
       scheduledTime: r.scheduled_time,
       takenAt: r.taken_at || undefined,
       status: r.status,

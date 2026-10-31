@@ -1,4 +1,5 @@
 import apiClient, { extractErrorMessage } from '@/src/shared/api/client';
+import { getTodayDateString } from '../utils/dateHelpers';
 import {
   ConsumptionLog,
   ConsumptionStats,
@@ -47,7 +48,7 @@ export async function recordConsumptionAction(
   scheduledDate?: string,
 ) {
   const normalizedStatus = status === 'taken' ? 'recorded' : status;
-  const finalDate = scheduledDate || new Date().toISOString().split('T')[0];
+  const finalDate = scheduledDate || getTodayDateString();
   const response = await apiClient.post('/consumption/record', {
     scheduleId,
     status: normalizedStatus,
@@ -105,7 +106,7 @@ export async function recordConsumptionForDateAction(
   notes?: string,
 ) {
   try {
-    const finalDate = targetDate || new Date().toISOString().split('T')[0];
+    const finalDate = targetDate || getTodayDateString();
     const response = await apiClient.post('/consumption/record', {
       date: finalDate,
       targetDate: finalDate,

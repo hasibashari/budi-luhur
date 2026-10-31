@@ -39,6 +39,8 @@ export interface UserScheduleData {
   nextDate: string;
   daysRemaining: number;
   instructions: string;
+  startDate?: string;
+  createdAt?: string;
 }
 
 export interface UserDashboardData {

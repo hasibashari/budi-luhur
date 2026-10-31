@@ -69,14 +69,25 @@ export function useMonitoringData(userId: string) {
     initMonitoring();
 
     const unsubscribe = subscribeRealtimeEvent(event => {
-      if (event.type === 'MEDICATION_TAKEN') {
+      if (event.type === 'MEDICATION_TAKEN' || event.type === 'SCHEDULE_UPDATED') {
         initMonitoring();
       }
     });
 
+    const handleLocalScheduleUpdate = () => {
+      initMonitoring();
+    };
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('schedule:updated', handleLocalScheduleUpdate);
+    }
+
     return () => {
       isSubscribed = false;
       unsubscribe();
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('schedule:updated', handleLocalScheduleUpdate);
+      }
     };
   }, [userId]);
 

@@ -1,5 +1,6 @@
 export * from './types';
 export * from './api/scheduleRepository';
+export * from './components';
 export { default as ScheduleView } from './views/ScheduleView';
 export { useDailySchedules } from './hooks/useDailySchedules';
 export {

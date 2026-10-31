@@ -23,7 +23,10 @@ export async function calculateChronologicalStreak(
   const dateSet = new Set<string>();
   completedDates.forEach(d => {
     if (!d) return;
-    const str = typeof d === 'string' ? d.split('T')[0] : new Date(d).toISOString().split('T')[0];
+    const str =
+      typeof d === 'string'
+        ? d.split('T')[0]
+        : `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
     dateSet.add(str);
   });
 

@@ -9,6 +9,8 @@ interface FullBlisterPackCalendarProps {
   onSelectDate: (date: string) => void;
   todayStr: string;
   todayStatus?: 'pending' | 'recorded' | 'missed';
+  hasActiveSchedule?: boolean;
+  startDate?: string;
 }
 
 interface CalendarDay {
@@ -28,6 +30,8 @@ export const FullBlisterPackCalendar: React.FC<FullBlisterPackCalendarProps> = (
   onSelectDate,
   todayStr,
   todayStatus = 'pending',
+  hasActiveSchedule = true,
+  startDate,
 }) => {
   const [calendarViewDate, setCalendarViewDate] = useState(() => {
     const date = new Date(`${selectedDate || todayStr}T00:00:00`);
@@ -50,16 +54,20 @@ export const FullBlisterPackCalendar: React.FC<FullBlisterPackCalendarProps> = (
 
       let status: 'recorded' | 'missed' | 'pending' | 'none' = 'none';
 
-      if (activity) {
+      if (startDate && dateKey < startDate) {
+        // Hari sebelum jadwal pengingat aktif dibuat: netral, bukan siklus berjalan
+        status = 'none';
+      } else if (activity) {
         if (activity.status === 'recorded') {
           status = 'recorded';
         } else if (activity.status === 'missed') {
           status = 'missed';
-        } else if (isToday) {
-          status = todayStatus || 'pending';
-        } else if (isPast) {
-          status = 'missed';
+        } else if (activity.status === 'pending') {
+          status = isToday ? todayStatus || 'pending' : isPast ? 'missed' : 'pending';
         }
+      } else if (!hasActiveSchedule) {
+        // Siklus pengingat belum dibuat: kalender standby, belum menandai missed
+        status = 'none';
       } else if (isToday) {
         status = todayStatus || 'pending';
       } else if (isPast) {
@@ -78,7 +86,15 @@ export const FullBlisterPackCalendar: React.FC<FullBlisterPackCalendarProps> = (
     }
 
     return days;
-  }, [activityMap, calendarViewDate, selectedDate, todayStr, todayStatus]);
+  }, [
+    activityMap,
+    calendarViewDate,
+    selectedDate,
+    todayStr,
+    todayStatus,
+    hasActiveSchedule,
+    startDate,
+  ]);
 
   const changeMonth = (offset: number) => {
     setCalendarViewDate(current => new Date(current.getFullYear(), current.getMonth() + offset, 1));
@@ -88,7 +104,25 @@ export const FullBlisterPackCalendar: React.FC<FullBlisterPackCalendarProps> = (
     <Card padding='md' className='border border-slate-200/90 bg-white shadow-xs'>
       <div className='flex items-center justify-between border-b border-slate-100 pb-3'>
         <div>
-          <h3 className='text-sm font-bold tracking-tight text-slate-900 sm:text-base'>Kalender</h3>
+          <div className='flex items-center gap-2'>
+            <h3 className='text-sm font-bold tracking-tight text-slate-900 sm:text-base'>
+              Kalender Blister
+            </h3>
+            {!hasActiveSchedule ? (
+              <span className='inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200/80'>
+                Siklus Belum Dimulai
+              </span>
+            ) : (
+              <span className='inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-teal-50 text-teal-700 border border-teal-200/80'>
+                Siklus Berjalan
+              </span>
+            )}
+          </div>
+          <p className='text-[11px] text-slate-500 mt-0.5'>
+            {!hasActiveSchedule
+              ? 'Kalender akan mulai mencatat riwayat kepatuhan setelah pengingat dibuat'
+              : 'Pantau riwayat kepatuhan 28 butir pil KB per tanggal'}
+          </p>
         </div>
         <div className='flex items-center gap-1'>
           <button

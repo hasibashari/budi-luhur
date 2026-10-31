@@ -66,15 +66,21 @@ export class UserService {
         is_enabled: boolean;
         remind_15min_before: boolean;
         instructions: string | null;
+        created_at?: string | Date;
       }>(
-        `SELECT id, tablet_name, dosage, frequency, day_of_week, time_slot, is_enabled, remind_15min_before, instructions
+        `SELECT id, tablet_name, dosage, frequency, day_of_week, time_slot, is_enabled, remind_15min_before, instructions, created_at
          FROM reminder_schedules
          WHERE user_id = $1 AND status = 'Aktif'
          ORDER BY created_at DESC LIMIT 1`,
         [userId],
       ),
-      db.query<{ status: string; taken_at: string | null }>(
-        `SELECT status, taken_at 
+      db.query<{
+        status: string;
+        taken_at: string | null;
+        schedule_id?: string | null;
+        created_at?: string | Date;
+      }>(
+        `SELECT status, taken_at, schedule_id, created_at 
          FROM consumption_logs 
          WHERE user_id = $1 AND scheduled_date = $2
          ORDER BY created_at DESC LIMIT 1`,
@@ -124,6 +130,12 @@ export class UserService {
           'Minum 1 tablet setiap hari pada jam yang sama setelah makan malam atau sebelum tidur.',
         nextDate,
         daysRemaining,
+        createdAt: sch.created_at ? new Date(sch.created_at).toISOString() : undefined,
+        startDate: sch.created_at
+          ? new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Jakarta' }).format(
+              new Date(sch.created_at),
+            )
+          : undefined,
       };
     }
 
@@ -134,11 +146,22 @@ export class UserService {
 
     if (todayLogRes.rows.length > 0) {
       const log = todayLogRes.rows[0];
-      if (log.status === 'ON_TIME' || log.status === 'LATE') {
-        todayStatus = 'recorded';
-        todayRecordedTime = log.taken_at || '20:00 WIB';
-      } else if (log.status === 'MISSED' || log.status === 'SKIPPED') {
-        todayStatus = 'missed';
+      const isFromOldSchedule = Boolean(
+        activeSchedule &&
+        log.schedule_id &&
+        log.schedule_id !== activeSchedule.id &&
+        scheduleRes.rows[0]?.created_at &&
+        log.created_at &&
+        new Date(log.created_at) < new Date(scheduleRes.rows[0].created_at),
+      );
+
+      if (!isFromOldSchedule) {
+        if (log.status === 'ON_TIME' || log.status === 'LATE') {
+          todayStatus = 'recorded';
+          todayRecordedTime = log.taken_at || '20:00 WIB';
+        } else if (log.status === 'MISSED' || log.status === 'SKIPPED') {
+          todayStatus = 'missed';
+        }
       }
     }
 

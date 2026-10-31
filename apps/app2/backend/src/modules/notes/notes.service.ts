@@ -22,9 +22,10 @@ export class NotesService {
       [userId],
     );
 
-    return result.rows.map(row => ({
+    return result.rows.map((row: any) => ({
       id: row.id,
-      logDate: row.log_date instanceof Date ? row.log_date.toISOString().slice(0, 10) : row.log_date,
+      logDate:
+        row.log_date instanceof Date ? row.log_date.toISOString().slice(0, 10) : row.log_date,
       mood: row.mood,
       pain: row.pain,
       bleeding: row.bleeding,
@@ -32,10 +33,11 @@ export class NotesService {
       weightStatus: row.weight_status,
       weightKg: row.weight_kg == null ? '' : String(row.weight_kg),
       notes: row.notes || '',
-      updatedAt: new Date(row.updated_at).toLocaleTimeString('id-ID', {
-        hour: '2-digit',
-        minute: '2-digit',
-      }) + ' WIB',
+      updatedAt:
+        new Date(row.updated_at).toLocaleTimeString('id-ID', {
+          hour: '2-digit',
+          minute: '2-digit',
+        }) + ' WIB',
     }));
   }
 
@@ -71,7 +73,8 @@ export class NotesService {
     const row = result.rows[0];
     return {
       id: row.id,
-      logDate: row.log_date instanceof Date ? row.log_date.toISOString().slice(0, 10) : row.log_date,
+      logDate:
+        row.log_date instanceof Date ? row.log_date.toISOString().slice(0, 10) : row.log_date,
       mood: row.mood,
       pain: row.pain,
       bleeding: row.bleeding,
@@ -79,10 +82,11 @@ export class NotesService {
       weightStatus: row.weight_status,
       weightKg: row.weight_kg == null ? '' : String(row.weight_kg),
       notes: row.notes || '',
-      updatedAt: new Date(row.updated_at).toLocaleTimeString('id-ID', {
-        hour: '2-digit',
-        minute: '2-digit',
-      }) + ' WIB',
+      updatedAt:
+        new Date(row.updated_at).toLocaleTimeString('id-ID', {
+          hour: '2-digit',
+          minute: '2-digit',
+        }) + ' WIB',
     };
   }
 }

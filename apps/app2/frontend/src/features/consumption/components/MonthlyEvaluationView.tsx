@@ -17,6 +17,9 @@ export interface MonthlyEvaluationViewProps {
   selectedDate?: string;
   onSelectDate?: (date: string) => void;
   todayStr?: string;
+  hasActiveSchedule?: boolean;
+  startDate?: string;
+  activeScheduleId?: string;
 }
 
 export function MonthlyEvaluationView({
@@ -28,6 +31,9 @@ export function MonthlyEvaluationView({
   selectedDate,
   onSelectDate,
   todayStr,
+  hasActiveSchedule = true,
+  startDate,
+  activeScheduleId,
 }: MonthlyEvaluationViewProps) {
   // Compute adherence and totals for the current cycle
   const metrics = useMemo(() => {
@@ -50,7 +56,7 @@ export function MonthlyEvaluationView({
 
   return (
     <div className='flex flex-col gap-5 animate-fade-in'>
-      {/* 1. 30-Day Pill Compliance Status Bar Chart */}
+      {/* 1. 28-Day Pill Compliance Status Bar Chart */}
       <PillComplianceChart
         logs={logs}
         activityMap={activityMap}
@@ -58,6 +64,9 @@ export function MonthlyEvaluationView({
         selectedDate={selectedDate}
         onSelectDate={onSelectDate}
         todayStr={todayStr}
+        hasActiveSchedule={hasActiveSchedule}
+        startDate={startDate}
+        activeScheduleId={activeScheduleId}
       />
 
       {/* 2. Responsive Milestone KPI Cards (2 Cards) */}
@@ -73,16 +82,24 @@ export function MonthlyEvaluationView({
                 <Flame size={18} className='animate-pulse' />
               </div>
               <span className='text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-orange-50 text-orange-700 border border-orange-200/80'>
-                {streakCount >= 7 ? 'Konsisten' : 'Mulai Rutin'}
+                {!hasActiveSchedule
+                  ? 'Belum Aktif'
+                  : streakCount >= 7
+                    ? 'Konsisten'
+                    : 'Mulai Rutin'}
               </span>
             </div>
             <span className='text-[11px] text-slate-500 block font-medium'>Streak Kepatuhan</span>
             <span className='text-base sm:text-lg font-extrabold text-slate-900'>
-              {streakCount} {streakUnit}
+              {hasActiveSchedule ? `${streakCount} ${streakUnit}` : '0 Hari'}
             </span>
           </div>
           <span className='text-[10px] text-slate-400 mt-2 block font-normal border-t border-slate-100 pt-1.5'>
-            {streakCount > 0 ? `${streakCount} hari tanpa jeda` : 'Mulai catat hari ini'}
+            {!hasActiveSchedule
+              ? 'Mulai setelah pengingat harian dibuat'
+              : streakCount > 0
+                ? `${streakCount} hari tanpa jeda`
+                : 'Mulai catat hari ini'}
           </span>
         </Card>
 
@@ -97,12 +114,12 @@ export function MonthlyEvaluationView({
                 <CalendarCheck size={18} />
               </div>
               <span className='text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-teal-50 text-teal-800 border border-teal-200/80'>
-                {metrics.totalCompleted}/30 Pil
+                {hasActiveSchedule ? `${metrics.totalCompleted}/28 Pil` : '0/28 Pil'}
               </span>
             </div>
             <span className='text-[11px] text-slate-500 block font-medium'>Total Pil Diminum</span>
             <span className='text-base sm:text-lg font-extrabold text-slate-900'>
-              {metrics.totalCompleted} Butir
+              {hasActiveSchedule ? `${metrics.totalCompleted} Butir` : '0 Butir'}
             </span>
           </div>
           {/* Mini Progress Bar */}
@@ -111,7 +128,9 @@ export function MonthlyEvaluationView({
               <div
                 className='h-full bg-teal-600 rounded-full transition-all duration-500'
                 style={{
-                  width: `${Math.min(100, Math.round((metrics.totalCompleted / 30) * 100))}%`,
+                  width: hasActiveSchedule
+                    ? `${Math.min(100, Math.round((metrics.totalCompleted / 28) * 100))}%`
+                    : '0%',
                 }}
               />
             </div>

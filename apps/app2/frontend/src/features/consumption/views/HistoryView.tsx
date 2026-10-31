@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { Flame } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Flame, CalendarClock, Clock, ArrowRight } from 'lucide-react';
 import { useAuth } from '@/src/features/auth/context/AuthContext';
 import { useMonitoringData } from '../hooks/useMonitoringData';
 import {
@@ -25,9 +26,20 @@ export default function HistoryView() {
   const [dateFilterPreset, setDateFilterPreset] = useState<DateFilterPreset>('ALL');
   const [statusFilter, setStatusFilter] = useState<StatusFilterOption>('ALL');
 
+  const handleSelectDate = (date: string) => {
+    setSelectedDate(date);
+    setDateFilterPreset('CUSTOM');
+  };
+
   // Unified PostgreSQL data fetching & realtime mutations hook
   const { dashboardData, activityMap, allLogs, stats, loading, isUpdatingDate, updateDateStatus } =
     useMonitoringData(userId);
+
+  const hasActiveSchedule = Boolean(
+    dashboardData?.activeSchedule && dashboardData.activeSchedule.isEnabled,
+  );
+  const activeScheduleId = dashboardData?.activeSchedule?.id;
+  const scheduleStartDate = dashboardData?.activeSchedule?.startDate;
 
   // Selected date details and status
   const selectedDateActivity = activityMap[selectedDate];
@@ -95,46 +107,57 @@ export default function HistoryView() {
         <div className='inline-flex items-center gap-2 bg-white px-3.5 py-1.5 rounded-full border border-slate-200 shadow-2xs self-start sm:self-auto'>
           <Flame size={18} className='text-orange-500 fill-orange-500' />
           <span className='text-xs font-bold text-slate-800'>
-            {streakCount} {streakUnit} Disiplin
+            {hasActiveSchedule ? `${streakCount} ${streakUnit} Disiplin` : 'Siap Memulai'}
           </span>
         </div>
       </div>
 
-      {/* 2. Visual Kemasan Fisik Blister Pack 28 Butir (4 baris x 7 butir) */}
+      {/* 2. Setup Prompt Banner when schedule has not been created */}
+      {!hasActiveSchedule && (
+        <div className='p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-teal-50 via-teal-50/50 to-white border border-teal-200/90 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-4'>
+          <div className='flex items-start gap-3.5'>
+            <div className='w-11 h-11 rounded-2xl bg-teal-100 text-teal-700 flex items-center justify-center shrink-0 shadow-2xs'>
+              <CalendarClock size={22} />
+            </div>
+            <div>
+              <div className='flex items-center gap-2 flex-wrap'>
+                <h4 className='text-sm sm:text-base font-bold text-teal-950'>
+                  Jadwal Pengingat Pil KB Belum Dikonfigurasi
+                </h4>
+                <span className='px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-teal-100 text-teal-800 border border-teal-200'>
+                  Langkah Awal
+                </span>
+              </div>
+              <p className='text-xs text-slate-600 mt-1 leading-relaxed max-w-xl'>
+                Tentukan jam minum pil harian Anda untuk mengaktifkan pelacakan <strong>Kalender Blister 28 Butir</strong> dan <strong>Grafik Kepatuhan</strong>.
+              </p>
+            </div>
+          </div>
+          <Link
+            to='/user/schedule'
+            className='inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold rounded-xl transition-all shadow-sm shadow-teal-600/20 shrink-0 self-start sm:self-auto'
+          >
+            <Clock size={15} />
+            <span>Atur Jam Minum</span>
+            <ArrowRight size={14} />
+          </Link>
+        </div>
+      )}
+
+      {/* 3. Visual Kemasan Fisik Blister Pack 28 Butir (4 baris x 7 butir) */}
       <FullBlisterPackCalendar
         activityMap={activityMap}
         selectedDate={selectedDate}
-        onSelectDate={setSelectedDate}
+        onSelectDate={handleSelectDate}
         todayStr={todayStr}
         todayStatus={dashboardData?.todayStatus}
+        hasActiveSchedule={hasActiveSchedule}
+        startDate={scheduleStartDate}
       />
 
       <div className='flex flex-col gap-5 animate-fade-in'>
-        {/* COMPACT FILTER BAR WITH CALENDAR POPOVER */}
-        <DateFilterBar
-          selectedDate={selectedDate}
-          onSelectDate={setSelectedDate}
-          dateFilterPreset={dateFilterPreset}
-          onDateFilterPresetChange={setDateFilterPreset}
-          activityMap={activityMap}
-          todayStr={todayStr}
-          todayStatus={dashboardData?.todayStatus}
-        />
-
-        <MonthlyEvaluationView
-          stats={stats}
-          streakCount={streakCount}
-          streakUnit={streakUnit}
-          riskLevel={dashboardData?.user.riskLevel}
-          logs={allLogs}
-          activityMap={activityMap}
-          selectedDate={selectedDate}
-          onSelectDate={setSelectedDate}
-          todayStr={todayStr}
-        />
-
-        {/* ACTIVE DATE QUICK ACTION CARD */}
-        {dateFilterPreset === 'CUSTOM' && (
+        {/* ACTIVE DATE QUICK ACTION CARD (Focused on Selected Date) */}
+        {hasActiveSchedule && (
           <ActiveDateActionCard
             selectedDate={selectedDate}
             isToday={isSelectedDateToday}
@@ -146,6 +169,32 @@ export default function HistoryView() {
             onUpdateStatus={updateDateStatus}
           />
         )}
+
+        <MonthlyEvaluationView
+          stats={stats}
+          streakCount={streakCount}
+          streakUnit={streakUnit}
+          riskLevel={dashboardData?.user.riskLevel}
+          logs={allLogs}
+          activityMap={activityMap}
+          selectedDate={selectedDate}
+          onSelectDate={handleSelectDate}
+          todayStr={todayStr}
+          hasActiveSchedule={hasActiveSchedule}
+          startDate={scheduleStartDate}
+          activeScheduleId={activeScheduleId}
+        />
+
+        {/* COMPACT FILTER BAR WITH CALENDAR POPOVER */}
+        <DateFilterBar
+          selectedDate={selectedDate}
+          onSelectDate={handleSelectDate}
+          dateFilterPreset={dateFilterPreset}
+          onDateFilterPresetChange={setDateFilterPreset}
+          activityMap={activityMap}
+          todayStr={todayStr}
+          todayStatus={dashboardData?.todayStatus}
+        />
 
         {/* UNIFIED CONSUMPTION LOG LIST WITH STATUS FILTER DROPDOWN */}
         <ConsumptionLogList

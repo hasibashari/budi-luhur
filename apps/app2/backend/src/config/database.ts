@@ -1,5 +1,13 @@
-import { Pool, PoolClient, QueryResult, QueryResultRow } from 'pg';
+import pg from 'pg';
+import type { PoolClient, QueryResult, QueryResultRow } from 'pg';
 import { config } from './env.js';
+
+const { Pool } = pg;
+export type { PoolClient, QueryResult, QueryResultRow };
+
+// Parse PostgreSQL DATE type (OID 1082) as raw string 'YYYY-MM-DD'
+// to avoid local timezone offset shifting the date to the previous day.
+pg.types.setTypeParser(1082, (val: string) => val);
 
 const connectionString = config.databaseUrl?.trim();
 
