@@ -58,7 +58,7 @@ export default function AdminSidebar({ mobileOpen = false, onMobileClose }: Admi
 
   return (
     <AppSidebar
-      brandSubtitle='Portal Bidan & Faskes KB'
+      brandSubtitle='Portal Fasilitas Kesehatan KB'
       badge={adminBadge}
       brandHref='/admin/dashboard'
       navItems={ADMIN_NAVIGATION_ITEMS}

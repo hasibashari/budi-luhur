@@ -1,5 +1,6 @@
 import db from '../../config/database.js';
 import { NotificationService } from '../notifications/notification.service.js';
+import { clearArticlesCache } from '../articles/article.service.js';
 
 export interface AdminStats {
   totalUsers: number;
@@ -57,7 +58,7 @@ export interface MedicationSchedule {
   startDate: string;
   endDate: string;
   status: 'Aktif' | 'Selesai' | 'Diberhentikan';
-  category: 'TTD Rutin' | 'Terapi Anemia' | 'Suplemen Tambahan';
+  category: 'Pil KB Kombinasi' | 'Pil KB Progestin' | 'Suplemen Tambahan';
   instructions: string;
   lastReminderSent?: string;
   todayStatus?: 'COMPLETED' | 'PENDING' | 'NOT_YET_TIME' | 'OFF_SCHEDULE' | 'MISSED';
@@ -144,7 +145,7 @@ export class AdminService {
     const res = await db.query<any>(`
       SELECT 
         u.id, u.name, u.gender, u.phone, u.email, u.avatar_url, u.created_at,
-        p.risk_level, p.status, p.notes, p.school_or_org, p.hb_level, p.friend_code, p.streak_count, p.last_active_at,
+        p.risk_level, p.status, p.notes, p.school_or_org, p.friend_code, p.streak_count, p.last_active_at,
         (SELECT count(*) FROM reminder_schedules WHERE user_id = u.id AND status = 'Aktif') as active_schedules_count,
         (SELECT count(*) FROM consumption_logs WHERE user_id = u.id) as total_logs,
         (SELECT count(*) FROM consumption_logs WHERE user_id = u.id AND status IN ('ON_TIME', 'LATE')) as completed_logs
@@ -164,7 +165,7 @@ export class AdminService {
         ? d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })
         : 'Hari ini';
 
-      const schoolOrOrg = r.school_or_org || 'SMA Negeri 1 Sehat';
+      const schoolOrOrg = r.school_or_org || 'Puskesmas / Faskes Terdaftar';
 
       return {
         id: r.id,
@@ -182,7 +183,7 @@ export class AdminService {
         adherenceRate,
         lastActive: lastActiveStr,
         joinDate: r.created_at ? new Date(r.created_at).toISOString().split('T')[0] : '2026-09-01',
-        medicalNotes: `Kadar Hb: ${r.hb_level || 12.4} g/dL • ${r.notes || 'Rutin suplementasi'}`,
+        medicalNotes: r.notes || 'Rutin minum pil KB',
         lastReminderSent: 'Hari ini, 20:00 WIB',
       };
     });
@@ -192,7 +193,7 @@ export class AdminService {
     const res = await db.query<any>(
       `SELECT 
         u.id, u.name, u.gender, u.phone, u.email, u.avatar_url, u.created_at,
-        p.risk_level, p.status, p.notes, p.school_or_org, p.hb_level, p.friend_code, p.streak_count, p.last_active_at,
+        p.risk_level, p.status, p.notes, p.school_or_org, p.friend_code, p.streak_count, p.last_active_at,
         (SELECT count(*) FROM reminder_schedules WHERE user_id = u.id AND status = 'Aktif') as active_schedules_count,
         (SELECT count(*) FROM consumption_logs WHERE user_id = u.id) as total_logs,
         (SELECT count(*) FROM consumption_logs WHERE user_id = u.id AND status IN ('ON_TIME', 'LATE')) as completed_logs
@@ -214,7 +215,7 @@ export class AdminService {
       ? d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })
       : 'Hari ini';
 
-    const schoolOrOrg = r.school_or_org || 'SMA Negeri 1 Sehat';
+    const schoolOrOrg = r.school_or_org || 'Puskesmas / Faskes Terdaftar';
 
     return {
       id: r.id,
@@ -232,7 +233,7 @@ export class AdminService {
       adherenceRate,
       lastActive: lastActiveStr,
       joinDate: r.created_at ? new Date(r.created_at).toISOString().split('T')[0] : '2026-09-01',
-      medicalNotes: `Kadar Hb: ${r.hb_level || 12.4} g/dL • ${r.notes || 'Rutin suplementasi'}`,
+      medicalNotes: r.notes || 'Rutin minum pil KB',
       lastReminderSent: 'Hari ini, 20:00 WIB',
     };
   }
@@ -254,7 +255,7 @@ export class AdminService {
         .replace(/[^A-Z]/g, '')
         .slice(0, 5) || 'USER';
     const friendCode = `FE-${cleanTag}-${Math.floor(1000 + Math.random() * 9000)}`;
-    const school = data.schoolOrOrg || 'SMA Negeri 1 Sehat';
+    const school = data.schoolOrOrg || 'Puskesmas / Faskes Terdaftar';
 
     await db.transaction(async (client) => {
       await client.query(
@@ -278,7 +279,7 @@ export class AdminService {
 
       await client.query(
         `INSERT INTO reminder_schedules (id, user_id, tablet_name, dosage, frequency, day_of_week, time_slot, is_enabled, status)
-         VALUES ($1, $2, 'Tablet Tambah Darah (TTD)', '1 tablet', 'weekly', 'Sabtu', '20:00', true, 'Aktif')`,
+         VALUES ($1, $2, 'Pil KB Kombinasi (28 Tablet)', '1 tablet', 'daily', 'Setiap Hari', '20:00', true, 'Aktif')`,
         [`sch_${newId}`, newId],
       );
     });
@@ -340,11 +341,11 @@ export class AdminService {
 
   static async sendUserReminder(userId: string, message?: string, channel: string = 'app') {
     const nudgeId = `ndg_${Date.now().toString().slice(-6)}`;
-    const msg = message || 'Halo! Jangan lupa minum Tablet Tambah Darah (TTD) minggu ini ya 🌸';
+    const msg = message || 'Halo! Jangan lupa minum Pil KB hari ini tepat waktu ya 🌸';
 
     await db.query(
       `INSERT INTO admin_nudges (id, user_id, title, message, channel, status)
-       VALUES ($1, $2, 'Pengingat Minum TTD', $3, $4, 'UNREAD')`,
+       VALUES ($1, $2, 'Pengingat Minum Pil KB', $3, $4, 'UNREAD')`,
       [nudgeId, userId, msg, channel],
     );
 
@@ -447,7 +448,7 @@ export class AdminService {
           canonicalCategory,
           data.status || 'Terbit',
           today,
-          data.author || 'Tim Ahli Gizi UKS',
+          data.author || 'Tim Medis Pilluna',
         ],
       );
 
@@ -464,11 +465,13 @@ export class AdminService {
       }
     });
 
+    clearArticlesCache();
+
     return {
       id: newId,
       title: data.title,
       category: canonicalCategory,
-      author: data.author || 'Tim Ahli Gizi UKS',
+      author: data.author || 'Tim Medis Pilluna',
       publishDate: today,
       status: (data.status || 'Terbit') as HealthArticle['status'],
       views: 0,
@@ -536,6 +539,8 @@ export class AdminService {
       }
     });
 
+    clearArticlesCache();
+
     return { success: true };
   }
 
@@ -544,6 +549,7 @@ export class AdminService {
       await client.query(`DELETE FROM articles WHERE id = $1`, [articleId]);
       await AdminService.normalizeStoredCategories(client);
     });
+    clearArticlesCache();
     return { success: true };
   }
 
@@ -595,11 +601,12 @@ export class AdminService {
       const isSupplement =
         (r.tablet_name || '').toLowerCase().includes('vitamin') ||
         (r.tablet_name || '').toLowerCase().includes('suplemen');
+      const isProgestin = (r.tablet_name || '').toLowerCase().includes('progestin');
       const category: MedicationSchedule['category'] = isSupplement
         ? 'Suplemen Tambahan'
-        : isDaily
-          ? 'Terapi Anemia'
-          : 'TTD Rutin';
+        : isProgestin
+          ? 'Pil KB Progestin'
+          : 'Pil KB Kombinasi';
 
       const log = isDaily
         ? recentLogs.find(
@@ -620,13 +627,13 @@ export class AdminService {
       result.push({
         id: r.id,
         userId: r.user_id,
-        userName: r.user_name || 'Siswi FEMORY',
+        userName: r.user_name || 'Akseptor Pilluna',
         patientId: r.user_id,
-        patientName: r.user_name || 'Siswi FEMORY',
-        medicationName: r.tablet_name || 'Tablet Tambah Darah (TTD)',
+        patientName: r.user_name || 'Akseptor Pilluna',
+        medicationName: r.tablet_name || 'Pil KB Kombinasi (28 Tablet)',
         dosage: r.dosage || '1 tablet',
         frequency: isDaily ? 'Harian' : '1x Seminggu',
-        dayOfWeek: r.day_of_week || 'Sabtu',
+        dayOfWeek: r.day_of_week || 'Setiap Hari',
         timeSlots: slots,
         startDate: r.created_at ? new Date(r.created_at).toISOString().split('T')[0] : '2026-09-01',
         endDate: '2026-12-31',
@@ -634,7 +641,7 @@ export class AdminService {
         category,
         instructions:
           r.instructions || 'Minum setelah makan malam atau sebelum tidur dengan air putih.',
-        lastReminderSent: `${r.day_of_week || 'Sabtu'}, ${r.time_slot || '20:00'} WIB`,
+        lastReminderSent: `${r.day_of_week || 'Setiap Hari'}, ${r.time_slot || '20:00'} WIB`,
         todayStatus,
       });
     }
@@ -671,22 +678,23 @@ export class AdminService {
     const isSupplement =
       (r.tablet_name || '').toLowerCase().includes('vitamin') ||
       (r.tablet_name || '').toLowerCase().includes('suplemen');
+    const isProgestin = (r.tablet_name || '').toLowerCase().includes('progestin');
     const category: MedicationSchedule['category'] = isSupplement
       ? 'Suplemen Tambahan'
-      : isDaily
-        ? 'Terapi Anemia'
-        : 'TTD Rutin';
+      : isProgestin
+        ? 'Pil KB Progestin'
+        : 'Pil KB Kombinasi';
 
     return {
       id: r.id,
       userId: r.user_id,
-      userName: r.user_name || 'Siswi FEMORY',
+      userName: r.user_name || 'Akseptor Pilluna',
       patientId: r.user_id,
-      patientName: r.user_name || 'Siswi FEMORY',
-      medicationName: r.tablet_name || 'Tablet Tambah Darah (TTD)',
+      patientName: r.user_name || 'Akseptor Pilluna',
+      medicationName: r.tablet_name || 'Pil KB Kombinasi (28 Tablet)',
       dosage: r.dosage || '1 tablet',
       frequency: isDaily ? 'Harian' : '1x Seminggu',
-      dayOfWeek: r.day_of_week || 'Sabtu',
+      dayOfWeek: r.day_of_week || 'Setiap Hari',
       timeSlots: slots,
       startDate: r.created_at ? new Date(r.created_at).toISOString().split('T')[0] : '2026-09-01',
       endDate: '2026-12-31',
@@ -694,7 +702,7 @@ export class AdminService {
       category,
       instructions:
         r.instructions || 'Minum setelah makan malam atau sebelum tidur dengan air putih.',
-      lastReminderSent: `${r.day_of_week || 'Sabtu'}, ${r.time_slot || '20:00'} WIB`,
+      lastReminderSent: `${r.day_of_week || 'Setiap Hari'}, ${r.time_slot || '20:00'} WIB`,
     };
   }
 
@@ -706,16 +714,18 @@ export class AdminService {
     frequency: string;
     dayOfWeek?: string;
     timeSlots: string[];
-    category?: 'TTD Rutin' | 'Terapi Anemia' | 'Suplemen Tambahan';
+    category?: 'Pil KB Kombinasi' | 'Pil KB Progestin' | 'Suplemen Tambahan';
     instructions?: string;
   }) {
     const targetUserId = data.userId || data.patientId;
     if (!targetUserId) throw new Error('User tujuan wajib dipilih.');
     const newId = `sch_${Date.now().toString().slice(-6)}`;
     const mainSlot = (data.timeSlots && data.timeSlots[0]) || '20:00';
-    const dayOfWeek = data.dayOfWeek || 'Sabtu';
+    const dayOfWeek = data.dayOfWeek || 'Setiap Hari';
     const dbFrequency =
-      data.frequency === 'Harian' || data.category === 'Terapi Anemia' ? 'daily' : 'weekly';
+      data.frequency === 'Harian' || data.category === 'Pil KB Kombinasi' || data.category === 'Pil KB Progestin'
+        ? 'daily'
+        : 'weekly';
 
     await db.transaction(async (client) => {
       await client.query(
@@ -725,13 +735,13 @@ export class AdminService {
         [
           newId,
           targetUserId,
-          data.medicationName || 'Tablet Tambah Darah (TTD)',
+          data.medicationName || 'Pil KB Kombinasi (28 Tablet)',
           data.dosage || '1 tablet',
           dbFrequency,
           dayOfWeek,
           mainSlot,
           data.instructions ||
-            'Minum 1 tablet setelah sarapan atau sebelum tidur dengan air putih.',
+            'Minum 1 tablet setiap hari pada jam yang sama setelah makan malam atau sebelum tidur.',
         ],
       );
 
@@ -751,7 +761,7 @@ export class AdminService {
 
   static async updateSchedule(scheduleId: string, data: any) {
     const dbFrequency = data.frequency
-      ? data.frequency === 'Harian' || data.category === 'Terapi Anemia'
+      ? data.frequency === 'Harian' || data.category === 'Pil KB Kombinasi' || data.category === 'Pil KB Progestin'
         ? 'daily'
         : 'weekly'
       : null;

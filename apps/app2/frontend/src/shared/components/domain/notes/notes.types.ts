@@ -68,7 +68,7 @@ export const PAIN_OPTIONS: { id: PainLevel; label: string; advice?: string }[] =
     id: 'berat',
     label: 'Berat',
     advice:
-      'PERHATIAN: Jika mengalami nyeri perut atau kepala hebat secara mendadak, segera konsultasikan dengan dokter atau bidan.',
+      'PERHATIAN: Jika mengalami nyeri perut atau kepala hebat secara mendadak, segera konsultasikan dengan dokter atau fasilitas kesehatan.',
   },
 ];
 

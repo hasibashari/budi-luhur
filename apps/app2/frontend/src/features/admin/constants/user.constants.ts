@@ -20,7 +20,7 @@ export const RISK_LEVEL_COLORS: Record<string, { bg: string; text: string }> = {
   default: { bg: '#f1f5f9', text: '#475569' },
 };
 
-export const DEFAULT_SCHOOL_ORG = 'Puskesmas Melati / Wilayah Bidan';
+export const DEFAULT_SCHOOL_ORG = 'Puskesmas Melati / Wilayah Faskes';
 
 export interface UserFormData {
   name: string;

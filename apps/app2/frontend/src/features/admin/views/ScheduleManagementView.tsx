@@ -162,7 +162,7 @@ export default function ScheduleManagementView() {
       frequency: schedule.frequency === 'Harian' ? 'Harian' : '1x Seminggu',
       dayOfWeek: schedule.dayOfWeek || 'Sabtu',
       timeSlot: schedule.timeSlots.join(', '),
-      category: (schedule.category as ScheduleCategory) || 'TTD Rutin',
+      category: (schedule.category as ScheduleCategory) || 'Pil KB Kombinasi',
       instructions: schedule.instructions,
     });
   };
@@ -263,7 +263,7 @@ export default function ScheduleManagementView() {
   const handleOpenReminder = (schedule: MedicationSchedule) => {
     const targetUserId = schedule.userId || schedule.patientId || '';
     const userObj = users.find(u => u.id === targetUserId);
-    const name = schedule.userName || schedule.patientName || userObj?.name || 'Siswi';
+    const name = schedule.userName || schedule.patientName || userObj?.name || 'Pengguna';
     setReminderData({
       userId: targetUserId,
       userName: name,
@@ -281,8 +281,8 @@ export default function ScheduleManagementView() {
       await sendReminderNudgeAction({
         userId: reminderData.userId,
         patientId: reminderData.userId,
-        senderName: 'Bidan Faskes Pilluna',
-        senderRole: 'Bidan / Nakes',
+        senderName: 'Tim Faskes Pilluna',
+        senderRole: 'Tenaga Medis / Faskes',
         scheduleId: reminderData.scheduleId,
         medicationName: reminderData.medicationName,
         dosage: reminderData.dosage,
@@ -318,7 +318,7 @@ export default function ScheduleManagementView() {
             <div className='min-w-0'>
               <div className='font-bold text-[#24354D] text-sm truncate'>{name}</div>
               <div className='text-xs text-[#4A5E78] truncate'>
-                {targetUserId} • {user?.schoolOrOrg || 'Puskesmas / Bidan Terdaftar'}
+                {targetUserId} • {user?.schoolOrOrg || 'Puskesmas / Faskes Terdaftar'}
               </div>
             </div>
           </div>
@@ -510,7 +510,7 @@ export default function ScheduleManagementView() {
                       {name}
                     </h4>
                     <p className='text-xs text-slate-500 mt-0.5 truncate'>
-                      {targetUserId} • {user?.schoolOrOrg || 'Puskesmas / Bidan Terdaftar'}
+                      {targetUserId} • {user?.schoolOrOrg || 'Puskesmas / Faskes Terdaftar'}
                     </p>
                   </div>
                 </div>

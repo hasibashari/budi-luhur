@@ -11,7 +11,6 @@ export interface MonthlyEvaluationViewProps {
   stats: ConsumptionStats | null;
   streakCount: number;
   streakUnit: string;
-  hbLevel?: number | null;
   riskLevel?: string | null;
   logs: ConsumptionLog[];
   activityMap?: Record<string, ActivityDateInfo>;

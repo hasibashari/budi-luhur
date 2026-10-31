@@ -46,12 +46,11 @@ export class UserService {
         avatar_url: string | null;
         friend_code: string | null;
         school_or_org: string | null;
-        hb_level: number | null;
         risk_level: string | null;
         streak_count: number;
       }>(
         `SELECT u.name, u.email, u.phone, u.avatar_url,
-                p.friend_code, p.school_or_org, p.hb_level, p.risk_level, p.streak_count
+                p.friend_code, p.school_or_org, p.risk_level, p.streak_count
          FROM users u
          LEFT JOIN user_profiles p ON u.id = p.user_id
          WHERE u.id = $1`,
@@ -112,17 +111,17 @@ export class UserService {
       activeSchedule = {
         id: sch.id,
         patientId: userId,
-        tabletName: sch.tablet_name || 'Tablet Tambah Darah (TTD)',
-        dosage: sch.dosage || '1 tablet, 1x seminggu',
-        frequency: sch.frequency === 'daily' ? 'Harian' : 'Mingguan',
-        category: sch.frequency === 'daily' ? 'Terapi Anemia' : 'TTD Rutin',
+        tabletName: sch.tablet_name || 'Pil KB Kombinasi (28 Tablet)',
+        dosage: sch.dosage || '1 tablet setiap hari',
+        frequency: sch.frequency === 'daily' ? 'Harian' : '1x Seminggu',
+        category: sch.frequency === 'daily' ? 'Pil KB Kombinasi' : 'Suplemen Tambahan',
         dayOfWeek,
         time: timeSlot,
         isEnabled: sch.is_enabled,
         remind15MinBefore: sch.remind_15min_before,
         instructions:
           sch.instructions ||
-          'Minum 1 tablet seminggu sekali setelah makan malam atau sebelum tidur.',
+          'Minum 1 tablet setiap hari pada jam yang sama setelah makan malam atau sebelum tidur.',
         nextDate,
         daysRemaining,
       };
@@ -155,7 +154,6 @@ export class UserService {
         streakCount: streakResult.streakCount,
         streakUnit: streakResult.streakUnit,
         consecutiveDates: streakResult.consecutiveDates,
-        hbLevel: userRow.hb_level,
         schoolOrOrg: userRow.school_or_org,
         riskLevel: userRow.risk_level,
         friendCode: userRow.friend_code || undefined,
@@ -181,7 +179,7 @@ export class UserService {
   static async getProfile(userId: string): Promise<UserProfile | null> {
     const res = await db.query<any>(
       `SELECT u.id, u.name, u.email, u.phone, u.avatar_url, u.date_of_birth,
-              p.blood_type, p.height, p.weight, p.school_or_org, p.hb_level,
+              p.blood_type, p.height, p.weight, p.school_or_org,
               p.streak_count, p.friend_code, p.risk_level, p.level_title, p.status, p.notes
        FROM users u
        LEFT JOIN user_profiles p ON u.id = p.user_id
@@ -203,7 +201,6 @@ export class UserService {
       height: row.height !== null ? Number(row.height) : undefined,
       weight: row.weight !== null ? Number(row.weight) : undefined,
       schoolOrOrg: row.school_or_org || undefined,
-      hbLevel: row.hb_level !== null ? Number(row.hb_level) : undefined,
       streakCount: row.streak_count !== null ? Number(row.streak_count) : 0,
       friendCode: row.friend_code || undefined,
       riskLevel: row.risk_level || undefined,
@@ -255,31 +252,6 @@ export class UserService {
         profileUpdates.push(`school_or_org = $${idx++}`);
         profileParams.push(data.schoolOrOrg || null);
       }
-      if (data.hbLevel !== undefined) {
-        profileUpdates.push(`hb_level = $${idx++}`);
-        profileParams.push(
-          data.hbLevel !== null && data.hbLevel !== '' ? Number(data.hbLevel) : null,
-        );
-
-        // Auto evaluate hb_status and risk_level
-        const hb = Number(data.hbLevel);
-        let hbStatus: string | null = hb > 0 ? 'Normal' : null;
-        let riskLevel: string | null = hb > 0 ? 'Rendah' : null;
-        if (hb > 0 && hb < 8.0) {
-          hbStatus = 'Anemia Berat';
-          riskLevel = 'Tinggi';
-        } else if (hb >= 8.0 && hb < 11.0) {
-          hbStatus = 'Anemia Sedang';
-          riskLevel = 'Tinggi';
-        } else if (hb >= 11.0 && hb < 12.0) {
-          hbStatus = 'Anemia Ringan';
-          riskLevel = 'Sedang';
-        }
-        profileUpdates.push(`hb_status = $${idx++}`);
-        profileParams.push(hbStatus);
-        profileUpdates.push(`risk_level = $${idx++}`);
-        profileParams.push(riskLevel);
-      }
       if (data.bloodType !== undefined) {
         profileUpdates.push(`blood_type = $${idx++}`);
         profileParams.push(data.bloodType || null);
@@ -316,36 +288,19 @@ export class UserService {
       }
 
       // 2. Update user profile
-      const hb = data.hbLevel ? Number(data.hbLevel) : null;
-      let hbStatus: string | null = hb ? 'Normal' : null;
-      let riskLevel: string | null = hb ? 'Rendah' : null;
-      if (hb && hb < 11.0) {
-        hbStatus = hb < 8.0 ? 'Anemia Berat' : 'Anemia Sedang';
-        riskLevel = 'Tinggi';
-      } else if (hb && hb < 12.0) {
-        hbStatus = 'Anemia Ringan';
-        riskLevel = 'Sedang';
-      }
-
       await client.query(
         `UPDATE user_profiles
          SET school_or_org = $1,
              blood_type = $2,
              height = $3,
              weight = $4,
-             hb_level = $5,
-             hb_status = $6,
-             risk_level = $7,
              last_active_at = CURRENT_TIMESTAMP
-         WHERE user_id = $8`,
+         WHERE user_id = $5`,
         [
           data.schoolOrOrg || null,
           data.bloodType || null,
           data.height ? Number(data.height) : null,
           data.weight ? Number(data.weight) : null,
-          hb,
-          hbStatus,
-          riskLevel,
           userId,
         ],
       );
@@ -360,13 +315,13 @@ export class UserService {
           [
             schedId,
             userId,
-            data.schedule.tabletName || 'Tablet Tambah Darah (TTD)',
+            data.schedule.tabletName || 'Pil KB Kombinasi (28 Tablet)',
             data.schedule.dosage || '1 tablet',
-            data.schedule.frequency || 'weekly',
-            data.schedule.dayOfWeek || 'Sabtu',
+            data.schedule.frequency || 'daily',
+            data.schedule.dayOfWeek || 'Setiap Hari',
             data.schedule.timeSlot || '20:00',
             data.schedule.remind15MinBefore ?? true,
-            'Minum setelah makan malam atau sebelum tidur dengan air putih.',
+            'Minum pil KB pada jam yang sama setiap hari dengan air putih.',
           ],
         );
 

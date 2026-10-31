@@ -23,7 +23,7 @@ export class AuthService {
       // 1. Check direct email match
       const res = await db.query<UserDbRow>(
         `SELECT u.id, u.name, u.email, u.password_hash, u.role, u.phone, u.avatar_url, u.gender,
-                p.friend_code, p.school_or_org, p.hb_level, p.streak_count
+                p.friend_code, p.school_or_org, p.streak_count
          FROM users u
          LEFT JOIN user_profiles p ON u.id = p.user_id
          WHERE lower(u.email) = $1`,
@@ -67,7 +67,6 @@ export class AuthService {
       gender: row.gender || 'Perempuan',
       friendCode: row.friend_code || undefined,
       schoolOrOrg: row.school_or_org || undefined,
-      hbLevel: row.hb_level !== null ? Number(row.hb_level) : undefined,
       streakCount: row.streak_count !== null ? Number(row.streak_count) : 0,
       isProfileComplete,
     };
@@ -148,8 +147,8 @@ export class AuthService {
       // 2. Insert into user_profiles
       await client.query(
         `INSERT INTO user_profiles (
-          user_id, friend_code, school_or_org, hb_level, hb_status, risk_level, height, weight, blood_type, streak_count, level_title, status
-        ) VALUES ($1, $2, NULL, NULL, 'Normal', 'Rendah', NULL, NULL, NULL, 0, 'Pemula Sehat', 'Aktif')`,
+          user_id, friend_code, school_or_org, risk_level, height, weight, blood_type, streak_count, level_title, status
+        ) VALUES ($1, $2, NULL, 'Rendah', NULL, NULL, NULL, 0, 'Pemula Sehat', 'Aktif')`,
         [newId, friendCode],
       );
     });

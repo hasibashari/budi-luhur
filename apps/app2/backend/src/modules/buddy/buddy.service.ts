@@ -128,7 +128,7 @@ export class BuddyService {
       id: msg.id,
       groupId,
       senderId: msg.sender_id || 'system',
-      senderName: msg.sender_name || 'Sistem FEMORY',
+      senderName: msg.sender_name || 'Sistem Pilluna',
       senderAvatar: msg.sender_avatar || '',
       type: msg.message_type,
       content: msg.content,
@@ -181,7 +181,7 @@ export class BuddyService {
       await client.query(
         `INSERT INTO buddy_group_messages (id, group_id, sender_id, message_type, content)
          VALUES ($1, $2, $3, 'system', $4)`,
-        [`msg_${Date.now().toString().slice(-6)}`, groupId, userId, 'Grup berhasil dibuat! Mari cegah anemia bersama-sama 🌸'],
+        [`msg_${Date.now().toString().slice(-6)}`, groupId, userId, 'Grup berhasil dibuat! Mari disiplin minum pil KB bersama-sama 🌸'],
       );
     });
 

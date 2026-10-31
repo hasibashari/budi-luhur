@@ -10,7 +10,6 @@ export interface AuthUser {
   gender?: 'Perempuan' | 'Laki-laki';
   schoolOrOrg?: string;
   friendCode?: string;
-  hbLevel?: number;
   streakCount?: number;
   isProfileComplete?: boolean;
 }
@@ -39,6 +38,5 @@ export interface UserDbRow {
   gender: 'Perempuan' | 'Laki-laki' | null;
   friend_code: string | null;
   school_or_org: string | null;
-  hb_level: number | null;
   streak_count: number | null;
 }

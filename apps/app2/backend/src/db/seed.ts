@@ -62,13 +62,11 @@ export async function seedDatabase() {
     console.log('  -> Seeding user profiles...');
     const insertUserProfileQuery = `
       INSERT INTO user_profiles (
-        user_id, friend_code, school_or_org, hb_level, hb_status, risk_level, height, weight, blood_type, streak_count, level_title, status, notes
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+        user_id, friend_code, school_or_org, risk_level, height, weight, blood_type, streak_count, level_title, status, notes
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
       ON CONFLICT (user_id) DO UPDATE SET
         friend_code = EXCLUDED.friend_code,
         school_or_org = EXCLUDED.school_or_org,
-        hb_level = EXCLUDED.hb_level,
-        hb_status = EXCLUDED.hb_status,
         risk_level = EXCLUDED.risk_level,
         height = EXCLUDED.height,
         weight = EXCLUDED.weight,
@@ -84,8 +82,6 @@ export async function seedDatabase() {
         p.userId,
         p.friendCode,
         p.schoolOrOrg,
-        p.hbLevel,
-        p.hbStatus,
         p.riskLevel,
         p.height ?? 158.0,
         p.weight ?? 48.0,

@@ -1,5 +1,5 @@
 -- ============================================================
--- FEMORY CLEAN RELATIONAL SCHEMA (2-ROLE ARCHITECTURE)
+-- PILLUNA CLEAN RELATIONAL SCHEMA (2-ROLE ARCHITECTURE)
 -- PostgreSQL 15+ Schema Definition
 -- ============================================================
 
@@ -37,13 +37,11 @@ CREATE TABLE users (
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- 2. USER PROFILES (BIOMETRICS, SCHOOL, HB LEVEL, FRIEND CODE)
+-- 2. USER PROFILES (BIOMETRICS, FASKES/COMMUNITY, FRIEND CODE)
 CREATE TABLE user_profiles (
     user_id VARCHAR(255) PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
     friend_code VARCHAR(50) NOT NULL UNIQUE,
     school_or_org VARCHAR(255) DEFAULT NULL,
-    hb_level DOUBLE PRECISION DEFAULT NULL,
-    hb_status VARCHAR(50) DEFAULT 'Normal' CHECK(hb_status IN ('Normal', 'Anemia Ringan', 'Anemia Sedang', 'Anemia Berat')),
     risk_level VARCHAR(50) DEFAULT 'Rendah' CHECK(risk_level IN ('Tinggi', 'Sedang', 'Rendah')),
     height DOUBLE PRECISION DEFAULT NULL,
     weight DOUBLE PRECISION DEFAULT NULL,
@@ -55,11 +53,11 @@ CREATE TABLE user_profiles (
     last_active_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- 3. PRODUCTS (SUPPLEMENTS & TTD INVENTORY)
+-- 3. PRODUCTS (CONTRACEPTIVES & PIL KB INVENTORY)
 CREATE TABLE products (
     id VARCHAR(255) PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    category VARCHAR(100) NOT NULL DEFAULT 'Suplemen TTD',
+    category VARCHAR(100) NOT NULL DEFAULT 'Pil KB',
     sku VARCHAR(100) NOT NULL UNIQUE,
     stock INTEGER NOT NULL DEFAULT 0,
     unit VARCHAR(50) NOT NULL DEFAULT 'Tablet',
@@ -75,14 +73,14 @@ CREATE TABLE reminder_schedules (
     id VARCHAR(255) PRIMARY KEY,
     user_id VARCHAR(255) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     product_id VARCHAR(255) REFERENCES products(id) ON DELETE SET NULL,
-    tablet_name VARCHAR(255) NOT NULL DEFAULT 'Tablet Tambah Darah (TTD)',
+    tablet_name VARCHAR(255) NOT NULL DEFAULT 'Pil KB Kombinasi (28 Tablet)',
     dosage VARCHAR(100) NOT NULL DEFAULT '1 tablet',
-    frequency VARCHAR(50) NOT NULL DEFAULT 'weekly' CHECK(frequency IN ('weekly', 'daily')),
-    day_of_week VARCHAR(50) NOT NULL DEFAULT 'Sabtu',
+    frequency VARCHAR(50) NOT NULL DEFAULT 'daily' CHECK(frequency IN ('weekly', 'daily')),
+    day_of_week VARCHAR(50) NOT NULL DEFAULT 'Setiap Hari',
     time_slot VARCHAR(50) NOT NULL DEFAULT '20:00',
     is_enabled BOOLEAN NOT NULL DEFAULT TRUE,
     remind_15min_before BOOLEAN NOT NULL DEFAULT TRUE,
-    instructions TEXT DEFAULT 'Minum setelah makan malam atau sebelum tidur dengan air putih.',
+    instructions TEXT DEFAULT 'Minum pil KB pada jam yang sama setiap hari dengan air putih.',
     status VARCHAR(50) NOT NULL DEFAULT 'Aktif' CHECK(status IN ('Aktif', 'Selesai', 'Diberhentikan')),
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -99,8 +97,8 @@ CREATE TABLE consumption_logs (
     id VARCHAR(255) PRIMARY KEY,
     user_id VARCHAR(255) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     schedule_id VARCHAR(255) REFERENCES reminder_schedules(id) ON DELETE SET NULL,
-    title VARCHAR(255) NOT NULL DEFAULT 'Tablet Tambah Darah (TTD)',
-    category VARCHAR(50) NOT NULL DEFAULT 'TTD',
+    title VARCHAR(255) NOT NULL DEFAULT 'Pil KB Kombinasi',
+    category VARCHAR(50) NOT NULL DEFAULT 'Pil KB',
     dosage VARCHAR(100) DEFAULT '1 Tablet',
     scheduled_date DATE NOT NULL,
     scheduled_time VARCHAR(50) NOT NULL DEFAULT '20:00',
@@ -180,7 +178,7 @@ CREATE TABLE admin_nudges (
     user_id VARCHAR(255) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     sender_id VARCHAR(255) REFERENCES users(id) ON DELETE SET NULL,
     schedule_id VARCHAR(255) REFERENCES reminder_schedules(id) ON DELETE SET NULL,
-    title VARCHAR(255) NOT NULL DEFAULT 'Pengingat Minum TTD',
+    title VARCHAR(255) NOT NULL DEFAULT 'Pengingat Minum Pil KB',
     message TEXT NOT NULL,
     channel VARCHAR(50) NOT NULL DEFAULT 'app' CHECK(channel IN ('app', 'whatsapp')),
     status VARCHAR(50) NOT NULL DEFAULT 'UNREAD' CHECK(status IN ('UNREAD', 'READ', 'DISMISSED')),

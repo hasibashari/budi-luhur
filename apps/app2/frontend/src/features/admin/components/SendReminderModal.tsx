@@ -37,7 +37,7 @@ function SendReminderModalContent({
   const getTemplateContent = (templateKey: string) => {
     switch (templateKey) {
       case 'standard':
-        return `Halo ${displayName}, ini pengingat dari Bidan Faskes / Pilluna untuk minum ${medicationName} (${dosage}) pada jam ${timeSlot}. Jangan lupa diminum tepat waktu agar efektivitas perlindungan tetap optimal ya! 🌸`;
+        return `Halo ${displayName}, ini pengingat dari Tim Faskes Pilluna untuk minum ${medicationName} (${dosage}) pada jam ${timeSlot}. Jangan lupa diminum tepat waktu agar efektivitas perlindungan tetap optimal ya! 🌸`;
       case 'friendly':
         return `Halo ${displayName}, tetap disiplin minum ${medicationName} (${dosage}) hari ini ya! Rutin minum pil setiap hari menjaga efektivitas perlindungan hingga 99%. Semangat selalu! 🌸`;
       case 'urgent':

@@ -78,7 +78,7 @@ export class ArticleService {
       if (r.author_name) {
         author = {
           name: r.author_name,
-          role: r.author_role || 'Tim Medis FEMORY',
+          role: r.author_role || 'Tim Medis Pilluna',
           avatarUrl: r.author_avatar_url || '',
           bio: r.author_bio || undefined,
         };
@@ -169,7 +169,7 @@ export class ArticleService {
     if (row.author_name) {
       author = {
         name: row.author_name,
-        role: row.author_role || 'Tim Medis FEMORY',
+        role: row.author_role || 'Tim Medis Pilluna',
         avatarUrl: row.author_avatar_url || '',
         bio: row.author_bio || undefined,
       };

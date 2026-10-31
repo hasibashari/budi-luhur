@@ -21,10 +21,10 @@ export default function AdminProfileView() {
     name: user?.name || 'SUPER ADMIN',
     email: user?.email || 'superAdmin@gmail.com',
     phone: user?.phone || '+62 811-2233-4455',
-    title: user?.schoolOrOrg || 'Bidan Koordinator KB & Kespro',
+    title: user?.schoolOrOrg || 'Koordinator Pelayanan KB & Kespro',
     department: 'Layanan Kontrasepsi & Kesehatan Reproduksi',
     clinicName: 'Puskesmas / Klinik Pratama Pilluna',
-    roleLabel: 'Bidan / Administrator',
+    roleLabel: 'Tenaga Medis / Administrator',
     avatarUrl: user?.avatarUrl || '',
   });
 
@@ -119,7 +119,7 @@ export default function AdminProfileView() {
     {
       id: 'system',
       label: 'Sistem Pengelola',
-      value: 'Puskesmas / Bidan',
+      value: 'Puskesmas / Fasilitas Kesehatan',
       subtitle: 'Portal Terpadu Pilluna KB & SADARI',
       icon: Building,
       iconBgColor: 'bg-teal-50',

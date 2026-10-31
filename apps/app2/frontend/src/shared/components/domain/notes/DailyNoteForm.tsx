@@ -286,12 +286,12 @@ export const DailyNoteForm: React.FC<DailyNoteFormProps> = ({
         </NoteSectionCard>
       </div>
 
-      {/* FEEDBACK EDUKATIF BIDAN */}
+      {/* FEEDBACK EDUKATIF MEDIS */}
       {activeAdvices.length > 0 && (
         <div className='p-3.5 sm:p-4 bg-teal-50/80 rounded-2xl border border-teal-200/80 text-xs text-slate-700 space-y-2 transition-all'>
           <div className='flex items-center gap-1.5 text-teal-900 font-bold text-xs sm:text-sm'>
             <Sparkles className='w-4 h-4 text-teal-600 shrink-0' />
-            <span>Catatan Klinis Bidan Pilluna</span>
+            <span>Catatan Klinis Medis Pilluna</span>
           </div>
           <div className='space-y-1.5'>
             {activeAdvices.map((item, idx) => (

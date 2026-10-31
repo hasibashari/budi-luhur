@@ -278,8 +278,8 @@ export default function ProfileView() {
     },
     {
       icon: Building2,
-      label: 'Faskes / Bidan Pendamping',
-      value: userProfile.schoolOrOrg || 'Puskesmas / Praktik Mandiri Bidan',
+      label: 'Fasilitas Kesehatan Pendamping',
+      value: userProfile.schoolOrOrg || 'Puskesmas / Fasilitas Kesehatan Terdaftar',
     },
   ];
 
@@ -383,13 +383,13 @@ export default function ProfileView() {
 
         <div>
           <label className='text-xs font-bold text-slate-700 block mb-1'>
-            Fasilitas Kesehatan / Bidan Pendamping
+            Fasilitas Kesehatan Pendamping
           </label>
           <input
             type='text'
             value={editFaskes}
             onChange={e => setEditFaskes(e.target.value)}
-            placeholder='Contoh: Puskesmas Budi Luhur / PMB Bidan Siti'
+            placeholder='Contoh: Puskesmas Budi Luhur / Klinik Pratama'
             className='w-full bg-slate-50 border border-slate-200 focus:border-teal-600 focus:ring-1 focus:ring-teal-600 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-slate-800 outline-none'
           />
         </div>

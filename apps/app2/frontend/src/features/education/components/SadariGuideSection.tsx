@@ -186,7 +186,7 @@ export function SadariGuideSection() {
             </p>
           </div>
           <span className='text-xs font-semibold text-teal-800 bg-teal-50 border border-teal-200 px-3 py-1 rounded-full'>
-            Sesuai Panduan Kemenkes RI
+            Standar Panduan Medis
           </span>
         </div>
 
@@ -229,7 +229,7 @@ export function SadariGuideSection() {
         </div>
       </div>
 
-      {/* Tanda Bahaya & Kapan Harus ke Bidan / Faskes */}
+      {/* Tanda Bahaya & Kapan Harus ke Dokter / Faskes */}
       <Card padding='md' className='border border-slate-200/80 bg-gradient-to-br from-white to-slate-50 shadow-xs'>
         <div className='flex items-center gap-2 mb-3'>
           <div className='w-8 h-8 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center shrink-0 border border-orange-100'>
@@ -237,7 +237,7 @@ export function SadariGuideSection() {
           </div>
           <div>
             <h4 className='text-sm sm:text-base font-bold text-slate-900'>
-              Kapan Harus Segera Memeriksakan Diri ke Bidan / Dokter?
+              Kapan Harus Segera Memeriksakan Diri ke Fasilitas Kesehatan / Dokter?
             </h4>
             <p className='text-xs text-slate-500'>
               Waspadai gejala-gejala berikut jika teraba atau terlihat saat melakukan SADARI:

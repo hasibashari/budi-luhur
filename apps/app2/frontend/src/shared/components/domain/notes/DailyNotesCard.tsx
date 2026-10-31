@@ -127,7 +127,7 @@ export const DailyNotesCard: React.FC<DailyNotesCardProps> = ({
     }
   };
 
-  // Kumpulkan Saran Klinis Bidan secara dinamis berdasarkan input
+  // Kumpulkan Saran Klinis Medis secara dinamis berdasarkan input
   const activeAdvices = useMemo(() => {
     const list: ClinicalAdvice[] = [];
 

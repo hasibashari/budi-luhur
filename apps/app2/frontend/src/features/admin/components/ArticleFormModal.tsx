@@ -163,7 +163,7 @@ export default function ArticleFormModal({
         </div>
         <div>
           <label className='block text-xs font-bold text-slate-700 mb-1'>
-            Penulis / Bidan / Faskes
+            Penulis / Fasilitas Kesehatan
           </label>
           <input
             type='text'

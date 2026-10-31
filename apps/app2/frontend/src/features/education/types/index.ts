@@ -28,7 +28,7 @@ export interface Article {
   readTime: string; // e.g. "4 min read"
   category: string;
   publishedAt: string;
-  author?: Author;
+  author?: Author | string;
   leadParagraph?: string;
   content?: string;
   sections?: ContentSection[];

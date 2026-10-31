@@ -144,7 +144,6 @@ export default function DashboardView() {
     streakCount: 0,
     streakUnit: 'Hari' as const,
     consecutiveDates: [],
-    hbLevel: authUser?.hbLevel || null,
     schoolOrOrg: authUser?.schoolOrOrg || null,
     avatarUrl: authUser?.avatarUrl || null,
   };
@@ -279,9 +278,9 @@ export default function DashboardView() {
         </div>
       </div>
 
-      {/* Realtime Bidan / Faskes Reminder Nudge Banner (If Admin sent a reminder) */}
+      {/* Realtime Pengingat Faskes Nudge Banner (If Admin sent a reminder) */}
       {activeNudge && (
-        <section aria-label='Pengingat Langsung dari Bidan'>
+        <section aria-label='Pengingat Langsung dari Tenaga Medis'>
           <div className='p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-teal-800 via-teal-700 to-teal-900 text-white shadow-lg shadow-teal-900/10 border border-teal-600/40 animate-fade-in'>
             <div className='flex items-start justify-between gap-3'>
               <div className='flex items-start gap-3.5'>
@@ -291,7 +290,7 @@ export default function DashboardView() {
                 <div>
                   <div className='flex items-center gap-2 flex-wrap'>
                     <span className='text-[10px] sm:text-xs font-bold uppercase tracking-wider bg-white/20 px-2.5 py-0.5 rounded-full'>
-                      Pesan Bidan • {activeNudge.senderName}
+                      Pesan Medis • {activeNudge.senderName}
                     </span>
                     <span className='text-[11px] text-teal-200'>{activeNudge.sentAt}</span>
                   </div>
@@ -407,7 +406,7 @@ export default function DashboardView() {
                   <div className='absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/40 to-transparent flex flex-col justify-end p-4 sm:p-5'>
                     <span className='text-[10px] font-bold text-teal-300 uppercase tracking-wider flex items-center gap-1'>
                       <Sparkles size={11} />
-                      <span>Edukasi Bidan • {featuredArticle.readTime}</span>
+                      <span>Edukasi Medis • {featuredArticle.readTime}</span>
                     </span>
                     <h3 className='text-sm sm:text-base font-bold text-white leading-snug line-clamp-2 mt-0.5'>
                       {featuredArticle.title}

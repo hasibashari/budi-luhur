@@ -2,10 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Article } from '../types';
 import {
-  getArticleByIdAction,
-  getRelatedArticlesAction,
+  getArticleDetailAction,
   toggleArticleBookmarkAction,
-  isArticleBookmarkedAction,
 } from '../api/educationRepository';
 import { useAuth } from '@/src/features/auth/context/AuthContext';
 import ArticleCard from '../components/ArticleCard';
@@ -55,18 +53,14 @@ export default function ArticleDetailView({
     let isMounted = true;
     const fetchData = async () => {
       setLoading(true);
-      const data = await getArticleByIdAction(articleId);
+      const detail = await getArticleDetailAction(articleId, userId);
       if (isMounted) {
-        setArticle(data);
-        if (data) {
-          const [related, bookmarkStatus] = await Promise.all([
-            getRelatedArticlesAction(data.id, 3),
-            isArticleBookmarkedAction(userId, data.id),
-          ]);
-          if (isMounted) {
-            setRelatedArticles(related);
-            setBookmarked(bookmarkStatus);
-          }
+        if (detail) {
+          setArticle(detail.article);
+          setRelatedArticles(detail.relatedArticles);
+          setBookmarked(detail.isBookmarked);
+        } else {
+          setArticle(null);
         }
         setLoading(false);
       }
@@ -202,23 +196,31 @@ export default function ArticleDetailView({
         {/* Author & Meta Data */}
         <div className='flex flex-wrap items-center justify-between gap-4 py-3 border-y border-slate-200 text-xs text-slate-500'>
           <div className='flex items-center gap-3'>
-            {article.author?.avatarUrl ? (
+            {typeof article.author === 'object' && article.author?.avatarUrl ? (
               <img
                 src={article.author.avatarUrl}
-                alt={article.author.name}
+                alt={typeof article.author === 'object' ? article.author.name : 'Author'}
                 className='w-10 h-10 rounded-full object-cover border border-slate-200'
               />
             ) : (
               <div className='w-10 h-10 rounded-full bg-teal-100 flex items-center justify-center font-bold text-teal-800 text-sm overflow-hidden border border-teal-200'>
-                {article.author?.name ? article.author.name.charAt(0) : 'P'}
+                {typeof article.author === 'string'
+                  ? article.author.charAt(0).toUpperCase()
+                  : article.author?.name
+                  ? article.author.name.charAt(0).toUpperCase()
+                  : 'P'}
               </div>
             )}
             <div>
               <p className='font-bold text-slate-800 text-sm'>
-                {article.author?.name || 'Bidan Konselor Pilluna'}
+                {typeof article.author === 'string'
+                  ? article.author
+                  : article.author?.name || 'Tim Medis Pilluna'}
               </p>
               <p className='text-slate-400 text-xs'>
-                {article.author?.role || 'Fasilitator Kontrasepsi Medis'}
+                {typeof article.author === 'object' && article.author?.role
+                  ? article.author.role
+                  : 'Fasilitator Kontrasepsi Medis'}
               </p>
             </div>
           </div>
@@ -266,8 +268,62 @@ export default function ArticleDetailView({
 
       {/* Markdown Formatted Article Content */}
       <div className='prose prose-slate max-w-none text-slate-700 leading-relaxed text-sm sm:text-base'>
-        <MarkdownRenderer content={article.content || ''} />
+        <MarkdownRenderer content={article.content || article.summary || ''} />
       </div>
+
+      {/* Structured Sections (Rendered if sections exist and are not already in content) */}
+      {article.sections && article.sections.length > 0 && (
+        <div className='mt-8 space-y-6'>
+          {article.sections.map((section, idx) => {
+            const isDuplicate =
+              article.content &&
+              section.paragraphs?.[0] &&
+              article.content.includes(section.paragraphs[0]);
+            if (isDuplicate) return null;
+
+            return (
+              <div key={idx} className='space-y-3'>
+                {section.heading && (
+                  <h3 className='text-lg sm:text-xl font-bold text-slate-900'>
+                    {section.heading}
+                  </h3>
+                )}
+                {section.subheading && (
+                  <h4 className='text-sm sm:text-base font-semibold text-slate-700'>
+                    {section.subheading}
+                  </h4>
+                )}
+                {section.paragraphs?.map((p, pIdx) => (
+                  <p key={pIdx} className='text-slate-700 leading-relaxed text-sm sm:text-base'>
+                    {p}
+                  </p>
+                ))}
+                {section.bulletPoints && section.bulletPoints.length > 0 && (
+                  <ul className='list-disc list-inside space-y-1 text-slate-700 text-sm sm:text-base'>
+                    {section.bulletPoints.map((bp, bpIdx) => (
+                      <li key={bpIdx}>{bp}</li>
+                    ))}
+                  </ul>
+                )}
+                {section.callout && (
+                  <div
+                    className={`p-4 rounded-xl border text-sm ${
+                      section.callout.type === 'warning'
+                        ? 'bg-amber-50 border-amber-200 text-amber-900'
+                        : 'bg-teal-50 border-teal-200 text-teal-900'
+                    }`}
+                  >
+                    {section.callout.title && (
+                      <div className='font-bold mb-1'>{section.callout.title}</div>
+                    )}
+                    <div>{section.callout.text}</div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
 
       {/* Bottom Appreciation / Like Box */}
       <div className='mt-10 pt-6 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-50 p-6 rounded-2xl border border-slate-200/80'>

@@ -18,7 +18,7 @@ export default function AdminLayout() {
         <div className="block md:hidden">
           <MobileTopBar
             brandTitle="Pilluna 🌸"
-            brandSubtitle="Bidan & Faskes KB"
+            brandSubtitle="Portal Fasilitas Kesehatan KB"
             brandHref="/admin/dashboard"
             badge={adminBadge}
           />

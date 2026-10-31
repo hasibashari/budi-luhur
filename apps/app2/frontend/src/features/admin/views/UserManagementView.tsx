@@ -27,6 +27,7 @@ import {
   RISK_LEVEL_COLORS,
   RiskLevel,
   UserGender,
+  DEFAULT_SCHOOL_ORG,
 } from '../constants/user.constants';
 
 export default function UserManagementView() {
@@ -125,8 +126,8 @@ export default function UserManagementView() {
       phone: user.phone,
       email: user.email || '',
       riskLevel: (user.riskLevel as RiskLevel) || 'Rendah',
-      schoolOrOrg: user.schoolOrOrg || 'SMA Negeri 1 Sehat',
-      assignedDoctor: user.schoolOrOrg || 'SMA Negeri 1 Sehat',
+      schoolOrOrg: user.schoolOrOrg || DEFAULT_SCHOOL_ORG,
+      assignedDoctor: user.schoolOrOrg || DEFAULT_SCHOOL_ORG,
       medicalNotes: user.medicalNotes || '',
     });
   };
@@ -166,7 +167,7 @@ export default function UserManagementView() {
           phone: formData.phone,
           email: formData.email || `${formData.name.toLowerCase().replace(/\s+/g, '')}@example.com`,
           riskLevel: formData.riskLevel,
-          schoolOrOrg: formData.schoolOrOrg || formData.assignedDoctor || 'Puskesmas / Bidan Terdaftar',
+          schoolOrOrg: formData.schoolOrOrg || formData.assignedDoctor || 'Puskesmas / Faskes Terdaftar',
           medicalNotes: formData.medicalNotes,
         });
 
@@ -245,7 +246,7 @@ export default function UserManagementView() {
       renderCell: user => (
         <div>
           <div className='font-semibold text-[#24354D] text-xs sm:text-sm truncate'>
-            {user.schoolOrOrg || 'Puskesmas / Bidan Terdaftar'}
+            {user.schoolOrOrg || 'Puskesmas / Faskes Terdaftar'}
           </div>
           <div className='text-xs text-[#4A5E78] flex items-center gap-1 mt-0.5'>
             <Phone size={11} className='text-teal-600 shrink-0' />
@@ -423,7 +424,7 @@ export default function UserManagementView() {
                       {user.name}
                     </h4>
                     <p className='text-xs text-slate-500 mt-0.5 truncate'>
-                      {user.id} • {user.age} th ({user.schoolOrOrg || 'Puskesmas / Bidan Terdaftar'})
+                      {user.id} • {user.age} th ({user.schoolOrOrg || 'Puskesmas / Faskes Terdaftar'})
                     </p>
                   </div>
                 </div>
@@ -515,8 +516,8 @@ export default function UserManagementView() {
       <ConfirmDeleteDialog
         open={deleteConfirmOpen}
         title='Konfirmasi Hapus'
-        message='Apakah Anda yakin ingin menghapus data siswi ini? Data tidak dapat dikembalikan.'
-        confirmText='Hapus Siswi'
+        message='Apakah Anda yakin ingin menghapus data pengguna ini? Data tidak dapat dikembalikan.'
+        confirmText='Hapus Pengguna'
         onClose={handleCloseDelete}
         onConfirm={handleConfirmDelete}
       />

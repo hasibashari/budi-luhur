@@ -125,7 +125,6 @@ export default function HistoryView() {
           stats={stats}
           streakCount={streakCount}
           streakUnit={streakUnit}
-          hbLevel={dashboardData?.user.hbLevel}
           riskLevel={dashboardData?.user.riskLevel}
           logs={allLogs}
           activityMap={activityMap}

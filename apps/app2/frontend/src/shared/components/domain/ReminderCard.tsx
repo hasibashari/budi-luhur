@@ -51,7 +51,7 @@ export function ReminderCard({ schedule }: ReminderCardProps) {
       <div className='text-xs text-slate-600 bg-white/80 backdrop-blur-xs p-3 rounded-xl border border-teal-100 mt-3 leading-relaxed space-y-1'>
         <div className='flex items-center gap-1.5 font-bold text-teal-900'>
           <Sparkles size={13} className='text-teal-600' />
-          <span>Tips Bidan Pilluna:</span>
+          <span>Tips Medis Pilluna:</span>
         </div>
         <p className='text-[11px] text-slate-600'>
           Minum pil pada jam yang sama di malam hari setelah makan malam. Jika terlambat kurang dari 12 jam, segera minum begitu ingat.

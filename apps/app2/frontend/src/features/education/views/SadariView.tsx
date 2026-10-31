@@ -139,7 +139,7 @@ export default function SadariView() {
             Panduan Mandiri SADARI
           </h2>
           <p className='text-xs sm:text-sm text-slate-500 mt-1 max-w-2xl'>
-            Pemeriksaan Payudara Sendiri (SADARI) untuk deteksi dini kelainan struktur payudara secara mandiri dan teratur setiap bulan sesuai rekomendasi Kementerian Kesehatan RI.
+            Pemeriksaan Payudara Sendiri (SADARI) untuk deteksi dini kelainan struktur payudara secara mandiri dan teratur setiap bulan demi kesehatan optimal.
           </p>
         </div>
 
@@ -290,7 +290,7 @@ export default function SadariView() {
             </p>
           </div>
           <span className='text-xs font-semibold text-teal-800 bg-teal-50 border border-teal-200 px-3 py-1 rounded-full'>
-            Standar Kemenkes RI
+            Standar Medis Klinis
           </span>
         </div>
 
@@ -338,7 +338,7 @@ export default function SadariView() {
         </div>
       </div>
 
-      {/* Tanda Bahaya & Kapan Harus ke Bidan / Faskes */}
+      {/* Tanda Bahaya & Kapan Harus ke Dokter / Faskes */}
       <Card padding='md' className='border border-orange-200/80 bg-gradient-to-br from-white to-orange-50/30 shadow-xs'>
         <div className='flex items-center gap-2 mb-3'>
           <div className='w-8 h-8 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center shrink-0 border border-orange-200'>
@@ -349,7 +349,7 @@ export default function SadariView() {
               Tanda Bahaya: Kapan Harus Segera Memeriksakan Diri?
             </h4>
             <p className='text-xs text-slate-500'>
-              Segera konsultasikan dengan Bidan atau Dokter bila Anda menemukan tanda-tanda berikut saat SADARI:
+              Segera konsultasikan dengan Dokter atau Fasilitas Kesehatan bila Anda menemukan tanda-tanda berikut saat SADARI:
             </p>
           </div>
         </div>

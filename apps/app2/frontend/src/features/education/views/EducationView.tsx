@@ -147,8 +147,13 @@ export default function EducationView() {
               </p>
               <div className='flex items-center justify-between mt-3 pt-3 border-t border-slate-100'>
                 <span className='text-xs text-slate-400'>
-                  Oleh <strong>{featuredArticle.author?.name || 'Bidan Konselor Pilluna'}</strong> •{' '}
-                  {featuredArticle.publishedAt}
+                  Oleh{' '}
+                  <strong>
+                    {typeof featuredArticle.author === 'string'
+                      ? featuredArticle.author
+                      : featuredArticle.author?.name || 'Tim Medis Pilluna'}
+                  </strong>{' '}
+                  • {featuredArticle.publishedAt}
                 </span>
                 <span className='text-xs sm:text-sm font-bold text-teal-700 flex items-center gap-1 group-hover:translate-x-0.5 transition-transform'>
                   <span>Baca Panduan</span>

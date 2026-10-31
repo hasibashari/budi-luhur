@@ -20,7 +20,6 @@ export function SetupProfileView() {
   const [bloodType, setBloodType] = useState<string>('');
   const [height, setHeight] = useState<string>('');
   const [weight, setWeight] = useState<string>('');
-  const [hbLevel, setHbLevel] = useState<string>('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,14 +42,12 @@ export function SetupProfileView() {
         bloodType: bloodType || undefined,
         height: height ? Number(height) : undefined,
         weight: weight ? Number(weight) : undefined,
-        hbLevel: hbLevel ? Number(hbLevel) : undefined,
       });
 
       if (res.success) {
         updateUser({
           schoolOrOrg: schoolOrOrg.trim(),
           isProfileComplete: true,
-          hbLevel: hbLevel ? Number(hbLevel) : undefined,
         });
         navigate('/user/dashboard');
       } else {
@@ -175,8 +172,8 @@ export function SetupProfileView() {
             </div>
           </div>
 
-          {/* Height, Weight, Hb Level */}
-          <div className='grid grid-cols-3 gap-2 sm:gap-3'>
+          {/* Height & Weight */}
+          <div className='grid grid-cols-2 gap-2 sm:gap-3'>
             <div className='min-w-0'>
               <label className='block text-[11px] sm:text-xs font-bold text-[#0F172A] mb-1.5 truncate text-center sm:text-left'>
                 Tinggi <span className='text-[#64748B] font-normal text-[10px]'>(cm)</span>
@@ -199,20 +196,6 @@ export function SetupProfileView() {
                 placeholder='48'
                 value={weight}
                 onChange={e => setWeight(e.target.value)}
-                className='w-full bg-white text-xs sm:text-sm text-[#0F172A] rounded-full border border-slate-200 px-2 sm:px-3 py-2 sm:py-2.5 outline-none focus:border-[#0D9488] focus:ring-2 focus:ring-[#0D9488]/15 transition-all shadow-2xs text-center'
-              />
-            </div>
-
-            <div className='min-w-0'>
-              <label className='block text-[11px] sm:text-xs font-bold text-[#0F172A] mb-1.5 truncate text-center sm:text-left'>
-                Hb Lab <span className='text-[#64748B] font-normal text-[10px]'>(g/dL)</span>
-              </label>
-              <input
-                type='number'
-                step='0.1'
-                placeholder='12.4'
-                value={hbLevel}
-                onChange={e => setHbLevel(e.target.value)}
                 className='w-full bg-white text-xs sm:text-sm text-[#0F172A] rounded-full border border-slate-200 px-2 sm:px-3 py-2 sm:py-2.5 outline-none focus:border-[#0D9488] focus:ring-2 focus:ring-[#0D9488]/15 transition-all shadow-2xs text-center'
               />
             </div>

@@ -31,53 +31,41 @@ interface MarkdownEditorProps {
 
 const TEMPLATES = [
   {
-    title: 'Panduan Suplementasi TTD Remaja',
-    content: `## Pentingnya Tablet Tambah Darah (TTD)
-Remaja putri memiliki risiko anemia yang lebih tinggi karena siklus menstruasi bulanan dan masa pertumbuhan yang pesat.
+    title: 'Panduan Konsumsi Pil KB Harian',
+    content: `## Pentingnya Disiplin Minum Pil KB
+Pil KB kombinasi maupun progestin bekerja efektif mencegah kehamilan hingga 99% bila dikonsumsi secara disiplin setiap hari pada jam yang sama.
 
-> Tips UKS: Minum 1 tablet TTD setiap minggu setelah makan malam atau sarapan untuk penyerapan optimal!
+> Tips Medis: Pilih waktu yang paling mudah diingat, misalnya setelah makan malam atau sebelum tidur malam!
 
-### Manfaat Rutin Minum TTD:
-- Menjaga konsentrasi belajar tetap optimal di sekolah
-- Mencegah tubuh cepat lemas, letih, lesu, dan lunglai (5L)
-- Meningkatkan daya tahan tubuh dari serangan penyakit
-
-### Aturan Minum yang Benar:
-1. Minum dengan **air putih** atau **jus jeruk/buah segar** (Vitamin C membantu penyerapan zat besi).
-2. Hindari minum TTD bersamaan dengan **teh**, **kopi**, atau **susu** karena dapat menghambat penyerapan zat besi.
-3. Jangan minum dalam keadaan perut kosong untuk menghindari rasa mual.`,
+### Aturan Konsumsi yang Benar:
+1. Minum 1 tablet setiap hari pada jam yang sama secara berurutan mengikuti tanda panah pada blister pack.
+2. Jika terlewat < 12 jam: segera minum pil yang terlupa, lalu lanjutkan pil berikutnya sesuai jadwal normal.
+3. Selalu sediakan air putih dan simpan kemasan pil pada suhu ruang yang terhindar dari sinar matahari langsung.`,
   },
   {
-    title: 'Mitos vs Fakta Seputar Anemia & TTD',
-    content: `## Mitos & Fakta Tablet Tambah Darah
-
-Masih banyak anggapan keliru mengenai konsumsi suplemen zat besi di kalangan siswi sekolah. Mari kita bedah faktanya!
+    title: 'Mitos vs Fakta Seputar Pil KB',
+    content: `## Mitos & Fakta Kontrasepsi Oral
+Masih banyak kekhawatiran yang keliru seputar penggunaan pil KB. Mari kita telaah faktanya secara medis!
 
 | Mitos | Fakta Sebenarnya |
 |---|---|
-| Minum TTD bikin tensi darah tinggi | TTD hanya menambah zat besi (Hb), bukan menaikkan tekanan darah |
-| Tubuh gemuk pasti bebas anemia | Anemia berkaitan dengan kadar zat besi, bukan berat badan |
-| TTD menyebabkan ketergantungan | TTD adalah suplemen nutrisi pencegahan, bukan obat adiktif |
+| Minum Pil KB bikin rahim kering / mandul | Kesuburan akan kembali normal setelah konsumsi pil dihentikan |
+| Harus minum pil saat jam kosong perut | Boleh diminum bersama atau setelah makan untuk mengurangi rasa mual |
+| Pil KB menyebabkan ketergantungan obat | Pil KB bekerja mengatur hormon secara reversibel, bukan zat adiktif |
 
-> Fakta Medis: Minum TTD secara teratur 1 kali seminggu aman dikonsumsi jangka panjang dan direkomendasikan Kemenkes RI.`,
+> Fakta Medis: Konsumsi pil KB secara teratur juga dapat membantu meredakan kram menstruasi dan menstabilkan siklus haid.`,
   },
   {
-    title: 'Daftar Makanan Sumber Zat Besi & Gizi Seimbang',
-    content: `## Pilihan Makanan Pencegah Anemia
+    title: 'Penanganan Efek Samping Ringan & Adaptasi Tubuh',
+    content: `## Mengatasi Efek Samping Awal Pil KB
+Pada 1-3 bulan pertama, tubuh sedang beradaptasi dengan hormon kontrasepsi.
 
-Selain rutin meminum TTD, siswi disarankan memperbanyak konsumsi makanan tinggi zat besi:
+### Efek Samping Ringan yang Wajar:
+- **Flek / Spotting di luar jadwal:** Lanjutkan minum pil sesuai urutan, biasanya mereda setelah 2-3 siklus.
+- **Rasa Mual:** Minum pil bersama makanan atau tepat sebelum tidur di malam hari.
+- **Payudara Terasa Kencang:** Kenakan pakaian yang nyaman dan hindari konsumsi kafein berlebih.
 
-### 1. Sumber Hewani (Zat Besi Heme):
-- Hati ayam / sapi
-- Daging merah tanpa lemak
-- Ikan dan telur ayam
-
-### 2. Sumber Nabati (Zat Besi Non-Heme):
-- Bayam, daun kelor, dan brokoli
-- Kacang kedelai, tahu, dan tempe
-- Kacang merah dan kacang hijau
-
-> Tips Sehat: Padukan makanan sumber zat besi dengan buah kaya Vitamin C (jeruk, jambu biji, tomat) agar penyerapannya maksimal di dalam tubuh!`,
+> Tips Sehat: Jika mengalami keluhan yang tidak kunjung reda setelah 3 siklus, konsultasikan dengan dokter atau tenaga medis di fasilitas kesehatan.`,
   },
 ];
 
@@ -203,7 +191,7 @@ export default function MarkdownEditor({
           <button
             type='button'
             title='Kotak Tips / Quote (> )'
-            onClick={() => insertToken('> Tips UKS: ', '\n', 'Informasi penting pencegahan anemia')}
+            onClick={() => insertToken('> Tips Medis: ', '\n', 'Informasi penting seputar penggunaan Pil KB')}
             disabled={readOnly}
             className='p-1.5 rounded-lg text-[#475569] hover:bg-rose-100/70 hover:text-[#e11d48] transition-colors cursor-pointer disabled:opacity-40'
           >
@@ -245,7 +233,7 @@ export default function MarkdownEditor({
             {showTemplateDropdown && (
               <div className='absolute left-0 top-full mt-1.5 w-64 bg-white rounded-xl shadow-xl border border-[#fce7f3] z-50 p-1.5 flex flex-col gap-1'>
                 <span className='text-[10px] font-bold text-[#94a3b8] px-2.5 py-1 uppercase tracking-wider'>
-                  Template Edukasi TTD
+                  Template Edukasi Pil KB
                 </span>
                 {TEMPLATES.map((tmpl, idx) => (
                   <button

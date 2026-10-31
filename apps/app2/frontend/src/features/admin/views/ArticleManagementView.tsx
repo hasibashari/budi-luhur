@@ -21,7 +21,7 @@ import { HealthArticle, ArticleCategory } from '../types/admin.types';
 const initialArticleFormData: ArticleFormData = {
   title: '',
   category: '',
-  author: 'Tim Ahli Gizi & UKS',
+  author: 'Tim Medis Pilluna',
   summary: '',
   content: '',
   readTime: '3 min read',

@@ -38,7 +38,7 @@ export const ONBOARDING_SLIDES: OnboardingSlide[] = [
     title: 'Kesehatan Holistik & SADARI',
     tagline: 'Deteksi Dini & Catatan Gejala',
     description:
-      'Catat keluhan tubuh seperti flek atau kram, serta pelajari 5 langkah panduan SADARI resmi Kemenkes RI.',
+      'Catat keluhan tubuh seperti flek atau kram, serta pelajari 5 langkah panduan SADARI secara mandiri.',
     illustration: BuddyIllustration,
     accentColor: 'amber',
   },

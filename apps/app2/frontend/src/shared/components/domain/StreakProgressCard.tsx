@@ -20,7 +20,7 @@ export function StreakProgressCard({
   const milestones = [
     { level: 1, target: 1, label: `1 ${streakUnit}`, title: 'Pemula' },
     { level: 2, target: 3, label: `3 ${streakUnit}`, title: 'Konsisten' },
-    { level: 3, target: 6, label: `6 ${streakUnit}`, title: 'Bebas Anemia' },
+    { level: 3, target: 6, label: `6 ${streakUnit}`, title: 'Disiplin' },
     { level: 4, target: 12, label: `12 ${streakUnit}`, title: 'Champion' },
   ];
 

@@ -99,7 +99,7 @@ export default function AdminDashboardView() {
     if (channel === 'app' && reminderData.userId) {
       publishRealtimeEvent('NUDGE_SENT', {
         patientId: reminderData.userId,
-        senderName: 'Bidan / Tim Faskes',
+        senderName: 'Tim Fasilitas Kesehatan',
       });
     }
     setToastMsg(
@@ -113,7 +113,7 @@ export default function AdminDashboardView() {
   return (
     <div className='animate-fade-in'>
       <AdminHeader
-        title='Dashboard Utama Bidan & Faskes'
+        title='Dashboard Utama Fasilitas Kesehatan'
         subtitle='Pantau capaian kepatuhan minum Pil KB, aktivitas harian akseptor, dan edukasi kesehatan secara real-time.'
       />
 

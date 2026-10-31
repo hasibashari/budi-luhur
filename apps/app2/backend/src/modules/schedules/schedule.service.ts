@@ -208,10 +208,10 @@ export class ScheduleService {
     return {
       id: row.id,
       patientId: row.user_id,
-      senderName: row.sender_name || 'Fasilitator Medis FEMORY',
-      senderRole: 'Fasilitator Kesehatan UKS',
+      senderName: row.sender_name || 'Fasilitator Medis Pilluna',
+      senderRole: 'Tim Faskes Pilluna',
       scheduleId: row.schedule_id || undefined,
-      medicationName: 'Tablet Tambah Darah (TTD)',
+      medicationName: 'Pil KB Kombinasi (28 Tablet)',
       dosage: '1 tablet',
       timeSlot: '20:00',
       message: row.message,

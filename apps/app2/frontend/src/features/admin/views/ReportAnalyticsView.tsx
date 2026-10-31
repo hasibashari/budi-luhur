@@ -206,7 +206,7 @@ export default function ReportAnalyticsView() {
           <div className='space-y-2.5'>
             {users.slice(0, 5).map(u => {
               const isGood = u.adherenceRate >= 90;
-              const org = u.schoolOrOrg || u.assignedDoctor || 'Puskesmas / Bidan Terdaftar';
+              const org = u.schoolOrOrg || u.assignedDoctor || 'Puskesmas / Faskes Terdaftar';
               return (
                 <div
                   key={u.id}
