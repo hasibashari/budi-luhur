@@ -9,6 +9,7 @@ import {
   ChevronRight,
   ArrowUpRight,
   BellRing,
+  ShieldCheck,
 } from 'lucide-react';
 import AdminHeader from '../components/AdminHeader';
 import StatCard from '@/src/shared/components/StatCard';
@@ -116,6 +117,39 @@ export default function AdminDashboardView() {
         title='Dashboard Utama Fasilitas Kesehatan'
         subtitle='Pantau capaian kepatuhan minum Pil KB, aktivitas harian akseptor, dan edukasi kesehatan secara real-time.'
       />
+
+      {/* Pending Verifications Alert Banner if any */}
+      {(stats.pendingVerifications ?? 0) > 0 && (
+        <div className='mb-4 p-4 sm:p-5 rounded-3xl border border-amber-200 bg-gradient-to-r from-amber-50/90 via-amber-50/50 to-white shadow-xs flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 animate-fade-in'>
+          <div className='flex items-center gap-3.5'>
+            <div className='w-11 h-11 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center shrink-0 border border-amber-200'>
+              <ShieldCheck size={24} />
+            </div>
+            <div>
+              <div className='flex items-center gap-2'>
+                <h3 className='font-bold text-amber-950 text-sm sm:text-base leading-tight'>
+                  {stats.pendingVerifications} Pendaftaran Menunggu Verifikasi
+                </h3>
+                <span className='px-2 py-0.5 rounded-full bg-amber-200 text-amber-900 text-[10px] font-black uppercase tracking-wider'>
+                  Perlu Ditinjau
+                </span>
+              </div>
+              <p className='text-xs sm:text-sm text-slate-600 mt-1 leading-relaxed'>
+                Calon akseptor baru telah mengisi 9 pertanyaan skrining dan mengunggah dokumen bukti
+                status pernikahan.
+              </p>
+            </div>
+          </div>
+
+          <Link
+            to='/admin/verifications'
+            className='inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-xl bg-amber-600 text-white font-bold text-xs sm:text-sm hover:bg-amber-700 shadow-xs transition-all cursor-pointer whitespace-nowrap'
+          >
+            <span>Tinjau Sekarang</span>
+            <ChevronRight size={16} />
+          </Link>
+        </div>
+      )}
 
       {/* Entry Portal Banner */}
       <div className='mb-6 p-4 sm:p-6 rounded-3xl border border-slate-200 bg-white shadow-xs flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4'>

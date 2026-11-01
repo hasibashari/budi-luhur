@@ -4,6 +4,8 @@
 -- ============================================================
 
 -- Clean up any legacy tables to ensure fresh relational constraints
+DROP TABLE IF EXISTS user_verification_logs CASCADE;
+DROP TABLE IF EXISTS user_verifications CASCADE;
 DROP TABLE IF EXISTS admin_nudges CASCADE;
 DROP TABLE IF EXISTS push_subscriptions CASCADE;
 DROP TABLE IF EXISTS user_bookmarks CASCADE;
@@ -33,6 +35,8 @@ CREATE TABLE users (
     avatar_url TEXT,
     gender VARCHAR(20) DEFAULT 'Perempuan' CHECK(gender IN ('Perempuan', 'Laki-laki')),
     date_of_birth DATE,
+    verification_status VARCHAR(50) NOT NULL DEFAULT 'Pending' CHECK(verification_status IN ('Pending', 'Approved', 'Rejected')),
+    rejection_reason TEXT,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
@@ -195,11 +199,44 @@ CREATE TABLE push_subscriptions (
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+-- 9. USER VERIFICATIONS & MEDICAL SCREENING
+CREATE TABLE user_verifications (
+    id VARCHAR(255) PRIMARY KEY,
+    user_id VARCHAR(255) NOT NULL REFERENCES users(id) ON DELETE CASCADE UNIQUE,
+    status VARCHAR(50) NOT NULL DEFAULT 'Pending' CHECK(status IN ('Pending', 'Approved', 'Rejected')),
+    screening_answers JSONB NOT NULL,
+    document_type VARCHAR(50) NOT NULL CHECK(document_type IN ('KK', 'KTP', 'Buku Nikah')),
+    document_file_name VARCHAR(255) NOT NULL,
+    document_file_type VARCHAR(100) NOT NULL,
+    document_file_size INTEGER NOT NULL,
+    document_file_data TEXT NOT NULL,
+    rejection_reason TEXT DEFAULT NULL,
+    reviewed_by VARCHAR(255) REFERENCES users(id) ON DELETE SET NULL,
+    reviewed_at TIMESTAMP WITH TIME ZONE DEFAULT NULL,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE user_verification_logs (
+    id SERIAL PRIMARY KEY,
+    user_id VARCHAR(255) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    action VARCHAR(50) NOT NULL CHECK(action IN ('SUBMITTED', 'APPROVED', 'REJECTED')),
+    previous_status VARCHAR(50),
+    new_status VARCHAR(50) NOT NULL,
+    notes TEXT,
+    admin_id VARCHAR(255) REFERENCES users(id) ON DELETE SET NULL,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
 -- ============================================================
 -- PERFORMANCE INDEXES
 -- ============================================================
 CREATE INDEX idx_users_email ON users(email);
 CREATE INDEX idx_users_role ON users(role);
+CREATE INDEX idx_users_verification_status ON users(verification_status);
+CREATE INDEX idx_verifications_status ON user_verifications(status);
+CREATE INDEX idx_verifications_user_id ON user_verifications(user_id);
+CREATE INDEX idx_verification_logs_user_id ON user_verification_logs(user_id);
 CREATE INDEX idx_profiles_friend_code ON user_profiles(friend_code);
 CREATE INDEX idx_profiles_school ON user_profiles(school_or_org);
 CREATE INDEX idx_schedules_user_status ON reminder_schedules(user_id, status);

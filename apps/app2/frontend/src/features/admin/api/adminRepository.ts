@@ -6,6 +6,8 @@ import {
   ScheduleCategory,
   HealthArticle,
   ComplianceReport,
+  AdminVerificationListItem,
+  AdminVerificationDetail,
 } from '../types/admin.types';
 
 export async function getAdminStatsAction(): Promise<AdminStats> {
@@ -257,4 +259,73 @@ export async function getComplianceReportsAction(): Promise<ComplianceReport[]> 
     console.error('getComplianceReportsAction error:', err);
     return [];
   }
+}
+
+// ─── USER VERIFICATION ACTIONS ───────────────────────────────────────────────
+
+export async function getAdminVerificationsAction(
+  status?: string,
+  search?: string,
+): Promise<AdminVerificationListItem[]> {
+  try {
+    const params = new URLSearchParams();
+    if (status && status !== 'Semua') params.append('status', status);
+    if (search && search.trim()) params.append('q', search.trim());
+
+    const queryString = params.toString() ? `?${params.toString()}` : '';
+    const res = await apiClient.get<{ success: boolean; data: AdminVerificationListItem[] }>(
+      `/admin/verifications${queryString}`,
+    );
+    return res.data?.data || [];
+  } catch (err: any) {
+    console.error('getAdminVerificationsAction error:', err);
+    return [];
+  }
+}
+
+export async function getAdminVerificationDetailAction(
+  userId: string,
+): Promise<AdminVerificationDetail | null> {
+  try {
+    const res = await apiClient.get<{ success: boolean; data: AdminVerificationDetail }>(
+      `/admin/verifications/${userId}`,
+    );
+    return res.data?.data || null;
+  } catch (err: any) {
+    console.error('getAdminVerificationDetailAction error:', err);
+    return null;
+  }
+}
+
+export async function approveUserVerificationAction(
+  userId: string,
+): Promise<{ success: boolean; message?: string; error?: string }> {
+  try {
+    const res = await apiClient.post<{ success: boolean; message: string }>(
+      `/admin/verifications/${userId}/approve`,
+    );
+    return { success: true, message: res.data?.message };
+  } catch (err: any) {
+    return { success: false, error: extractErrorMessage(err) };
+  }
+}
+
+export async function rejectUserVerificationAction(
+  userId: string,
+  reason: string,
+): Promise<{ success: boolean; message?: string; error?: string }> {
+  try {
+    const res = await apiClient.post<{ success: boolean; message: string }>(
+      `/admin/verifications/${userId}/reject`,
+      { reason },
+    );
+    return { success: true, message: res.data?.message };
+  } catch (err: any) {
+    return { success: false, error: extractErrorMessage(err) };
+  }
+}
+
+export function getAdminVerificationDocumentUrl(userId: string): string {
+  const base = apiClient.defaults.baseURL || '/api/v1';
+  return `${base}/admin/verifications/${userId}/document`;
 }

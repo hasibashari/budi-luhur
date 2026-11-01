@@ -1,4 +1,5 @@
 export type UserRole = 'admin' | 'user';
+export type VerificationStatus = 'Pending' | 'Approved' | 'Rejected';
 
 export interface AuthUser {
   id: string;
@@ -13,6 +14,8 @@ export interface AuthUser {
   pillType?: string;
   streakCount?: number;
   isProfileComplete?: boolean;
+  verificationStatus?: VerificationStatus;
+  rejectionReason?: string;
 }
 
 export interface LoginCredentials {

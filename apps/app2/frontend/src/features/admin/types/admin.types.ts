@@ -4,6 +4,7 @@ export interface AdminStats {
   adherenceRate: number;
   publishedArticles: number;
   activePrograms: number;
+  pendingVerifications?: number;
 }
 
 export interface ManagedUser {
@@ -82,4 +83,44 @@ export interface ComplianceReport {
   takenCount: number;
   missedCount: number;
   adherencePercentage: number;
+}
+
+export type VerificationStatus = 'Pending' | 'Approved' | 'Rejected';
+
+export interface AdminVerificationListItem {
+  id: string;
+  userId: string;
+  userName: string;
+  userEmail: string;
+  userPhone: string;
+  userAvatar?: string | null;
+  schoolOrOrg?: string | null;
+  pillType?: string | null;
+  status: VerificationStatus;
+  screeningAnswers: any;
+  documentType: 'KK' | 'KTP' | 'Buku Nikah';
+  documentFileName: string;
+  documentFileType: string;
+  documentFileSize: number;
+  rejectionReason?: string | null;
+  submittedAt: string;
+  reviewedAt?: string | null;
+  reviewedBy?: string | null;
+}
+
+export interface AdminVerificationDetail extends AdminVerificationListItem {
+  gender?: string;
+  dateOfBirth?: string;
+  bloodType?: string;
+  height?: number;
+  weight?: number;
+  history: {
+    id: number;
+    action: string;
+    previousStatus: string | null;
+    newStatus: string;
+    notes: string | null;
+    adminName: string;
+    createdAt: string;
+  }[];
 }

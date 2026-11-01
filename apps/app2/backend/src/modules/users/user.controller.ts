@@ -74,4 +74,24 @@ export class UserController {
       res.status(500).json({ success: false, error: 'Gagal menyimpan setup awal.' });
     }
   }
+
+  static async getVerificationStatus(req: AuthRequest, res: Response) {
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        res.status(401).json({ success: false, error: 'Sesi tidak valid.' });
+        return;
+      }
+
+      const data = await UserService.getVerificationStatus(userId);
+      if (!data) {
+        res.status(404).json({ success: false, error: 'Data verifikasi tidak ditemukan.' });
+        return;
+      }
+      res.json({ success: true, data });
+    } catch (error: any) {
+      console.error('UserController.getVerificationStatus error:', error);
+      res.status(500).json({ success: false, error: 'Gagal memuat status verifikasi.' });
+    }
+  }
 }

@@ -1,10 +1,11 @@
-import { LayoutDashboard, Users, Calendar, FileText, BookOpen, LogOut, User } from 'lucide-react';
+import { LayoutDashboard, Users, Calendar, FileText, BookOpen, LogOut, User, ShieldCheck } from 'lucide-react';
 import AppSidebar, { NavItem } from '@/src/shared/components/AppSidebar';
 import { Avatar } from '@/src/shared/components/ui/Avatar';
 import { useAuth } from '@/src/features/auth';
 
 const ADMIN_NAVIGATION_ITEMS: NavItem[] = [
   { name: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
+  { name: 'Verifikasi Akun', href: '/admin/verifications', icon: ShieldCheck },
   { name: 'Data Akseptor', href: '/admin/users', icon: Users },
   { name: 'Jadwal', href: '/admin/schedules', icon: Calendar },
   { name: 'Laporan', href: '/admin/reports', icon: FileText },

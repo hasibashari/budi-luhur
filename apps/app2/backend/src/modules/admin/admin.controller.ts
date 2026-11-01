@@ -208,4 +208,111 @@ export class AdminController {
       res.status(500).json({ success: false, error: 'Gagal memperbarui profil admin.' });
     }
   }
+
+  // ─── USER VERIFICATION HANDLERS ──────────────────────────────────────────
+
+  static async getVerifications(req: AuthRequest, res: Response) {
+    try {
+      const status = req.query.status as string | undefined;
+      const search = (req.query.q || req.query.search) as string | undefined;
+      const list = await AdminService.getVerifications({ status, search });
+      res.json({ success: true, data: list });
+    } catch (error: any) {
+      console.error('AdminController.getVerifications error:', error);
+      res.status(500).json({ success: false, error: 'Gagal memuat daftar verifikasi pengguna.' });
+    }
+  }
+
+  static async getVerificationDetail(req: AuthRequest, res: Response) {
+    try {
+      const userId = String(req.params.userId);
+      const detail = await AdminService.getVerificationDetail(userId);
+      if (!detail) {
+        res.status(404).json({ success: false, error: 'Data verifikasi pengguna tidak ditemukan.' });
+        return;
+      }
+      res.json({ success: true, data: detail });
+    } catch (error: any) {
+      console.error('AdminController.getVerificationDetail error:', error);
+      res.status(500).json({ success: false, error: 'Gagal memuat detail verifikasi pengguna.' });
+    }
+  }
+
+  static async getVerificationDocument(req: AuthRequest, res: Response) {
+    try {
+      const userId = String(req.params.userId);
+      const doc = await AdminService.getVerificationDocument(userId);
+      if (!doc || !doc.document_file_data) {
+        res.status(404).json({ success: false, error: 'Dokumen tidak ditemukan atau belum diunggah.' });
+        return;
+      }
+
+      const fileData = doc.document_file_data;
+      const fileName = doc.document_file_name || 'dokumen-persyaratan';
+      const fileType = doc.document_file_type || 'application/octet-stream';
+
+      const matches = fileData.match(/^data:([A-Za-z0-9\-+\/]+);base64,(.+)$/);
+      if (matches) {
+        const mimeType = matches[1] || fileType;
+        const buffer = Buffer.from(matches[2], 'base64');
+        res.setHeader('Content-Type', mimeType);
+        res.setHeader('Content-Disposition', `inline; filename="${fileName}"`);
+        res.send(buffer);
+        return;
+      }
+
+      // If stored as raw base64
+      try {
+        const buffer = Buffer.from(fileData, 'base64');
+        res.setHeader('Content-Type', fileType);
+        res.setHeader('Content-Disposition', `inline; filename="${fileName}"`);
+        res.send(buffer);
+      } catch {
+        res.status(400).json({ success: false, error: 'Format data dokumen tidak valid.' });
+      }
+    } catch (error: any) {
+      console.error('AdminController.getVerificationDocument error:', error);
+      res.status(500).json({ success: false, error: 'Gagal memuat berkas dokumen.' });
+    }
+  }
+
+  static async approveVerification(req: AuthRequest, res: Response) {
+    try {
+      const userId = String(req.params.userId);
+      const adminId = req.user?.id || 'adm_1';
+      const result = await AdminService.approveVerification(userId, adminId);
+      res.json(result);
+    } catch (error: any) {
+      console.error('AdminController.approveVerification error:', error);
+      res.status(500).json({ success: false, error: 'Gagal menyetujui verifikasi pengguna.' });
+    }
+  }
+
+  static async rejectVerification(req: AuthRequest, res: Response) {
+    try {
+      const userId = String(req.params.userId);
+      const adminId = req.user?.id || 'adm_1';
+      const reason = req.body?.reason;
+      if (!reason || !reason.trim()) {
+        res.status(400).json({ success: false, error: 'Alasan penolakan pendaftaran wajib disertakan.' });
+        return;
+      }
+      const result = await AdminService.rejectVerification(userId, adminId, reason);
+      res.json(result);
+    } catch (error: any) {
+      console.error('AdminController.rejectVerification error:', error);
+      res.status(500).json({ success: false, error: 'Gagal menolak verifikasi pengguna.' });
+    }
+  }
+
+  static async getVerificationHistory(req: AuthRequest, res: Response) {
+    try {
+      const userId = String(req.params.userId);
+      const history = await AdminService.getVerificationHistory(userId);
+      res.json({ success: true, data: history });
+    } catch (error: any) {
+      console.error('AdminController.getVerificationHistory error:', error);
+      res.status(500).json({ success: false, error: 'Gagal memuat riwayat verifikasi.' });
+    }
+  }
 }

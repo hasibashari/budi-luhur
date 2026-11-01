@@ -11,6 +11,7 @@ import {
   UserLayout,
   DashboardView,
   SetupProfileView,
+  VerificationStatusView,
   ProfileView,
 } from '@/src/features/user';
 import { ScheduleView } from '@/src/features/schedule';
@@ -23,6 +24,7 @@ import {
   AdminLayout,
   AdminDashboardView,
   UserManagementView,
+  AdminVerificationView,
   ScheduleManagementView,
   ArticleManagementView,
   ReportAnalyticsView,
@@ -37,7 +39,16 @@ function RootRedirect() {
   }
 
   if (isAuthenticated) {
-    return <Navigate to={user?.role === 'admin' ? '/admin/dashboard' : '/user/dashboard'} replace />;
+    if (user?.role === 'admin') {
+      return <Navigate to='/admin/dashboard' replace />;
+    }
+    if (!user?.isProfileComplete) {
+      return <Navigate to='/user/setup' replace />;
+    }
+    if (user?.verificationStatus === 'Pending' || user?.verificationStatus === 'Rejected') {
+      return <Navigate to='/user/verification-status' replace />;
+    }
+    return <Navigate to='/user/dashboard' replace />;
   }
 
   if (hasCompletedOnboarding) {
@@ -91,6 +102,16 @@ export function AppRoutes() {
         }
       />
 
+      {/* Verification Status Route */}
+      <Route
+        path='/user/verification-status'
+        element={
+          <AuthGuard allowedRoles={['user', 'admin']}>
+            <VerificationStatusView />
+          </AuthGuard>
+        }
+      />
+
       {/* Protected User Portal Routes */}
       <Route
         path='/user'
@@ -124,6 +145,7 @@ export function AppRoutes() {
       >
         <Route index element={<Navigate to='/admin/dashboard' replace />} />
         <Route path='dashboard' element={<AdminDashboardView />} />
+        <Route path='verifications' element={<AdminVerificationView />} />
         <Route path='users' element={<UserManagementView />} />
         <Route path='schedules' element={<ScheduleManagementView />} />
         <Route path='articles' element={<ArticleManagementView />} />

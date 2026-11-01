@@ -23,6 +23,7 @@ export class AuthService {
       // 1. Check direct email match
       const res = await db.query<UserDbRow>(
         `SELECT u.id, u.name, u.email, u.password_hash, u.role, u.phone, u.avatar_url, u.gender,
+                u.verification_status, u.rejection_reason,
                 p.friend_code, p.school_or_org, p.streak_count
          FROM users u
          LEFT JOIN user_profiles p ON u.id = p.user_id
@@ -56,6 +57,10 @@ export class AuthService {
     const hasSchool = Boolean(row.school_or_org && row.school_or_org.trim());
     const hasSchedule = scheduleCount > 0;
     const isProfileComplete = row.role === 'admin' || (hasSchool && hasSchedule);
+    const verificationStatus =
+      row.role === 'admin'
+        ? 'Approved'
+        : (row.verification_status || 'Pending');
 
     const authUser: AuthUser = {
       id: row.id,
@@ -69,10 +74,18 @@ export class AuthService {
       schoolOrOrg: row.school_or_org || undefined,
       streakCount: row.streak_count !== null ? Number(row.streak_count) : 0,
       isProfileComplete,
+      verificationStatus,
+      rejectionReason: row.rejection_reason || undefined,
     };
 
     const token = jwt.sign(
-      { id: authUser.id, email: authUser.email, role: authUser.role, name: authUser.name },
+      {
+        id: authUser.id,
+        email: authUser.email,
+        role: authUser.role,
+        name: authUser.name,
+        verificationStatus: authUser.verificationStatus,
+      },
       config.jwtSecret,
       { expiresIn: config.jwtExpiresIn } as jwt.SignOptions,
     );
@@ -80,9 +93,11 @@ export class AuthService {
     const redirectTo =
       authUser.role === 'admin'
         ? '/admin/dashboard'
-        : isProfileComplete
-          ? '/user/dashboard'
-          : '/user/setup';
+        : !isProfileComplete
+          ? '/user/setup'
+          : verificationStatus === 'Approved'
+            ? '/user/dashboard'
+            : '/user/verification-status';
 
     return {
       success: true,
@@ -131,8 +146,8 @@ export class AuthService {
     await db.transaction(async client => {
       // 1. Insert into users
       await client.query(
-        `INSERT INTO users (id, name, email, password_hash, role, phone, gender, avatar_url)
-         VALUES ($1, $2, $3, $4, 'user', $5, $6, $7)`,
+        `INSERT INTO users (id, name, email, password_hash, role, phone, gender, avatar_url, verification_status)
+         VALUES ($1, $2, $3, $4, 'user', $5, $6, $7, 'Pending')`,
         [
           newId,
           cleanName,

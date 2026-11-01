@@ -1,12 +1,12 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Users, CalendarCheck, BarChart3, FileText } from 'lucide-react';
+import { LayoutDashboard, Users, CalendarCheck, BarChart3, ShieldCheck } from 'lucide-react';
 
 const ADMIN_BOTTOM_ITEMS = [
   { name: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
+  { name: 'Verifikasi', href: '/admin/verifications', icon: ShieldCheck },
   { name: 'Akseptor', href: '/admin/users', icon: Users },
   { name: 'Jadwal', href: '/admin/schedules', icon: CalendarCheck },
-  { name: 'Artikel', href: '/admin/articles', icon: FileText },
   { name: 'Laporan', href: '/admin/reports', icon: BarChart3 },
 ];
 

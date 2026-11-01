@@ -1,27 +1,10 @@
 import { app } from './app.js';
 import { config } from './config/env.js';
-import db from './config/database.js';
 import { ScheduleReminderService } from './modules/schedules/scheduleReminder.service.js';
 
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : config.port;
 
 async function start() {
-  await db.query(`
-    ALTER TABLE user_profiles ADD COLUMN IF NOT EXISTS pill_type VARCHAR(100) DEFAULT 'Pil KB Kombinasi';
-  `).catch(() => {});
-
-  await db.query(`
-    CREATE TABLE IF NOT EXISTS push_subscriptions (
-      id SERIAL PRIMARY KEY,
-      user_id VARCHAR(255) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-      endpoint TEXT NOT NULL UNIQUE,
-      subscription JSONB NOT NULL,
-      created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-      updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE INDEX IF NOT EXISTS idx_push_subscriptions_user ON push_subscriptions(user_id);
-  `);
-
   // Pengingat jadwal harian (aktif untuk proses long-running; pada Vercel
   // serverless pengingat dijalankan oleh hook di sisi frontend).
   ScheduleReminderService.startScheduler();
@@ -33,7 +16,7 @@ async function start() {
 }
 
 start().catch(error => {
-  console.error('❌ Failed to prepare push notification storage:', error);
+  console.error('❌ Failed to start Pilluna backend:', error);
   process.exit(1);
 });
 

@@ -30,8 +30,8 @@ export async function seedDatabase() {
     console.log('  -> Seeding users (2 Roles)...');
     const insertUserQuery = `
       INSERT INTO users (
-        id, name, email, password_hash, role, phone, avatar_url, gender, date_of_birth
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+        id, name, email, password_hash, role, phone, avatar_url, gender, date_of_birth, verification_status
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
       ON CONFLICT (id) DO UPDATE SET
         name = EXCLUDED.name,
         email = EXCLUDED.email,
@@ -41,6 +41,7 @@ export async function seedDatabase() {
         avatar_url = EXCLUDED.avatar_url,
         gender = EXCLUDED.gender,
         date_of_birth = EXCLUDED.date_of_birth,
+        verification_status = EXCLUDED.verification_status,
         updated_at = CURRENT_TIMESTAMP
     `;
 
@@ -55,6 +56,7 @@ export async function seedDatabase() {
         u.avatarUrl ?? null,
         u.gender ?? 'Perempuan',
         u.dateOfBirth ?? null,
+        u.verificationStatus ?? 'Approved',
       ]);
     }
 

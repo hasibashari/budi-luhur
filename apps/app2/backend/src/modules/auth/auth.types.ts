@@ -1,4 +1,5 @@
 export type UserRole = 'admin' | 'user';
+export type VerificationStatus = 'Pending' | 'Approved' | 'Rejected';
 
 export interface AuthUser {
   id: string;
@@ -12,6 +13,8 @@ export interface AuthUser {
   friendCode?: string;
   streakCount?: number;
   isProfileComplete?: boolean;
+  verificationStatus?: VerificationStatus;
+  rejectionReason?: string;
 }
 
 export interface LoginCredentials {
@@ -39,4 +42,6 @@ export interface UserDbRow {
   friend_code: string | null;
   school_or_org: string | null;
   streak_count: number | null;
+  verification_status?: VerificationStatus | null;
+  rejection_reason?: string | null;
 }

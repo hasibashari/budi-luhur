@@ -31,4 +31,12 @@ adminRoutes.delete('/schedules/:id', AdminController.deleteSchedule as any);
 adminRoutes.get('/compliance', AdminController.getComplianceReports as any);
 adminRoutes.put('/profile', AdminController.updateProfile as any);
 
+// ─── User Verifications ──────────────────────────────────────────────────────
+adminRoutes.get('/verifications', AdminController.getVerifications as any);
+adminRoutes.get('/verifications/:userId', AdminController.getVerificationDetail as any);
+adminRoutes.get('/verifications/:userId/document', AdminController.getVerificationDocument as any);
+adminRoutes.post('/verifications/:userId/approve', AdminController.approveVerification as any);
+adminRoutes.post('/verifications/:userId/reject', AdminController.rejectVerification as any);
+adminRoutes.get('/verifications/:userId/history', AdminController.getVerificationHistory as any);
+
 export default adminRoutes;

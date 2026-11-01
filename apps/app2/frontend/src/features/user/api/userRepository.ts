@@ -1,7 +1,19 @@
 import apiClient, { extractErrorMessage } from '@/src/shared/api/client';
-import { UserProfile, UserScheduleData, UserDashboardData, StreakResult } from '../types';
+import {
+  UserProfile,
+  UserScheduleData,
+  UserDashboardData,
+  StreakResult,
+  UserVerificationStatusData,
+} from '../types';
 
-export type { UserProfile, UserScheduleData, UserDashboardData, StreakResult };
+export type {
+  UserProfile,
+  UserScheduleData,
+  UserDashboardData,
+  StreakResult,
+  UserVerificationStatusData,
+};
 
 export async function getUserDashboardDataAction(_userId?: string): Promise<UserDashboardData> {
   const response = await apiClient.get<UserDashboardData>('/users/dashboard');
@@ -90,6 +102,21 @@ export async function updateUserScheduleSettingsAction(
   try {
     const response = await apiClient.put(`/schedules/${scheduleId}`, data);
     return { success: true, data: response.data };
+  } catch (err: any) {
+    return { success: false, error: extractErrorMessage(err) };
+  }
+}
+
+export async function getVerificationStatusAction(): Promise<{
+  success: boolean;
+  data?: UserVerificationStatusData;
+  error?: string;
+}> {
+  try {
+    const response = await apiClient.get<{ success: boolean; data: UserVerificationStatusData }>(
+      '/users/verification-status',
+    );
+    return response.data;
   } catch (err: any) {
     return { success: false, error: extractErrorMessage(err) };
   }

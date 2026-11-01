@@ -375,8 +375,102 @@ export class UserService {
         schedId,
         timeSlot,
       ]);
+
+      // 4. Save Screening Answers & Verification Document if provided
+      if (data.document || data.screening) {
+        const doc = data.document || {};
+        const documentType = doc.documentType || 'KTP';
+        const fileName = doc.fileName || 'dokumen-persyaratan';
+        const fileType = doc.fileType || 'image/jpeg';
+        const fileSize = Number(doc.fileSize) || 0;
+        const fileData = doc.fileData || '';
+
+        const verifId = `vrf_${Date.now().toString().slice(-6)}`;
+        const screeningAnswers = data.screening || {};
+
+        await client.query(
+          `INSERT INTO user_verifications (
+            id, user_id, status, screening_answers, document_type, document_file_name,
+            document_file_type, document_file_size, document_file_data, updated_at
+          ) VALUES ($1, $2, 'Pending', $3, $4, $5, $6, $7, $8, CURRENT_TIMESTAMP)
+          ON CONFLICT (user_id) DO UPDATE SET
+            status = 'Pending',
+            screening_answers = EXCLUDED.screening_answers,
+            document_type = EXCLUDED.document_type,
+            document_file_name = EXCLUDED.document_file_name,
+            document_file_type = EXCLUDED.document_file_type,
+            document_file_size = EXCLUDED.document_file_size,
+            document_file_data = EXCLUDED.document_file_data,
+            rejection_reason = NULL,
+            reviewed_by = NULL,
+            reviewed_at = NULL,
+            updated_at = CURRENT_TIMESTAMP`,
+          [
+            verifId,
+            userId,
+            JSON.stringify(screeningAnswers),
+            documentType,
+            fileName,
+            fileType,
+            fileSize,
+            fileData,
+          ],
+        );
+
+        await client.query(
+          `UPDATE users SET verification_status = 'Pending', rejection_reason = NULL, updated_at = CURRENT_TIMESTAMP WHERE id = $1`,
+          [userId],
+        );
+
+        await client.query(
+          `INSERT INTO user_verification_logs (user_id, action, previous_status, new_status, notes)
+           VALUES ($1, 'SUBMITTED', NULL, 'Pending', 'Pengguna melengkapi berkas dan skrining persyaratan pil KB.')`,
+          [userId],
+        );
+      }
     });
 
-    return { success: true, message: 'Setup profil awal dan jadwal berhasil disimpan.' };
+    return {
+      success: true,
+      verificationStatus: 'Pending',
+      message: 'Setup profil awal dan dokumen persyaratan berhasil dikirim untuk verifikasi admin.',
+    };
+  }
+
+  static async getVerificationStatus(userId: string) {
+    const res = await db.query<any>(
+      `SELECT u.id, u.name, u.email, u.verification_status, u.rejection_reason,
+              v.id as verification_id, v.status as doc_status, v.screening_answers,
+              v.document_type, v.document_file_name, v.document_file_type, v.document_file_size,
+              v.reviewed_at, v.created_at as submitted_at
+       FROM users u
+       LEFT JOIN user_verifications v ON u.id = v.user_id
+       WHERE u.id = $1`,
+      [userId],
+    );
+
+    const row = res.rows[0];
+    if (!row) return null;
+
+    return {
+      userId: row.id,
+      name: row.name,
+      email: row.email,
+      verificationStatus: row.verification_status || 'Pending',
+      rejectionReason: row.rejection_reason || null,
+      verification: row.verification_id
+        ? {
+            id: row.verification_id,
+            status: row.doc_status,
+            screeningAnswers: row.screening_answers,
+            documentType: row.document_type,
+            documentFileName: row.document_file_name,
+            documentFileType: row.document_file_type,
+            documentFileSize: row.document_file_size,
+            submittedAt: row.submitted_at,
+            reviewedAt: row.reviewed_at,
+          }
+        : null,
+    };
   }
 }

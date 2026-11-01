@@ -87,3 +87,44 @@ export interface UserDashboardData {
     avatarUrl?: string;
   } | null;
 }
+
+export type DocumentProofType = 'KK' | 'KTP' | 'Buku Nikah';
+
+export interface PillScreeningAnswers {
+  age: number | string;
+  childrenCount: number | string;
+  isPregnant: boolean | null;
+  hasContraindications: boolean | null;
+  hasHypertension: boolean | null;
+  hasBloodClotOrStroke: boolean | null;
+  hasBreastCancer: boolean | null;
+  hasSevereLiverDisease: boolean | null;
+  willingToTakeDaily: boolean | null;
+}
+
+export interface VerificationDocumentPayload {
+  documentType: DocumentProofType;
+  fileName: string;
+  fileType: string;
+  fileSize: number;
+  fileData: string;
+}
+
+export interface UserVerificationStatusData {
+  userId: string;
+  name: string;
+  email: string;
+  verificationStatus: 'Pending' | 'Approved' | 'Rejected';
+  rejectionReason: string | null;
+  verification: {
+    id: string;
+    status: 'Pending' | 'Approved' | 'Rejected';
+    screeningAnswers: PillScreeningAnswers;
+    documentType: DocumentProofType;
+    documentFileName: string;
+    documentFileType: string;
+    documentFileSize: number;
+    submittedAt: string;
+    reviewedAt?: string | null;
+  } | null;
+}
