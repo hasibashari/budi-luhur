@@ -243,143 +243,157 @@ export function PillComplianceChart({
 
       {/* 2. Main 28-Day Discrete Status Bar Chart Area */}
       <div className='py-3.5'>
-        <div className='rounded-2xl border border-slate-200/90 bg-slate-50/50 p-3.5 sm:p-5'>
-          {/* Chart Coordinate Area: Left Y-Axis Labels + Right Bars Area */}
-          <div className='flex gap-2 sm:gap-3 w-full'>
-            {/* Y-Axis Column (Fixed width on the left, completely separated from bars) */}
-            <div className='flex flex-col justify-between pt-7 sm:pt-8 pb-6 w-16 sm:w-20 text-[9px] sm:text-[10px] font-semibold shrink-0 text-slate-500 select-none'>
-              <div className='flex items-center gap-1 text-teal-700'>
-                <span className='w-1.5 h-1.5 rounded-full bg-teal-500 shrink-0' />
-                <span className='truncate'>Tepat</span>
-              </div>
-              <div className='flex items-center gap-1 text-amber-700'>
-                <span className='w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0' />
-                <span className='truncate'>Terlambat</span>
-              </div>
-              <div className='flex items-center gap-1 text-rose-700'>
-                <span className='w-1.5 h-1.5 rounded-full bg-rose-500 shrink-0' />
-                <span className='truncate'>Terlewat</span>
-              </div>
-              <div className='flex items-center gap-1 text-slate-400'>
-                <span className='w-1.5 h-1.5 rounded-full bg-slate-300 shrink-0' />
-                <span className='truncate'>Belum</span>
-              </div>
-            </div>
-
-            {/* 28-Bars Coordinate Track Container */}
-            <div className='relative flex-1 h-48 sm:h-52 pt-7 sm:pt-8 pb-6 px-1 flex items-end justify-between gap-1 sm:gap-1.5 border-b border-slate-200/80'>
-              {/* Y-Axis Guide Lines running across the track behind bars */}
-              <div className='absolute inset-0 flex flex-col justify-between pointer-events-none pt-7 sm:pt-8 pb-6'>
-                <div className='w-full border-b border-dashed border-teal-200/80' />
-                <div className='w-full border-b border-dashed border-amber-200/80' />
-                <div className='w-full border-b border-dashed border-rose-200/80' />
-                <div className='w-full border-b border-slate-200' />
-              </div>
-
-              {/* The 28 Pill-Shaped Discrete Bars */}
-              {cycleDays.map(item => {
-                const isSelected = item.dateStr === selectedDate;
-
-                // Height and styling calculation for Opsi 2 Discrete Bar Chart
-                let heightClass = 'h-[16%]';
-                let barStyle = 'bg-slate-200/80 border border-slate-300/80 text-slate-400';
-
-                if (item.status === 'ON_TIME') {
-                  heightClass = 'h-[95%]';
-                  barStyle =
-                    'bg-gradient-to-t from-teal-600 to-teal-400 border border-teal-600 shadow-xs shadow-teal-500/20';
-                } else if (item.status === 'LATE') {
-                  heightClass = 'h-[68%]';
-                  barStyle =
-                    'bg-gradient-to-t from-amber-500 to-amber-400 border border-amber-500 shadow-xs shadow-amber-500/20';
-                } else if (item.status === 'MISSED') {
-                  heightClass = 'h-[36%]';
-                  barStyle =
-                    'bg-gradient-to-t from-rose-500 to-rose-400 border border-rose-500 shadow-xs shadow-rose-500/20';
-                } else if (item.isToday) {
-                  heightClass = 'h-[50%]';
-                  barStyle =
-                    'bg-orange-100 border-2 border-dashed border-orange-500 animate-pulse text-orange-600';
-                }
-
-                return (
-                  <div
-                    key={item.dateStr}
-                    className='relative flex-1 flex flex-col items-center justify-end h-full group z-10'
-                  >
-                    {/* Today Pin Indicator */}
-                    {item.isToday && (
-                      <span className='absolute -top-5 text-[8px] font-extrabold px-1 rounded bg-orange-500 text-white shadow-2xs whitespace-nowrap animate-bounce z-20'>
-                        Hari Ini
-                      </span>
-                    )}
-
-                    {/* The Bar */}
-                    <button
-                      type='button'
-                      onClick={() => onSelectDate?.(item.dateStr)}
-                      title={`Tablet ${item.dayIndex} (${item.formattedDate}): ${
-                        item.status === 'ON_TIME'
-                          ? 'Tepat Waktu'
-                          : item.status === 'LATE'
-                            ? 'Terlambat'
-                            : item.status === 'MISSED'
-                              ? 'Terlewat'
-                              : item.isToday
-                                ? 'Hari Ini'
-                                : 'Mendatang'
-                      }`}
-                      aria-label={`Tablet ke-${item.dayIndex}`}
-                      className={`w-full rounded-t-lg transition-all cursor-pointer ${heightClass} ${barStyle} ${
-                        isSelected
-                          ? 'ring-2 ring-teal-600 ring-offset-1 z-20 brightness-110'
-                          : 'hover:brightness-105'
-                      }`}
-                    />
-                  </div>
-                );
-              })}
-            </div>
+        <div className='rounded-2xl border border-slate-200/90 bg-slate-50/50 p-3 sm:p-5'>
+          {/* Mobile Swipe / Interaction Hint */}
+          <div className='flex items-center justify-between pb-2 sm:hidden text-[10px] text-teal-700 font-semibold'>
+            <span>Geser horizontal untuk melihat 28 hari</span>
+            <span aria-hidden='true'>→</span>
           </div>
 
-          {/* X-Axis Interval Labels (Siklus 28 Hari / 4 Minggu: H-1, H-7, H-14, H-21, H-28) */}
-          <div className='flex gap-2 sm:gap-3 w-full'>
-            {/* Offset spacer matching Y-axis column width */}
-            <div className='w-16 sm:w-20 shrink-0' />
+          {/* Horizontally scrollable coordinate container for mobile touch usability */}
+          <div
+            data-testid='pill-chart-scroll-track'
+            className='overflow-x-auto no-scrollbar -mx-1 px-1'
+          >
+            <div className='min-w-[540px] sm:min-w-0 w-full'>
+              {/* Chart Coordinate Area: Left Y-Axis Labels + Right Bars Area */}
+              <div className='flex gap-2 sm:gap-3 w-full'>
+                {/* Y-Axis Column (Fixed width on the left, completely separated from bars) */}
+                <div className='flex flex-col justify-between pt-7 sm:pt-8 pb-6 w-16 sm:w-20 text-[9px] sm:text-[10px] font-semibold shrink-0 text-slate-500 select-none'>
+                  <div className='flex items-center gap-1 text-teal-700'>
+                    <span className='w-1.5 h-1.5 rounded-full bg-teal-500 shrink-0' />
+                    <span className='truncate'>Tepat</span>
+                  </div>
+                  <div className='flex items-center gap-1 text-amber-700'>
+                    <span className='w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0' />
+                    <span className='truncate'>Terlambat</span>
+                  </div>
+                  <div className='flex items-center gap-1 text-rose-700'>
+                    <span className='w-1.5 h-1.5 rounded-full bg-rose-500 shrink-0' />
+                    <span className='truncate'>Terlewat</span>
+                  </div>
+                  <div className='flex items-center gap-1 text-slate-400'>
+                    <span className='w-1.5 h-1.5 rounded-full bg-slate-300 shrink-0' />
+                    <span className='truncate'>Belum</span>
+                  </div>
+                </div>
 
-            <div className='flex-1 flex justify-between pt-2 px-1 text-[10px] sm:text-xs font-bold text-slate-500'>
-              <span>H-1</span>
-              <span>H-7</span>
-              <span>H-14</span>
-              <span>H-21</span>
-              <span>H-28</span>
+                {/* 28-Bars Coordinate Track Container */}
+                <div className='relative flex-1 h-48 sm:h-52 pt-7 sm:pt-8 pb-6 px-1 flex items-end justify-between gap-1 sm:gap-1.5 border-b border-slate-200/80'>
+                  {/* Y-Axis Guide Lines running across the track behind bars */}
+                  <div className='absolute inset-0 flex flex-col justify-between pointer-events-none pt-7 sm:pt-8 pb-6'>
+                    <div className='w-full border-b border-dashed border-teal-200/80' />
+                    <div className='w-full border-b border-dashed border-amber-200/80' />
+                    <div className='w-full border-b border-dashed border-rose-200/80' />
+                    <div className='w-full border-b border-slate-200' />
+                  </div>
+
+                  {/* The 28 Pill-Shaped Discrete Bars */}
+                  {cycleDays.map(item => {
+                    const isSelected = item.dateStr === selectedDate;
+
+                    // Height and styling calculation for Opsi 2 Discrete Bar Chart
+                    let heightClass = 'h-[16%]';
+                    let barStyle = 'bg-slate-200/80 border border-slate-300/80 text-slate-400';
+
+                    if (item.status === 'ON_TIME') {
+                      heightClass = 'h-[95%]';
+                      barStyle =
+                        'bg-gradient-to-t from-teal-600 to-teal-400 border border-teal-600 shadow-xs shadow-teal-500/20';
+                    } else if (item.status === 'LATE') {
+                      heightClass = 'h-[68%]';
+                      barStyle =
+                        'bg-gradient-to-t from-amber-500 to-amber-400 border border-amber-500 shadow-xs shadow-amber-500/20';
+                    } else if (item.status === 'MISSED') {
+                      heightClass = 'h-[36%]';
+                      barStyle =
+                        'bg-gradient-to-t from-rose-500 to-rose-400 border border-rose-500 shadow-xs shadow-rose-500/20';
+                    } else if (item.isToday) {
+                      heightClass = 'h-[50%]';
+                      barStyle =
+                        'bg-orange-100 border-2 border-dashed border-orange-500 animate-pulse text-orange-600';
+                    }
+
+                    return (
+                      <div
+                        key={item.dateStr}
+                        className='relative flex-1 flex flex-col items-center justify-end h-full group z-10'
+                      >
+                        {/* Today Pin Indicator */}
+                        {item.isToday && (
+                          <span className='absolute -top-5 text-[8px] font-extrabold px-1 rounded bg-orange-500 text-white shadow-2xs whitespace-nowrap animate-bounce z-20'>
+                            Hari Ini
+                          </span>
+                        )}
+
+                        {/* The Bar */}
+                        <button
+                          type='button'
+                          onClick={() => onSelectDate?.(item.dateStr)}
+                          title={`Tablet ${item.dayIndex} (${item.formattedDate}): ${
+                            item.status === 'ON_TIME'
+                              ? 'Tepat Waktu'
+                              : item.status === 'LATE'
+                                ? 'Terlambat'
+                                : item.status === 'MISSED'
+                                  ? 'Terlewat'
+                                  : item.isToday
+                                    ? 'Hari Ini'
+                                    : 'Mendatang'
+                          }`}
+                          aria-label={`Tablet ke-${item.dayIndex}`}
+                          className={`w-full rounded-t-lg transition-all cursor-pointer ${heightClass} ${barStyle} ${
+                            isSelected
+                              ? 'ring-2 ring-teal-600 ring-offset-1 z-20 brightness-110'
+                              : 'hover:brightness-105'
+                          }`}
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* X-Axis Interval Labels (Siklus 28 Hari / 4 Minggu: H-1, H-7, H-14, H-21, H-28) */}
+              <div className='flex gap-2 sm:gap-3 w-full'>
+                {/* Offset spacer matching Y-axis column width */}
+                <div className='w-16 sm:w-20 shrink-0' />
+
+                <div className='flex-1 flex justify-between pt-2 px-1 text-[10px] sm:text-xs font-bold text-slate-500'>
+                  <span>H-1</span>
+                  <span>H-7</span>
+                  <span>H-14</span>
+                  <span>H-21</span>
+                  <span>H-28</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
       {/* 3. Bottom Legend & Summary Pill Badges */}
-      <div className='pt-3 border-t border-slate-100 flex items-center justify-between flex-wrap gap-2.5 text-xs'>
-        <div className='flex items-center gap-2 flex-wrap'>
-          <span className='inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-teal-50 border border-teal-200/80 text-teal-800 font-bold'>
+      <div className='pt-3 border-t border-slate-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5 text-xs'>
+        <div className='grid grid-cols-2 sm:flex sm:items-center gap-2 w-full sm:w-auto'>
+          <span className='inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-teal-50 border border-teal-200/80 text-teal-800 font-bold text-[11px] sm:text-xs justify-center sm:justify-start'>
             <span className='w-2 h-2 rounded-full bg-teal-600' />
             {counts.onTime} Tepat Waktu
           </span>
-          <span className='inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-50 border border-amber-200/80 text-amber-800 font-bold'>
+          <span className='inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-50 border border-amber-200/80 text-amber-800 font-bold text-[11px] sm:text-xs justify-center sm:justify-start'>
             <span className='w-2 h-2 rounded-full bg-amber-500' />
             {counts.late} Terlambat
           </span>
-          <span className='inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-rose-50 border border-rose-200/80 text-rose-800 font-bold'>
+          <span className='inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-rose-50 border border-rose-200/80 text-rose-800 font-bold text-[11px] sm:text-xs justify-center sm:justify-start'>
             <span className='w-2 h-2 rounded-full bg-rose-500' />
             {counts.missed} Terlewat
           </span>
-          <span className='inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 border border-slate-200 text-slate-700 font-semibold'>
+          <span className='inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 border border-slate-200 text-slate-700 font-semibold text-[11px] sm:text-xs justify-center sm:justify-start'>
             <span className='w-2 h-2 rounded-full bg-slate-400' />
             {counts.future + counts.pending} Tersisa
           </span>
         </div>
 
-        <div className='text-[11px] text-slate-500 font-medium flex items-center gap-1'>
+        <div className='text-[11px] text-slate-500 font-medium flex items-center gap-1 self-end sm:self-auto'>
           <ShieldCheck size={14} className='text-teal-600' />
           <span>
             Kepatuhan Siklus: <strong>{counts.adherenceRate}%</strong>

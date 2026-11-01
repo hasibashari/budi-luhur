@@ -103,7 +103,7 @@ export default function SadariView() {
 
       {/* Floating Toast Feedback */}
       {toastMessage && (
-        <div className='fixed top-16 left-1/2 -translate-x-1/2 z-50 bg-slate-900 text-white text-xs font-semibold px-4 py-2.5 rounded-full shadow-lg flex items-center gap-2 animate-fade-in'>
+        <div className='fixed top-16 left-1/2 -translate-x-1/2 z-[80] bg-slate-900 text-white text-xs font-semibold px-4 py-2.5 rounded-full shadow-lg flex items-center gap-2 animate-fade-in'>
           <Sparkles size={14} className='text-teal-400' />
           <span>{toastMessage}</span>
         </div>
@@ -126,10 +126,10 @@ export default function SadariView() {
         </div>
 
         {/* Quick Link to Education Library */}
-        <div className='shrink-0'>
+        <div className='shrink-0 w-full sm:w-auto'>
           <Link
             to='/user/education'
-            className='inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-xs font-bold text-slate-700 hover:text-teal-700 hover:border-teal-300 transition-colors shadow-2xs'
+            className='inline-flex items-center justify-center gap-2 px-3.5 py-2.5 sm:py-2 rounded-xl bg-white border border-slate-200 text-xs font-bold text-slate-700 hover:text-teal-700 hover:border-teal-300 transition-colors shadow-2xs w-full sm:w-auto text-center'
           >
             <span>Pustaka Artikel Edukasi</span>
             <ArrowRight size={14} />
@@ -139,10 +139,10 @@ export default function SadariView() {
 
       {/* Hero Banner: Definisi SADARI, Status, & Quick Start Guided Mode */}
       <Card
-        padding='lg'
-        className='border border-teal-200/80 bg-gradient-to-br from-teal-50/70 via-white to-slate-50/50 shadow-xs relative overflow-hidden'
+        padding='md'
+        className='border border-teal-200/80 bg-gradient-to-br from-teal-50/70 via-white to-slate-50/50 shadow-xs relative overflow-hidden p-4 sm:p-6 lg:p-7'
       >
-        <div className='relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6'>
+        <div className='relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-5 sm:gap-6'>
           <div className='max-w-xl'>
             <span className='inline-flex items-center gap-1.5 text-xs font-bold text-teal-700 uppercase tracking-wider mb-2'>
               <Sparkles size={13} />
@@ -155,38 +155,38 @@ export default function SadariView() {
               {SADARI_DEFINITION.fullText}
             </p>
 
-            <div className='flex flex-wrap items-center gap-3 mt-4 text-xs font-semibold text-slate-800'>
-              <span className='inline-flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-xl border border-slate-200 shadow-2xs'>
-                <Calendar size={14} className='text-teal-600' />
+            <div className='flex flex-wrap items-center gap-2 sm:gap-2.5 mt-3.5 sm:mt-4 text-[11px] sm:text-xs font-semibold text-slate-800'>
+              <span className='inline-flex items-center gap-1.5 bg-white px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl border border-slate-200 shadow-2xs'>
+                <Calendar size={13} className='text-teal-600' />
                 <span>Rutin 1 Kali / Bulan</span>
               </span>
-              <span className='inline-flex items-center gap-1.5 bg-teal-50 text-teal-800 px-3 py-1.5 rounded-xl border border-teal-200'>
-                <Clock size={14} className='text-teal-600' />
+              <span className='inline-flex items-center gap-1.5 bg-teal-50 text-teal-800 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl border border-teal-200'>
+                <Clock size={13} className='text-teal-600' />
                 <span>10–15 Menit Praktik</span>
               </span>
-              <span className='inline-flex items-center gap-1.5 bg-white text-slate-600 px-3 py-1.5 rounded-xl border border-slate-200'>
+              <span className='inline-flex items-center gap-1.5 bg-white text-slate-600 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl border border-slate-200'>
                 <BookOpen size={13} className='text-teal-600' />
                 <span>Sumber: {SADARI_DEFINITION.citation}</span>
               </span>
             </div>
 
             {/* Guided Practice CTA Button */}
-            <div className='mt-5 pt-2'>
+            <div className='mt-4 sm:mt-5 pt-1'>
               <Button
                 variant='primary'
                 size='md'
                 shape='pill'
                 onClick={() => handleOpenGuidedAtStep(1)}
-                className='inline-flex items-center gap-2 shadow-sm shadow-teal-700/20'
+                icon={<Play size={16} className='fill-white shrink-0' />}
+                className='w-full sm:w-auto inline-flex items-center justify-center gap-2.5 shadow-md shadow-teal-700/25 hover:shadow-lg hover:shadow-teal-700/30 text-xs sm:text-sm py-2.5 sm:py-3 px-5 sm:px-6 whitespace-normal leading-snug font-bold active:scale-[0.98] transition-all text-center'
               >
-                <Play size={15} />
-                <span>Mulai Praktik Terpandu (Langkah demi Langkah)</span>
+                Mulai Praktik Terpandu (Langkah demi Langkah)
               </Button>
             </div>
           </div>
 
           {/* Interactive Monthly Check Status Card */}
-          <div className='bg-white p-5 rounded-2xl border border-slate-200 shadow-xs shrink-0 w-full md:w-80 flex flex-col gap-3 text-center'>
+          <div className='bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-xs shrink-0 w-full md:w-80 flex flex-col gap-3 text-center'>
             <div
               className={`w-12 h-12 rounded-2xl flex items-center justify-center mx-auto border transition-colors ${
                 isCheckedThisMonth
@@ -217,7 +217,7 @@ export default function SadariView() {
               size='sm'
               shape='pill'
               onClick={handleToggleCheck}
-              className='w-full'
+              className='w-full py-2 font-bold'
             >
               {isCheckedThisMonth ? 'Batalkan Tanda Periksa' : 'Saya Sudah SADARI Bulan Ini'}
             </Button>
@@ -229,7 +229,7 @@ export default function SadariView() {
       <SadariTimingWidget />
 
       {/* Panduan 3 Tingkatan Tekanan Raba (Palpasi) */}
-      <Card padding='md' className='border border-slate-200/80 bg-white shadow-2xs'>
+      <Card padding='md' className='border border-slate-200/80 bg-white shadow-2xs p-4 sm:p-5'>
         <div className='flex items-center gap-2 mb-3'>
           <div className='w-8 h-8 rounded-xl bg-teal-50 text-teal-700 flex items-center justify-center shrink-0 border border-teal-100'>
             <Layers size={18} />
@@ -249,7 +249,7 @@ export default function SadariView() {
           {SADARI_PRESSURE_LEVELS.map(level => (
             <div
               key={level.level}
-              className='bg-slate-50 p-3.5 rounded-xl border border-slate-200/70 flex flex-col justify-between'
+              className='bg-slate-50 p-3 sm:p-3.5 rounded-xl border border-slate-200/70 flex flex-col justify-between'
             >
               <div>
                 <div className='flex items-center gap-2 mb-1.5'>
@@ -327,7 +327,7 @@ export default function SadariView() {
                   <button
                     type='button'
                     onClick={() => handleOpenGuidedAtStep(item.step)}
-                    className='text-teal-700 hover:text-teal-900 font-bold inline-flex items-center gap-1'
+                    className='text-teal-700 hover:text-teal-900 font-bold inline-flex items-center gap-1 bg-teal-50 hover:bg-teal-100/80 px-2.5 py-1 rounded-lg border border-teal-200/60 transition-colors cursor-pointer shrink-0 text-[11px]'
                   >
                     <span>Buka Panduan</span>
                     <ArrowRight size={11} />
@@ -342,7 +342,7 @@ export default function SadariView() {
       {/* Tanda Bahaya & Kapan Harus ke Dokter / Faskes */}
       <Card
         padding='md'
-        className='border border-orange-200/80 bg-gradient-to-br from-white to-orange-50/30 shadow-xs'
+        className='border border-orange-200/80 bg-gradient-to-br from-white to-orange-50/30 shadow-xs p-4 sm:p-5'
       >
         <div className='flex items-center gap-2 mb-3'>
           <div className='w-8 h-8 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center shrink-0 border border-orange-200'>
@@ -359,11 +359,11 @@ export default function SadariView() {
           </div>
         </div>
 
-        <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 pt-2 text-xs text-slate-600'>
+        <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-3 pt-2 text-xs text-slate-600'>
           {SADARI_WARNING_SIGNS.map(sign => (
             <div
               key={sign.id}
-              className='bg-white p-3.5 rounded-xl border border-slate-200/80 flex flex-col gap-1 shadow-2xs'
+              className='bg-white p-3 sm:p-3.5 rounded-xl border border-slate-200/80 flex flex-col gap-1 shadow-2xs'
             >
               <span className='font-bold text-slate-900 flex items-center gap-1.5 text-xs'>
                 <AlertCircle size={14} className='text-red-500 shrink-0' />
@@ -380,10 +380,10 @@ export default function SadariView() {
             <HeartHandshake size={16} className='text-teal-600 shrink-0' />
             <span>Memiliki keraguan atau keluhan setelah melakukan periksa mandiri?</span>
           </div>
-          <div className='flex items-center gap-2'>
+          <div className='flex items-center gap-2 w-full sm:w-auto'>
             <Link
               to='/user/education'
-              className='inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-teal-600 text-white text-xs font-bold hover:bg-teal-700 transition-colors shadow-2xs'
+              className='inline-flex items-center justify-center gap-1.5 px-3.5 py-2 sm:py-1.5 rounded-xl bg-teal-600 text-white text-xs font-bold hover:bg-teal-700 transition-colors shadow-2xs w-full sm:w-auto text-center'
             >
               <span>Baca Panduan Edukasi</span>
               <ArrowRight size={13} />
@@ -393,7 +393,10 @@ export default function SadariView() {
       </Card>
 
       {/* Referensi Ilmiah Resmi (Daftar Pustaka) */}
-      <Card padding='md' className='border border-slate-200/80 bg-slate-50/60 shadow-2xs'>
+      <Card
+        padding='md'
+        className='border border-slate-200/80 bg-slate-50/60 shadow-2xs p-4 sm:p-5'
+      >
         <div className='flex items-center gap-2 mb-2'>
           <BookOpen size={16} className='text-teal-700 shrink-0' />
           <h4 className='text-xs sm:text-sm font-bold text-slate-800'>

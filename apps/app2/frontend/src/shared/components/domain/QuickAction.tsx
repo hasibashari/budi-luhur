@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Clock, CalendarDays, BookOpen, Ribbon } from 'lucide-react';
+import { Clock, CalendarDays, BookOpen, Ribbon, FileText } from 'lucide-react';
 
 export interface QuickActionItem {
   id: string;
@@ -30,6 +30,15 @@ export const QUICK_ACTIONS: QuickActionItem[] = [
     icon: CalendarDays,
     iconBg: 'bg-teal-50 text-teal-600 border border-teal-100',
     iconColor: '#0D9488',
+  },
+  {
+    id: 'notes',
+    label: 'Catatan',
+    sublabel: 'Log Harian',
+    href: '/user/notes',
+    icon: FileText,
+    iconBg: 'bg-emerald-50 text-emerald-600 border border-emerald-100',
+    iconColor: '#059669',
   },
   {
     id: 'education',
@@ -67,7 +76,7 @@ export function QuickAction({ className = '' }: QuickActionProps) {
         </span>
       </div>
 
-      <div className='grid grid-cols-4 gap-1.5 sm:gap-2'>
+      <div className='grid grid-cols-5 gap-1 sm:gap-2'>
         {QUICK_ACTIONS.map(action => {
           const Icon = action.icon;
           return (
@@ -77,11 +86,11 @@ export function QuickAction({ className = '' }: QuickActionProps) {
               className='flex flex-col items-center group text-center p-1 sm:p-1.5 rounded-xl hover:bg-slate-50 transition-colors'
             >
               <div
-                className={`w-10 h-10 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center transition-all duration-200 group-hover:scale-105 group-hover:shadow-xs group-active:scale-95 ${action.iconBg}`}
+                className={`w-9 h-9 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl flex items-center justify-center transition-all duration-200 group-hover:scale-105 group-hover:shadow-xs group-active:scale-95 ${action.iconBg}`}
               >
-                <Icon size={19} strokeWidth={1.75} />
+                <Icon size={18} strokeWidth={1.75} />
               </div>
-              <span className='text-[11px] font-bold text-slate-700 group-hover:text-teal-700 mt-1.5 transition-colors leading-tight truncate w-full'>
+              <span className='text-[10px] sm:text-[11px] font-bold text-slate-700 group-hover:text-teal-700 mt-1 sm:mt-1.5 transition-colors leading-tight truncate w-full'>
                 {action.label}
               </span>
               <span className='hidden sm:block text-[9px] text-slate-400 truncate w-full mt-0.5'>

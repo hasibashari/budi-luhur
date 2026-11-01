@@ -49,13 +49,13 @@ export function AdminNudgeBanner({
           </button>
         </div>
 
-        <div className='mt-3.5 pt-3 border-t border-white/20 flex items-center gap-2.5 flex-wrap'>
+        <div className='mt-3.5 pt-3 border-t border-white/20 flex flex-col sm:flex-row items-stretch sm:items-center gap-2'>
           <Button
             variant='secondary'
             size='sm'
             shape='pill'
             icon={<CheckCircle2 size={14} />}
-            className='font-bold shadow-sm text-xs'
+            className='font-bold shadow-sm text-xs w-full sm:w-auto justify-center'
             onClick={onRecordConsumption}
           >
             Catat Minum Sekarang
@@ -63,7 +63,7 @@ export function AdminNudgeBanner({
           <button
             type='button'
             onClick={onDismiss}
-            className='text-xs font-semibold text-teal-100 hover:text-white px-3 py-1.5 rounded-full hover:bg-white/10 transition-colors cursor-pointer'
+            className='text-xs font-semibold text-teal-100 hover:text-white px-3 py-2 sm:py-1.5 rounded-full hover:bg-white/10 transition-colors cursor-pointer w-full sm:w-auto text-center'
           >
             Sudah Mengerti
           </button>

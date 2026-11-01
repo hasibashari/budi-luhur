@@ -286,7 +286,7 @@ export default function DashboardView() {
                 </div>
                 <Link
                   to='/user/schedule'
-                  className='inline-flex items-center justify-center gap-1.5 px-3.5 py-2 bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold rounded-xl transition-colors shadow-2xs shrink-0 self-start sm:self-auto'
+                  className='inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 sm:py-2 bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold rounded-xl transition-colors shadow-2xs shrink-0 w-full sm:w-auto text-center'
                 >
                   <span>Atur Jam Minum</span>
                   <ArrowRight size={13} />
@@ -331,7 +331,7 @@ export default function DashboardView() {
                 </div>
                 <Link
                   to='/user/profile'
-                  className='inline-flex items-center justify-center gap-1.5 px-3.5 py-2 bg-teal-700 hover:bg-teal-800 text-white text-xs font-bold rounded-xl transition-colors shadow-2xs shrink-0 self-start sm:self-auto'
+                  className='inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 sm:py-2 bg-teal-700 hover:bg-teal-800 text-white text-xs font-bold rounded-xl transition-colors shadow-2xs shrink-0 w-full sm:w-auto text-center'
                 >
                   <span>Aktifkan Pengingat</span>
                   <ArrowRight size={13} />
@@ -373,13 +373,13 @@ export default function DashboardView() {
                   </div>
                 </div>
 
-                <div className='p-4 bg-white flex items-center justify-between'>
-                  <p className='text-xs text-slate-500 line-clamp-1 flex-1 pr-3'>
+                <div className='p-3.5 sm:p-4 bg-white flex flex-col sm:flex-row sm:items-center justify-between gap-2'>
+                  <p className='text-xs text-slate-500 line-clamp-2 sm:line-clamp-1 flex-1'>
                     {featuredArticle.summary}
                   </p>
                   <Link
                     to={`/user/education/${featuredArticle.id}`}
-                    className='inline-flex items-center gap-1 text-xs font-bold text-teal-700 hover:text-teal-800 shrink-0'
+                    className='inline-flex items-center gap-1 text-xs font-bold text-teal-700 hover:text-teal-800 shrink-0 self-start sm:self-auto'
                   >
                     <span>Baca Panduan</span>
                     <ArrowRight size={13} />

@@ -102,9 +102,9 @@ export const FullBlisterPackCalendar: React.FC<FullBlisterPackCalendarProps> = (
 
   return (
     <Card padding='md' className='border border-slate-200/90 bg-white shadow-xs'>
-      <div className='flex items-center justify-between border-b border-slate-100 pb-3'>
+      <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3'>
         <div>
-          <div className='flex items-center gap-2'>
+          <div className='flex items-center gap-2 flex-wrap'>
             <h3 className='text-sm font-bold tracking-tight text-slate-900 sm:text-base'>
               Kalender Blister
             </h3>
@@ -124,7 +124,7 @@ export const FullBlisterPackCalendar: React.FC<FullBlisterPackCalendarProps> = (
               : 'Pantau riwayat kepatuhan 28 butir pil KB per tanggal'}
           </p>
         </div>
-        <div className='flex items-center gap-1'>
+        <div className='flex items-center justify-between sm:justify-end gap-1 w-full sm:w-auto bg-slate-50/80 sm:bg-transparent p-1.5 sm:p-0 rounded-xl sm:rounded-none border border-slate-200/60 sm:border-0'>
           <button
             type='button'
             onClick={() => changeMonth(-1)}

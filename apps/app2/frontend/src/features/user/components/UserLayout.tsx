@@ -53,10 +53,10 @@ export default function UserLayout({ children }: UserLayoutProps) {
         {/* Main Content Area */}
         <main className='flex-1 min-w-0 w-full max-w-full md:max-w-7xl mx-auto px-4 py-4 pb-24 md:p-8 md:pb-12 min-h-screen box-border'>
           {pathname !== '/user/dashboard' && urgentReminder && (
-            <div className='mb-4 p-3 sm:p-4 rounded-xl bg-amber-500 text-white flex items-center justify-between gap-3 shadow-md animate-fade-in'>
-              <div className='flex items-center gap-2.5 min-w-0'>
-                <span className='text-lg sm:text-xl shrink-0'>💊</span>
-                <p className='text-xs sm:text-sm font-semibold truncate'>
+            <div className='mb-4 p-3 sm:p-4 rounded-2xl bg-amber-500 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 shadow-md animate-fade-in'>
+              <div className='flex items-start sm:items-center gap-2.5 min-w-0'>
+                <span className='text-lg sm:text-xl shrink-0 mt-0.5 sm:mt-0'>💊</span>
+                <p className='text-xs sm:text-sm font-semibold leading-snug'>
                   {urgentReminder.kind === 'exact'
                     ? `Waktunya minum obat (${urgentReminder.time} WIB)!`
                     : `Pengingat: Jadwal minum obat (${urgentReminder.time} WIB) belum dicatat.`}
@@ -64,7 +64,7 @@ export default function UserLayout({ children }: UserLayoutProps) {
               </div>
               <Link
                 to='/user/dashboard'
-                className='shrink-0 bg-white text-amber-900 hover:bg-amber-50 font-bold px-3 py-1.5 rounded-lg text-xs shadow-xs transition-colors'
+                className='shrink-0 bg-white text-amber-900 hover:bg-amber-50 font-bold px-3 py-2 sm:py-1.5 rounded-xl sm:rounded-lg text-xs shadow-xs transition-colors text-center'
               >
                 Catat Sekarang
               </Link>

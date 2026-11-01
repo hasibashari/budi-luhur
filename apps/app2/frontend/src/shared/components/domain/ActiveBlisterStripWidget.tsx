@@ -57,13 +57,13 @@ export const ActiveBlisterStripWidget: React.FC<ActiveBlisterStripWidgetProps> =
 
   return (
     <Card padding='md' className='border border-slate-200/80 bg-white shadow-xs'>
-      <div className='mb-4 flex items-center justify-between gap-3'>
+      <div className='mb-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5'>
         <div className='flex items-center gap-2.5'>
           <div className='flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-teal-100 bg-teal-50 text-teal-600'>
             <CalendarDays size={18} strokeWidth={1.75} />
           </div>
           <div>
-            <div className='flex items-center gap-2'>
+            <div className='flex flex-wrap items-center gap-1.5 sm:gap-2'>
               <h3 className='text-sm font-bold tracking-tight text-slate-800'>
                 Kalender Minggu Ini
               </h3>
@@ -83,11 +83,11 @@ export const ActiveBlisterStripWidget: React.FC<ActiveBlisterStripWidgetProps> =
         </div>
       </div>
 
-      <div className='grid grid-cols-7 gap-1.5 sm:gap-2.5'>
+      <div className='grid grid-cols-7 gap-1 sm:gap-2'>
         {weekDates.map(date => (
           <div
             key={date.dateStr}
-            className={`flex min-h-16 flex-col items-center justify-center gap-1 rounded-xl border p-1.5 transition-all sm:min-h-20 ${
+            className={`flex min-h-[56px] sm:min-h-20 flex-col items-center justify-center gap-0.5 sm:gap-1 rounded-xl border p-1 sm:p-1.5 transition-all ${
               date.isToday ? 'ring-2 ring-orange-400 ring-offset-1' : ''
             } ${
               date.isRecorded
@@ -100,7 +100,7 @@ export const ActiveBlisterStripWidget: React.FC<ActiveBlisterStripWidgetProps> =
             }`}
           >
             <span
-              className={`text-[10px] font-bold uppercase ${
+              className={`text-[9px] sm:text-[10px] font-bold uppercase ${
                 date.isToday
                   ? date.isRecorded
                     ? 'text-teal-100'
@@ -112,7 +112,7 @@ export const ActiveBlisterStripWidget: React.FC<ActiveBlisterStripWidgetProps> =
             >
               {date.dayName}
             </span>
-            <span className='text-sm font-extrabold sm:text-base'>{date.dayNumber}</span>
+            <span className='text-xs sm:text-base font-extrabold'>{date.dayNumber}</span>
             <span className='flex h-3.5 items-center justify-center'>
               {date.isRecorded && <Check size={13} strokeWidth={3} />}
               {date.isToday && !date.isRecorded && !date.isMissed && (
@@ -123,23 +123,23 @@ export const ActiveBlisterStripWidget: React.FC<ActiveBlisterStripWidgetProps> =
         ))}
       </div>
 
-      <div className='mt-3.5 flex flex-col justify-between gap-2 border-t border-slate-100 pt-3 text-[11px] sm:flex-row sm:items-center'>
-        <div className='flex flex-wrap items-center gap-3 text-slate-500'>
+      <div className='mt-3 flex flex-col justify-between gap-2 border-t border-slate-100 pt-2.5 text-[10px] sm:text-[11px] sm:flex-row sm:items-center'>
+        <div className='flex flex-wrap items-center gap-2.5 text-slate-500'>
           <span className='flex items-center gap-1.5'>
-            <span className='h-2.5 w-2.5 rounded-full bg-teal-600' />
+            <span className='h-2 w-2 sm:h-2.5 sm:w-2.5 rounded-full bg-teal-600' />
             Selesai
           </span>
           <span className='flex items-center gap-1.5'>
-            <span className='h-2.5 w-2.5 rounded-full bg-rose-300' />
+            <span className='h-2 w-2 sm:h-2.5 sm:w-2.5 rounded-full bg-rose-300' />
             Terlewat
           </span>
           <span className='flex items-center gap-1.5'>
-            <span className='h-2.5 w-2.5 rounded-full bg-orange-300' />
+            <span className='h-2 w-2 sm:h-2.5 sm:w-2.5 rounded-full bg-orange-300' />
             Hari ini
           </span>
         </div>
 
-        <div className='flex items-center gap-1.5 rounded-md bg-teal-50/70 px-2.5 py-1 font-medium text-teal-700'>
+        <div className='flex items-center gap-1.5 rounded-md bg-teal-50/70 px-2 sm:px-2.5 py-1 font-medium text-teal-700'>
           <Info size={12} className='shrink-0' />
           <span>Tanggal akan berubah warna setelah selesai</span>
         </div>

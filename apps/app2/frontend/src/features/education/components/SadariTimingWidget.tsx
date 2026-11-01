@@ -97,9 +97,9 @@ export const SadariTimingWidget: React.FC = () => {
   }, [hphtDate]);
 
   return (
-    <Card padding='lg' className='border border-teal-200/80 bg-white shadow-xs'>
+    <Card padding='md' className='border border-teal-200/80 bg-white shadow-xs p-4 sm:p-6'>
       {/* Header & Tabs */}
-      <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-4 border-b border-slate-100'>
+      <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3.5 border-b border-slate-100'>
         <div>
           <span className='inline-flex items-center gap-1.5 text-xs font-bold text-teal-800 uppercase tracking-wider mb-1'>
             <Calendar size={13} className='text-teal-600' />
@@ -112,11 +112,11 @@ export const SadariTimingWidget: React.FC = () => {
         </div>
 
         {/* Profile Switcher Tabs */}
-        <div className='flex items-center bg-slate-100 p-1 rounded-xl self-start sm:self-auto border border-slate-200/70'>
+        <div className='grid grid-cols-2 w-full sm:w-auto sm:flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200/70'>
           <button
             type='button'
             onClick={() => handleProfileTypeChange('menstruating')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+            className={`px-3 py-2 sm:py-1.5 rounded-lg text-xs font-bold transition-all text-center ${
               profileType === 'menstruating'
                 ? 'bg-white text-teal-800 shadow-xs'
                 : 'text-slate-600 hover:text-slate-900'
@@ -127,7 +127,7 @@ export const SadariTimingWidget: React.FC = () => {
           <button
             type='button'
             onClick={() => handleProfileTypeChange('menopause')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+            className={`px-3 py-2 sm:py-1.5 rounded-lg text-xs font-bold transition-all text-center ${
               profileType === 'menopause'
                 ? 'bg-white text-teal-800 shadow-xs'
                 : 'text-slate-600 hover:text-slate-900'
@@ -141,9 +141,9 @@ export const SadariTimingWidget: React.FC = () => {
       {/* Active Tab Content */}
       <div className='pt-4'>
         {profileType === 'menstruating' ? (
-          <div className='flex flex-col md:flex-row gap-5 items-stretch'>
+          <div className='flex flex-col md:flex-row gap-4 sm:gap-5 items-stretch'>
             {/* Input Side */}
-            <div className='flex-1 flex flex-col gap-3'>
+            <div className='flex-1 flex flex-col gap-2.5'>
               <label
                 htmlFor='hpht-input'
                 className='text-xs font-bold text-slate-800 flex items-center gap-1.5'
@@ -151,13 +151,13 @@ export const SadariTimingWidget: React.FC = () => {
                 <Clock size={14} className='text-teal-600' />
                 <span>Hari Pertama Haid Terakhir (HPHT):</span>
               </label>
-              <div className='flex items-center gap-2'>
+              <div className='flex flex-col sm:flex-row sm:items-center gap-2'>
                 <input
                   id='hpht-input'
                   type='date'
                   value={hphtDate}
                   onChange={handleHphtChange}
-                  className='w-full max-w-xs bg-slate-50 border border-slate-200 text-slate-800 text-xs sm:text-sm rounded-xl px-3.5 py-2.5 focus:border-teal-600 focus:bg-white outline-none transition-colors'
+                  className='w-full sm:max-w-xs bg-slate-50 border border-slate-200 text-slate-800 text-xs sm:text-sm rounded-xl px-3.5 py-2.5 focus:border-teal-600 focus:bg-white outline-none transition-colors'
                 />
                 {savedTiming && (
                   <span className='text-[11px] font-semibold text-teal-700 animate-fade-in'>
@@ -171,7 +171,7 @@ export const SadariTimingWidget: React.FC = () => {
             </div>
 
             {/* Result Box */}
-            <div className='flex-1 bg-teal-50/60 border border-teal-200/80 rounded-2xl p-4 flex flex-col justify-center'>
+            <div className='flex-1 bg-teal-50/60 border border-teal-200/80 rounded-2xl p-3.5 sm:p-4.5 flex flex-col justify-center'>
               {timingCalculation ? (
                 <div className='flex flex-col gap-2'>
                   <div className='flex items-center gap-2'>
@@ -217,9 +217,9 @@ export const SadariTimingWidget: React.FC = () => {
             </div>
           </div>
         ) : (
-          <div className='flex flex-col md:flex-row gap-5 items-stretch'>
+          <div className='flex flex-col md:flex-row gap-4 sm:gap-5 items-stretch'>
             {/* Menopause Input */}
-            <div className='flex-1 flex flex-col gap-3'>
+            <div className='flex-1 flex flex-col gap-2.5'>
               <label
                 htmlFor='fixed-day-select'
                 className='text-xs font-bold text-slate-800 flex items-center gap-1.5'
@@ -227,12 +227,12 @@ export const SadariTimingWidget: React.FC = () => {
                 <Calendar size={14} className='text-teal-600' />
                 <span>Pilih Tanggal Tetap Setiap Bulan:</span>
               </label>
-              <div className='flex items-center gap-2'>
+              <div className='flex flex-col sm:flex-row sm:items-center gap-2'>
                 <select
                   id='fixed-day-select'
                   value={fixedDay}
                   onChange={handleFixedDayChange}
-                  className='bg-slate-50 border border-slate-200 text-slate-800 text-xs sm:text-sm rounded-xl px-3.5 py-2.5 focus:border-teal-600 focus:bg-white outline-none transition-colors'
+                  className='w-full sm:w-auto bg-slate-50 border border-slate-200 text-slate-800 text-xs sm:text-sm rounded-xl px-3.5 py-2.5 focus:border-teal-600 focus:bg-white outline-none transition-colors'
                 >
                   {Array.from({ length: 31 }, (_, i) => i + 1).map(day => (
                     <option key={day} value={day}>
@@ -252,7 +252,7 @@ export const SadariTimingWidget: React.FC = () => {
             </div>
 
             {/* Menopause Result Box */}
-            <div className='flex-1 bg-teal-50/60 border border-teal-200/80 rounded-2xl p-4 flex flex-col justify-center'>
+            <div className='flex-1 bg-teal-50/60 border border-teal-200/80 rounded-2xl p-3.5 sm:p-4.5 flex flex-col justify-center'>
               <div className='flex items-center gap-2 mb-1'>
                 <CheckCircle2 size={16} className='text-teal-600' />
                 <span className='text-xs font-bold text-teal-900'>
@@ -268,7 +268,7 @@ export const SadariTimingWidget: React.FC = () => {
         )}
 
         {/* Medical Disclaimer & Citation Footer */}
-        <div className='mt-4 pt-3 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[11px] text-slate-500'>
+        <div className='mt-4 pt-3 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 text-[11px] text-slate-500'>
           <div className='flex items-center gap-1.5 text-amber-800 bg-amber-50 px-2.5 py-1 rounded-lg border border-amber-200/70'>
             <AlertCircle size={13} className='shrink-0 text-amber-600' />
             <span>{SADARI_TIMING_INFO.medicalDisclaimer}</span>

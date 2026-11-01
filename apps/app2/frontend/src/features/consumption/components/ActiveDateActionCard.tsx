@@ -53,9 +53,9 @@ export function ActiveDateActionCard({
         </div>
 
         {/* Right side: Direct Quick Status Action */}
-        <div className='flex items-center gap-2'>
+        <div className='flex items-center sm:justify-end gap-2 w-full sm:w-auto pt-2 sm:pt-0 border-t sm:border-t-0 border-teal-100/60'>
           {effectiveStatus === 'recorded' && (
-            <div className='flex items-center gap-2'>
+            <div className='flex items-center justify-between sm:justify-end gap-2 w-full sm:w-auto'>
               <Badge variant='recorded' size='sm'>
                 ✓ Selesai
               </Badge>
@@ -63,7 +63,7 @@ export function ActiveDateActionCard({
                 type='button'
                 disabled={isUpdating}
                 onClick={() => onUpdateStatus(selectedDate, 'pending')}
-                className='text-[11px] font-semibold text-slate-500 hover:text-teal-700 hover:underline cursor-pointer'
+                className='text-xs font-semibold text-slate-500 hover:text-teal-700 hover:underline cursor-pointer py-1 px-2 rounded-lg hover:bg-white/80'
               >
                 Ubah
               </button>
@@ -71,7 +71,7 @@ export function ActiveDateActionCard({
           )}
 
           {effectiveStatus === 'missed' && (
-            <div className='flex items-center gap-2'>
+            <div className='flex items-center justify-between sm:justify-end gap-2 w-full sm:w-auto'>
               <Badge variant='missed' size='sm'>
                 ✕ Terlewat
               </Badge>
@@ -79,7 +79,7 @@ export function ActiveDateActionCard({
                 type='button'
                 disabled={isUpdating}
                 onClick={() => onUpdateStatus(selectedDate, 'pending')}
-                className='text-[11px] font-semibold text-slate-500 hover:text-teal-700 hover:underline cursor-pointer'
+                className='text-xs font-semibold text-slate-500 hover:text-teal-700 hover:underline cursor-pointer py-1 px-2 rounded-lg hover:bg-white/80'
               >
                 Ubah
               </button>
@@ -87,14 +87,14 @@ export function ActiveDateActionCard({
           )}
 
           {effectiveStatus === 'pending' && (
-            <div className='flex items-center gap-2'>
+            <div className='grid grid-cols-2 sm:flex sm:items-center gap-2 w-full sm:w-auto'>
               <Button
                 variant='primary'
                 size='sm'
                 shape='pill'
                 disabled={isUpdating}
                 icon={<CheckCircle2 size={14} />}
-                className='text-xs py-1.5 px-3'
+                className='text-xs py-2 px-3 sm:py-1.5 justify-center font-bold shadow-xs'
                 onClick={() => onUpdateStatus(selectedDate, 'recorded')}
               >
                 {isUpdating ? '...' : 'Sudah Minum'}
@@ -104,7 +104,7 @@ export function ActiveDateActionCard({
                 size='sm'
                 shape='pill'
                 disabled={isUpdating}
-                className='text-xs py-1.5 px-3 text-slate-600 border-slate-300 hover:bg-slate-50'
+                className='text-xs py-2 px-3 sm:py-1.5 justify-center font-bold text-slate-600 border-slate-300 hover:bg-slate-50'
                 icon={<XCircle size={14} />}
                 onClick={() => onUpdateStatus(selectedDate, 'missed')}
               >

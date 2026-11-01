@@ -89,7 +89,7 @@ export function Button({
       ) : icon ? (
         <span className='shrink-0'>{icon}</span>
       ) : null}
-      <span>{children}</span>
+      <span className='inline-flex items-center gap-1.5'>{children}</span>
     </button>
   );
 }

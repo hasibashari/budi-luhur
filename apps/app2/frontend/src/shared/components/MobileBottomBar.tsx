@@ -31,7 +31,7 @@ export default function MobileBottomBar({ items = USER_BOTTOM_NAV_ITEMS }: Mobil
       className='fixed bottom-0 left-0 right-0 z-50 md:hidden bg-white/95 backdrop-blur-md border-t border-[#E2E8F0] shadow-[0_-4px_16px_rgba(15,23,42,0.05)]'
       style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
     >
-      <div className='max-w-md mx-auto h-16 px-2 flex items-center justify-around'>
+      <div className='max-w-md mx-auto h-16 px-1 sm:px-2 flex items-center justify-around'>
         {items.map(item => {
           let isActive = false;
           if (item.name === 'SADARI' || item.href === '/user/sadari') {
@@ -50,24 +50,24 @@ export default function MobileBottomBar({ items = USER_BOTTOM_NAV_ITEMS }: Mobil
             <Link
               key={item.name}
               to={item.href}
-              className={`flex flex-col items-center justify-center min-w-[56px] h-full py-1 px-1.5 rounded-xl transition-all duration-150 relative select-none ${
+              className={`flex flex-col items-center justify-center flex-1 min-w-0 max-w-[64px] h-full py-1 px-0.5 sm:px-1 rounded-xl transition-all duration-150 relative select-none ${
                 isActive ? 'text-[#0D9488]' : 'text-[#64748B] hover:text-[#0D9488]'
               }`}
             >
               <div
-                className={`flex items-center justify-center w-10 h-7 rounded-xl transition-all duration-200 ${
+                className={`flex items-center justify-center w-8 h-7 sm:w-10 rounded-xl transition-all duration-200 ${
                   isActive ? 'bg-[#F0FDFA] scale-105' : 'bg-transparent'
                 }`}
               >
                 <Icon
-                  size={20}
+                  size={19}
                   strokeWidth={isActive ? 2.2 : 1.75}
                   className={isActive ? 'text-[#0D9488]' : 'text-[#64748B]'}
                 />
               </div>
 
               <span
-                className={`text-[10px] mt-0.5 tracking-tight font-medium ${
+                className={`text-[9px] sm:text-[10px] mt-0.5 tracking-tight truncate max-w-full leading-tight font-medium ${
                   isActive ? 'text-[#0D9488] font-bold' : 'text-[#64748B]'
                 }`}
               >

@@ -106,7 +106,7 @@ export function DateFilterBar({
       padding='md'
       className='relative z-30 overflow-visible border border-slate-200/80 shadow-xs'
     >
-      <div className='flex flex-col lg:flex-row lg:items-center justify-between gap-3'>
+      <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-3'>
         {/* Left Side: Calendar Dropdown Button & Preset Chips */}
         <div className='flex items-center gap-2 flex-wrap'>
           {/* 📅 Popover Calendar Trigger Button */}
@@ -114,7 +114,7 @@ export function DateFilterBar({
             <button
               type='button'
               onClick={() => setIsCalendarOpen(prev => !prev)}
-              className={`inline-flex items-center justify-center gap-1.5 sm:gap-2 w-8 h-8 sm:w-auto sm:h-auto sm:px-3 sm:py-2 rounded-xl text-xs font-bold border transition-all cursor-pointer shadow-2xs ${
+              className={`inline-flex items-center justify-center gap-1.5 sm:gap-2 px-2.5 py-1.5 sm:px-3 sm:py-2 min-h-[34px] rounded-xl text-xs font-bold border transition-all cursor-pointer shadow-2xs ${
                 isCalendarOpen || dateFilterPreset === 'CUSTOM'
                   ? 'bg-teal-50 border-teal-600 text-teal-700 ring-2 ring-teal-100'
                   : 'bg-white border-slate-200 text-slate-700 hover:border-teal-200'
@@ -123,20 +123,25 @@ export function DateFilterBar({
               aria-label='Pilih Tanggal dari Kalender'
             >
               <CalendarIcon size={15} className='text-teal-600 shrink-0' />
-              <span className='hidden sm:inline'>
-                {dateFilterPreset === 'CUSTOM'
-                  ? formatShortDate(selectedDate)
-                  : 'Pilih dari Kalender'}
+              <span className='truncate max-w-[120px] sm:max-w-none'>
+                {dateFilterPreset === 'CUSTOM' ? (
+                  formatShortDate(selectedDate)
+                ) : (
+                  <>
+                    <span className='inline sm:hidden'>Kalender</span>
+                    <span className='hidden sm:inline'>Pilih dari Kalender</span>
+                  </>
+                )}
               </span>
               <ChevronDown
                 size={14}
-                className={`hidden sm:inline-block transition-transform ${isCalendarOpen ? 'rotate-180' : ''}`}
+                className={`transition-transform shrink-0 ${isCalendarOpen ? 'rotate-180' : ''}`}
               />
             </button>
 
             {/* 🗓️ MINI CALENDAR POPOVER DROPDOWN WITH ACTIVITY DOTS */}
             {isCalendarOpen && (
-              <div className='absolute left-0 top-full mt-2 w-72 sm:w-80 bg-white rounded-2xl shadow-2xl border border-slate-200 p-3.5 z-50 animate-fade-in'>
+              <div className='absolute left-0 top-full mt-2 w-[calc(100vw-2.5rem)] max-w-xs sm:w-80 bg-white rounded-2xl shadow-2xl border border-slate-200 p-3 sm:p-3.5 z-50 animate-fade-in'>
                 {/* Month Navigator Header */}
                 <div className='flex items-center justify-between mb-3 pb-2 border-b border-slate-100'>
                   <span className='text-xs sm:text-sm font-extrabold text-slate-800'>
@@ -273,7 +278,7 @@ export function DateFilterBar({
             <button
               type='button'
               onClick={() => onDateFilterPresetChange('ALL')}
-              className={`text-xs font-bold px-3 py-1.5 rounded-xl transition-all cursor-pointer shrink-0 ${
+              className={`text-xs font-bold px-3 py-1.5 min-h-[34px] rounded-xl transition-all cursor-pointer shrink-0 ${
                 dateFilterPreset === 'ALL'
                   ? 'bg-teal-600 text-white shadow-2xs'
                   : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
@@ -284,7 +289,7 @@ export function DateFilterBar({
             <button
               type='button'
               onClick={() => onDateFilterPresetChange('30_DAYS')}
-              className={`text-xs font-bold px-3 py-1.5 rounded-xl transition-all cursor-pointer shrink-0 ${
+              className={`text-xs font-bold px-3 py-1.5 min-h-[34px] rounded-xl transition-all cursor-pointer shrink-0 ${
                 dateFilterPreset === '30_DAYS'
                   ? 'bg-teal-600 text-white shadow-2xs'
                   : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
@@ -297,11 +302,11 @@ export function DateFilterBar({
 
         {/* Right Side: Reset Date Filter button if preset is active */}
         {dateFilterPreset !== 'ALL' && (
-          <div className='flex items-center gap-1.5 self-end lg:self-auto'>
+          <div className='flex items-center gap-1.5 self-start sm:self-auto'>
             <button
               type='button'
               onClick={() => onDateFilterPresetChange('ALL')}
-              className='inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold text-slate-500 hover:text-teal-700 hover:bg-teal-50 rounded-xl transition-colors cursor-pointer border border-slate-200 hover:border-teal-200'
+              className='inline-flex items-center gap-1 px-2.5 py-1.5 min-h-[34px] text-xs font-semibold text-slate-500 hover:text-teal-700 hover:bg-teal-50 rounded-xl transition-colors cursor-pointer border border-slate-200 hover:border-teal-200'
               title='Reset Filter Tanggal'
             >
               <X size={14} />
