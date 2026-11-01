@@ -305,4 +305,70 @@ export const BuddyIllustration: React.FC<IllustrationProps> = ({
   );
 };
 
+/**
+ * Slide 4: Peringatan Medis & Kontraindikasi (Warning Shield with Alert Emblem)
+ */
+export const WarningIllustration: React.FC<IllustrationProps> = ({
+  className = '',
+  size = 150,
+}) => {
+  return (
+    <div
+      className={`relative flex items-center justify-center select-none ${className}`}
+      style={{ width: size, height: size }}
+    >
+      <div className='absolute inset-0 rounded-full bg-[#F59E0B]/20 blur-2xl animate-pulse pointer-events-none' />
+      <svg
+        viewBox='0 0 160 160'
+        fill='none'
+        xmlns='http://www.w3.org/2000/svg'
+        className='w-full h-full drop-shadow-xl overflow-visible'
+      >
+        <defs>
+          <linearGradient id='warnShieldGrad' x1='0' y1='0' x2='1' y2='1'>
+            <stop offset='0%' stopColor='#FEF3C7' />
+            <stop offset='60%' stopColor='#FDE68A' />
+            <stop offset='100%' stopColor='#FCD34D' />
+          </linearGradient>
+          <linearGradient id='warnBorderGrad' x1='0' y1='0' x2='1' y2='1'>
+            <stop offset='0%' stopColor='#F59E0B' />
+            <stop offset='100%' stopColor='#D97706' />
+          </linearGradient>
+        </defs>
+
+        {/* Floor Shadow */}
+        <ellipse cx='80' cy='144' rx='40' ry='8' fill='#0F172A' fillOpacity='0.12' />
+
+        {/* Medical Protective Warning Shield */}
+        <g transform='translate(40, 22)'>
+          <path
+            d='M40 0 C68 0 80 14 80 32 C80 66 40 92 40 92 C40 92 0 66 0 32 C0 14 12 0 40 0 Z'
+            fill='url(#warnShieldGrad)'
+            stroke='url(#warnBorderGrad)'
+            strokeWidth='3'
+            filter='drop-shadow(0 8px 20px rgba(245,158,11,0.25))'
+          />
+
+          {/* Alert Triangle in Shield Center */}
+          <path
+            d='M40 24 L58 58 L22 58 Z'
+            fill='#DC2626'
+            stroke='#B91C1C'
+            strokeWidth='2'
+            strokeLinejoin='round'
+          />
+          {/* Exclamation Mark in Triangle */}
+          <rect x='38.5' y='33' width='3' height='13' rx='1.5' fill='#FFFFFF' />
+          <circle cx='40' cy='51' r='2' fill='#FFFFFF' />
+        </g>
+
+        {/* Subtle Ambient Sparkles */}
+        <path d='M26 36 L28 42 L34 44 L28 46 L26 52 L24 46 L18 44 L24 42 Z' fill='#F59E0B' />
+        <path d='M134 32 L136 38 L142 40 L136 42 L134 48 L132 42 L126 40 L132 38 Z' fill='#EF4444' />
+        <circle cx='136' cy='82' r='2.5' fill='#F59E0B' />
+      </svg>
+    </div>
+  );
+};
+
 export default ReminderIllustration;

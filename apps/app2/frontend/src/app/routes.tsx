@@ -2,9 +2,9 @@ import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthGuard } from '@/src/features/auth/components/AuthGuard';
 import { GuestGuard } from '@/src/features/auth/components/GuestGuard';
-import { LoginView, RegisterView } from '@/src/features/auth';
-import { SplashView } from '@/src/features/splash';
+import { LoginView, RegisterView, useAuth } from '@/src/features/auth';
 import { OnboardingView } from '@/src/features/onboarding';
+import { SplashScreenView } from '@/src/shared/components/feedback/SplashScreenView';
 
 // User Portal Views
 import {
@@ -29,19 +29,31 @@ import {
   AdminProfileView,
 } from '@/src/features/admin';
 
+function RootRedirect() {
+  const { isAuthenticated, isInitializing, user, hasCompletedOnboarding } = useAuth();
+
+  if (isInitializing) {
+    return <SplashScreenView statusText='Memeriksa sesi...' />;
+  }
+
+  if (isAuthenticated) {
+    return <Navigate to={user?.role === 'admin' ? '/admin/dashboard' : '/user/dashboard'} replace />;
+  }
+
+  if (hasCompletedOnboarding) {
+    return <Navigate to='/auth/login' replace />;
+  }
+
+  return <Navigate to='/onboarding' replace />;
+}
+
 export function AppRoutes() {
   return (
     <Routes>
       {/* Public / Entry Routes */}
-      <Route path='/' element={<Navigate to='/splash' replace />} />
-      <Route
-        path='/splash'
-        element={
-          <GuestGuard>
-            <SplashView />
-          </GuestGuard>
-        }
-      />
+      <Route path='/' element={<RootRedirect />} />
+      {/* Backwards compatibility: redirect /splash directly to root */}
+      <Route path='/splash' element={<Navigate to='/' replace />} />
       <Route
         path='/onboarding'
         element={

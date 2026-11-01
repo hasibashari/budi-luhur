@@ -50,3 +50,4 @@ export function SplashScreenView({
 }
 
 export default SplashScreenView;
+

@@ -3,6 +3,7 @@ import {
   ReminderIllustration,
   TrackingIllustration,
   BuddyIllustration,
+  WarningIllustration,
 } from '../components/OnboardingIllustrations';
 
 export interface OnboardingSlide {
@@ -11,7 +12,9 @@ export interface OnboardingSlide {
   tagline: string;
   description: string;
   illustration: React.ComponentType<{ size?: number; className?: string }>;
-  accentColor: 'rose' | 'emerald' | 'amber';
+  accentColor: 'rose' | 'emerald' | 'amber' | 'red';
+  items?: string[];
+  isWarning?: boolean;
 }
 
 export const ONBOARDING_SLIDES: OnboardingSlide[] = [
@@ -41,5 +44,23 @@ export const ONBOARDING_SLIDES: OnboardingSlide[] = [
       'Catat keluhan tubuh seperti flek atau kram, serta pelajari 5 langkah panduan SADARI secara mandiri.',
     illustration: BuddyIllustration,
     accentColor: 'amber',
+  },
+  {
+    id: 'contraindications',
+    title: 'Peringatan! ⚠️',
+    tagline: 'Konsultasi Medis Diperlukan',
+    description:
+      'Bagi yang memiliki penyakit atau kondisi berikut, penggunaan pil KB harus dihindari atau dikonsultasikan terlebih dahulu dengan tenaga kesehatan:',
+    illustration: WarningIllustration,
+    accentColor: 'red',
+    isWarning: true,
+    items: [
+      'Hipertensi berat atau tekanan darah tidak terkontrol.',
+      'Penyakit jantung dan riwayat stroke.',
+      'Riwayat penggumpalan darah (trombosis).',
+      'Migrain dengan aura.',
+      'Kanker payudara aktif.',
+      'Diabetes dengan komplikasi pembuluh darah.',
+    ],
   },
 ];

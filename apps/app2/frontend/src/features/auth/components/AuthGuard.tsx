@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { UserRole } from '../types/auth.types';
-import { SplashScreenView } from '../../splash';
+import { SplashScreenView } from '@/src/shared/components/feedback/SplashScreenView';
 
 export interface AuthGuardProps {
   children: React.ReactNode;

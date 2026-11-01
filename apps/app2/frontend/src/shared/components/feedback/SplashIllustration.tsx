@@ -1,11 +1,11 @@
 import React from 'react';
 
-interface OnboardingIllustrationProps {
+interface SplashIllustrationProps {
   className?: string;
   size?: number;
 }
 
-export const OnboardingIllustration: React.FC<OnboardingIllustrationProps> = ({
+export const SplashIllustration: React.FC<SplashIllustrationProps> = ({
   className = '',
   size = 140,
 }) => {
@@ -25,46 +25,46 @@ export const OnboardingIllustration: React.FC<OnboardingIllustrationProps> = ({
       >
         <defs>
           {/* Medical Teal Gradient - Upper Half */}
-          <linearGradient id='pillTealUpper' x1='15' y1='10' x2='48' y2='48' gradientUnits='userSpaceOnUse'>
+          <linearGradient id='splashPillTeal' x1='15' y1='10' x2='48' y2='48' gradientUnits='userSpaceOnUse'>
             <stop offset='0%' stopColor='#2DD4BF' />
             <stop offset='45%' stopColor='#0D9488' />
             <stop offset='100%' stopColor='#0F766E' />
           </linearGradient>
 
           {/* Pearl White Gradient - Lower Half */}
-          <linearGradient id='pillPearlLower' x1='24' y1='48' x2='48' y2='96' gradientUnits='userSpaceOnUse'>
+          <linearGradient id='splashPillPearl' x1='24' y1='48' x2='48' y2='96' gradientUnits='userSpaceOnUse'>
             <stop offset='0%' stopColor='#FFFFFF' />
             <stop offset='65%' stopColor='#F0FDFA' />
             <stop offset='100%' stopColor='#E2E8F0' />
           </linearGradient>
 
           {/* Specular Gloss - Upper Highlight */}
-          <linearGradient id='pillGlossUpper' x1='6' y1='8' x2='18' y2='48' gradientUnits='userSpaceOnUse'>
+          <linearGradient id='splashPillGlossUp' x1='6' y1='8' x2='18' y2='48' gradientUnits='userSpaceOnUse'>
             <stop offset='0%' stopColor='#FFFFFF' stopOpacity='0.85' />
             <stop offset='50%' stopColor='#FFFFFF' stopOpacity='0.35' />
             <stop offset='100%' stopColor='#FFFFFF' stopOpacity='0.0' />
           </linearGradient>
 
           {/* Specular Gloss - Lower Highlight */}
-          <linearGradient id='pillGlossLower' x1='6' y1='48' x2='18' y2='88' gradientUnits='userSpaceOnUse'>
+          <linearGradient id='splashPillGlossLow' x1='6' y1='48' x2='18' y2='88' gradientUnits='userSpaceOnUse'>
             <stop offset='0%' stopColor='#FFFFFF' stopOpacity='0.5' />
             <stop offset='100%' stopColor='#FFFFFF' stopOpacity='0.05' />
           </linearGradient>
 
           {/* Coral Sparkle Accent Gradient */}
-          <linearGradient id='pillCoralSparkle' x1='0' y1='0' x2='1' y2='1'>
+          <linearGradient id='splashPillCoral' x1='0' y1='0' x2='1' y2='1'>
             <stop offset='0%' stopColor='#FB923C' />
             <stop offset='100%' stopColor='#EA580C' />
           </linearGradient>
 
           {/* Teal Sparkle Accent Gradient */}
-          <linearGradient id='pillTealSparkle' x1='0' y1='0' x2='1' y2='1'>
+          <linearGradient id='splashPillTealSpark' x1='0' y1='0' x2='1' y2='1'>
             <stop offset='0%' stopColor='#5EEAD4' />
             <stop offset='100%' stopColor='#0D9488' />
           </linearGradient>
 
           {/* Floor Shadow Radial Gradient */}
-          <radialGradient id='pillFloorShadow' cx='50%' cy='50%' r='50%'>
+          <radialGradient id='splashFloorShadow' cx='50%' cy='50%' r='50%'>
             <stop offset='0%' stopColor='#0F172A' stopOpacity='0.20' />
             <stop offset='60%' stopColor='#0D9488' stopOpacity='0.12' />
             <stop offset='100%' stopColor='#0D9488' stopOpacity='0' />
@@ -72,23 +72,23 @@ export const OnboardingIllustration: React.FC<OnboardingIllustrationProps> = ({
         </defs>
 
         {/* Soft Floating Shadow Beneath Pill */}
-        <ellipse cx='80' cy='144' rx='42' ry='8' fill='url(#pillFloorShadow)' />
+        <ellipse cx='80' cy='144' rx='42' ry='8' fill='url(#splashFloorShadow)' />
 
         {/* Diagonal Rotated 3D Pill Capsule Container */}
         <g transform='translate(80, 72) rotate(-35) translate(-24, -48)'>
-          {/* Capsule Outer Shell Backdrop (Soft Edge Depth) */}
+          {/* Capsule Outer Shell Backdrop */}
           <rect x='-1' y='-1' width='50' height='98' rx='25' fill='#0F766E' fillOpacity='0.15' />
 
           {/* 1. TOP HALF: Medical Teal Cap */}
           <path
             d='M 0,24 C 0,10.75 10.75,0 24,0 C 37.25,0 48,10.75 48,24 L 48,48 L 0,48 Z'
-            fill='url(#pillTealUpper)'
+            fill='url(#splashPillTeal)'
           />
 
           {/* 2. BOTTOM HALF: Pearl White Body */}
           <path
             d='M 0,48 L 48,48 L 48,72 C 48,85.25 37.25,96 24,96 C 10.75,96 0,85.25 0,72 Z'
-            fill='url(#pillPearlLower)'
+            fill='url(#splashPillPearl)'
             stroke='#E2E8F0'
             strokeWidth='1'
           />
@@ -100,36 +100,33 @@ export const OnboardingIllustration: React.FC<OnboardingIllustrationProps> = ({
           {/* 4. SPECULAR GLOSS HIGHLIGHTS (Curved 3D Glass Surface) */}
           <path
             d='M 6,16 C 6,9 10,6 16,6 L 16,48 L 6,48 Z'
-            fill='url(#pillGlossUpper)'
+            fill='url(#splashPillGlossUp)'
           />
           <path
             d='M 6,48 L 16,48 L 16,80 C 10,80 6,76 6,70 Z'
-            fill='url(#pillGlossLower)'
+            fill='url(#splashPillGlossLow)'
           />
 
           {/* 5. MEDICAL CROSS EMBLEM ON TEAL HALF */}
           <g transform='translate(24, 24)'>
-            {/* Soft subtle glow behind emblem */}
             <circle cx='0' cy='0' r='12' fill='#FFFFFF' fillOpacity='0.12' />
-            {/* Vertical Bar */}
             <rect x='-3' y='-8' width='6' height='16' rx='2' fill='#FFFFFF' fillOpacity='0.95' />
-            {/* Horizontal Bar */}
             <rect x='-8' y='-3' width='16' height='6' rx='2' fill='#FFFFFF' fillOpacity='0.95' />
           </g>
         </g>
 
-        {/* SPARKLING ACCENT ELEMENTS (Brand Identity: Energy & Care) */}
+        {/* SPARKLING ACCENT ELEMENTS */}
         {/* Top Right Coral Sparkle */}
         <path
           d='M134 32 L136.5 40 L144.5 42.5 L136.5 45 L134 53 L131.5 45 L123.5 42.5 L131.5 40 Z'
-          fill='url(#pillCoralSparkle)'
+          fill='url(#splashPillCoral)'
           className='animate-pulse'
         />
 
         {/* Bottom Left Teal Sparkle */}
         <path
           d='M26 88 L28 94 L34 96 L28 98 L26 104 L24 98 L18 96 L24 94 Z'
-          fill='url(#pillTealSparkle)'
+          fill='url(#splashPillTealSpark)'
           className='animate-pulse'
         />
 
@@ -142,4 +139,5 @@ export const OnboardingIllustration: React.FC<OnboardingIllustrationProps> = ({
   );
 };
 
-export default OnboardingIllustration;
+export default SplashIllustration;
+

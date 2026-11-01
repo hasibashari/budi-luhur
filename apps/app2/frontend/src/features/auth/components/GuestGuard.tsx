@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { SplashScreenView } from '../../splash';
+import { SplashScreenView } from '@/src/shared/components/feedback/SplashScreenView';
 
 export interface GuestGuardProps {
   children: React.ReactNode;
