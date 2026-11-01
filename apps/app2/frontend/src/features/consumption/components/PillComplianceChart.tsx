@@ -92,7 +92,8 @@ export function PillComplianceChart({
 
       const activity = activityMap[dateStr];
       const matchingLog = logs.find(
-        l => l.scheduledDate === dateStr && (!activeScheduleId || l.reminderId === activeScheduleId),
+        l =>
+          l.scheduledDate === dateStr && (!activeScheduleId || l.reminderId === activeScheduleId),
       );
 
       let status: DayPillItem['status'] = 'FUTURE';
@@ -333,8 +334,8 @@ export function PillComplianceChart({
                       aria-label={`Tablet ke-${item.dayIndex}`}
                       className={`w-full rounded-t-lg transition-all cursor-pointer ${heightClass} ${barStyle} ${
                         isSelected
-                          ? 'ring-2 ring-teal-600 ring-offset-1 scale-110 z-20 brightness-110'
-                          : 'hover:scale-105 hover:brightness-105'
+                          ? 'ring-2 ring-teal-600 ring-offset-1 z-20 brightness-110'
+                          : 'hover:brightness-105'
                       }`}
                     />
                   </div>

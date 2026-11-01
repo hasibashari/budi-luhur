@@ -180,7 +180,7 @@ export function AdminVerificationView() {
       <AdminHeader
         title='Verifikasi Akseptor Pil KB'
         subtitle='Pemeriksaan 9 pertanyaan skrining kontraindikasi medis dan bukti dokumen status pernikahan akseptor.'
-        rightAction={
+        action={
           <Button
             type='button'
             variant='outline'
@@ -271,8 +271,7 @@ export function AdminVerificationView() {
         <DataTable
           columns={columns}
           data={verifications}
-          loading={isLoading}
-          emptyMessage='Belum ada berkas pendaftaran akseptor yang perlu diverifikasi.'
+          emptyMessage={isLoading ? 'Memuat data verifikasi...' : 'Belum ada berkas pendaftaran akseptor yang perlu diverifikasi.'}
           renderMobileCard={row => (
             <div className='p-4 flex flex-col gap-3'>
               <div className='flex items-center justify-between'>
