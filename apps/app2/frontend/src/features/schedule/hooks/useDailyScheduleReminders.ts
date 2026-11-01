@@ -25,11 +25,11 @@ const TIMEZONE = 'Asia/Jakarta';
 const STORAGE_PREFIX = 'pilluna_daily_reminder';
 
 // Prefix base URL app2 (mis. "/app2") supaya klik notifikasi tetap di aplikasi.
-const APP_BASE = (import.meta.env.BASE_URL || '/').replace(/\/+$/, '');
+const APP_BASE = (typeof import.meta !== 'undefined' && import.meta.env?.BASE_URL ? import.meta.env.BASE_URL : '/').replace(/\/+$/, '');
 
 export interface ActiveReminder {
   scheduleId: string;
-  kind: 'exact' | 'early';
+  kind: 'exact' | 'early' | 'morning' | 'afternoon' | 'overdue';
   title: string;
   time: string;
 }
@@ -208,7 +208,33 @@ export function useDailyScheduleReminders({
         // tidak dobel saat aplikasi terbuka (notifikasi baru menggantikan yang lama).
         const notificationTag = `daily_${schedule.id}_${dateKey}`;
 
-        // 1. Tepat waktu (0 s/d 10 menit setelah jam jadwal)
+        // 1. Pagi (07:00 - 07:15 WIB) untuk jadwal siang/sore/malam
+        if (nowMinutes >= 7 * 60 && nowMinutes <= 7 * 60 + 15 && scheduleMinutes >= 8 * 60) {
+          const key = `${baseKey}_morning`;
+          if (!wasAlreadyFired(key)) {
+            markAsFired(key);
+            notifyUser('Jadwal Minum Obat Hari Ini 📅', {
+              body: `Ada jadwal minum ${schedule.title} pukul ${schedule.time} WIB nanti malam.`,
+              tag: `${notificationTag}_morning`,
+              url: `${APP_BASE}/user/dashboard`,
+            });
+          }
+        }
+
+        // 2. Siang (13:00 - 13:15 WIB) untuk jadwal sore/malam
+        if (nowMinutes >= 13 * 60 && nowMinutes <= 13 * 60 + 15 && scheduleMinutes >= 14 * 60) {
+          const key = `${baseKey}_afternoon`;
+          if (!wasAlreadyFired(key)) {
+            markAsFired(key);
+            notifyUser('Pengingat Siang ⏰', {
+              body: `Mengingatkan kembali, jadwal minum ${schedule.title} pukul ${schedule.time} WIB nanti.`,
+              tag: `${notificationTag}_afternoon`,
+              url: `${APP_BASE}/user/dashboard`,
+            });
+          }
+        }
+
+        // 3. Tepat waktu (0 s/d 10 menit setelah jam jadwal)
         if (diff >= 0 && diff <= EXACT_WINDOW_MINUTES) {
           stillActive.push({
             scheduleId: schedule.id,
@@ -220,9 +246,8 @@ export function useDailyScheduleReminders({
           const key = `${baseKey}_exact`;
           if (!wasAlreadyFired(key)) {
             markAsFired(key);
-            notifyUser(`Waktunya ${schedule.title}! 🔔`, {
-              body: `${schedule.time} WIB telah tiba. Jangan lupa catat sekarang${schedule.notes ? ` — ${schedule.notes}` : ''
-                }.`,
+            notifyUser(`Waktunya Minum Obat! 💊`, {
+              body: `Pukul ${schedule.time} WIB telah tiba. Minum ${schedule.title} sekarang dan catat di aplikasi.`,
               tag: `${notificationTag}_exact`,
               url: `${APP_BASE}/user/dashboard`,
             });
@@ -230,7 +255,31 @@ export function useDailyScheduleReminders({
           continue;
         }
 
-        // 2. Pengingat 15 menit sebelumnya
+        // 4. Pengingat berulang / susulan jika belum diminum (10 menit hingga 2 jam)
+        if (diff > EXACT_WINDOW_MINUTES && diff <= 120) {
+          stillActive.push({
+            scheduleId: schedule.id,
+            kind: 'overdue',
+            title: schedule.title,
+            time: schedule.time,
+          });
+
+          const overdueStep = Math.floor(diff / 15) * 15;
+          if (overdueStep >= 15 && overdueStep <= 120) {
+            const key = `${baseKey}_overdue_${overdueStep}`;
+            if (!wasAlreadyFired(key)) {
+              markAsFired(key);
+              notifyUser('Pengingat: Belum Dicatat ⚠️', {
+                body: `${schedule.title} pukul ${schedule.time} WIB belum dicatat. Klik di sini untuk konfirmasi sudah minum.`,
+                tag: `${notificationTag}_overdue_${overdueStep}`,
+                url: `${APP_BASE}/user/dashboard`,
+              });
+            }
+          }
+          continue;
+        }
+
+        // 5. Pengingat 15 menit sebelumnya
         if (
           schedule.remind15MinBefore &&
           diff >= -EARLY_WINDOW_MINUTES &&
@@ -246,7 +295,7 @@ export function useDailyScheduleReminders({
           const key = `${baseKey}_early`;
           if (!wasAlreadyFired(key)) {
             markAsFired(key);
-            notifyUser(`15 Menit Lagi: ${schedule.title} ⏰`, {
+            notifyUser(`15 Menit Menuju Pengingat ⏰`, {
               body: `Pengingat ${schedule.title} dijadwalkan pukul ${schedule.time} WIB. Siapkan sekarang.`,
               tag: `${notificationTag}_early`,
               url: `${APP_BASE}/user/dashboard`,

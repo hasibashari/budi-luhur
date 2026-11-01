@@ -9,6 +9,7 @@ export interface AdminNudge {
   medicationName?: string;
   dosage?: string;
   timeSlot?: string;
+  title?: string;
   message: string;
   channel: 'app' | 'whatsapp';
   status: 'UNREAD' | 'READ' | 'DISMISSED';

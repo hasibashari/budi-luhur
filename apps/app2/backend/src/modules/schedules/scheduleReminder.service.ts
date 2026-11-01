@@ -11,8 +11,10 @@ const EARLY_MAX_MINUTES = 12;
 
 export const APP2_REMINDER_URL = '/app2/user/dashboard';
 
-const EXACT_TITLE = 'Pengingat Harian Pil KB 💊';
+const EXACT_TITLE = 'Waktunya Minum Obat! 💊';
 const EARLY_TITLE = '15 Menit Menuju Pengingat ⏰';
+const MORNING_TITLE = 'Jadwal Minum Obat Hari Ini 📅';
+const AFTERNOON_TITLE = 'Pengingat Siang ⏰';
 
 interface ScheduleRow {
   id: string;
@@ -27,10 +29,13 @@ interface ScheduleRow {
   user_name: string;
 }
 
-interface CronResult {
+export interface CronResult {
   checked: number;
   exactSent: number;
   earlySent: number;
+  morningSent: number;
+  afternoonSent: number;
+  overdueSent: number;
 }
 
 /**
@@ -83,8 +88,7 @@ export class ScheduleReminderService {
     };
   }
 
-  static async checkAndSendReminders(): Promise<CronResult> {
-    const now = new Date();
+  static async checkAndSendReminders(now: Date = new Date()): Promise<CronResult> {
     const { dateKey, minutes: nowMinutes, dayName } = this.getWibNow(now);
 
     const schedulesRes = await db.query<ScheduleRow>(
@@ -98,6 +102,9 @@ export class ScheduleReminderService {
 
     let exactSent = 0;
     let earlySent = 0;
+    let morningSent = 0;
+    let afternoonSent = 0;
+    let overdueSent = 0;
 
     for (const schedule of schedulesRes.rows) {
       const isScheduledToday =
@@ -112,14 +119,6 @@ export class ScheduleReminderService {
       const scheduleMinutes = (scheduleHour || 20) * 60 + (scheduleMinute || 0);
       const diff = nowMinutes - scheduleMinutes;
 
-      const isExactWindow = diff >= 0 && diff <= EXACT_WINDOW_MINUTES;
-      const isEarlyWindow =
-        schedule.remind_15min_before &&
-        diff >= -EARLY_MIN_MINUTES &&
-        diff <= -EARLY_MAX_MINUTES;
-
-      if (!isExactWindow && !isEarlyWindow) continue;
-
       // Sudah mencatat minum hari ini → jangan ganggu lagi.
       const logRes = await db.query<{ status: string }>(
         `SELECT status FROM consumption_logs
@@ -130,8 +129,73 @@ export class ScheduleReminderService {
       const latestStatus = logRes.rows[0]?.status;
       if (latestStatus === 'ON_TIME' || latestStatus === 'LATE') continue;
 
-      const kind = isExactWindow ? 'exact' : 'early';
-      const title = kind === 'exact' ? EXACT_TITLE : EARLY_TITLE;
+      const tabletName = schedule.tablet_name || 'Pil KB';
+
+      // ── Skenario 1: Tepat Waktu (0 s/d 5 menit setelah jam jadwal) ─────────
+      const isExactWindow = diff >= 0 && diff <= EXACT_WINDOW_MINUTES;
+
+      // ── Skenario 2: Pengingat Berulang / Susulan (Tiap 15 Menit jika belum dicatat) ──
+      // Rentang: 15 s/d 120 menit setelah jam jadwal, diperiksa pada kelipatan 15 menit
+      const overdueStep = Math.floor(diff / 15) * 15;
+      const isOverdueWindow =
+        diff >= 15 &&
+        diff <= 120 &&
+        overdueStep >= 15 &&
+        (diff % 15) <= 2;
+
+      // ── Skenario 3: Pagi Hari (07:00 - 07:10 WIB) ──────────────────────────
+      // Hanya untuk jadwal yang berlangsung di siang/sore/malam hari (>= 08:00)
+      const isMorningWindow =
+        nowMinutes >= 7 * 60 &&
+        nowMinutes <= 7 * 60 + 10 &&
+        scheduleMinutes >= 8 * 60;
+
+      // ── Skenario 4: Siang Hari (13:00 - 13:10 WIB) ─────────────────────────
+      // Hanya untuk jadwal yang berlangsung di sore/malam hari (>= 14:00)
+      const isAfternoonWindow =
+        nowMinutes >= 13 * 60 &&
+        nowMinutes <= 13 * 60 + 10 &&
+        scheduleMinutes >= 14 * 60;
+
+      // ── Skenario 5: Pengingat Awal 15 Menit Sebelumnya (Opsional) ──────────
+      const isEarlyWindow =
+        schedule.remind_15min_before &&
+        diff >= -EARLY_MIN_MINUTES &&
+        diff <= -EARLY_MAX_MINUTES;
+
+      let kind: 'exact' | 'overdue' | 'morning' | 'afternoon' | 'early' | null = null;
+      let title = '';
+      let message = '';
+      let tagSuffix = '';
+
+      if (isExactWindow) {
+        kind = 'exact';
+        title = EXACT_TITLE;
+        message = `Pukul ${schedule.time_slot} WIB telah tiba. Minum ${tabletName} sekarang dan catat di aplikasi.`;
+        tagSuffix = 'exact';
+      } else if (isOverdueWindow) {
+        kind = 'overdue';
+        title = `Pengingat: Belum Dicatat (${overdueStep} Menit) ⚠️`;
+        message = `${tabletName} pukul ${schedule.time_slot} WIB belum dicatat. Klik di sini untuk konfirmasi sudah minum.`;
+        tagSuffix = `overdue_${overdueStep}`;
+      } else if (isMorningWindow) {
+        kind = 'morning';
+        title = MORNING_TITLE;
+        message = `Ada jadwal minum ${tabletName} pukul ${schedule.time_slot} WIB nanti malam.`;
+        tagSuffix = 'morning';
+      } else if (isAfternoonWindow) {
+        kind = 'afternoon';
+        title = AFTERNOON_TITLE;
+        message = `Mengingatkan kembali, jadwal minum ${tabletName} pukul ${schedule.time_slot} WIB nanti.`;
+        tagSuffix = 'afternoon';
+      } else if (isEarlyWindow) {
+        kind = 'early';
+        title = EARLY_TITLE;
+        message = `Pengingat ${tabletName} dalam 15 menit (${schedule.time_slot} WIB). Siapkan sekarang.`;
+        tagSuffix = 'early';
+      }
+
+      if (!kind) continue;
 
       // Anti-duplikat: satu nudge per jadwal per jenis per hari (berbasis WIB).
       const duplicateRes = await db.query<{ id: string }>(
@@ -142,12 +206,6 @@ export class ScheduleReminderService {
         [schedule.user_id, schedule.id, title],
       );
       if (duplicateRes.rows.length > 0) continue;
-
-      const tabletName = schedule.tablet_name || 'Pil KB';
-      const message =
-        kind === 'exact'
-          ? `Waktunya ${tabletName} pukul ${schedule.time_slot} WIB. Buka Pilluna dan catat sekarang.`
-          : `Pengingat ${tabletName} dalam 15 menit (${schedule.time_slot} WIB). Siapkan sekarang.`;
 
       const nudgeId = `nudge_auto_${Date.now().toString(36)}_${Math.random()
         .toString(36)
@@ -160,16 +218,26 @@ export class ScheduleReminderService {
       );
 
       await NotificationService.sendToUser(schedule.user_id, {
-        title: kind === 'exact' ? `Waktunya ${tabletName}! 💊` : `15 Menit Lagi: ${tabletName} ⏰`,
+        title,
         body: message,
         url: APP2_REMINDER_URL,
-        tag: `daily_${schedule.id}_${dateKey}_${kind}`,
+        tag: `daily_${schedule.id}_${dateKey}_${tagSuffix}`,
       });
 
       if (kind === 'exact') exactSent += 1;
-      else earlySent += 1;
+      else if (kind === 'early') earlySent += 1;
+      else if (kind === 'morning') morningSent += 1;
+      else if (kind === 'afternoon') afternoonSent += 1;
+      else if (kind === 'overdue') overdueSent += 1;
     }
 
-    return { checked: schedulesRes.rows.length, exactSent, earlySent };
+    return {
+      checked: schedulesRes.rows.length,
+      exactSent,
+      earlySent,
+      morningSent,
+      afternoonSent,
+      overdueSent,
+    };
   }
 }

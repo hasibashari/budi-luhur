@@ -28,7 +28,12 @@ export function AdminNudgeBanner({
                 </span>
                 <span className='text-[11px] text-teal-200'>{nudge.sentAt}</span>
               </div>
-              <h3 className='text-sm sm:text-base font-bold mt-1 text-white leading-snug'>
+              {nudge.title && (
+                <div className='text-xs font-semibold text-teal-200 mt-1'>
+                  {nudge.title}
+                </div>
+              )}
+              <h3 className='text-sm sm:text-base font-bold mt-0.5 text-white leading-snug'>
                 {nudge.message}
               </h3>
             </div>

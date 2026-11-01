@@ -214,6 +214,7 @@ export class ScheduleService {
       medicationName: 'Pil KB Kombinasi (28 Tablet)',
       dosage: '1 tablet',
       timeSlot: '20:00',
+      title: row.title || 'Pengingat Minum Obat',
       message: row.message,
       channel: (row.channel as 'app' | 'whatsapp') || 'app',
       status: row.status as 'UNREAD' | 'READ' | 'DISMISSED',
