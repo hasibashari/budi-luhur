@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Plus, Sparkles } from 'lucide-react';
 import { Button } from '@/src/shared/components/ui/Button';
+import { ConfirmDeleteDialog } from '@/src/shared/components/ConfirmDeleteDialog';
 import useNotificationPermission from '@/src/shared/hooks/useNotificationPermission';
 import { useDailySchedules } from '../hooks/useDailySchedules';
 import { DailySchedule } from '../types';
@@ -8,7 +9,6 @@ import {
   ScheduleEmptyState,
   ScheduleCard,
   ScheduleFormModal,
-  ScheduleDeleteDialog,
   ScheduleGuideCard,
   FormState,
 } from '../components';
@@ -222,14 +222,20 @@ export default function ScheduleView() {
       )}
 
       {/* Delete Confirm Dialog */}
-      {deleteTarget && (
-        <ScheduleDeleteDialog
-          schedule={deleteTarget}
-          isDeleting={isDeleting}
-          onCancel={() => setDeleteTarget(null)}
-          onConfirm={handleDeleteConfirm}
-        />
-      )}
+      <ConfirmDeleteDialog
+        open={Boolean(deleteTarget)}
+        title='Hapus Jadwal Ini?'
+        message={
+          deleteTarget
+            ? `Apakah Anda yakin ingin menghapus jadwal "${deleteTarget.title}"? Jadwal akan dihapus permanen dan tidak bisa dikembalikan.`
+            : ''
+        }
+        confirmText='Ya, Hapus'
+        cancelText='Batal'
+        loading={isDeleting}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={handleDeleteConfirm}
+      />
     </div>
   );
 }

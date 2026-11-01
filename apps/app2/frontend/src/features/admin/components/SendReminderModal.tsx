@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef  } from 'react';
 import { BellRing, MessageSquare, Send, X, Smartphone } from 'lucide-react';
 
 export interface SendReminderModalProps {

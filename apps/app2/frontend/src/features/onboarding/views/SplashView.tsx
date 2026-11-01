@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect  } from 'react';
 import { SplashIllustration } from '@/src/shared/components/feedback/SplashIllustration';
 
 export interface SplashViewProps {

@@ -1,5 +1,3 @@
-'use client'
-
 export type RealtimeEventType =
   | 'NUDGE_SENT'
   | 'MEDICATION_TAKEN'

@@ -1,6 +1,4 @@
-'use client';
-
-import React, { useState, useMemo, useRef, useEffect } from 'react';
+import { useState, useMemo, useRef, useEffect  } from 'react';
 import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, ChevronDown, X } from 'lucide-react';
 import { Card } from '@/src/shared/components/ui/Card';
 import { ActivityDateInfo } from '../api/consumptionRepository';

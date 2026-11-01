@@ -1,5 +1,3 @@
-'use client';
-
 import { useMemo } from 'react';
 import { Flame, CalendarCheck } from 'lucide-react';
 import { Card } from '@/src/shared/components/ui/Card';

@@ -1,4 +1,3 @@
-import React from 'react';
 import { BellRing, Edit3, Trash2 } from 'lucide-react';
 import { Card } from '@/src/shared/components/ui/Card';
 import { Button } from '@/src/shared/components/ui/Button';

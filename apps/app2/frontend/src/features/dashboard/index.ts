@@ -1,1 +1,2 @@
-export { DashboardView as default } from '@/src/features/user';
+export { default as DashboardView, default } from './views/DashboardView';
+export * from './components';

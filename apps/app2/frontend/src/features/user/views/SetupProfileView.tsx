@@ -1,9 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Building2,
-  Calendar,
-  Droplets,
   Check,
   AlertCircle,
   Loader2,
@@ -18,9 +15,11 @@ import { saveUserInitialSetupAction } from '../api/userRepository';
 import { Button } from '@/src/shared/components/ui/Button';
 import { PillScreeningSection } from '../components/PillScreeningSection';
 import { ProofDocumentUploader } from '../components/ProofDocumentUploader';
+import { PillTypeCardSelector, PillOption } from '../components/PillTypeCardSelector';
+import { BasicProfileFormFields } from '../components/BasicProfileFormFields';
 import { PillScreeningAnswers, VerificationDocumentPayload } from '../types';
 
-export type PillOption = 'Pil KB Kombinasi' | 'Mini Pil';
+export type { PillOption };
 
 export function SetupProfileView() {
   const navigate = useNavigate();
@@ -310,201 +309,22 @@ export function SetupProfileView() {
           {currentStep === 1 && (
             <div className='flex flex-col gap-4 animate-fade-in'>
               {/* Pilihan Jenis Pil KB (Bisa di-klik) */}
-              <div>
-                <div className='flex items-center justify-between mb-2'>
-                  <label className='block text-xs font-bold text-[#0F172A]'>
-                    Jenis Pil KB Akseptor <span className='text-[#0D9488]'>*</span>
-                  </label>
-                  <span className='text-[10px] sm:text-[11px] text-[#0D9488] font-semibold bg-[#F0FDFA] px-2 py-0.5 rounded-full border border-[#CCFBF1]'>
-                    Dapat diubah di profil
-                  </span>
-                </div>
+              <PillTypeCardSelector value={pillType} onChange={setPillType} />
 
-                <div className='grid grid-cols-1 sm:grid-cols-2 gap-2.5'>
-                  {/* Option 1: KB Pil Kombinasi */}
-                  <button
-                    type='button'
-                    onClick={() => setPillType('Pil KB Kombinasi')}
-                    className={`relative flex items-start gap-3 p-3.5 rounded-2xl border text-left transition-all cursor-pointer ${
-                      pillType === 'Pil KB Kombinasi'
-                        ? 'border-[#0D9488] bg-[#F0FDFA] ring-2 ring-[#0D9488]/20 shadow-xs'
-                        : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/60'
-                    }`}
-                  >
-                    <div
-                      className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
-                        pillType === 'Pil KB Kombinasi'
-                          ? 'bg-[#0D9488] text-white shadow-2xs'
-                          : 'bg-slate-100 text-slate-500'
-                      }`}
-                    >
-                      <Pill size={18} />
-                    </div>
-                    <div className='flex-1 min-w-0 pr-4'>
-                      <div className='flex items-center gap-1.5'>
-                        <span className='font-bold text-xs sm:text-sm text-[#0F172A] leading-tight'>
-                          KB Pil Kombinasi
-                        </span>
-                      </div>
-                      <p className='text-[11px] text-slate-500 mt-0.5 font-medium leading-snug'>
-                        Estrogen & Progestin (28 Tablet)
-                      </p>
-                      <span className='inline-block text-[10px] text-[#0D9488] font-bold mt-1.5 bg-white/80 px-1.5 py-0.5 rounded border border-[#CCFBF1]'>
-                        Umum / Non-Menyusui
-                      </span>
-                    </div>
-                    <div
-                      className={`absolute top-3 right-3 w-4 h-4 rounded-full flex items-center justify-center transition-all ${
-                        pillType === 'Pil KB Kombinasi'
-                          ? 'bg-[#0D9488] text-white'
-                          : 'border-2 border-slate-300 bg-white'
-                      }`}
-                    >
-                      {pillType === 'Pil KB Kombinasi' && <Check size={11} strokeWidth={3} />}
-                    </div>
-                  </button>
-
-                  {/* Option 2: Mini Pil (Progestin Only) */}
-                  <button
-                    type='button'
-                    onClick={() => setPillType('Mini Pil')}
-                    className={`relative flex items-start gap-3 p-3.5 rounded-2xl border text-left transition-all cursor-pointer ${
-                      pillType === 'Mini Pil'
-                        ? 'border-[#0D9488] bg-[#F0FDFA] ring-2 ring-[#0D9488]/20 shadow-xs'
-                        : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/60'
-                    }`}
-                  >
-                    <div
-                      className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
-                        pillType === 'Mini Pil'
-                          ? 'bg-[#0D9488] text-white shadow-2xs'
-                          : 'bg-slate-100 text-slate-500'
-                      }`}
-                    >
-                      <Pill size={18} />
-                    </div>
-                    <div className='flex-1 min-w-0 pr-4'>
-                      <div className='flex items-center gap-1.5'>
-                        <span className='font-bold text-xs sm:text-sm text-[#0F172A] leading-tight'>
-                          Mini Pil (Progestin)
-                        </span>
-                      </div>
-                      <p className='text-[11px] text-slate-500 mt-0.5 font-medium leading-snug'>
-                        Progestin Saja / POP (28 Tablet)
-                      </p>
-                      <span className='inline-block text-[10px] text-[#ea580c] font-bold mt-1.5 bg-[#fff7ed] px-1.5 py-0.5 rounded border border-[#ffedd5]'>
-                        Aman Ibu Menyusui
-                      </span>
-                    </div>
-                    <div
-                      className={`absolute top-3 right-3 w-4 h-4 rounded-full flex items-center justify-center transition-all ${
-                        pillType === 'Mini Pil'
-                          ? 'bg-[#0D9488] text-white'
-                          : 'border-2 border-slate-300 bg-white'
-                      }`}
-                    >
-                      {pillType === 'Mini Pil' && <Check size={11} strokeWidth={3} />}
-                    </div>
-                  </button>
-                </div>
-              </div>
-
-              {/* Domisili / Faskes (Required) */}
-              <div>
-                <label className='block text-xs font-bold text-[#0F172A] mb-1.5'>
-                  Domisili / Faskes Rujukan <span className='text-[#0D9488]'>*</span>
-                </label>
-                <div className='relative flex items-center'>
-                  <div className='absolute left-3.5 w-7 sm:w-8 h-7 sm:h-8 rounded-full bg-[#F0FDFA] flex items-center justify-center text-[#0D9488]'>
-                    <Building2 size={15} />
-                  </div>
-                  <input
-                    type='text'
-                    placeholder='Contoh: Puskesmas Kebayoran Baru / Jakarta Selatan'
-                    value={schoolOrOrg}
-                    onChange={e => setSchoolOrOrg(e.target.value)}
-                    className='w-full bg-white text-xs sm:text-sm text-[#0F172A] rounded-full border border-slate-200 pl-12 sm:pl-13 pr-4 py-2.5 sm:py-3 outline-none focus:border-[#0D9488] focus:ring-2 focus:ring-[#0D9488]/15 transition-all shadow-2xs'
-                  />
-                </div>
-              </div>
-
-              {/* Date of Birth & Blood Type */}
-              <div className='grid grid-cols-2 gap-2.5 sm:gap-3.5'>
-                <div className='min-w-0'>
-                  <label className='block text-xs font-bold text-[#0F172A] mb-1.5 truncate'>
-                    Tanggal Lahir{' '}
-                    <span className='text-[#64748B] font-normal text-[10px] sm:text-[11px]'>
-                      (Opsional)
-                    </span>
-                  </label>
-                  <div className='relative flex items-center'>
-                    <div className='absolute left-3 w-6 sm:w-7 h-6 sm:h-7 rounded-full bg-[#F0FDFA] flex items-center justify-center text-[#0D9488]'>
-                      <Calendar size={13} />
-                    </div>
-                    <input
-                      type='date'
-                      value={dateOfBirth}
-                      max={maxDate}
-                      onChange={e => setDateOfBirth(e.target.value)}
-                      className='w-full min-w-0 bg-white text-xs sm:text-sm text-[#0F172A] rounded-full border border-slate-200 pl-10 sm:pl-11 pr-2.5 sm:pr-3 py-2.5 sm:py-3 outline-none focus:border-[#0D9488] focus:ring-2 focus:ring-[#0D9488]/15 transition-all shadow-2xs'
-                    />
-                  </div>
-                </div>
-
-                <div className='min-w-0'>
-                  <label className='block text-xs font-bold text-[#0F172A] mb-1.5 truncate'>
-                    Gol. Darah{' '}
-                    <span className='text-[#64748B] font-normal text-[10px] sm:text-[11px]'>
-                      (Opsional)
-                    </span>
-                  </label>
-                  <div className='relative flex items-center'>
-                    <div className='absolute left-3 w-6 sm:w-7 h-6 sm:h-7 rounded-full bg-[#F0FDFA] flex items-center justify-center text-[#0D9488]'>
-                      <Droplets size={13} />
-                    </div>
-                    <select
-                      value={bloodType}
-                      onChange={e => setBloodType(e.target.value)}
-                      className='w-full min-w-0 bg-white text-xs sm:text-sm text-[#0F172A] rounded-full border border-slate-200 pl-10 sm:pl-11 pr-3 py-2.5 sm:py-3 outline-none focus:border-[#0D9488] focus:ring-2 focus:ring-[#0D9488]/15 transition-all shadow-2xs cursor-pointer'
-                    >
-                      <option value=''>Pilih Golongan</option>
-                      <option value='A'>A</option>
-                      <option value='B'>B</option>
-                      <option value='AB'>AB</option>
-                      <option value='O'>O</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-
-              {/* Height & Weight */}
-              <div className='grid grid-cols-2 gap-2 sm:gap-3'>
-                <div className='min-w-0'>
-                  <label className='block text-[11px] sm:text-xs font-bold text-[#0F172A] mb-1.5 truncate text-center sm:text-left'>
-                    Tinggi <span className='text-[#64748B] font-normal text-[10px]'>(cm)</span>
-                  </label>
-                  <input
-                    type='number'
-                    placeholder='158'
-                    value={height}
-                    onChange={e => setHeight(e.target.value)}
-                    className='w-full bg-white text-xs sm:text-sm text-[#0F172A] rounded-full border border-slate-200 px-2 sm:px-3 py-2 sm:py-2.5 outline-none focus:border-[#0D9488] focus:ring-2 focus:ring-[#0D9488]/15 transition-all shadow-2xs text-center'
-                  />
-                </div>
-
-                <div className='min-w-0'>
-                  <label className='block text-[11px] sm:text-xs font-bold text-[#0F172A] mb-1.5 truncate text-center sm:text-left'>
-                    Berat <span className='text-[#64748B] font-normal text-[10px]'>(kg)</span>
-                  </label>
-                  <input
-                    type='number'
-                    placeholder='48'
-                    value={weight}
-                    onChange={e => setWeight(e.target.value)}
-                    className='w-full bg-white text-xs sm:text-sm text-[#0F172A] rounded-full border border-slate-200 px-2 sm:px-3 py-2 sm:py-2.5 outline-none focus:border-[#0D9488] focus:ring-2 focus:ring-[#0D9488]/15 transition-all shadow-2xs text-center'
-                  />
-                </div>
-              </div>
+              {/* Data Profil Dasar (Faskes, Tanggal Lahir, Golongan Darah, BB/TB) */}
+              <BasicProfileFormFields
+                schoolOrOrg={schoolOrOrg}
+                onSchoolOrOrgChange={setSchoolOrOrg}
+                dateOfBirth={dateOfBirth}
+                onDateOfBirthChange={setDateOfBirth}
+                maxDate={maxDate}
+                bloodType={bloodType}
+                onBloodTypeChange={setBloodType}
+                height={height}
+                onHeightChange={setHeight}
+                weight={weight}
+                onWeightChange={setWeight}
+              />
 
               {/* Action Row - Step 1 */}
               <div className='pt-4 mt-2 border-t border-[#E2E8F0] flex items-center justify-between gap-3'>

@@ -1,4 +1,3 @@
-import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { AuthProvider } from '@/src/features/auth';
 import { AppRoutes } from './routes';

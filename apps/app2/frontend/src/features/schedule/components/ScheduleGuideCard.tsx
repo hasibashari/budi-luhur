@@ -1,4 +1,3 @@
-import React from 'react';
 import { ShieldCheck, Check, Bell } from 'lucide-react';
 import { Card } from '@/src/shared/components/ui/Card';
 

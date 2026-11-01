@@ -1,23 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Sparkles,
   ArrowRight,
   ShieldCheck,
   Flame,
-  Clock,
   Award,
-  BellRing,
-  X,
-  CheckCircle2,
   CalendarClock,
-  Shield,
 } from 'lucide-react';
 import { DailyPrescriptionHeroCard } from '@/src/shared/components/domain/DailyPrescriptionHeroCard';
 import { ActiveBlisterStripWidget } from '@/src/shared/components/domain/ActiveBlisterStripWidget';
 import { QuickAction } from '@/src/shared/components/domain/QuickAction';
 import { Card } from '@/src/shared/components/ui/Card';
-import { Button } from '@/src/shared/components/ui/Button';
 import { useAuth } from '@/src/features/auth/context/AuthContext';
 import { publishRealtimeEvent, subscribeRealtimeEvent } from '@/src/shared/utils/realtimeSync';
 import { playNotificationTone, showSystemNotification } from '@/src/shared/utils/notifications';
@@ -31,6 +25,7 @@ import {
   dismissNudgeAction,
 } from '@/src/features/schedule/api/scheduleRepository';
 import { AdminNudge } from '@/src/features/schedule/types';
+import { MobileHealthStatsBar, AdminNudgeBanner } from '../components';
 
 type DashboardConsumptionStatus = 'recorded' | 'missed' | 'pending';
 
@@ -218,51 +213,12 @@ export default function DashboardView() {
   return (
     <div className='flex flex-col gap-4 sm:gap-5 w-full'>
       {/* Mobile Health Stats Bar (< md) */}
-      <div className='flex md:hidden items-center justify-between gap-2 p-3 bg-white rounded-2xl border border-slate-200 shadow-2xs'>
-        <div className='flex items-center gap-2'>
-          <div className='w-8 h-8 rounded-full bg-orange-50 flex items-center justify-center text-orange-600 border border-orange-100'>
-            <Flame size={16} className='fill-orange-500 text-orange-500' />
-          </div>
-          <div>
-            <span className='text-[10px] text-slate-500 block leading-tight'>
-              Disiplin Konsumsi
-            </span>
-            <span className='text-xs font-extrabold text-slate-900'>
-              {currentUser.streakCount} {streakUnit}
-            </span>
-          </div>
-        </div>
-
-        <div className='h-7 w-[1px] bg-slate-200' />
-
-        <div className='flex items-center gap-2'>
-          <div className='w-8 h-8 rounded-full bg-teal-50 flex items-center justify-center text-teal-600 border border-teal-100'>
-            <Shield size={16} />
-          </div>
-          <div>
-            <span className='text-[10px] text-slate-500 block leading-tight'>
-              Proteksi Kontrasepsi
-            </span>
-            <span className='text-xs font-extrabold text-teal-700'>
-              {currentUser.streakCount >= 7 ? '99% Optimal' : 'Tahap Adaptasi'}
-            </span>
-          </div>
-        </div>
-
-        <div className='h-7 w-[1px] bg-slate-200' />
-
-        <div className='flex items-center gap-2'>
-          <div className='w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600'>
-            <Clock size={16} />
-          </div>
-          <div>
-            <span className='text-[10px] text-slate-500 block leading-tight'>Jadwal</span>
-            <span className='text-xs font-extrabold text-slate-800'>
-              {isReminderActive ? `${activeSchedule?.time || '20:00'} WIB` : 'Nonaktif'}
-            </span>
-          </div>
-        </div>
-      </div>
+      <MobileHealthStatsBar
+        streakCount={currentUser.streakCount}
+        streakUnit={streakUnit}
+        isReminderActive={isReminderActive}
+        scheduleTime={activeSchedule?.time}
+      />
 
       {/* Mobile Quick Action Menu (Visible on < md at top) */}
       <section aria-label='Menu Cepat Navigasi Mobile' className='block md:hidden'>
@@ -299,57 +255,11 @@ export default function DashboardView() {
 
       {/* Realtime Pengingat Faskes Nudge Banner (If Admin sent a reminder) */}
       {activeNudge && (
-        <section aria-label='Pengingat Langsung dari Tenaga Medis'>
-          <div className='p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-teal-800 via-teal-700 to-teal-900 text-white shadow-lg shadow-teal-900/10 border border-teal-600/40 animate-fade-in'>
-            <div className='flex items-start justify-between gap-3'>
-              <div className='flex items-start gap-3.5'>
-                <div className='w-11 h-11 rounded-2xl bg-white/15 backdrop-blur-xs flex items-center justify-center shrink-0 text-white mt-0.5 shadow-inner'>
-                  <BellRing size={22} className='animate-pulse' />
-                </div>
-                <div>
-                  <div className='flex items-center gap-2 flex-wrap'>
-                    <span className='text-[10px] sm:text-xs font-bold uppercase tracking-wider bg-white/20 px-2.5 py-0.5 rounded-full'>
-                      Pesan Medis • {activeNudge.senderName}
-                    </span>
-                    <span className='text-[11px] text-teal-200'>{activeNudge.sentAt}</span>
-                  </div>
-                  <h3 className='text-sm sm:text-base font-bold mt-1 text-white leading-snug'>
-                    {activeNudge.message}
-                  </h3>
-                </div>
-              </div>
-
-              <button
-                type='button'
-                onClick={handleDismissNudge}
-                className='text-teal-200 hover:text-white p-1.5 rounded-xl hover:bg-white/10 transition-colors cursor-pointer shrink-0'
-                title='Tutup Pengingat'
-              >
-                <X size={18} />
-              </button>
-            </div>
-
-            <div className='mt-3.5 pt-3 border-t border-white/20 flex items-center gap-2.5 flex-wrap'>
-              <Button
-                variant='secondary'
-                size='sm'
-                shape='pill'
-                icon={<CheckCircle2 size={14} />}
-                className='font-bold shadow-sm text-xs'
-                onClick={handleTakeFromNudge}
-              >
-                Catat Minum Sekarang
-              </Button>
-              <button
-                type='button'
-                onClick={handleDismissNudge}
-                className='text-xs font-semibold text-teal-100 hover:text-white px-3 py-1.5 rounded-full hover:bg-white/10 transition-colors cursor-pointer'
-              >
-                Sudah Mengerti
-              </button>
-            </div>
-          </div>
-        </section>
+        <AdminNudgeBanner
+          nudge={activeNudge}
+          onDismiss={handleDismissNudge}
+          onRecordConsumption={handleTakeFromNudge}
+        />
       )}
 
       {/* Main Responsive Layout: Mobile Stack -> Desktop Bento Grid */}

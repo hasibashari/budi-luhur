@@ -1,6 +1,4 @@
-'use client';
-
-import React, { useState, useRef, useMemo } from 'react';
+import { useState, useRef, useMemo  } from 'react';
 import {
   Bold,
   Italic,

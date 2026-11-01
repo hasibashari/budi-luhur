@@ -1,5 +1,3 @@
-'use client'
-
 import { useState, useCallback } from 'react'
 
 export function useDeleteConfirm<T = string>() {

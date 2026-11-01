@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
-  ShieldCheck,
   Search,
   Clock,
   CheckCircle2,
@@ -8,18 +7,14 @@ import {
   FileText,
   Eye,
   RefreshCw,
-  Building2,
-  User,
-  AlertTriangle,
 } from 'lucide-react';
 import AdminHeader from '../components/AdminHeader';
 import { VerificationDetailModal } from '../components/VerificationDetailModal';
 import { DataTable, Column } from '@/src/shared/components/DataTable';
 import { Avatar } from '@/src/shared/components/ui/Avatar';
-import { Badge } from '@/src/shared/components/ui/Badge';
 import { Button } from '@/src/shared/components/ui/Button';
 import { getAdminVerificationsAction } from '../api/adminRepository';
-import { AdminVerificationListItem, VerificationStatus } from '../types/admin.types';
+import { AdminVerificationListItem } from '../types/admin.types';
 
 export function AdminVerificationView() {
   const [verifications, setVerifications] = useState<AdminVerificationListItem[]>([]);

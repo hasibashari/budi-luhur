@@ -1,4 +1,3 @@
-import React from 'react';
 import { CrudModalDialog } from '@/src/shared/components/CrudModalDialog';
 import {
   GENDER_OPTIONS,

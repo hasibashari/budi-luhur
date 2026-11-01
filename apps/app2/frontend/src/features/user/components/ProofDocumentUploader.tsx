@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import {
   FileText,
   UploadCloud,
@@ -7,7 +7,6 @@ import {
   Trash2,
   FileCheck,
   ShieldCheck,
-  Image as ImageIcon,
 } from 'lucide-react';
 import { DocumentProofType, VerificationDocumentPayload } from '../types';
 

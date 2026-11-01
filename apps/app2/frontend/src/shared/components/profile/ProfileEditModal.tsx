@@ -1,5 +1,3 @@
-'use client';
-
 import React, { ReactNode, useEffect } from 'react';
 import { X, Check, Loader2, AlertCircle } from 'lucide-react';
 import { Button } from '@/src/shared/components/ui/Button';

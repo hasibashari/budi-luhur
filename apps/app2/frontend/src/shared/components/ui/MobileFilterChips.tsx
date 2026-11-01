@@ -1,7 +1,3 @@
-'use client';
-
-import React from 'react';
-
 export interface FilterOption<T extends string = string> {
   label: string;
   value: T;

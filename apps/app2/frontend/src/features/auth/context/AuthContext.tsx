@@ -1,11 +1,10 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import {
   AuthUser,
   AuthState,
   AuthContextValue,
   LoginCredentials,
   RegisterCredentials,
-  UserRole,
 } from '../types/auth.types';
 import apiClient, {
   AUTH_STORAGE_KEY,

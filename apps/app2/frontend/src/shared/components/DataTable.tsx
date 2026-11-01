@@ -1,6 +1,4 @@
-'use client';
-
-import React, { ReactNode, useState } from 'react';
+import { ReactNode, useState  } from 'react';
 import Pagination from './Pagination';
 
 export interface Column<T> {

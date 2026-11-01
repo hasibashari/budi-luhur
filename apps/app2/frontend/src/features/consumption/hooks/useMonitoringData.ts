@@ -1,5 +1,3 @@
-'use client';
-
 import { useState, useEffect, useCallback } from 'react';
 import { publishRealtimeEvent, subscribeRealtimeEvent } from '@/src/shared/utils/realtimeSync';
 import {

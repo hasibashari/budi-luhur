@@ -1,4 +1,3 @@
-import React from 'react';
 import { SplashIllustration } from './SplashIllustration';
 
 export interface SplashScreenViewProps {

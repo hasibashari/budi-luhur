@@ -1,5 +1,3 @@
-'use client';
-
 import React, { useState, useRef } from 'react';
 import { Camera, Trash2, Upload, Check, X, Loader2, AlertCircle } from 'lucide-react';
 import { Avatar, AvatarSize } from '../ui/Avatar';

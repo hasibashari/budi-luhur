@@ -1,5 +1,3 @@
-'use client';
-
 import { useState, useCallback } from 'react';
 
 export type ToastSeverity = 'success' | 'error' | 'warning' | 'info';

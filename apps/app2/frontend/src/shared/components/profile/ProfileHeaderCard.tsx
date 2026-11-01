@@ -1,6 +1,4 @@
-'use client';
-
-import React, { ReactNode } from 'react';
+import { ReactNode  } from 'react';
 import { Edit2, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/src/shared/components/ui/Button';
 import { ProfilePhotoUploader } from '@/src/shared/components/domain/ProfilePhotoUploader';

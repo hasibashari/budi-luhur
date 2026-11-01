@@ -1,5 +1,3 @@
-'use client'
-
 import { useState, useCallback, useSyncExternalStore } from 'react'
 import {
   isNotificationSupported,

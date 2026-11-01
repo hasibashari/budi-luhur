@@ -1,6 +1,3 @@
-'use client';
-
-import React from 'react';
 import { CheckCircle2, XCircle } from 'lucide-react';
 import { Card } from '@/src/shared/components/ui/Card';
 import { Badge } from '@/src/shared/components/ui/Badge';

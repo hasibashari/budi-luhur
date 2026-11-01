@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Clock,
@@ -13,7 +13,6 @@ import {
   ChevronDown,
   ChevronUp,
   ShieldCheck,
-  Phone,
 } from 'lucide-react';
 import { useAuth } from '@/src/features/auth/context/AuthContext';
 import { getVerificationStatusAction } from '../api/userRepository';
@@ -120,6 +119,13 @@ export function VerificationStatusView() {
             <span className='hidden sm:inline'>Ganti Akun</span>
           </button>
         </div>
+
+        {errorMessage && (
+          <div className='p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold flex items-center gap-2'>
+            <AlertTriangle size={15} className='shrink-0' />
+            <span>{errorMessage}</span>
+          </div>
+        )}
 
         {/* Status Hero Card */}
         {currentStatus === 'Pending' ? (

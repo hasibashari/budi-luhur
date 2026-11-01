@@ -1,6 +1,4 @@
-'use client';
-
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo  } from 'react';
 import { Link } from 'react-router-dom';
 import { Flame, CalendarClock, Clock, ArrowRight } from 'lucide-react';
 import { useAuth } from '@/src/features/auth/context/AuthContext';

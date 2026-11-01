@@ -1,9 +1,8 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { ShieldCheck, ArrowLeft, Heart, CheckCircle2, Clock, Pill } from 'lucide-react';
+import type { ReactNode } from 'react';
+import { ShieldCheck, ArrowLeft, CheckCircle2, Clock, Pill } from 'lucide-react';
 
 export interface AuthCardLayoutProps {
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
 export function AuthCardLayout({ children }: AuthCardLayoutProps) {

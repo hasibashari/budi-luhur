@@ -1,4 +1,3 @@
-import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { LayoutDashboard, Users, CalendarCheck, BarChart3, ShieldCheck } from 'lucide-react';
 

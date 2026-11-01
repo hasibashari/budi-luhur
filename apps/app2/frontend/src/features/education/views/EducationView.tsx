@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo  } from 'react';
 import { Link } from 'react-router-dom';
 import { Search, BookOpen, Sparkles, Clock, ArrowRight, X, Ribbon } from 'lucide-react';
 import { Card } from '@/src/shared/components/ui/Card';

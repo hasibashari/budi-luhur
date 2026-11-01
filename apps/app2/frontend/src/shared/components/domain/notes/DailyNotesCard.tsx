@@ -1,5 +1,3 @@
-'use client';
-
 import React, { useEffect, useMemo, useState } from 'react';
 import { Calendar as CalendarIcon, Plus, Edit3 } from 'lucide-react';
 import { Card } from '@/src/shared/components/ui/Card';

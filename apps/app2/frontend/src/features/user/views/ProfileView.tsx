@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Flame,
@@ -10,7 +10,6 @@ import {
   Check,
   Trash2,
   AlertTriangle,
-  X,
   Loader2,
   Pill,
 } from 'lucide-react';
@@ -153,19 +152,6 @@ export default function ProfileView() {
       showToast(enabled ? 'Pengingat Pil KB diaktifkan! 🔔' : 'Pengingat Pil KB dinonaktifkan.');
     } else {
       showToast(res.error || 'Gagal memperbarui status pengingat.');
-    }
-  };
-
-  const handleToggleRemind15 = async (remind15: boolean) => {
-    if (!scheduleData) return;
-    setScheduleData(prev => (prev ? { ...prev, remind15MinBefore: remind15 } : null));
-    const res = await updateUserScheduleSettingsAction(scheduleData.id, {
-      remind15MinBefore: remind15,
-    });
-    if (res.success) {
-      showToast(
-        remind15 ? 'Peringatan 15 menit sebelum aktif.' : 'Peringatan 15 menit dinonaktifkan.',
-      );
     }
   };
 

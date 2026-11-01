@@ -1,4 +1,3 @@
-import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthGuard } from '@/src/features/auth/components/AuthGuard';
 import { GuestGuard } from '@/src/features/auth/components/GuestGuard';

@@ -1,5 +1,3 @@
-'use client';
-
 import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { BarChart3, ShieldCheck, Clock, ArrowRight } from 'lucide-react';
