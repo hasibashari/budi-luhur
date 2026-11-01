@@ -26,6 +26,7 @@ import {
 } from '../api/adminRepository';
 import { AdminVerificationDetail } from '../types/admin.types';
 import { Button } from '@/src/shared/components/ui/Button';
+import apiClient from '@/src/shared/api/client';
 
 export interface VerificationDetailModalProps {
   userId: string | null;
@@ -48,6 +49,29 @@ export function VerificationDetailModal({
   // Reject Form State
   const [isRejectMode, setIsRejectMode] = useState(false);
   const [rejectReason, setRejectReason] = useState('');
+  const [openingDoc, setOpeningDoc] = useState(false);
+
+  const handleOpenDocument = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (!detail) return;
+    setOpeningDoc(true);
+    try {
+      const res = await apiClient.get(`/admin/verifications/${detail.userId}/document`, {
+        responseType: 'blob',
+      });
+      const blob = new Blob([res.data], {
+        type: detail.documentFileType || 'application/octet-stream',
+      });
+      const objectUrl = URL.createObjectURL(blob);
+      window.open(objectUrl, '_blank');
+    } catch {
+      // Fallback: tokenized direct URL
+      const fallbackUrl = getAdminVerificationDocumentUrl(detail.userId);
+      window.open(fallbackUrl, '_blank');
+    } finally {
+      setOpeningDoc(false);
+    }
+  };
 
   useEffect(() => {
     if (isOpen && userId) {
@@ -430,10 +454,20 @@ export function VerificationDetailModal({
                     href={docUrl}
                     target='_blank'
                     rel='noopener noreferrer'
-                    className='inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold transition-colors shrink-0 shadow-2xs'
+                    onClick={handleOpenDocument}
+                    className='inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold transition-colors shrink-0 shadow-2xs cursor-pointer'
                   >
-                    <span>Buka Dokumen</span>
-                    <ExternalLink size={13} />
+                    {openingDoc ? (
+                      <>
+                        <Loader2 size={13} className='animate-spin' />
+                        <span>Membuka...</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>Buka Dokumen</span>
+                        <ExternalLink size={13} />
+                      </>
+                    )}
                   </a>
                 </div>
               </div>

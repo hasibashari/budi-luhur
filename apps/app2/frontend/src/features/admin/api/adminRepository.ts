@@ -1,4 +1,4 @@
-import apiClient, { extractErrorMessage } from '@/src/shared/api/client';
+import apiClient, { extractErrorMessage, AUTH_STORAGE_KEY } from '@/src/shared/api/client';
 import {
   AdminStats,
   ManagedUser,
@@ -327,5 +327,14 @@ export async function rejectUserVerificationAction(
 
 export function getAdminVerificationDocumentUrl(userId: string): string {
   const base = apiClient.defaults.baseURL || '/api/v1';
-  return `${base}/admin/verifications/${userId}/document`;
+  let token = '';
+  try {
+    token =
+      localStorage.getItem(AUTH_STORAGE_KEY) ||
+      localStorage.getItem('app2_auth_token') ||
+      localStorage.getItem('pilluna_token') ||
+      '';
+  } catch {}
+  const tokenQuery = token ? `?token=${encodeURIComponent(token)}` : '';
+  return `${base}/admin/verifications/${userId}/document${tokenQuery}`;
 }
