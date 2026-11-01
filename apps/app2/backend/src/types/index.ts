@@ -9,6 +9,7 @@ export interface UserProfile {
   bloodType?: string;
   height?: number;
   weight?: number;
+  pillType?: string;
   schoolOrOrg?: string;
   streakCount?: number;
   friendCode?: string;
@@ -56,6 +57,7 @@ export interface UserDashboardData {
     schoolOrOrg?: string | null;
     riskLevel?: string | null;
     friendCode?: string;
+    pillType?: string;
   };
   todayStatus: 'recorded' | 'missed' | 'pending';
   todayRecordedTime?: string;

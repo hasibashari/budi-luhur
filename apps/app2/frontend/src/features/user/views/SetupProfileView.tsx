@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Building2, Calendar, Droplets, Check, AlertCircle, Loader2, LogOut } from 'lucide-react';
+import { Building2, Calendar, Droplets, Check, AlertCircle, Loader2, LogOut, Pill } from 'lucide-react';
 import { useAuth } from '@/src/features/auth/context/AuthContext';
 import { saveUserInitialSetupAction } from '../api/userRepository';
 import { Button } from '@/src/shared/components/ui/Button';
+
+export type PillOption = 'Pil KB Kombinasi' | 'Mini Pil';
 
 export function SetupProfileView() {
   const navigate = useNavigate();
@@ -12,7 +14,8 @@ export function SetupProfileView() {
   const [isSaving, setIsSaving] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // Form States – Data Profil Dasar
+  // Form States – Data Profil Dasar & Pilihan Pil KB
+  const [pillType, setPillType] = useState<PillOption>('Pil KB Kombinasi');
   const [schoolOrOrg, setSchoolOrOrg] = useState('');
   const [dateOfBirth, setDateOfBirth] = useState('');
   const today = new Date();
@@ -38,15 +41,27 @@ export function SetupProfileView() {
     try {
       const res = await saveUserInitialSetupAction(authUser.id, {
         schoolOrOrg: schoolOrOrg.trim(),
+        pillType,
         dateOfBirth: dateOfBirth || undefined,
         bloodType: bloodType || undefined,
         height: height ? Number(height) : undefined,
         weight: weight ? Number(weight) : undefined,
+        schedule: {
+          tabletName:
+            pillType === 'Mini Pil'
+              ? 'Mini Pil / Progestin (28 Tablet)'
+              : 'Pil KB Kombinasi (28 Tablet)',
+          category: pillType === 'Mini Pil' ? 'Pil KB Progestin' : 'Pil KB Kombinasi',
+          frequency: 'daily',
+          dayOfWeek: 'Setiap Hari',
+          timeSlot: '20:00',
+        },
       });
 
       if (res.success) {
         updateUser({
           schoolOrOrg: schoolOrOrg.trim(),
+          pillType,
           isProfileComplete: true,
         });
         navigate('/user/dashboard');
@@ -83,7 +98,7 @@ export function SetupProfileView() {
               Lengkapi Data Profil
             </h1>
             <p className='text-xs sm:text-sm text-[#334155] mt-1 leading-relaxed'>
-              Halo, {authUser?.name || 'Akseptor Setia'}! Masukkan data kesehatan dan domisili untuk
+              Halo, {authUser?.name || 'Akseptor Setia'}! Pilih jenis pil KB dan lengkapi data faskes untuk
               personalisasi pengalaman Pilluna-mu.
             </p>
           </div>
@@ -103,6 +118,106 @@ export function SetupProfileView() {
 
         {/* Form */}
         <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
+          {/* Pilihan Jenis Pil KB (Bisa di-klik) */}
+          <div>
+            <div className='flex items-center justify-between mb-2'>
+              <label className='block text-xs font-bold text-[#0F172A]'>
+                Jenis Pil KB Akseptor <span className='text-[#0D9488]'>*</span>
+              </label>
+              <span className='text-[10px] sm:text-[11px] text-[#0D9488] font-semibold bg-[#F0FDFA] px-2 py-0.5 rounded-full border border-[#CCFBF1]'>
+                Dapat diubah di profil
+              </span>
+            </div>
+
+            <div className='grid grid-cols-1 sm:grid-cols-2 gap-2.5'>
+              {/* Option 1: KB Pil Kombinasi */}
+              <button
+                type='button'
+                onClick={() => setPillType('Pil KB Kombinasi')}
+                className={`relative flex items-start gap-3 p-3.5 rounded-2xl border text-left transition-all cursor-pointer ${
+                  pillType === 'Pil KB Kombinasi'
+                    ? 'border-[#0D9488] bg-[#F0FDFA] ring-2 ring-[#0D9488]/20 shadow-xs'
+                    : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/60'
+                }`}
+              >
+                <div
+                  className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
+                    pillType === 'Pil KB Kombinasi'
+                      ? 'bg-[#0D9488] text-white shadow-2xs'
+                      : 'bg-slate-100 text-slate-500'
+                  }`}
+                >
+                  <Pill size={18} />
+                </div>
+                <div className='flex-1 min-w-0 pr-4'>
+                  <div className='flex items-center gap-1.5'>
+                    <span className='font-bold text-xs sm:text-sm text-[#0F172A] leading-tight'>
+                      KB Pil Kombinasi
+                    </span>
+                  </div>
+                  <p className='text-[11px] text-slate-500 mt-0.5 font-medium leading-snug'>
+                    Estrogen & Progestin (28 Tablet)
+                  </p>
+                  <span className='inline-block text-[10px] text-[#0D9488] font-bold mt-1.5 bg-white/80 px-1.5 py-0.5 rounded border border-[#CCFBF1]'>
+                    Umum / Non-Menyusui
+                  </span>
+                </div>
+                <div
+                  className={`absolute top-3 right-3 w-4 h-4 rounded-full flex items-center justify-center transition-all ${
+                    pillType === 'Pil KB Kombinasi'
+                      ? 'bg-[#0D9488] text-white'
+                      : 'border-2 border-slate-300 bg-white'
+                  }`}
+                >
+                  {pillType === 'Pil KB Kombinasi' && <Check size={11} strokeWidth={3} />}
+                </div>
+              </button>
+
+              {/* Option 2: Mini Pil (Progestin Only) */}
+              <button
+                type='button'
+                onClick={() => setPillType('Mini Pil')}
+                className={`relative flex items-start gap-3 p-3.5 rounded-2xl border text-left transition-all cursor-pointer ${
+                  pillType === 'Mini Pil'
+                    ? 'border-[#0D9488] bg-[#F0FDFA] ring-2 ring-[#0D9488]/20 shadow-xs'
+                    : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/60'
+                }`}
+              >
+                <div
+                  className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
+                    pillType === 'Mini Pil'
+                      ? 'bg-[#0D9488] text-white shadow-2xs'
+                      : 'bg-slate-100 text-slate-500'
+                  }`}
+                >
+                  <Pill size={18} />
+                </div>
+                <div className='flex-1 min-w-0 pr-4'>
+                  <div className='flex items-center gap-1.5'>
+                    <span className='font-bold text-xs sm:text-sm text-[#0F172A] leading-tight'>
+                      Mini Pil (Progestin)
+                    </span>
+                  </div>
+                  <p className='text-[11px] text-slate-500 mt-0.5 font-medium leading-snug'>
+                    Progestin Saja / POP (28 Tablet)
+                  </p>
+                  <span className='inline-block text-[10px] text-[#ea580c] font-bold mt-1.5 bg-[#fff7ed] px-1.5 py-0.5 rounded border border-[#ffedd5]'>
+                    Aman Ibu Menyusui
+                  </span>
+                </div>
+                <div
+                  className={`absolute top-3 right-3 w-4 h-4 rounded-full flex items-center justify-center transition-all ${
+                    pillType === 'Mini Pil'
+                      ? 'bg-[#0D9488] text-white'
+                      : 'border-2 border-slate-300 bg-white'
+                  }`}
+                >
+                  {pillType === 'Mini Pil' && <Check size={11} strokeWidth={3} />}
+                </div>
+              </button>
+            </div>
+          </div>
+
           {/* Domisili / Faskes (Required) */}
           <div>
             <label className='block text-xs font-bold text-[#0F172A] mb-1.5'>

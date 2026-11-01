@@ -46,6 +46,7 @@ CREATE TABLE user_profiles (
     height DOUBLE PRECISION DEFAULT NULL,
     weight DOUBLE PRECISION DEFAULT NULL,
     blood_type VARCHAR(10) DEFAULT NULL,
+    pill_type VARCHAR(100) DEFAULT 'Pil KB Kombinasi',
     streak_count INTEGER NOT NULL DEFAULT 0,
     level_title VARCHAR(100) NOT NULL DEFAULT 'Pemula Sehat',
     status VARCHAR(50) NOT NULL DEFAULT 'Aktif' CHECK(status IN ('Aktif', 'Nonaktif')),

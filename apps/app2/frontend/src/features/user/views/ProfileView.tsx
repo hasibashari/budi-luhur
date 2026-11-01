@@ -12,6 +12,7 @@ import {
   AlertTriangle,
   X,
   Loader2,
+  Pill,
 } from 'lucide-react';
 import {
   ProfileHeaderCard,
@@ -38,6 +39,7 @@ interface UserProfileState {
   streakCount: number;
   schoolOrOrg?: string | null;
   riskLevel?: string | null;
+  pillType?: string | null;
 }
 
 export default function ProfileView() {
@@ -52,6 +54,7 @@ export default function ProfileView() {
     streakCount: authUser?.streakCount || 0,
     schoolOrOrg: authUser?.schoolOrOrg || null,
     riskLevel: null,
+    pillType: authUser?.pillType || 'Pil KB Kombinasi',
   });
   const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -61,6 +64,7 @@ export default function ProfileView() {
   const [editName, setEditName] = useState(userProfile.name);
   const [editFaskes, setEditFaskes] = useState(userProfile.schoolOrOrg || '');
   const [editPhone, setEditPhone] = useState(userProfile.phone);
+  const [editPillType, setEditPillType] = useState<string>(userProfile.pillType || 'Pil KB Kombinasi');
 
   // Delete Account State
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -102,6 +106,13 @@ export default function ProfileView() {
       try {
         const dashboard = await getUserDashboardDataAction(authUser?.id);
         if (isMounted && dashboard.user) {
+          const activeTablet = dashboard.activeSchedule?.tabletName?.toLowerCase() || '';
+          const resolvedPillType =
+            dashboard.user.pillType ||
+            (activeTablet.includes('mini') || activeTablet.includes('progestin')
+              ? 'Mini Pil'
+              : 'Pil KB Kombinasi');
+
           setUserProfile({
             id: dashboard.user.id,
             name: dashboard.user.name,
@@ -111,10 +122,12 @@ export default function ProfileView() {
             streakCount: dashboard.user.streakCount || 0,
             schoolOrOrg: dashboard.user.schoolOrOrg,
             riskLevel: dashboard.user.riskLevel,
+            pillType: resolvedPillType,
           });
           setEditName(dashboard.user.name);
           setEditFaskes(dashboard.user.schoolOrOrg || '');
           setEditPhone(dashboard.user.phone || '');
+          setEditPillType(resolvedPillType);
           if (dashboard.activeSchedule) {
             setScheduleData(dashboard.activeSchedule);
           }
@@ -190,6 +203,7 @@ export default function ProfileView() {
     setEditName(userProfile.name);
     setEditFaskes(userProfile.schoolOrOrg || '');
     setEditPhone(userProfile.phone);
+    setEditPillType(userProfile.pillType || 'Pil KB Kombinasi');
     setIsEditProfileModalOpen(true);
   };
 
@@ -201,6 +215,7 @@ export default function ProfileView() {
         name: editName,
         phone: editPhone,
         schoolOrOrg: editFaskes,
+        pillType: editPillType,
       });
 
       if (res.success) {
@@ -209,8 +224,14 @@ export default function ProfileView() {
           name: editName,
           schoolOrOrg: editFaskes || null,
           phone: editPhone,
+          pillType: editPillType,
         }));
-        updateUser({ name: editName, phone: editPhone, schoolOrOrg: editFaskes });
+        updateUser({
+          name: editName,
+          phone: editPhone,
+          schoolOrOrg: editFaskes,
+          pillType: editPillType,
+        });
         setIsEditProfileModalOpen(false);
         showToast('Profil berhasil diperbarui!');
       } else {
@@ -277,6 +298,13 @@ export default function ProfileView() {
       value: userProfile.phone || 'Belum ditambahkan',
     },
     {
+      icon: Pill,
+      label: 'Jenis Pil KB Terpilih',
+      value: userProfile.pillType || 'Pil KB Kombinasi',
+      iconBgColor: 'bg-teal-50 border border-teal-100',
+      iconColor: 'text-teal-700',
+    },
+    {
       icon: Building2,
       label: 'Fasilitas Kesehatan Pendamping',
       value: userProfile.schoolOrOrg || 'Puskesmas / Fasilitas Kesehatan Terdaftar',
@@ -307,9 +335,9 @@ export default function ProfileView() {
       <ProfileHeaderCard
         name={userProfile.name}
         avatarUrl={userProfile.avatarUrl}
-        roleBadgeText='Akseptor Pil KB'
+        roleBadgeText={userProfile.pillType ? `Akseptor ${userProfile.pillType}` : 'Akseptor Pil KB'}
         roleBadgeColor='user'
-        subtitle='Akseptor Program Kontrasepsi Mandiri & Deteksi Dini SADARI'
+        subtitle={`Akseptor ${userProfile.pillType || 'Pil KB'} • Kontrasepsi Mandiri & Skrining SADARI`}
         onEditClick={handleOpenEdit}
         onSaveAvatar={handleSaveAvatar}
       />
@@ -359,6 +387,38 @@ export default function ProfileView() {
         subtitle='Perbarui data identitas akseptor dan fasilitas kesehatan'
         isSaving={isSaving}
       >
+        <div>
+          <label className='text-xs font-bold text-slate-700 block mb-1.5'>
+            Jenis Pil KB yang Digunakan
+          </label>
+          <div className='grid grid-cols-2 gap-2'>
+            <button
+              type='button'
+              onClick={() => setEditPillType('Pil KB Kombinasi')}
+              className={`p-2.5 rounded-xl border text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                editPillType === 'Pil KB Kombinasi'
+                  ? 'border-[#0D9488] bg-[#F0FDFA] text-[#0D9488] ring-1 ring-[#0D9488]'
+                  : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
+              }`}
+            >
+              <Pill size={14} />
+              <span>Pil KB Kombinasi</span>
+            </button>
+            <button
+              type='button'
+              onClick={() => setEditPillType('Mini Pil')}
+              className={`p-2.5 rounded-xl border text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                editPillType === 'Mini Pil'
+                  ? 'border-[#0D9488] bg-[#F0FDFA] text-[#0D9488] ring-1 ring-[#0D9488]'
+                  : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
+              }`}
+            >
+              <Pill size={14} />
+              <span>Mini Pil</span>
+            </button>
+          </div>
+        </div>
+
         <div>
           <label className='text-xs font-bold text-slate-700 block mb-1'>Nama Lengkap</label>
           <input

@@ -10,6 +10,7 @@ export interface AuthUser {
   gender?: 'Perempuan' | 'Laki-laki';
   schoolOrOrg?: string;
   friendCode?: string;
+  pillType?: string;
   streakCount?: number;
   isProfileComplete?: boolean;
 }

@@ -7,6 +7,10 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : config.port;
 
 async function start() {
   await db.query(`
+    ALTER TABLE user_profiles ADD COLUMN IF NOT EXISTS pill_type VARCHAR(100) DEFAULT 'Pil KB Kombinasi';
+  `).catch(() => {});
+
+  await db.query(`
     CREATE TABLE IF NOT EXISTS push_subscriptions (
       id SERIAL PRIMARY KEY,
       user_id VARCHAR(255) NOT NULL REFERENCES users(id) ON DELETE CASCADE,

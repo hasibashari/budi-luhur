@@ -165,6 +165,8 @@ export default function DashboardView() {
 
   const featuredArticle = dashboardData?.featuredArticle;
   const streakUnit = currentUser.streakUnit || 'Hari';
+  const activeSchedule = dashboardData?.activeSchedule;
+  const isReminderActive = Boolean(activeSchedule && activeSchedule.isEnabled);
 
   // Dynamic milestone level calculation based on real streak count
   const getMilestoneInfo = (streak: number) => {
@@ -255,7 +257,9 @@ export default function DashboardView() {
           </div>
           <div>
             <span className='text-[10px] text-slate-500 block leading-tight'>Jadwal</span>
-            <span className='text-xs font-extrabold text-slate-800'>20:00 WIB</span>
+            <span className='text-xs font-extrabold text-slate-800'>
+              {isReminderActive ? `${activeSchedule?.time || '20:00'} WIB` : 'Nonaktif'}
+            </span>
           </div>
         </div>
       </div>
@@ -353,7 +357,7 @@ export default function DashboardView() {
         {/* LEFT COLUMN: Main Health Actions & Hero (md:col-span-7 lg:col-span-8) */}
         <div className='md:col-span-7 lg:col-span-8 flex flex-col gap-5'>
           {/* Missing Schedule Setup Prompt Banner */}
-          {dashboardData && !dashboardData.activeSchedule && (
+          {dashboardData && !activeSchedule && (
             <section aria-label='Pengingat Atur Jadwal Konsumsi'>
               <div className='p-4 sm:p-4.5 rounded-2xl bg-orange-50 border border-orange-200/80 text-orange-950 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs'>
                 <div className='flex items-start gap-3'>
@@ -381,21 +385,50 @@ export default function DashboardView() {
             </section>
           )}
 
-          {/* 1. Hero Preskripsi Klinis Harian */}
-          <section aria-label='Preskripsi Pil KB Hari Ini'>
-            <DailyPrescriptionHeroCard
-              initialStatus={dashboardData?.todayStatus || 'pending'}
-              initialRecordedTime={dashboardData?.todayRecordedTime}
-              onStatusChange={handleStatusChange}
-              pillDayNumber={
-                currentUser.streakCount % 28 === 0 && currentUser.streakCount > 0
-                  ? 28
-                  : currentUser.streakCount % 28 || 1
-              }
-              totalPills={28}
-              targetTime='20:00 WIB'
-            />
-          </section>
+          {/* 1. Hero Preskripsi Klinis Harian - Hanya muncul saat pengingat aktif */}
+          {isReminderActive ? (
+            <section aria-label='Preskripsi Pil KB Hari Ini'>
+              <DailyPrescriptionHeroCard
+                initialStatus={dashboardData?.todayStatus || 'pending'}
+                initialRecordedTime={dashboardData?.todayRecordedTime}
+                onStatusChange={handleStatusChange}
+                pillDayNumber={
+                  currentUser.streakCount % 28 === 0 && currentUser.streakCount > 0
+                    ? 28
+                    : currentUser.streakCount % 28 || 1
+                }
+                totalPills={28}
+                targetTime={`${activeSchedule?.time || '20:00'} WIB`}
+              />
+            </section>
+          ) : activeSchedule && !activeSchedule.isEnabled ? (
+            /* State saat jadwal ada tetapi pengingat dimatikan */
+            <section aria-label='Pengingat Pil KB Nonaktif'>
+              <div className='p-4 sm:p-5 rounded-2xl bg-slate-50 border border-slate-200 text-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs'>
+                <div className='flex items-start gap-3'>
+                  <div className='w-9 h-9 rounded-xl bg-slate-200 text-slate-600 flex items-center justify-center shrink-0 mt-0.5'>
+                    <CalendarClock size={20} />
+                  </div>
+                  <div>
+                    <h4 className='text-xs sm:text-sm font-bold text-slate-900'>
+                      Pengingat Harian Pil KB Sedang Dijeda
+                    </h4>
+                    <p className='text-[11px] sm:text-xs text-slate-500 mt-0.5 leading-relaxed'>
+                      Pengingat otomatis dinonaktifkan. Aktifkan kembali agar tidak terlewat jadwal
+                      minum pil harian Anda.
+                    </p>
+                  </div>
+                </div>
+                <Link
+                  to='/user/profile'
+                  className='inline-flex items-center justify-center gap-1.5 px-3.5 py-2 bg-teal-700 hover:bg-teal-800 text-white text-xs font-bold rounded-xl transition-colors shadow-2xs shrink-0 self-start sm:self-auto'
+                >
+                  <span>Aktifkan Pengingat</span>
+                  <ArrowRight size={13} />
+                </Link>
+              </div>
+            </section>
+          ) : null}
 
           {/* 2. Visual Kemasan Strip Blister Aktif 7 Butir */}
           <section aria-label='Kemasan Blister Aktif'>

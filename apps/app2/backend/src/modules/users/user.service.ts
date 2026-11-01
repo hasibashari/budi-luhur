@@ -48,9 +48,10 @@ export class UserService {
         school_or_org: string | null;
         risk_level: string | null;
         streak_count: number;
+        pill_type?: string | null;
       }>(
         `SELECT u.name, u.email, u.phone, u.avatar_url,
-                p.friend_code, p.school_or_org, p.risk_level, p.streak_count
+                p.friend_code, p.school_or_org, p.risk_level, p.streak_count, p.pill_type
          FROM users u
          LEFT JOIN user_profiles p ON u.id = p.user_id
          WHERE u.id = $1`,
@@ -180,6 +181,7 @@ export class UserService {
         schoolOrOrg: userRow.school_or_org,
         riskLevel: userRow.risk_level,
         friendCode: userRow.friend_code || undefined,
+        pillType: userRow.pill_type || 'Pil KB Kombinasi',
       },
       todayStatus,
       todayRecordedTime,
@@ -202,7 +204,7 @@ export class UserService {
   static async getProfile(userId: string): Promise<UserProfile | null> {
     const res = await db.query<any>(
       `SELECT u.id, u.name, u.email, u.phone, u.avatar_url, u.date_of_birth,
-              p.blood_type, p.height, p.weight, p.school_or_org,
+              p.blood_type, p.height, p.weight, p.school_or_org, p.pill_type,
               p.streak_count, p.friend_code, p.risk_level, p.level_title, p.status, p.notes
        FROM users u
        LEFT JOIN user_profiles p ON u.id = p.user_id
@@ -223,6 +225,7 @@ export class UserService {
       bloodType: row.blood_type || undefined,
       height: row.height !== null ? Number(row.height) : undefined,
       weight: row.weight !== null ? Number(row.weight) : undefined,
+      pillType: row.pill_type || 'Pil KB Kombinasi',
       schoolOrOrg: row.school_or_org || undefined,
       streakCount: row.streak_count !== null ? Number(row.streak_count) : 0,
       friendCode: row.friend_code || undefined,
@@ -287,6 +290,10 @@ export class UserService {
         profileUpdates.push(`weight = $${idx++}`);
         profileParams.push(data.weight ? Number(data.weight) : null);
       }
+      if (data.pillType !== undefined) {
+        profileUpdates.push(`pill_type = $${idx++}`);
+        profileParams.push(data.pillType || 'Pil KB Kombinasi');
+      }
 
       if (profileUpdates.length > 0) {
         profileParams.push(userId);
@@ -310,6 +317,8 @@ export class UserService {
         );
       }
 
+      const pillType = data.pillType || 'Pil KB Kombinasi';
+
       // 2. Update user profile
       await client.query(
         `UPDATE user_profiles
@@ -317,42 +326,55 @@ export class UserService {
              blood_type = $2,
              height = $3,
              weight = $4,
+             pill_type = $5,
              last_active_at = CURRENT_TIMESTAMP
-         WHERE user_id = $5`,
+         WHERE user_id = $6`,
         [
           data.schoolOrOrg || null,
           data.bloodType || null,
           data.height ? Number(data.height) : null,
           data.weight ? Number(data.weight) : null,
+          pillType,
           userId,
         ],
       );
 
-      // 2. Create initial reminder schedule if provided
-      if (data.schedule) {
-        const schedId = `sch_${Date.now().toString().slice(-6)}`;
-        await client.query(
-          `INSERT INTO reminder_schedules (
-            id, user_id, tablet_name, dosage, frequency, day_of_week, time_slot, is_enabled, remind_15min_before, instructions, status
-          ) VALUES ($1, $2, $3, $4, $5, $6, $7, true, $8, $9, 'Aktif')`,
-          [
-            schedId,
-            userId,
-            data.schedule.tabletName || 'Pil KB Kombinasi (28 Tablet)',
-            data.schedule.dosage || '1 tablet',
-            data.schedule.frequency || 'daily',
-            data.schedule.dayOfWeek || 'Setiap Hari',
-            data.schedule.timeSlot || '20:00',
-            data.schedule.remind15MinBefore ?? true,
-            'Minum pil KB pada jam yang sama setiap hari dengan air putih.',
-          ],
-        );
+      // 3. Create or update initial reminder schedule
+      const schedId = `sch_${Date.now().toString().slice(-6)}`;
+      const tabletName =
+        data.schedule?.tabletName ||
+        (pillType === 'Mini Pil'
+          ? 'Mini Pil / Progestin (28 Tablet)'
+          : 'Pil KB Kombinasi (28 Tablet)');
+      const instructions =
+        data.schedule?.instructions ||
+        (pillType === 'Mini Pil'
+          ? 'Minum 1 tablet setiap hari pada jam yang sama persis (toleransi keterlambatan maksimal 3 jam).'
+          : 'Minum 1 tablet setiap hari pada jam yang sama setelah makan malam atau sebelum tidur.');
+      const timeSlot = data.schedule?.timeSlot || data.selectedTime || '20:00';
+      const dayOfWeek = data.schedule?.dayOfWeek || data.selectedDay || 'Setiap Hari';
 
-        await client.query(`INSERT INTO schedule_time_slots (schedule_id, time) VALUES ($1, $2)`, [
+      await client.query(
+        `INSERT INTO reminder_schedules (
+          id, user_id, tablet_name, dosage, frequency, day_of_week, time_slot, is_enabled, remind_15min_before, instructions, status
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, true, $8, $9, 'Aktif')`,
+        [
           schedId,
-          data.schedule.timeSlot || '20:00',
-        ]);
-      }
+          userId,
+          tabletName,
+          data.schedule?.dosage || '1 tablet',
+          data.schedule?.frequency || 'daily',
+          dayOfWeek,
+          timeSlot,
+          data.schedule?.remind15MinBefore ?? true,
+          instructions,
+        ],
+      );
+
+      await client.query(`INSERT INTO schedule_time_slots (schedule_id, time) VALUES ($1, $2)`, [
+        schedId,
+        timeSlot,
+      ]);
     });
 
     return { success: true, message: 'Setup profil awal dan jadwal berhasil disimpan.' };
