@@ -490,7 +490,7 @@ export default function HistoryView() {
         <div className='flex items-center justify-between'>
           <div className='flex flex-col'>
             <span className='text-[11px] uppercase tracking-wider text-[#aa294d] font-bold'>
-              Rencana Suntik TT
+              RIWAYAT TT
             </span>
             <h2 className='text-base sm:text-lg font-bold text-[#121c2a]'>Evaluasi Vaksinasi TT</h2>
           </div>
@@ -724,8 +724,12 @@ export default function HistoryView() {
         <div className='pt-4 border-t border-[#eff4ff] flex flex-col gap-3'>
           <div className='flex items-center justify-between px-1'>
             <div>
-              <h3 className='text-sm sm:text-base font-bold text-[#121c2a]'>Grafik Capaian Imunisasi TT</h3>
-              <p className='text-[11px] text-[#574144]'>Diagram batang tahapan dosis TT1–TT5 & kepatuhan</p>
+              <h3 className='text-sm sm:text-base font-bold text-[#121c2a]'>
+                Grafik Capaian Imunisasi TT
+              </h3>
+              <p className='text-[11px] text-[#574144]'>
+                Diagram batang tahapan dosis TT1–TT5 & kepatuhan
+              </p>
             </div>
             <span className='inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#aff1d0] text-[#0a5139] text-xs font-bold'>
               <Activity size={12} /> Optimal
@@ -733,11 +737,7 @@ export default function HistoryView() {
           </div>
 
           <div className='animate-fade-in'>
-            <TTVaccineBarChart
-              records={records}
-              schedules={schedules}
-              logs={allLogs}
-            />
+            <TTVaccineBarChart records={records} schedules={schedules} logs={allLogs} />
           </div>
         </div>
       </div>
