@@ -95,47 +95,14 @@ export async function seedDatabase() {
       ]);
     }
 
-    // 3. Products
-    console.log('  -> Seeding products...');
-    const insertProductQuery = `
-      INSERT INTO products (
-        id, name, category, sku, stock, unit, price, status, description
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-      ON CONFLICT (id) DO UPDATE SET
-        name = EXCLUDED.name,
-        category = EXCLUDED.category,
-        sku = EXCLUDED.sku,
-        stock = EXCLUDED.stock,
-        unit = EXCLUDED.unit,
-        price = EXCLUDED.price,
-        status = EXCLUDED.status,
-        description = EXCLUDED.description,
-        updated_at = CURRENT_TIMESTAMP
-    `;
-
-    for (const prod of seedData.products) {
-      await client.query(insertProductQuery, [
-        prod.id,
-        prod.name,
-        prod.category,
-        prod.sku,
-        prod.stock,
-        prod.unit,
-        prod.price,
-        prod.status,
-        prod.description ?? null,
-      ]);
-    }
-
-    // 4. Reminder Schedules
+    // 3. Reminder Schedules
     console.log('  -> Seeding reminder schedules...');
     const insertScheduleQuery = `
       INSERT INTO reminder_schedules (
-        id, user_id, product_id, tablet_name, dosage, frequency, day_of_week, time_slot, is_enabled, remind_15min_before, instructions, status
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+        id, user_id, tablet_name, dosage, frequency, day_of_week, time_slot, is_enabled, remind_15min_before, instructions, status
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
       ON CONFLICT (id) DO UPDATE SET
         user_id = EXCLUDED.user_id,
-        product_id = EXCLUDED.product_id,
         tablet_name = EXCLUDED.tablet_name,
         dosage = EXCLUDED.dosage,
         frequency = EXCLUDED.frequency,
@@ -152,7 +119,6 @@ export async function seedDatabase() {
       await client.query(insertScheduleQuery, [
         sch.id,
         sch.userId,
-        sch.productId ?? null,
         sch.tabletName,
         sch.dosage,
         sch.frequency,
@@ -165,7 +131,7 @@ export async function seedDatabase() {
       ]);
     }
 
-    // 5. Consumption Logs
+    // 4. Consumption Logs
     console.log('  -> Seeding consumption logs...');
     const insertLogQuery = `
       INSERT INTO consumption_logs (
@@ -202,16 +168,17 @@ export async function seedDatabase() {
       ]);
     }
 
-    // 6. Articles & Sections
+    // 5. Articles
     console.log('  -> Seeding articles...');
     const insertArticleQuery = `
       INSERT INTO articles (
-        id, title, category, summary, lead_paragraph, image_url, image_caption, read_time, status, is_featured, views, published_at, author_id, author_name, author_role, author_avatar_url, key_takeaways, tags
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)
+        id, title, category, summary, content, lead_paragraph, image_url, image_caption, read_time, status, is_featured, views, published_at, author_id, author_name, author_role, author_avatar_url, key_takeaways, tags
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)
       ON CONFLICT (id) DO UPDATE SET
         title = EXCLUDED.title,
         category = EXCLUDED.category,
         summary = EXCLUDED.summary,
+        content = EXCLUDED.content,
         lead_paragraph = EXCLUDED.lead_paragraph,
         image_url = EXCLUDED.image_url,
         image_caption = EXCLUDED.image_caption,
@@ -235,6 +202,7 @@ export async function seedDatabase() {
         art.title,
         art.category,
         art.summary,
+        art.content ?? art.leadParagraph ?? art.summary,
         art.leadParagraph ?? null,
         art.imageUrl,
         art.imageCaption ?? null,
@@ -250,31 +218,9 @@ export async function seedDatabase() {
         art.keyTakeaways ?? null,
         art.tags ?? null,
       ]);
-
-      if (art.sections && Array.isArray(art.sections)) {
-        await client.query('DELETE FROM article_sections WHERE article_id = $1', [art.id]);
-        for (const sec of art.sections) {
-          await client.query(
-            `INSERT INTO article_sections (
-              article_id, order_index, heading, subheading, paragraphs, callout_type, callout_title, callout_text, bullet_points
-            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
-            [
-              art.id,
-              sec.orderIndex,
-              sec.heading ?? null,
-              sec.subheading ?? null,
-              sec.paragraphs,
-              sec.calloutType ?? null,
-              sec.calloutTitle ?? null,
-              sec.calloutText ?? null,
-              sec.bulletPoints ?? null,
-            ],
-          );
-        }
-      }
     }
 
-    // 7. Admin Nudges
+    // 6. Admin Nudges
     console.log('  -> Seeding admin nudges...');
     const insertNudgeQuery = `
       INSERT INTO admin_nudges (

@@ -127,6 +127,9 @@ export class AdminUserService {
     riskLevel?: string;
     schoolOrOrg?: string;
     medicalNotes?: string;
+    timeSlot?: string;
+    schedule?: any;
+    tabletName?: string;
   }) {
     const newId = `usr_${Date.now().toString().slice(-6)}`;
     const avatarUrl = null;

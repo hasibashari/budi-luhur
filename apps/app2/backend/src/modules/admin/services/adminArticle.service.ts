@@ -61,33 +61,8 @@ export class AdminArticleService {
     const rows = res.rows;
     if (rows.length === 0) return [];
 
-    const articleIds = rows.map((r: any) => r.id);
-    const sectionsRes = await db.query<{ article_id: string; paragraphs: string }>(
-      `SELECT article_id, paragraphs FROM article_sections WHERE article_id = ANY($1) ORDER BY order_index ASC`,
-      [articleIds],
-    );
-
-    const sectionsByArticle = new Map<string, string[]>();
-    for (const s of sectionsRes.rows) {
-      if (s.paragraphs) {
-        try {
-          const parsed = JSON.parse(s.paragraphs);
-          if (Array.isArray(parsed)) {
-            if (!sectionsByArticle.has(s.article_id)) {
-              sectionsByArticle.set(s.article_id, []);
-            }
-            sectionsByArticle.get(s.article_id)!.push(...parsed);
-          }
-        } catch {}
-      }
-    }
-
     return rows.map((r: any) => {
-      const allParagraphs = sectionsByArticle.get(r.id);
-      const content =
-        allParagraphs && allParagraphs.length > 0
-          ? allParagraphs.join('\n\n')
-          : r.lead_paragraph || r.summary;
+      const content = r.content || r.lead_paragraph || r.summary || '';
 
       const d = r.published_at ? new Date(r.published_at) : new Date();
       const publishDateStr = !isNaN(d.getTime())
@@ -133,12 +108,13 @@ export class AdminArticleService {
       canonicalCategory = await AdminArticleService.resolveCategory(client, category);
       await client.query(
         `INSERT INTO articles (
-          id, title, summary, lead_paragraph, image_url, read_time, category, status, views, published_at, author_name
-        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 0, $9, $10)`,
+          id, title, summary, content, lead_paragraph, image_url, read_time, category, status, views, published_at, author_name
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 0, $10, $11)`,
         [
           newId,
           data.title,
           data.summary,
+          finalContent,
           finalContent,
           finalImageUrl,
           readTime,
@@ -148,18 +124,6 @@ export class AdminArticleService {
           data.author || 'Tim Medis Pilluna',
         ],
       );
-
-      const paragraphs = finalContent
-        .split('\n\n')
-        .map((p) => p.trim())
-        .filter(Boolean);
-      if (paragraphs.length > 0) {
-        await client.query(
-          `INSERT INTO article_sections (article_id, order_index, heading, paragraphs)
-           VALUES ($1, 1, 'Pembahasan Edukasi', $2)`,
-          [newId, JSON.stringify(paragraphs)],
-        );
-      }
     });
 
     clearArticlesCache();
@@ -195,6 +159,7 @@ export class AdminArticleService {
            status = COALESCE($5, status),
            author_name = COALESCE($6, author_name),
            image_url = COALESCE($7, image_url),
+           content = COALESCE($8, content),
            lead_paragraph = COALESCE($8, lead_paragraph),
            updated_at = CURRENT_TIMESTAMP
          WHERE id = $9`,
@@ -210,30 +175,6 @@ export class AdminArticleService {
           articleId,
         ],
       );
-
-      if (data.content !== undefined) {
-        const paragraphs = data.content
-          .split('\n\n')
-          .map((p: string) => p.trim())
-          .filter(Boolean);
-        const existingSectionRes = await client.query<{ id: number }>(
-          `SELECT id FROM article_sections WHERE article_id = $1 ORDER BY order_index ASC LIMIT 1`,
-          [articleId],
-        );
-        const existingSection = existingSectionRes.rows[0];
-
-        if (existingSection) {
-          await client.query(`UPDATE article_sections SET paragraphs = $1 WHERE id = $2`, [
-            JSON.stringify(paragraphs),
-            existingSection.id,
-          ]);
-        } else if (paragraphs.length > 0) {
-          await client.query(
-            `INSERT INTO article_sections (article_id, order_index, heading, paragraphs) VALUES ($1, 1, 'Pembahasan Edukasi', $2)`,
-            [articleId, JSON.stringify(paragraphs)],
-          );
-        }
-      }
     });
 
     clearArticlesCache();

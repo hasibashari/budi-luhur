@@ -271,16 +271,10 @@ export default function ArticleDetailView({
         <MarkdownRenderer content={article.content || article.summary || ''} />
       </div>
 
-      {/* Structured Sections (Rendered if sections exist and are not already in content) */}
-      {article.sections && article.sections.length > 0 && (
+      {/* Structured Sections Fallback (Rendered only if sections exist and content is not present) */}
+      {!article.content && article.sections && article.sections.length > 0 && (
         <div className='mt-8 space-y-6'>
           {article.sections.map((section, idx) => {
-            const isDuplicate =
-              article.content &&
-              section.paragraphs?.[0] &&
-              article.content.includes(section.paragraphs[0]);
-            if (isDuplicate) return null;
-
             return (
               <div key={idx} className='space-y-3'>
                 {section.heading && (

@@ -57,7 +57,7 @@ export class ArticleService {
     }
 
     let sql = `
-      SELECT id, title, summary, lead_paragraph, image_url, image_caption, read_time, category, status, views, published_at,
+      SELECT id, title, summary, content, lead_paragraph, image_url, image_caption, read_time, category, status, views, published_at,
              author_id, author_name, author_role, author_avatar_url, author_bio, key_takeaways, tags
       FROM articles
       WHERE status = 'Terbit' AND btrim(category) <> ''
@@ -89,7 +89,7 @@ export class ArticleService {
         title: r.title,
         summary: r.summary,
         leadParagraph: r.lead_paragraph || undefined,
-        content: r.lead_paragraph || r.summary,
+        content: r.content || r.lead_paragraph || r.summary,
         imageUrl: r.image_url,
         imageCaption: r.image_caption || undefined,
         readTime: r.read_time,
@@ -122,48 +122,16 @@ export class ArticleService {
       console.error('Failed to increment article views:', err);
     });
 
-    // Run article query and section query in parallel to eliminate sequential round-trip latency
-    const [res, sectionRes] = await Promise.all([
-      db.query<any>(
-        `SELECT id, title, summary, lead_paragraph, image_url, image_caption, read_time, category, status, views, published_at,
-                author_id, author_name, author_role, author_avatar_url, author_bio, key_takeaways, tags
-         FROM articles 
-         WHERE id = $1`,
-        [id],
-      ),
-      db.query<any>(
-        `SELECT heading, subheading, paragraphs, callout_type, callout_title, callout_text, bullet_points
-         FROM article_sections
-         WHERE article_id = $1
-         ORDER BY order_index ASC`,
-        [id],
-      ),
-    ]);
+    const res = await db.query<any>(
+      `SELECT id, title, summary, content, lead_paragraph, image_url, image_caption, read_time, category, status, views, published_at,
+              author_id, author_name, author_role, author_avatar_url, author_bio, key_takeaways, tags
+       FROM articles 
+       WHERE id = $1`,
+      [id],
+    );
 
     const row = res.rows[0];
     if (!row) return null;
-
-    const sections: ContentSection[] = sectionRes.rows.map((sec: any) => ({
-      heading: sec.heading || undefined,
-      subheading: sec.subheading || undefined,
-      paragraphs: sec.paragraphs
-        ? typeof sec.paragraphs === 'string'
-          ? JSON.parse(sec.paragraphs)
-          : sec.paragraphs
-        : [],
-      callout: sec.callout_text
-        ? {
-            type: sec.callout_type || 'tip',
-            title: sec.callout_title || undefined,
-            text: sec.callout_text,
-          }
-        : undefined,
-      bulletPoints: sec.bullet_points
-        ? typeof sec.bullet_points === 'string'
-          ? JSON.parse(sec.bullet_points)
-          : sec.bullet_points
-        : undefined,
-    }));
 
     let author: Author | undefined;
     if (row.author_name) {
@@ -180,7 +148,7 @@ export class ArticleService {
       title: row.title,
       summary: row.summary,
       leadParagraph: row.lead_paragraph || undefined,
-      content: row.lead_paragraph || row.summary,
+      content: row.content || row.lead_paragraph || row.summary,
       imageUrl: row.image_url,
       imageCaption: row.image_caption || undefined,
       readTime: row.read_time,
@@ -190,7 +158,6 @@ export class ArticleService {
           ? row.published_at
           : new Date(row.published_at).toISOString().split('T')[0],
       author,
-      sections,
       keyTakeaways: row.key_takeaways
         ? typeof row.key_takeaways === 'string'
           ? JSON.parse(row.key_takeaways)

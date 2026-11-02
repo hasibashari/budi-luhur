@@ -58,26 +58,10 @@ CREATE TABLE user_profiles (
     last_active_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- 3. PRODUCTS (CONTRACEPTIVES & PIL KB INVENTORY)
-CREATE TABLE products (
-    id VARCHAR(255) PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    category VARCHAR(100) NOT NULL DEFAULT 'Pil KB',
-    sku VARCHAR(100) NOT NULL UNIQUE,
-    stock INTEGER NOT NULL DEFAULT 0,
-    unit VARCHAR(50) NOT NULL DEFAULT 'Tablet',
-    price DOUBLE PRECISION NOT NULL DEFAULT 0.0,
-    status VARCHAR(50) NOT NULL DEFAULT 'Tersedia' CHECK(status IN ('Tersedia', 'Stok Menipis', 'Habis')),
-    description TEXT,
-    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
-
--- 4. REMINDER SCHEDULES
+-- 3. REMINDER SCHEDULES
 CREATE TABLE reminder_schedules (
     id VARCHAR(255) PRIMARY KEY,
     user_id VARCHAR(255) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    product_id VARCHAR(255) REFERENCES products(id) ON DELETE SET NULL,
     tablet_name VARCHAR(255) NOT NULL DEFAULT 'Pil KB Kombinasi (28 Tablet)',
     dosage VARCHAR(100) NOT NULL DEFAULT '1 tablet',
     frequency VARCHAR(50) NOT NULL DEFAULT 'daily' CHECK(frequency IN ('weekly', 'daily')),
@@ -97,7 +81,7 @@ CREATE TABLE schedule_time_slots (
     time VARCHAR(50) NOT NULL DEFAULT '20:00'
 );
 
--- 5. CONSUMPTION LOGS
+-- 4. CONSUMPTION LOGS
 CREATE TABLE consumption_logs (
     id VARCHAR(255) PRIMARY KEY,
     user_id VARCHAR(255) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -114,7 +98,7 @@ CREATE TABLE consumption_logs (
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- 6. DAILY HEALTH NOTES
+-- 5. DAILY HEALTH NOTES
 CREATE TABLE daily_health_logs (
     id VARCHAR(255) PRIMARY KEY,
     user_id VARCHAR(255) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -131,12 +115,13 @@ CREATE TABLE daily_health_logs (
     CONSTRAINT uq_daily_health_log_user_date UNIQUE(user_id, log_date)
 );
 
--- 6. EDUCATION ARTICLES & SECTIONS
+-- 6. EDUCATION ARTICLES
 CREATE TABLE articles (
     id VARCHAR(255) PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     category VARCHAR(100) NOT NULL CHECK (btrim(category) <> ''),
     summary TEXT NOT NULL,
+    content TEXT,
     lead_paragraph TEXT,
     image_url TEXT NOT NULL,
     image_caption TEXT,
@@ -154,19 +139,6 @@ CREATE TABLE articles (
     tags TEXT,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE article_sections (
-    id SERIAL PRIMARY KEY,
-    article_id VARCHAR(255) NOT NULL REFERENCES articles(id) ON DELETE CASCADE,
-    order_index INTEGER NOT NULL DEFAULT 1,
-    heading VARCHAR(255),
-    subheading VARCHAR(255),
-    paragraphs TEXT NOT NULL,
-    callout_type VARCHAR(50) CHECK(callout_type IN ('tip', 'quote', 'warning')),
-    callout_title VARCHAR(255),
-    callout_text TEXT,
-    bullet_points TEXT
 );
 
 CREATE TABLE user_bookmarks (
@@ -242,7 +214,6 @@ CREATE INDEX idx_profiles_school ON user_profiles(school_or_org);
 CREATE INDEX idx_schedules_user_status ON reminder_schedules(user_id, status);
 CREATE INDEX idx_logs_user_date ON consumption_logs(user_id, scheduled_date);
 CREATE INDEX idx_articles_category ON articles(category, status);
-CREATE INDEX idx_article_sections_order ON article_sections(article_id, order_index);
 CREATE INDEX idx_bookmarks_user ON user_bookmarks(user_id);
 CREATE INDEX idx_nudges_user_unread ON admin_nudges(user_id, status);
 CREATE INDEX idx_push_subscriptions_user ON push_subscriptions(user_id);
