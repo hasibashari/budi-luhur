@@ -37,6 +37,7 @@ const getAutomaticReadTime = (content: string, summary: string) => {
 export default function ArticleManagementView() {
   const navigate = useNavigate();
   const [articles, setArticles] = useState<HealthArticle[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('Semua');
   const [submitting, setSubmitting] = useState(false);
@@ -70,8 +71,13 @@ export default function ArticleManagementView() {
   } = useToast();
 
   const loadData = useCallback(async () => {
-    const data = await getAdminArticlesAction();
-    setArticles(data);
+    setIsLoading(true);
+    try {
+      const data = await getAdminArticlesAction();
+      setArticles(data);
+    } finally {
+      setIsLoading(false);
+    }
   }, []);
 
   useEffect(() => {
@@ -402,6 +408,8 @@ export default function ArticleManagementView() {
       <DataTable
         columns={columns}
         data={filteredArticles}
+        loading={isLoading}
+        loadingMessage='Memuat artikel kesehatan...'
         renderMobileCard={renderMobileCard}
         emptyMessage='Tidak ada artikel yang ditemukan.'
       />

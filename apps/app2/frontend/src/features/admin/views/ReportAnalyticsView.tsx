@@ -5,19 +5,30 @@ import { getComplianceReportsAction } from '../api/complianceRepository';
 import { getUsersAction } from '../api/userManagementRepository';
 import { ComplianceReport, ManagedUser } from '../types/admin.types';
 import { Avatar } from '@/src/shared/components/ui/Avatar';
+import { LoadingSpinner } from '@/src/shared/components/ui/LoadingSpinner';
 
 export default function ReportAnalyticsView() {
   const [period, setPeriod] = useState('7-hari');
   const [reports, setReports] = useState<ComplianceReport[]>([]);
   const [users, setUsers] = useState<ManagedUser[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     let isMounted = true;
     const fetchReports = async () => {
-      const [r, u] = await Promise.all([getComplianceReportsAction(), getUsersAction()]);
-      if (isMounted) {
-        setReports(r);
-        setUsers(u);
+      setIsLoading(true);
+      try {
+        const [r, u] = await Promise.all([getComplianceReportsAction(), getUsersAction()]);
+        if (isMounted) {
+          setReports(r);
+          setUsers(u);
+        }
+      } catch (err) {
+        console.error('Failed to load reports:', err);
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
       }
     };
     fetchReports();
@@ -96,8 +107,14 @@ export default function ReportAnalyticsView() {
         </div>
       </div>
 
-      {/* Summary KPI row */}
-      <div className='grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4'>
+      {isLoading ? (
+        <div className='flex items-center justify-center min-h-[40vh] w-full bg-white rounded-2xl sm:rounded-3xl border border-slate-200 shadow-sm'>
+          <LoadingSpinner message='Memuat data laporan dan analisis kepatuhan...' size='lg' />
+        </div>
+      ) : (
+        <>
+          {/* Summary KPI row */}
+          <div className='grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4'>
         {/* Card 1 */}
         <div className='bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-sm'>
           <div className='flex items-center gap-2 mb-2'>
@@ -243,6 +260,8 @@ export default function ReportAnalyticsView() {
           </div>
         </div>
       </div>
+      </>
+      )}
     </div>
   );
 }

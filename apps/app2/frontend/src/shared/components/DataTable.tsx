@@ -1,5 +1,6 @@
-import { ReactNode, useState  } from 'react';
+import { ReactNode, useState } from 'react';
 import Pagination from './Pagination';
+import { LoadingSpinner } from './ui/LoadingSpinner';
 
 export interface Column<T> {
   id: string;
@@ -12,6 +13,8 @@ export interface Column<T> {
 export interface DataTableProps<T> {
   columns: Column<T>[];
   data: T[];
+  loading?: boolean;
+  loadingMessage?: string;
   emptyMessage?: string;
   pagination?: boolean;
   defaultPageSize?: number;
@@ -27,6 +30,8 @@ export interface DataTableProps<T> {
 export function DataTable<T extends { id: string | number }>({
   columns,
   data,
+  loading = false,
+  loadingMessage,
   emptyMessage = 'Tidak ada data.',
   pagination = true,
   defaultPageSize = 10,
@@ -79,7 +84,11 @@ export function DataTable<T extends { id: string | number }>({
       {/* 1. Mobile-First Card View (< sm / mobile screens when renderMobileCard provided) */}
       {renderMobileCard && (
         <div className='flex sm:hidden flex-col gap-3 p-3 bg-slate-50/70'>
-          {paginatedData.length === 0 ? (
+          {loading ? (
+            <div className='py-8 flex justify-center items-center bg-white rounded-xl border border-dashed border-slate-200'>
+              <LoadingSpinner message={loadingMessage || 'Memuat data...'} size='md' />
+            </div>
+          ) : paginatedData.length === 0 ? (
             <div className='py-8 text-center bg-white rounded-xl border border-dashed border-slate-200'>
               <p className='text-xs text-slate-500'>{emptyMessage}</p>
             </div>
@@ -111,7 +120,13 @@ export function DataTable<T extends { id: string | number }>({
             </tr>
           </thead>
           <tbody className='divide-y divide-slate-100'>
-            {paginatedData.length === 0 ? (
+            {loading ? (
+              <tr>
+                <td colSpan={columns.length} className='py-12 text-center'>
+                  <LoadingSpinner message={loadingMessage || 'Memuat data...'} size='md' />
+                </td>
+              </tr>
+            ) : paginatedData.length === 0 ? (
               <tr>
                 <td colSpan={columns.length} className='py-12 text-center text-sm text-slate-500'>
                   {emptyMessage}
@@ -141,7 +156,7 @@ export function DataTable<T extends { id: string | number }>({
       </div>
 
       {/* Integrated Pagination Footer */}
-      {pagination && data.length > 0 && (
+      {pagination && !loading && data.length > 0 && (
         <div className='border-t border-slate-200'>
           <Pagination
             currentPage={activePage}

@@ -16,6 +16,7 @@ import StatCard from '@/src/shared/components/StatCard';
 import SendReminderModal from '../components/SendReminderModal';
 import { ToastFeedback } from '@/src/shared/components/ToastFeedback';
 import { Avatar } from '@/src/shared/components/ui/Avatar';
+import { LoadingSpinner } from '@/src/shared/components/ui/LoadingSpinner';
 import {
   getAdminStatsAction,
   getComplianceReportsAction,
@@ -29,6 +30,7 @@ import {
 import { publishRealtimeEvent } from '@/src/shared/utils/realtimeSync';
 
 export default function AdminDashboardView() {
+  const [isLoading, setIsLoading] = useState(true);
   const [stats, setStats] = useState<AdminStats>({
     totalUsers: 0,
     activeSchedules: 0,
@@ -58,6 +60,7 @@ export default function AdminDashboardView() {
   useEffect(() => {
     let isMounted = true;
     async function fetchDashboard() {
+      setIsLoading(true);
       try {
         const [statsData, reportsData, allUsers] = await Promise.all([
           getAdminStatsAction(),
@@ -75,6 +78,10 @@ export default function AdminDashboardView() {
         }
       } catch (err) {
         console.error('Failed to load admin dashboard data:', err);
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
       }
     }
 
@@ -118,8 +125,14 @@ export default function AdminDashboardView() {
         subtitle='Pantau capaian kepatuhan minum Pil KB, aktivitas harian akseptor, dan edukasi kesehatan secara real-time.'
       />
 
-      {/* Pending Verifications Alert Banner if any */}
-      {(stats.pendingVerifications ?? 0) > 0 && (
+      {isLoading ? (
+        <div className='flex items-center justify-center min-h-[45vh] w-full bg-white rounded-3xl border border-slate-200 mt-4 shadow-xs'>
+          <LoadingSpinner message='Memuat data ringkasan dan statistik dashboard...' size='lg' />
+        </div>
+      ) : (
+        <>
+          {/* Pending Verifications Alert Banner if any */}
+          {(stats.pendingVerifications ?? 0) > 0 && (
         <div className='mb-4 p-4 sm:p-5 rounded-3xl border border-amber-200 bg-gradient-to-r from-amber-50/90 via-amber-50/50 to-white shadow-xs flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 animate-fade-in'>
           <div className='flex items-center gap-3.5'>
             <div className='w-11 h-11 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center shrink-0 border border-amber-200'>
@@ -331,6 +344,8 @@ export default function AdminDashboardView() {
           </div>
         </div>
       </div>
+      </>
+      )}
 
       {/* Send Reminder Modal */}
       <SendReminderModal

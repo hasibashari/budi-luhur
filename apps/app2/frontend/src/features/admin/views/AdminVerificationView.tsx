@@ -266,7 +266,9 @@ export function AdminVerificationView() {
         <DataTable
           columns={columns}
           data={verifications}
-          emptyMessage={isLoading ? 'Memuat data verifikasi...' : 'Belum ada berkas pendaftaran akseptor yang perlu diverifikasi.'}
+          loading={isLoading}
+          loadingMessage='Memuat berkas verifikasi akseptor...'
+          emptyMessage='Belum ada berkas pendaftaran akseptor yang perlu diverifikasi.'
           renderMobileCard={row => (
             <div className='p-4 flex flex-col gap-3'>
               <div className='flex items-center justify-between'>

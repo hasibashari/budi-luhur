@@ -30,6 +30,7 @@ import {
 
 export default function UserManagementView() {
   const [users, setUsers] = useState<ManagedUser[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('Semua');
   const [submitting, setSubmitting] = useState(false);
@@ -80,8 +81,12 @@ export default function UserManagementView() {
   useEffect(() => {
     let isMounted = true;
     const fetchUsers = async () => {
-      const data = await getUsersAction();
-      if (isMounted) setUsers(data);
+      try {
+        const data = await getUsersAction();
+        if (isMounted) setUsers(data);
+      } finally {
+        if (isMounted) setIsLoading(false);
+      }
     };
     fetchUsers();
 
@@ -396,6 +401,8 @@ export default function UserManagementView() {
       <DataTable
         columns={columns}
         data={filteredUsers}
+        loading={isLoading}
+        loadingMessage='Memuat data akseptor & jadwal pil...'
         emptyMessage='Tidak ada user yang ditemukan.'
         renderMobileCard={user => {
           return (
