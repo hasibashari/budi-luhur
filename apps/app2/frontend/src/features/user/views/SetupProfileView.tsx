@@ -170,12 +170,12 @@ export function SetupProfileView() {
   };
 
   return (
-    <div className='flex-1 min-h-[100dvh] w-full bg-gradient-to-b from-[#F8FAFC] via-[#F0FDFA]/40 to-[#F8FAFC] flex flex-col justify-center items-center p-3.5 sm:p-6 md:p-8 pb-6 sm:pb-8 box-border relative overflow-x-hidden'>
+    <div className='flex-1 min-h-[100dvh] w-full bg-gradient-to-b from-[#F8FAFC] via-[#F0FDFA]/40 to-[#F8FAFC] flex flex-col justify-start sm:justify-center items-center p-3 sm:p-6 md:p-8 pb-6 sm:pb-8 box-border relative overflow-x-hidden'>
       {/* Ambient decorative bubbles */}
       <div className='hidden md:block absolute top-12 left-12 w-64 h-64 bg-[#0D9488]/10 rounded-full blur-3xl pointer-events-none' />
       <div className='hidden md:block absolute bottom-12 right-12 w-80 h-80 bg-[#F97316]/10 rounded-full blur-3xl pointer-events-none' />
 
-      <div className='w-full max-w-2xl bg-white/95 backdrop-blur-md rounded-3xl border border-[#E2E8F0] shadow-xl shadow-[#0D9488]/5 p-5 sm:p-8 relative z-10 flex flex-col gap-5 my-auto'>
+      <div className='w-full max-w-2xl bg-white/95 backdrop-blur-md rounded-2xl sm:rounded-3xl border border-[#E2E8F0] shadow-xl shadow-[#0D9488]/5 p-4 sm:p-8 relative z-10 flex flex-col gap-5 my-auto'>
         {/* Header Pilluna Brand & Step Status */}
         <div>
           <div className='flex items-center justify-between mb-3'>
@@ -196,7 +196,7 @@ export function SetupProfileView() {
               <button
                 type='button'
                 onClick={() => setCurrentStep(1)}
-                className={`flex items-center gap-2 p-2.5 rounded-xl transition-all text-left cursor-pointer ${
+                className={`flex items-center gap-2 p-2 sm:p-2.5 rounded-xl transition-all text-left cursor-pointer min-w-0 ${
                   currentStep === 1
                     ? 'bg-[#F0FDFA] text-[#0D9488] border border-[#CCFBF1] ring-2 ring-[#0D9488]/15'
                     : 'bg-slate-50 text-slate-500 hover:bg-slate-100 border border-slate-200'
@@ -211,7 +211,7 @@ export function SetupProfileView() {
                 >
                   {currentStep === 2 ? <Check size={13} strokeWidth={3} /> : '1'}
                 </div>
-                <div className='min-w-0'>
+                <div className='min-w-0 flex-1'>
                   <span className='block text-[11px] sm:text-xs leading-tight font-extrabold truncate'>
                     1. Profil & Pil KB
                   </span>
@@ -232,7 +232,7 @@ export function SetupProfileView() {
                     setErrorMessage('Silakan isi domisili/faskes sebelum ke langkah persyaratan.');
                   }
                 }}
-                className={`flex items-center gap-2 p-2.5 rounded-xl transition-all text-left cursor-pointer ${
+                className={`flex items-center gap-2 p-2 sm:p-2.5 rounded-xl transition-all text-left cursor-pointer min-w-0 ${
                   currentStep === 2
                     ? 'bg-[#F0FDFA] text-[#0D9488] border border-[#CCFBF1] ring-2 ring-[#0D9488]/15'
                     : 'bg-slate-50 text-slate-500 hover:bg-slate-100 border border-slate-200'
@@ -247,7 +247,7 @@ export function SetupProfileView() {
                 >
                   2
                 </div>
-                <div className='min-w-0'>
+                <div className='min-w-0 flex-1'>
                   <span className='block text-[11px] sm:text-xs leading-tight font-extrabold truncate'>
                     2. Skrining & Dokumen
                   </span>
@@ -268,7 +268,7 @@ export function SetupProfileView() {
           </div>
 
           <div>
-            <h1 className='text-lg sm:text-2xl font-black text-[#0F172A] tracking-tight'>
+            <h1 className='text-base sm:text-xl md:text-2xl font-black text-[#0F172A] tracking-tight'>
               {currentStep === 1 ? 'Lengkapi Data Profil' : 'Persyaratan & Verifikasi Akseptor'}
             </h1>
             <p className='text-xs sm:text-sm text-[#334155] mt-1 leading-relaxed'>
@@ -283,7 +283,7 @@ export function SetupProfileView() {
         {errorMessage && (
           <div className='p-3 sm:p-3.5 rounded-2xl bg-[#FEF2F2] border border-[#FECACA] text-[#DC2626] text-xs sm:text-sm font-semibold flex items-center gap-2 animate-fade-in'>
             <AlertCircle size={16} className='text-[#DC2626] shrink-0' />
-            <span>
+            <span className='break-words flex-1 min-w-0'>
               {typeof errorMessage === 'string'
                 ? errorMessage
                 : (errorMessage as any)?.message || JSON.stringify(errorMessage)}
@@ -317,11 +317,11 @@ export function SetupProfileView() {
               />
 
               {/* Action Row - Step 1 */}
-              <div className='pt-4 mt-2 border-t border-[#E2E8F0] flex items-center justify-between gap-3'>
+              <div className='pt-4 mt-2 border-t border-[#E2E8F0] flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-3'>
                 <button
                   type='button'
                   onClick={() => logout()}
-                  className='flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-4 sm:px-5 py-3 rounded-full border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs sm:text-sm font-bold transition-all shadow-2xs cursor-pointer'
+                  className='w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 sm:px-5 py-3 rounded-full border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs sm:text-sm font-bold transition-all shadow-2xs cursor-pointer min-h-[44px]'
                   title='Keluar dari sesi dan kembali ke halaman masuk'
                 >
                   <LogOut size={15} className='text-slate-500' />
@@ -335,7 +335,7 @@ export function SetupProfileView() {
                   shape='pill'
                   onClick={handleNextStep}
                   icon={<ArrowRight size={16} />}
-                  className='flex-1 sm:flex-initial px-6 sm:px-8 py-3 font-bold shadow-xs shadow-[#0D9488]/20 text-xs sm:text-sm flex items-center justify-center gap-2'
+                  className='w-full sm:w-auto px-5 sm:px-8 py-3 font-bold shadow-xs shadow-[#0D9488]/20 text-xs sm:text-sm flex items-center justify-center gap-2 min-h-[44px]'
                 >
                   Lanjut ke Persyaratan Skrining
                 </Button>
@@ -352,16 +352,16 @@ export function SetupProfileView() {
               <div className='p-3 sm:p-3.5 rounded-2xl bg-[#F0FDFA] border border-[#CCFBF1] flex items-center justify-between gap-2.5 text-xs text-[#0D9488]'>
                 <div className='flex items-center gap-2 min-w-0 flex-1'>
                   <Pill size={16} className='shrink-0 text-[#0D9488]' />
-                  <div className='truncate'>
-                    <span className='font-extrabold text-[#0F172A]'>{pillType}</span>
-                    <span className='mx-1.5 text-slate-300'>•</span>
-                    <span className='text-slate-600 truncate'>{schoolOrOrg}</span>
+                  <div className='truncate flex items-center min-w-0 flex-1'>
+                    <span className='font-extrabold text-[#0F172A] shrink-0'>{pillType}</span>
+                    <span className='mx-1.5 text-slate-300 shrink-0'>•</span>
+                    <span className='text-slate-600 truncate block min-w-0 flex-1'>{schoolOrOrg}</span>
                   </div>
                 </div>
                 <button
                   type='button'
                   onClick={() => setCurrentStep(1)}
-                  className='shrink-0 text-[11px] font-bold text-[#0D9488] underline hover:text-teal-800 cursor-pointer'
+                  className='shrink-0 text-[11px] font-bold text-[#0D9488] underline hover:text-teal-800 cursor-pointer ml-1'
                 >
                   Ubah Profil
                 </button>
@@ -382,11 +382,11 @@ export function SetupProfileView() {
               />
 
               {/* Action Row - Step 2 */}
-              <div className='pt-4 mt-2 border-t border-[#E2E8F0] flex items-center justify-between gap-3'>
+              <div className='pt-4 mt-2 border-t border-[#E2E8F0] flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-3'>
                 <button
                   type='button'
                   onClick={handlePrevStep}
-                  className='flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-4 sm:px-5 py-3 rounded-full border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs sm:text-sm font-bold transition-all shadow-2xs cursor-pointer'
+                  className='w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 sm:px-5 py-3 rounded-full border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs sm:text-sm font-bold transition-all shadow-2xs cursor-pointer min-h-[44px]'
                 >
                   <ArrowLeft size={15} className='text-slate-500' />
                   <span>Kembali ke Profil</span>
@@ -405,7 +405,7 @@ export function SetupProfileView() {
                       <ShieldCheck size={16} />
                     )
                   }
-                  className='flex-1 sm:flex-initial px-6 sm:px-8 py-3 font-bold shadow-xs shadow-[#0D9488]/20 text-xs sm:text-sm flex items-center justify-center gap-2'
+                  className='w-full sm:w-auto px-5 sm:px-8 py-3 font-bold shadow-xs shadow-[#0D9488]/20 text-xs sm:text-sm flex items-center justify-center gap-2 min-h-[44px]'
                 >
                   {isSaving ? 'Mengirim Persyaratan...' : 'Simpan & Kirim Persyaratan'}
                 </Button>

@@ -49,7 +49,7 @@ export function BasicProfileFormFields({
       </div>
 
       {/* Date of Birth & Blood Type */}
-      <div className='grid grid-cols-2 gap-2.5 sm:gap-3.5'>
+      <div className='grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3.5'>
         <div className='min-w-0'>
           <label className='block text-xs font-bold text-[#0F172A] mb-1.5 truncate'>
             Tanggal Lahir{' '}

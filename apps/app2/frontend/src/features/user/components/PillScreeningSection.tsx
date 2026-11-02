@@ -228,12 +228,12 @@ export function PillScreeningSection({ answers, onChange, pillType }: PillScreen
                 </div>
 
                 {/* Interactive Ya / Tidak Buttons */}
-                <div className='flex items-center gap-2 shrink-0 self-end sm:self-center pl-7 sm:pl-0'>
+                <div className='w-full sm:w-auto grid grid-cols-2 sm:flex sm:items-center gap-2 shrink-0 pt-2 sm:pt-0 pl-7 sm:pl-0'>
                   {/* Option YA */}
                   <button
                     type='button'
                     onClick={() => handleToggle(q.key, true)}
-                    className={`px-4 py-1.5 sm:py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer select-none ${
+                    className={`min-h-[40px] sm:min-h-[36px] px-4 py-2 sm:py-1.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer select-none ${
                       val === true
                         ? 'bg-amber-500 text-white shadow-xs ring-2 ring-amber-400/30'
                         : 'bg-slate-100 text-slate-600 hover:bg-slate-200/80'
@@ -246,7 +246,7 @@ export function PillScreeningSection({ answers, onChange, pillType }: PillScreen
                   <button
                     type='button'
                     onClick={() => handleToggle(q.key, false)}
-                    className={`px-4 py-1.5 sm:py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer select-none ${
+                    className={`min-h-[40px] sm:min-h-[36px] px-4 py-2 sm:py-1.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer select-none ${
                       val === false
                         ? 'bg-teal-600 text-white shadow-xs ring-2 ring-teal-500/30'
                         : 'bg-slate-100 text-slate-600 hover:bg-slate-200/80'

@@ -39,7 +39,7 @@ export function PillTypeCardSelector({ value, onChange }: PillTypeCardSelectorPr
           >
             <Pill size={18} />
           </div>
-          <div className='flex-1 min-w-0 pr-4'>
+          <div className='flex-1 min-w-0 pr-6'>
             <div className='flex items-center gap-1.5'>
               <span className='font-bold text-xs sm:text-sm text-[#0F172A] leading-tight'>
                 KB Pil Kombinasi
@@ -53,7 +53,7 @@ export function PillTypeCardSelector({ value, onChange }: PillTypeCardSelectorPr
             </span>
           </div>
           <div
-            className={`absolute top-3 right-3 w-4 h-4 rounded-full flex items-center justify-center transition-all ${
+            className={`absolute top-3.5 right-3.5 w-4 h-4 rounded-full flex items-center justify-center transition-all ${
               value === 'Pil KB Kombinasi'
                 ? 'bg-[#0D9488] text-white'
                 : 'border-2 border-slate-300 bg-white'
@@ -82,7 +82,7 @@ export function PillTypeCardSelector({ value, onChange }: PillTypeCardSelectorPr
           >
             <Pill size={18} />
           </div>
-          <div className='flex-1 min-w-0 pr-4'>
+          <div className='flex-1 min-w-0 pr-6'>
             <div className='flex items-center gap-1.5'>
               <span className='font-bold text-xs sm:text-sm text-[#0F172A] leading-tight'>
                 Mini Pil (Progestin)
@@ -96,7 +96,7 @@ export function PillTypeCardSelector({ value, onChange }: PillTypeCardSelectorPr
             </span>
           </div>
           <div
-            className={`absolute top-3 right-3 w-4 h-4 rounded-full flex items-center justify-center transition-all ${
+            className={`absolute top-3.5 right-3.5 w-4 h-4 rounded-full flex items-center justify-center transition-all ${
               value === 'Mini Pil'
                 ? 'bg-[#0D9488] text-white'
                 : 'border-2 border-slate-300 bg-white'

@@ -240,15 +240,17 @@ export function ProofDocumentUploader({
               Mendukung gambar (JPG, PNG, WEBP) atau PDF hingga 5 MB
             </p>
           </div>
-          <div className='inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 text-[10px] font-semibold text-slate-600 mt-1'>
-            <ShieldCheck size={12} className='text-teal-600' />
-            <span>Dokumen tersimpan aman & hanya dapat diakses oleh admin verifikator</span>
+          <div className='inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 text-[10px] font-semibold text-slate-600 mt-1 max-w-full text-center leading-snug'>
+            <ShieldCheck size={12} className='text-teal-600 shrink-0' />
+            <span className='break-words'>
+              Dokumen tersimpan aman & hanya dapat diakses oleh admin verifikator
+            </span>
           </div>
         </div>
       ) : (
         /* Preview Card */
         <div className='p-4 rounded-2xl bg-white border border-teal-200 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3'>
-          <div className='flex items-center gap-3.5 min-w-0 flex-1'>
+          <div className='flex items-center gap-3.5 min-w-0 flex-1 w-full sm:w-auto'>
             {document.fileType.startsWith('image/') ? (
               <div className='relative w-14 h-14 rounded-xl overflow-hidden bg-slate-100 border border-slate-200 shrink-0'>
                 <img
@@ -265,33 +267,33 @@ export function ProofDocumentUploader({
             )}
 
             <div className='min-w-0 flex-1'>
-              <div className='flex items-center gap-2'>
-                <span className='text-xs font-bold text-teal-900 truncate max-w-[220px] sm:max-w-xs'>
+              <div className='flex items-center gap-2 flex-wrap sm:flex-nowrap'>
+                <span className='text-xs font-bold text-teal-900 truncate block max-w-full'>
                   {document.fileName}
                 </span>
                 <span className='text-[10px] font-extrabold text-teal-700 bg-teal-50 px-2 py-0.5 rounded border border-teal-200 shrink-0'>
                   {document.documentType}
                 </span>
               </div>
-              <p className='text-[11px] text-slate-500 mt-0.5'>
+              <p className='text-[11px] text-slate-500 mt-0.5 truncate'>
                 {formatFileSize(document.fileSize)} • Siap dikirim
               </p>
             </div>
           </div>
 
           {/* Action: Remove / Replace */}
-          <div className='flex items-center gap-2 self-end sm:self-center shrink-0'>
+          <div className='flex items-center gap-2 self-stretch sm:self-center justify-end shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100'>
             <button
               type='button'
               onClick={() => fileInputRef.current?.click()}
-              className='px-3 py-1.5 rounded-lg text-xs font-bold text-teal-700 bg-teal-50 hover:bg-teal-100 transition-colors'
+              className='px-3 py-2 sm:py-1.5 rounded-lg text-xs font-bold text-teal-700 bg-teal-50 hover:bg-teal-100 transition-colors min-h-[36px] flex items-center justify-center cursor-pointer'
             >
               Ganti File
             </button>
             <button
               type='button'
               onClick={handleRemove}
-              className='p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors'
+              className='p-2 sm:p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors min-h-[36px] min-w-[36px] flex items-center justify-center cursor-pointer'
               title='Hapus file'
             >
               <Trash2 size={16} />
