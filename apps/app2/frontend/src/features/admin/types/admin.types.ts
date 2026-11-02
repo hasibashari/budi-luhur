@@ -25,6 +25,10 @@ export interface ManagedUser {
   joinDate: string;
   medicalNotes?: string;
   lastReminderSent?: string;
+  timeSlot?: string;
+  timeSlots?: string[];
+  frequency?: string;
+  todayStatus?: 'COMPLETED' | 'PENDING' | 'NOT_YET_TIME' | 'OFF_SCHEDULE' | 'MISSED';
 }
 
 import type { ScheduleCategory } from '../constants/schedule.constants';

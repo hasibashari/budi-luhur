@@ -19,24 +19,47 @@ export interface ManagedUser {
   joinDate: string;
   medicalNotes: string;
   lastReminderSent: string;
+  timeSlot?: string;
+  timeSlots?: string[];
+  frequency?: string;
+  todayStatus?: 'COMPLETED' | 'PENDING';
 }
 
 export class AdminUserService {
   static async getManagedUsers(): Promise<ManagedUser[]> {
-    const res = await db.query<any>(`
-      SELECT 
-        u.id, u.name, u.gender, u.phone, u.email, u.avatar_url, u.created_at,
-        p.risk_level, p.status, p.notes, p.school_or_org, p.friend_code, p.streak_count, p.last_active_at,
-        (SELECT count(*) FROM reminder_schedules WHERE user_id = u.id AND status = 'Aktif') as active_schedules_count,
-        (SELECT count(*) FROM consumption_logs WHERE user_id = u.id) as total_logs,
-        (SELECT count(*) FROM consumption_logs WHERE user_id = u.id AND status IN ('ON_TIME', 'LATE')) as completed_logs
-      FROM users u
-      LEFT JOIN user_profiles p ON u.id = p.user_id
-      WHERE u.role = 'user'
-      ORDER BY u.created_at DESC, u.name ASC
-    `);
+    const now = new Date();
+    const todayStr = now.toLocaleDateString('en-CA', { timeZone: 'Asia/Jakarta' });
 
-    return res.rows.map((r: any) => {
+    const [usersRes, todayLogsRes] = await Promise.all([
+      db.query<any>(`
+        SELECT 
+          u.id, u.name, u.gender, u.phone, u.email, u.avatar_url, u.created_at,
+          p.risk_level, p.status, p.notes, p.school_or_org, p.friend_code, p.streak_count, p.last_active_at,
+          (SELECT count(*) FROM reminder_schedules WHERE user_id = u.id AND status = 'Aktif') as active_schedules_count,
+          (SELECT time_slot FROM reminder_schedules WHERE user_id = u.id AND status = 'Aktif' ORDER BY created_at DESC LIMIT 1) as schedule_time_slot,
+          (SELECT frequency FROM reminder_schedules WHERE user_id = u.id AND status = 'Aktif' ORDER BY created_at DESC LIMIT 1) as schedule_frequency,
+          (SELECT day_of_week FROM reminder_schedules WHERE user_id = u.id AND status = 'Aktif' ORDER BY created_at DESC LIMIT 1) as schedule_day_of_week,
+          (SELECT count(*) FROM consumption_logs WHERE user_id = u.id) as total_logs,
+          (SELECT count(*) FROM consumption_logs WHERE user_id = u.id AND status IN ('ON_TIME', 'LATE')) as completed_logs
+        FROM users u
+        LEFT JOIN user_profiles p ON u.id = p.user_id
+        WHERE u.role = 'user'
+        ORDER BY u.created_at DESC, u.name ASC
+      `),
+      db.query<any>(
+        `SELECT user_id, status FROM consumption_logs WHERE scheduled_date = $1`,
+        [todayStr],
+      ),
+    ]);
+
+    const completedTodayUsers = new Set<string>();
+    for (const log of todayLogsRes.rows) {
+      if (log.status === 'ON_TIME' || log.status === 'LATE') {
+        completedTodayUsers.add(log.user_id);
+      }
+    }
+
+    return usersRes.rows.map((r: any) => {
       const totalLogs = Number(r.total_logs) || 0;
       const completedLogs = Number(r.completed_logs) || 0;
       const adherenceRate = totalLogs > 0 ? Math.round((completedLogs / totalLogs) * 100) : 85;
@@ -47,6 +70,15 @@ export class AdminUserService {
         : 'Hari ini';
 
       const schoolOrOrg = r.school_or_org || 'Puskesmas / Faskes Terdaftar';
+      const timeSlot = r.schedule_time_slot || '20:00';
+      const timeSlots = [timeSlot];
+      const frequency =
+        r.schedule_frequency === 'daily' || r.schedule_frequency === 'Harian'
+          ? 'Setiap Hari'
+          : r.schedule_day_of_week || 'Setiap Hari';
+      const todayStatus: 'COMPLETED' | 'PENDING' = completedTodayUsers.has(r.id)
+        ? 'COMPLETED'
+        : 'PENDING';
 
       return {
         id: r.id,
@@ -66,24 +98,40 @@ export class AdminUserService {
         joinDate: r.created_at ? new Date(r.created_at).toISOString().split('T')[0] : '2026-09-01',
         medicalNotes: r.notes || 'Rutin minum pil KB',
         lastReminderSent: 'Hari ini, 20:00 WIB',
+        timeSlot,
+        timeSlots,
+        frequency,
+        todayStatus,
       };
     });
   }
 
   static async getManagedUserById(userId: string): Promise<ManagedUser | null> {
-    const res = await db.query<any>(
-      `SELECT 
-        u.id, u.name, u.gender, u.phone, u.email, u.avatar_url, u.created_at,
-        p.risk_level, p.status, p.notes, p.school_or_org, p.friend_code, p.streak_count, p.last_active_at,
-        (SELECT count(*) FROM reminder_schedules WHERE user_id = u.id AND status = 'Aktif') as active_schedules_count,
-        (SELECT count(*) FROM consumption_logs WHERE user_id = u.id) as total_logs,
-        (SELECT count(*) FROM consumption_logs WHERE user_id = u.id AND status IN ('ON_TIME', 'LATE')) as completed_logs
-      FROM users u
-      LEFT JOIN user_profiles p ON u.id = p.user_id
-      WHERE u.id = $1
-      LIMIT 1`,
-      [userId],
-    );
+    const now = new Date();
+    const todayStr = now.toLocaleDateString('en-CA', { timeZone: 'Asia/Jakarta' });
+
+    const [res, todayLogsRes] = await Promise.all([
+      db.query<any>(
+        `SELECT 
+          u.id, u.name, u.gender, u.phone, u.email, u.avatar_url, u.created_at,
+          p.risk_level, p.status, p.notes, p.school_or_org, p.friend_code, p.streak_count, p.last_active_at,
+          (SELECT count(*) FROM reminder_schedules WHERE user_id = u.id AND status = 'Aktif') as active_schedules_count,
+          (SELECT time_slot FROM reminder_schedules WHERE user_id = u.id AND status = 'Aktif' ORDER BY created_at DESC LIMIT 1) as schedule_time_slot,
+          (SELECT frequency FROM reminder_schedules WHERE user_id = u.id AND status = 'Aktif' ORDER BY created_at DESC LIMIT 1) as schedule_frequency,
+          (SELECT day_of_week FROM reminder_schedules WHERE user_id = u.id AND status = 'Aktif' ORDER BY created_at DESC LIMIT 1) as schedule_day_of_week,
+          (SELECT count(*) FROM consumption_logs WHERE user_id = u.id) as total_logs,
+          (SELECT count(*) FROM consumption_logs WHERE user_id = u.id AND status IN ('ON_TIME', 'LATE')) as completed_logs
+        FROM users u
+        LEFT JOIN user_profiles p ON u.id = p.user_id
+        WHERE u.id = $1
+        LIMIT 1`,
+        [userId],
+      ),
+      db.query<any>(
+        `SELECT status FROM consumption_logs WHERE user_id = $1 AND scheduled_date = $2`,
+        [userId, todayStr],
+      ),
+    ]);
 
     if (res.rows.length === 0) return null;
     const r = res.rows[0];
@@ -97,6 +145,16 @@ export class AdminUserService {
       : 'Hari ini';
 
     const schoolOrOrg = r.school_or_org || 'Puskesmas / Faskes Terdaftar';
+    const isCompletedToday = todayLogsRes.rows.some(
+      (l: any) => l.status === 'ON_TIME' || l.status === 'LATE',
+    );
+    const timeSlot = r.schedule_time_slot || '20:00';
+    const timeSlots = [timeSlot];
+    const frequency =
+      r.schedule_frequency === 'daily' || r.schedule_frequency === 'Harian'
+        ? 'Setiap Hari'
+        : r.schedule_day_of_week || 'Setiap Hari';
+    const todayStatus: 'COMPLETED' | 'PENDING' = isCompletedToday ? 'COMPLETED' : 'PENDING';
 
     return {
       id: r.id,
@@ -116,6 +174,10 @@ export class AdminUserService {
       joinDate: r.created_at ? new Date(r.created_at).toISOString().split('T')[0] : '2026-09-01',
       medicalNotes: r.notes || 'Rutin minum pil KB',
       lastReminderSent: 'Hari ini, 20:00 WIB',
+      timeSlot,
+      timeSlots,
+      frequency,
+      todayStatus,
     };
   }
 
@@ -218,6 +280,15 @@ export class AdminUserService {
             data.medicalNotes ?? null,
             userId,
           ],
+        );
+      }
+
+      if (data.timeSlot) {
+        await client.query(
+          `UPDATE reminder_schedules
+           SET time_slot = $1, updated_at = CURRENT_TIMESTAMP
+           WHERE user_id = $2`,
+          [data.timeSlot, userId],
         );
       }
     });

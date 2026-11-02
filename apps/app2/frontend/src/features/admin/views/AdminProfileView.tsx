@@ -109,7 +109,7 @@ export default function AdminProfileView() {
       id: 'access',
       label: 'Level Hak Akses',
       value: 'Full Control',
-      subtitle: 'Pengguna, Jadwal, Edukasi, Laporan',
+      subtitle: 'User, Edukasi, Verifikasi, Laporan',
       icon: Shield,
       iconBgColor: 'bg-teal-100',
       iconColor: 'text-teal-700',

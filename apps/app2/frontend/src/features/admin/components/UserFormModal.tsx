@@ -30,14 +30,14 @@ export default function UserFormModal({
     <CrudModalDialog
       open={open}
       onClose={onClose}
-      title={editingId ? 'Edit Data Akseptor' : 'Tambah Akseptor Baru'}
+      title={editingId ? 'Edit Data User' : 'Tambah User Baru'}
       onSubmit={onSave}
-      submitText={editingId ? 'Update Data' : 'Tambah Akseptor'}
+      submitText={editingId ? 'Update Data' : 'Tambah User'}
       submitting={submitting}
     >
       <div>
         <label className='block text-xs font-bold text-slate-700 mb-1'>
-          Nama Lengkap Akseptor <span className='text-red-500'>*</span>
+          Nama Lengkap User <span className='text-red-500'>*</span>
         </label>
         <input
           type='text'
@@ -96,18 +96,15 @@ export default function UserFormModal({
 
       <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
         <div>
-          <label className='block text-xs font-bold text-slate-700 mb-1'>Tingkat Kepatuhan</label>
-          <select
-            value={formData.riskLevel}
-            onChange={e => onUpdateFormData({ riskLevel: e.target.value as RiskLevel })}
+          <label className='block text-xs font-bold text-slate-700 mb-1'>
+            Waktu Minum Pil (Jam:Menit)
+          </label>
+          <input
+            type='time'
+            value={formData.timeSlot || '20:00'}
+            onChange={e => onUpdateFormData({ timeSlot: e.target.value })}
             className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:border-transparent transition-all'
-          >
-            {RISK_LEVEL_OPTIONS.map(opt => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
+          />
         </div>
         <div>
           <label className='block text-xs font-bold text-slate-700 mb-1'>

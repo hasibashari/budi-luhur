@@ -151,31 +151,6 @@ export default function AdminDashboardView() {
         </div>
       )}
 
-      {/* Entry Portal Banner */}
-      <div className='mb-6 p-4 sm:p-6 rounded-3xl border border-slate-200 bg-white shadow-xs flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4'>
-        <div className='flex items-center gap-4'>
-          <div className='w-12 h-12 rounded-2xl bg-teal-50 text-teal-700 flex items-center justify-center shrink-0 border border-teal-100'>
-            <CalendarCheck size={26} />
-          </div>
-          <div>
-            <h3 className='font-bold text-slate-800 text-sm sm:text-base leading-tight'>
-              Pengelolaan Jadwal & Pengingat Pil KB
-            </h3>
-            <p className='text-xs sm:text-sm text-slate-500 mt-1 leading-relaxed'>
-              Akses konfigurasi dosis, jam minum pil, dan pemantauan kepatuhan harian akseptor KB.
-            </p>
-          </div>
-        </div>
-
-        <Link
-          to='/admin/schedules'
-          className='inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-xl bg-teal-600 text-white font-bold text-sm hover:bg-teal-700 shadow-xs transition-all cursor-pointer whitespace-nowrap'
-        >
-          <span>Buka Jadwal</span>
-          <ChevronRight size={16} />
-        </Link>
-      </div>
-
       {/* KPI Cards Grid */}
       <div className='grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5 mb-6'>
         <StatCard

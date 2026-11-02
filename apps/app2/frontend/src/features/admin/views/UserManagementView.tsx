@@ -23,8 +23,6 @@ import { ManagedUser } from '../types/admin.types';
 import {
   INITIAL_USER_FORM_DATA,
   UserFormData,
-  RISK_LEVEL_OPTIONS,
-  RISK_LEVEL_COLORS,
   RiskLevel,
   UserGender,
   DEFAULT_SCHOOL_ORG,
@@ -33,7 +31,7 @@ import {
 export default function UserManagementView() {
   const [users, setUsers] = useState<ManagedUser[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [riskFilter, setRiskFilter] = useState<string>('Semua');
+  const [statusFilter, setStatusFilter] = useState<string>('Semua');
   const [submitting, setSubmitting] = useState(false);
 
   // 1. Hook Form Modal Add/Edit
@@ -110,8 +108,11 @@ export default function UserManagementView() {
       u.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       u.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
       u.phone.includes(searchQuery);
-    const matchesRisk = riskFilter === 'Semua' || u.riskLevel === riskFilter;
-    return matchesSearch && matchesRisk;
+    const matchesStatus =
+      statusFilter === 'Semua' ||
+      (statusFilter === 'Sudah Minum' && u.todayStatus === 'COMPLETED') ||
+      (statusFilter === 'Belum Minum' && u.todayStatus !== 'COMPLETED');
+    return matchesSearch && matchesStatus;
   });
 
   const onOpenAdd = () => {
@@ -129,6 +130,7 @@ export default function UserManagementView() {
       schoolOrOrg: user.schoolOrOrg || DEFAULT_SCHOOL_ORG,
       assignedDoctor: user.schoolOrOrg || DEFAULT_SCHOOL_ORG,
       medicalNotes: user.medicalNotes || '',
+      timeSlot: user.timeSlot || '20:00',
     });
   };
 
@@ -150,12 +152,13 @@ export default function UserManagementView() {
           riskLevel: formData.riskLevel,
           schoolOrOrg: formData.schoolOrOrg || formData.assignedDoctor,
           medicalNotes: formData.medicalNotes,
+          timeSlot: formData.timeSlot || '20:00',
         });
 
         if (res.success) {
           await loadUsers();
           handleCloseModal();
-          showToast('Data akseptor berhasil diperbarui di database!', 'success');
+          showToast('Data user berhasil diperbarui di database!', 'success');
         } else {
           showToast(res.error || 'Gagal memperbarui data', 'error');
         }
@@ -169,14 +172,15 @@ export default function UserManagementView() {
           riskLevel: formData.riskLevel,
           schoolOrOrg: formData.schoolOrOrg || formData.assignedDoctor || 'Puskesmas / Faskes Terdaftar',
           medicalNotes: formData.medicalNotes,
+          timeSlot: formData.timeSlot || '20:00',
         });
 
         if (res.success) {
           await loadUsers();
           handleCloseModal();
-          showToast('Akseptor baru berhasil ditambahkan ke database!', 'success');
+          showToast('User baru berhasil ditambahkan ke database!', 'success');
         } else {
-          showToast(res.error || 'Gagal menambahkan akseptor', 'error');
+          showToast(res.error || 'Gagal menambahkan user', 'error');
         }
       }
     } finally {
@@ -189,9 +193,9 @@ export default function UserManagementView() {
       const res = await deleteUserAction(userToDelete);
       if (res.success) {
         await loadUsers();
-        showToast('Data akseptor berhasil dihapus dari database.', 'success');
+        showToast('Data user berhasil dihapus dari database.', 'success');
       } else {
-        showToast(res.error || 'Gagal menghapus data akseptor', 'error');
+        showToast(res.error || 'Gagal menghapus data user', 'error');
       }
     }
     handleCloseDelete();
@@ -220,7 +224,7 @@ export default function UserManagementView() {
   const columns: Column<ManagedUser>[] = [
     {
       id: 'user',
-      label: 'Akseptor (Pengguna)',
+      label: 'User',
       width: '28%',
       renderCell: user => (
         <div className='flex items-center gap-3'>
@@ -256,45 +260,39 @@ export default function UserManagementView() {
       ),
     },
     {
-      id: 'adherence',
-      label: 'Kepatuhan Pil KB',
-      width: '18%',
-      renderCell: user => {
-        const rate = user.adherenceRate ?? 100;
-        const color =
-          rate >= 90 ? 'text-teal-600' : rate >= 80 ? 'text-amber-600' : 'text-red-500';
-        return (
-          <div>
-            <div className='flex items-center gap-1.5'>
-              <span className={`font-bold text-sm ${color}`}>{rate}%</span>
-              <span className='text-[11px] text-[#4A5E78]'>
-                ({user.activeSchedulesCount || 0} Jadwal)
-              </span>
-            </div>
-            <div className='w-24 bg-slate-100 rounded-full h-1.5 mt-1 overflow-hidden'>
-              <div
-                className={`h-full rounded-full ${
-                  rate >= 90 ? 'bg-teal-600' : rate >= 80 ? 'bg-amber-400' : 'bg-red-500'
-                }`}
-                style={{ width: `${Math.min(100, Math.max(0, rate))}%` }}
-              />
-            </div>
+      id: 'scheduleTime',
+      label: 'Waktu Minum Pil',
+      width: '20%',
+      renderCell: user => (
+        <div>
+          <div className='font-semibold text-[#24354D] text-xs sm:text-sm'>
+            {user.frequency || 'Setiap Hari'}
           </div>
-        );
-      },
+          <div className='flex gap-1 flex-wrap mt-0.5'>
+            <span className='px-2.5 py-0.5 rounded-full border border-teal-200 bg-teal-50 text-[11px] font-bold text-teal-700'>
+              {user.timeSlot || '20:00'} WIB
+            </span>
+          </div>
+        </div>
+      ),
     },
     {
-      id: 'riskLevel',
-      label: 'Tingkat Kepatuhan',
+      id: 'todayStatus',
+      label: 'Status Minum Hari Ini',
       width: '18%',
       renderCell: user => {
-        const style = RISK_LEVEL_COLORS[user.riskLevel] || RISK_LEVEL_COLORS.default;
+        if (user.todayStatus === 'COMPLETED') {
+          return (
+            <span className='inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-teal-50 text-teal-700 border border-teal-200 text-xs font-bold'>
+              <span className='w-1.5 h-1.5 rounded-full bg-teal-600'></span>
+              Sudah Minum
+            </span>
+          );
+        }
         return (
-          <span
-            className='inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold'
-            style={{ backgroundColor: style.bg, color: style.text }}
-          >
-            {user.riskLevel}
+          <span className='inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200 text-xs font-bold'>
+            <span className='w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse'></span>
+            Belum Minum
           </span>
         );
       },
@@ -303,7 +301,7 @@ export default function UserManagementView() {
       id: 'aksi',
       label: 'Aksi',
       align: 'right',
-      width: '12%',
+      width: '10%',
       renderCell: user => (
         <div className='flex items-center justify-end gap-1'>
           <button
@@ -316,7 +314,7 @@ export default function UserManagementView() {
           </button>
           <button
             type='button'
-            title='Edit Akseptor'
+            title='Edit User'
             onClick={() => onOpenEdit(user)}
             className='p-1.5 rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition-colors cursor-pointer'
           >
@@ -324,7 +322,7 @@ export default function UserManagementView() {
           </button>
           <button
             type='button'
-            title='Hapus Akseptor'
+            title='Hapus User'
             onClick={() => handleDeleteRequest(user.id)}
             className='p-1.5 rounded-lg text-red-600 hover:bg-red-50 transition-colors cursor-pointer'
           >
@@ -338,8 +336,8 @@ export default function UserManagementView() {
   return (
     <div className='animate-fade-in'>
       <AdminHeader
-        title='Manajemen Akseptor KB'
-        subtitle='Pantau data akseptor, riwayat kepatuhan minum Pil KB, dan kirim pengingat langsung.'
+        title='Manajemen User'
+        subtitle='Pantau data user, jadwal minum pil harian, status konsumsi hari ini, dan kirim pengingat langsung.'
       />
 
       {/* Mobile & Desktop Filter Bar */}
@@ -352,7 +350,7 @@ export default function UserManagementView() {
               </span>
               <input
                 type='text'
-                placeholder='Cari nama, ID akseptor, atau no hp...'
+                placeholder='Cari nama, ID user, atau no hp...'
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
                 className='w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs sm:text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:bg-white transition-all min-h-[44px]'
@@ -361,16 +359,13 @@ export default function UserManagementView() {
 
             <div className='hidden sm:block sm:min-w-[180px]'>
               <select
-                value={riskFilter}
-                onChange={e => setRiskFilter(e.target.value)}
+                value={statusFilter}
+                onChange={e => setStatusFilter(e.target.value)}
                 className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs sm:text-sm font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:bg-white transition-all cursor-pointer min-h-[44px]'
               >
-                <option value='Semua'>Semua Tingkat</option>
-                {RISK_LEVEL_OPTIONS.map(opt => (
-                  <option key={opt.value} value={opt.value}>
-                    {opt.value}
-                  </option>
-                ))}
+                <option value='Semua'>Semua Status</option>
+                <option value='Sudah Minum'>Sudah Minum</option>
+                <option value='Belum Minum'>Belum Minum</option>
               </select>
             </div>
           </div>
@@ -381,21 +376,20 @@ export default function UserManagementView() {
             className='inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-teal-600 text-white font-bold text-xs sm:text-sm hover:bg-teal-700 shadow-xs transition-all cursor-pointer whitespace-nowrap min-h-[44px]'
           >
             <UserPlus size={18} />
-            <span>Tambah Akseptor</span>
+            <span>Tambah User</span>
           </button>
         </div>
 
         {/* Mobile Horizontal Filter Chips (< sm: 640px) */}
         <div className='block sm:hidden border-t border-slate-100 pt-2.5'>
-          <p className='text-[11px] font-bold text-slate-400 mb-1.5'>Filter Tingkat Risiko:</p>
+          <p className='text-[11px] font-bold text-slate-400 mb-1.5'>Filter Status Hari Ini:</p>
           <MobileFilterChips
-            selectedValue={riskFilter}
-            onSelect={setRiskFilter}
+            selectedValue={statusFilter}
+            onSelect={setStatusFilter}
             options={[
               { label: 'Semua', value: 'Semua' },
-              { label: 'Rendah', value: 'Rendah' },
-              { label: 'Sedang', value: 'Sedang' },
-              { label: 'Tinggi', value: 'Tinggi' },
+              { label: 'Sudah Minum', value: 'Sudah Minum' },
+              { label: 'Belum Minum', value: 'Belum Minum' },
             ]}
           />
         </div>
@@ -405,12 +399,11 @@ export default function UserManagementView() {
       <DataTable
         columns={columns}
         data={filteredUsers}
-        emptyMessage='Tidak ada akseptor yang ditemukan.'
+        emptyMessage='Tidak ada user yang ditemukan.'
         renderMobileCard={user => {
-          const style = RISK_LEVEL_COLORS[user.riskLevel] || RISK_LEVEL_COLORS.default;
           return (
             <div className='p-4 rounded-2xl border border-slate-200 bg-white shadow-xs flex flex-col gap-3.5'>
-              {/* Header: Avatar + Name + Risk */}
+              {/* Header: Avatar + Name + Status */}
               <div className='flex items-center justify-between gap-2.5'>
                 <div className='flex items-center gap-3 min-w-0'>
                   <Avatar
@@ -429,15 +422,20 @@ export default function UserManagementView() {
                   </div>
                 </div>
 
-                <span
-                  className='px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase shrink-0'
-                  style={{ backgroundColor: style.bg, color: style.text }}
-                >
-                  {user.riskLevel}
-                </span>
+                {user.todayStatus === 'COMPLETED' ? (
+                  <span className='inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-teal-50 text-teal-700 border border-teal-200 text-[10px] font-bold shrink-0'>
+                    <span className='w-1.5 h-1.5 rounded-full bg-teal-600'></span>
+                    Sudah Minum
+                  </span>
+                ) : (
+                  <span className='inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200 text-[10px] font-bold shrink-0'>
+                    <span className='w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse'></span>
+                    Belum Minum
+                  </span>
+                )}
               </div>
 
-              {/* Info Row: Phone + Schedules + Adherence */}
+              {/* Info Row: Phone + Waktu Minum Pil */}
               <div className='grid grid-cols-2 gap-2 p-3 rounded-xl bg-teal-50/50 border border-teal-100 text-xs'>
                 <div>
                   <span className='text-slate-500 block text-[11px] font-medium'>
@@ -450,18 +448,10 @@ export default function UserManagementView() {
 
                 <div>
                   <span className='text-slate-500 block text-[11px] font-medium'>
-                    Kepatuhan Pil KB
+                    Waktu Minum Pil
                   </span>
-                  <span
-                    className={`font-bold block mt-0.5 ${
-                      user.adherenceRate >= 90
-                        ? 'text-teal-600'
-                        : user.adherenceRate >= 80
-                          ? 'text-amber-600'
-                          : 'text-red-600'
-                    }`}
-                  >
-                    {user.adherenceRate}% ({user.activeSchedulesCount || 0} Jadwal)
+                  <span className='font-bold text-teal-800 block mt-0.5'>
+                    {user.timeSlot || '20:00'} WIB ({user.frequency || 'Setiap Hari'})
                   </span>
                 </div>
               </div>
@@ -480,7 +470,7 @@ export default function UserManagementView() {
                 <div className='flex gap-1.5'>
                   <button
                     type='button'
-                    title='Edit Akseptor'
+                    title='Edit User'
                     onClick={() => onOpenEdit(user)}
                     className='w-11 h-11 rounded-xl bg-slate-100 text-slate-600 hover:bg-teal-50 hover:text-teal-700 flex items-center justify-center transition-colors cursor-pointer'
                   >
@@ -488,7 +478,7 @@ export default function UserManagementView() {
                   </button>
                   <button
                     type='button'
-                    title='Hapus Akseptor'
+                    title='Hapus User'
                     onClick={() => handleDeleteRequest(user.id)}
                     className='w-11 h-11 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 flex items-center justify-center transition-colors cursor-pointer'
                   >
