@@ -114,6 +114,7 @@ export interface AdminVerificationDetail extends AdminVerificationListItem {
   bloodType?: string;
   height?: number;
   weight?: number;
+  documentFileData?: string | null;
   history: {
     id: number;
     action: string;

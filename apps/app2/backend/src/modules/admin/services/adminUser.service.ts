@@ -158,11 +158,18 @@ export class AdminUserService {
         [newId, friendCode, school, data.riskLevel || 'Rendah', data.medicalNotes || null],
       );
 
-      await client.query(
-        `INSERT INTO reminder_schedules (id, user_id, tablet_name, dosage, frequency, day_of_week, time_slot, is_enabled, status)
-         VALUES ($1, $2, 'Pil KB Kombinasi (28 Tablet)', '1 tablet', 'daily', 'Setiap Hari', '20:00', true, 'Aktif')`,
-        [`sch_${newId}`, newId],
-      );
+      if (data.timeSlot || data.schedule) {
+        await client.query(
+          `INSERT INTO reminder_schedules (id, user_id, tablet_name, dosage, frequency, day_of_week, time_slot, is_enabled, status)
+           VALUES ($1, $2, $3, '1 tablet', 'daily', 'Setiap Hari', $4, true, 'Aktif')`,
+          [
+            `sch_${newId}`,
+            newId,
+            data.tabletName || 'Pil KB Kombinasi (28 Tablet)',
+            data.timeSlot || '20:00',
+          ],
+        );
+      }
     });
 
     return this.getManagedUserById(newId);

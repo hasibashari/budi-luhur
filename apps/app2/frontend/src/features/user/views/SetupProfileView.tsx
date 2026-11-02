@@ -147,16 +147,6 @@ export function SetupProfileView() {
         bloodType: bloodType || undefined,
         height: height ? Number(height) : undefined,
         weight: weight ? Number(weight) : undefined,
-        schedule: {
-          tabletName:
-            pillType === 'Mini Pil'
-              ? 'Mini Pil / Progestin (28 Tablet)'
-              : 'Pil KB Kombinasi (28 Tablet)',
-          category: pillType === 'Mini Pil' ? 'Pil KB Progestin' : 'Pil KB Kombinasi',
-          frequency: 'daily',
-          dayOfWeek: 'Setiap Hari',
-          timeSlot: '20:00',
-        },
         screening: screeningAnswers,
         document: uploadedDocument,
       });

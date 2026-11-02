@@ -42,21 +42,8 @@ export class AuthService {
   }
 
   private static async createLoginResult(row: UserDbRow) {
-    // 4. Check active schedule count
-    let scheduleCount = 1;
-    try {
-      const schedRes = await db.query<{ count: string }>(
-        `SELECT COUNT(*)::text as count FROM reminder_schedules WHERE user_id = $1 AND status = 'Aktif'`,
-        [row.id],
-      );
-      scheduleCount = Number(schedRes.rows[0]?.count || 0);
-    } catch {
-      // Keep default 1
-    }
-
     const hasSchool = Boolean(row.school_or_org && row.school_or_org.trim());
-    const hasSchedule = scheduleCount > 0;
-    const isProfileComplete = row.role === 'admin' || (hasSchool && hasSchedule);
+    const isProfileComplete = row.role === 'admin' || hasSchool;
     const verificationStatus =
       row.role === 'admin'
         ? 'Approved'

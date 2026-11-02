@@ -1,11 +1,19 @@
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Users, CalendarCheck, BarChart3, ShieldCheck } from 'lucide-react';
+import {
+  LayoutDashboard,
+  Users,
+  CalendarCheck,
+  BarChart3,
+  ShieldCheck,
+  BookOpen,
+} from 'lucide-react';
 
-const ADMIN_BOTTOM_ITEMS = [
+export const ADMIN_BOTTOM_ITEMS = [
   { name: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
   { name: 'Verifikasi', href: '/admin/verifications', icon: ShieldCheck },
   { name: 'Akseptor', href: '/admin/users', icon: Users },
   { name: 'Jadwal', href: '/admin/schedules', icon: CalendarCheck },
+  { name: 'Artikel', href: '/admin/articles', icon: BookOpen },
   { name: 'Laporan', href: '/admin/reports', icon: BarChart3 },
 ];
 
@@ -19,7 +27,7 @@ export default function AdminMobileBottomNav() {
       style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
       aria-label='Navigasi Bawah Admin'
     >
-      <div className='flex items-center justify-around h-16 px-2 max-w-lg mx-auto'>
+      <div className='flex items-center justify-around h-16 px-1 sm:px-2 max-w-lg mx-auto'>
         {ADMIN_BOTTOM_ITEMS.map(item => {
           const isActive =
             pathname === item.href ||
@@ -30,21 +38,21 @@ export default function AdminMobileBottomNav() {
             <Link
               key={item.name}
               to={item.href}
-              className={`flex flex-col items-center justify-center flex-1 py-1.5 px-1 rounded-2xl transition-all duration-200 select-none ${
+              className={`flex flex-col items-center justify-center flex-1 min-w-0 max-w-[64px] h-full py-1 px-0.5 sm:px-1 rounded-xl transition-all duration-200 select-none ${
                 isActive
                   ? 'text-teal-700 font-bold'
                   : 'text-slate-600 hover:text-teal-700 font-medium'
               }`}
             >
               <div
-                className={`relative flex items-center justify-center w-10 h-7 rounded-full transition-all duration-200 ${
+                className={`relative flex items-center justify-center w-8 h-7 sm:w-10 rounded-full transition-all duration-200 ${
                   isActive ? 'bg-teal-50 text-teal-700 scale-105 shadow-2xs' : 'text-slate-500'
                 }`}
               >
                 <Icon size={19} className={isActive ? 'stroke-[2.2]' : 'stroke-[1.75]'} />
               </div>
               <span
-                className={`text-[10px] mt-0.5 tracking-tight transition-all duration-200 ${
+                className={`text-[9px] sm:text-[10px] mt-0.5 tracking-tight truncate max-w-full leading-tight transition-all duration-200 ${
                   isActive ? 'font-bold text-teal-800' : 'font-medium text-slate-500'
                 }`}
               >

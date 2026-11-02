@@ -63,7 +63,7 @@ export class AdminVerificationService {
     const res = await db.query<any>(
       `SELECT 
         v.id, v.user_id, v.status, v.screening_answers, v.document_type,
-        v.document_file_name, v.document_file_type, v.document_file_size,
+        v.document_file_name, v.document_file_type, v.document_file_size, v.document_file_data,
         v.rejection_reason, v.reviewed_by, v.reviewed_at, v.created_at, v.updated_at,
         u.name as user_name, u.email as user_email, u.phone as user_phone, u.avatar_url as user_avatar,
         u.gender, u.date_of_birth,
@@ -111,6 +111,7 @@ export class AdminVerificationService {
       documentFileName: r.document_file_name,
       documentFileType: r.document_file_type,
       documentFileSize: Number(r.document_file_size) || 0,
+      documentFileData: r.document_file_data || null,
       rejectionReason: r.rejection_reason || null,
       submittedAt: r.created_at ? new Date(r.created_at).toISOString() : new Date().toISOString(),
       reviewedAt: r.reviewed_at ? new Date(r.reviewed_at).toISOString() : null,

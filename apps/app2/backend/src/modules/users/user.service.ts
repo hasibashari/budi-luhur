@@ -339,42 +339,44 @@ export class UserService {
         ],
       );
 
-      // 3. Create or update initial reminder schedule
-      const schedId = `sch_${Date.now().toString().slice(-6)}`;
-      const tabletName =
-        data.schedule?.tabletName ||
-        (pillType === 'Mini Pil'
-          ? 'Mini Pil / Progestin (28 Tablet)'
-          : 'Pil KB Kombinasi (28 Tablet)');
-      const instructions =
-        data.schedule?.instructions ||
-        (pillType === 'Mini Pil'
-          ? 'Minum 1 tablet setiap hari pada jam yang sama persis (toleransi keterlambatan maksimal 3 jam).'
-          : 'Minum 1 tablet setiap hari pada jam yang sama setelah makan malam atau sebelum tidur.');
-      const timeSlot = data.schedule?.timeSlot || data.selectedTime || '20:00';
-      const dayOfWeek = data.schedule?.dayOfWeek || data.selectedDay || 'Setiap Hari';
+      // 3. Create or update initial reminder schedule (only if explicitly provided)
+      if (data.schedule && data.schedule.timeSlot) {
+        const schedId = `sch_${Date.now().toString().slice(-6)}`;
+        const tabletName =
+          data.schedule?.tabletName ||
+          (pillType === 'Mini Pil'
+            ? 'Mini Pil / Progestin (28 Tablet)'
+            : 'Pil KB Kombinasi (28 Tablet)');
+        const instructions =
+          data.schedule?.instructions ||
+          (pillType === 'Mini Pil'
+            ? 'Minum 1 tablet setiap hari pada jam yang sama persis (toleransi keterlambatan maksimal 3 jam).'
+            : 'Minum 1 tablet setiap hari pada jam yang sama setelah makan malam atau sebelum tidur.');
+        const timeSlot = data.schedule.timeSlot;
+        const dayOfWeek = data.schedule?.dayOfWeek || 'Setiap Hari';
 
-      await client.query(
-        `INSERT INTO reminder_schedules (
-          id, user_id, tablet_name, dosage, frequency, day_of_week, time_slot, is_enabled, remind_15min_before, instructions, status
-        ) VALUES ($1, $2, $3, $4, $5, $6, $7, true, $8, $9, 'Aktif')`,
-        [
+        await client.query(
+          `INSERT INTO reminder_schedules (
+            id, user_id, tablet_name, dosage, frequency, day_of_week, time_slot, is_enabled, remind_15min_before, instructions, status
+          ) VALUES ($1, $2, $3, $4, $5, $6, $7, true, $8, $9, 'Aktif')`,
+          [
+            schedId,
+            userId,
+            tabletName,
+            data.schedule?.dosage || '1 tablet',
+            data.schedule?.frequency || 'daily',
+            dayOfWeek,
+            timeSlot,
+            data.schedule?.remind15MinBefore ?? true,
+            instructions,
+          ],
+        );
+
+        await client.query(`INSERT INTO schedule_time_slots (schedule_id, time) VALUES ($1, $2)`, [
           schedId,
-          userId,
-          tabletName,
-          data.schedule?.dosage || '1 tablet',
-          data.schedule?.frequency || 'daily',
-          dayOfWeek,
           timeSlot,
-          data.schedule?.remind15MinBefore ?? true,
-          instructions,
-        ],
-      );
-
-      await client.query(`INSERT INTO schedule_time_slots (schedule_id, time) VALUES ($1, $2)`, [
-        schedId,
-        timeSlot,
-      ]);
+        ]);
+      }
 
       // 4. Save Screening Answers & Verification Document if provided
       if (data.document || data.screening) {
