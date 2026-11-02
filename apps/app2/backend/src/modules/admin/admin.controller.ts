@@ -9,7 +9,9 @@ export class AdminController {
       res.json(stats);
     } catch (error: any) {
       console.error('AdminController.getStats error:', error);
-      res.status(500).json({ success: false, error: 'Gagal memuat statistik fasilitas kesehatan.' });
+      res
+        .status(500)
+        .json({ success: false, error: 'Gagal memuat statistik fasilitas kesehatan.' });
     }
   }
 
@@ -196,7 +198,9 @@ export class AdminController {
       const userId = String(req.params.userId);
       const detail = await AdminService.getVerificationDetail(userId);
       if (!detail) {
-        res.status(404).json({ success: false, error: 'Data verifikasi pengguna tidak ditemukan.' });
+        res
+          .status(404)
+          .json({ success: false, error: 'Data verifikasi pengguna tidak ditemukan.' });
         return;
       }
       res.json({ success: true, data: detail });
@@ -211,7 +215,9 @@ export class AdminController {
       const userId = String(req.params.userId);
       const doc = await AdminService.getVerificationDocument(userId);
       if (!doc || !doc.document_file_data) {
-        res.status(404).json({ success: false, error: 'Dokumen tidak ditemukan atau belum diunggah.' });
+        res
+          .status(404)
+          .json({ success: false, error: 'Dokumen tidak ditemukan atau belum diunggah.' });
         return;
       }
 
@@ -262,7 +268,9 @@ export class AdminController {
       const adminId = req.user?.id || 'adm_1';
       const reason = req.body?.reason;
       if (!reason || !reason.trim()) {
-        res.status(400).json({ success: false, error: 'Alasan penolakan pendaftaran wajib disertakan.' });
+        res
+          .status(400)
+          .json({ success: false, error: 'Alasan penolakan pendaftaran wajib disertakan.' });
         return;
       }
       const result = await AdminService.rejectVerification(userId, adminId, reason);
