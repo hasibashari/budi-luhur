@@ -130,7 +130,6 @@ export default function UserManagementView() {
       schoolOrOrg: user.schoolOrOrg || DEFAULT_SCHOOL_ORG,
       assignedDoctor: user.schoolOrOrg || DEFAULT_SCHOOL_ORG,
       medicalNotes: user.medicalNotes || '',
-      timeSlot: user.timeSlot || '20:00',
     });
   };
 
@@ -152,7 +151,6 @@ export default function UserManagementView() {
           riskLevel: formData.riskLevel,
           schoolOrOrg: formData.schoolOrOrg || formData.assignedDoctor,
           medicalNotes: formData.medicalNotes,
-          timeSlot: formData.timeSlot || '20:00',
         });
 
         if (res.success) {
@@ -172,7 +170,6 @@ export default function UserManagementView() {
           riskLevel: formData.riskLevel,
           schoolOrOrg: formData.schoolOrOrg || formData.assignedDoctor || 'Puskesmas / Faskes Terdaftar',
           medicalNotes: formData.medicalNotes,
-          timeSlot: formData.timeSlot || '20:00',
         });
 
         if (res.success) {

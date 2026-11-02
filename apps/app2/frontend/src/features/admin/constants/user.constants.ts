@@ -32,7 +32,6 @@ export interface UserFormData {
   schoolOrOrg?: string;
   assignedDoctor?: string;
   medicalNotes: string;
-  timeSlot?: string;
 }
 
 export const INITIAL_USER_FORM_DATA: UserFormData = {
@@ -45,5 +44,4 @@ export const INITIAL_USER_FORM_DATA: UserFormData = {
   schoolOrOrg: DEFAULT_SCHOOL_ORG,
   assignedDoctor: DEFAULT_SCHOOL_ORG,
   medicalNotes: '',
-  timeSlot: '20:00',
 };

@@ -87,35 +87,13 @@ export class AdminService {
     return AdminArticleService.deleteAdminArticle(articleId);
   }
 
-  // ─── SCHEDULE MANAGEMENT ──────────────────────────────────────────────────
+  // ─── SCHEDULE MONITORING ──────────────────────────────────────────────────
   static getSchedules() {
     return AdminScheduleService.getSchedules();
   }
 
   static getScheduleById(scheduleId: string) {
     return AdminScheduleService.getScheduleById(scheduleId);
-  }
-
-  static createSchedule(data: {
-    userId?: string;
-    patientId?: string;
-    medicationName: string;
-    dosage: string;
-    frequency: string;
-    dayOfWeek?: string;
-    timeSlots: string[];
-    category?: 'Pil KB Kombinasi' | 'Pil KB Progestin' | 'Suplemen Tambahan';
-    instructions?: string;
-  }) {
-    return AdminScheduleService.createSchedule(data);
-  }
-
-  static updateSchedule(scheduleId: string, data: any) {
-    return AdminScheduleService.updateSchedule(scheduleId, data);
-  }
-
-  static deleteSchedule(scheduleId: string) {
-    return AdminScheduleService.deleteSchedule(scheduleId);
   }
 
   // ─── USER VERIFICATION MANAGEMENT ──────────────────────────────────────────

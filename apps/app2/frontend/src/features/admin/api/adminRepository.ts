@@ -54,7 +54,6 @@ export async function createUserAction(data: {
   riskLevel?: string;
   schoolOrOrg?: string;
   medicalNotes?: string;
-  timeSlot?: string;
 }): Promise<{ success: boolean; user?: ManagedUser; error?: string }> {
   try {
     const res = await apiClient.post<{ success: boolean; user: ManagedUser }>('/admin/users', data);

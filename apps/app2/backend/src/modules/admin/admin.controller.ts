@@ -152,38 +152,6 @@ export class AdminController {
     }
   }
 
-  static async createSchedule(req: AuthRequest, res: Response) {
-    try {
-      const schedule = await AdminService.createSchedule(req.body);
-      res.status(201).json({ success: true, schedule });
-    } catch (error: any) {
-      console.error('AdminController.createSchedule error:', error);
-      res.status(500).json({ success: false, error: 'Gagal membuat jadwal.' });
-    }
-  }
-
-  static async updateSchedule(req: AuthRequest, res: Response) {
-    try {
-      const id = String(req.params.id);
-      const result = await AdminService.updateSchedule(id, req.body);
-      res.json(result);
-    } catch (error: any) {
-      console.error('AdminController.updateSchedule error:', error);
-      res.status(500).json({ success: false, error: 'Gagal memperbarui jadwal.' });
-    }
-  }
-
-  static async deleteSchedule(req: AuthRequest, res: Response) {
-    try {
-      const id = String(req.params.id);
-      const result = await AdminService.deleteSchedule(id);
-      res.json(result);
-    } catch (error: any) {
-      console.error('AdminController.deleteSchedule error:', error);
-      res.status(500).json({ success: false, error: 'Gagal menghapus jadwal.' });
-    }
-  }
-
   static async getComplianceReports(_req: AuthRequest, res: Response) {
     try {
       const reports = await AdminService.getComplianceReports();

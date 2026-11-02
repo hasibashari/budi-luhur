@@ -189,9 +189,6 @@ export class AdminUserService {
     riskLevel?: string;
     schoolOrOrg?: string;
     medicalNotes?: string;
-    timeSlot?: string;
-    schedule?: any;
-    tabletName?: string;
   }) {
     const newId = `usr_${Date.now().toString().slice(-6)}`;
     const avatarUrl = null;
@@ -222,19 +219,6 @@ export class AdminUserService {
          VALUES ($1, $2, $3, $4, 'Aktif', $5)`,
         [newId, friendCode, school, data.riskLevel || 'Rendah', data.medicalNotes || null],
       );
-
-      if (data.timeSlot || data.schedule) {
-        await client.query(
-          `INSERT INTO reminder_schedules (id, user_id, tablet_name, dosage, frequency, day_of_week, time_slot, is_enabled, status)
-           VALUES ($1, $2, $3, '1 tablet', 'daily', 'Setiap Hari', $4, true, 'Aktif')`,
-          [
-            `sch_${newId}`,
-            newId,
-            data.tabletName || 'Pil KB Kombinasi (28 Tablet)',
-            data.timeSlot || '20:00',
-          ],
-        );
-      }
     });
 
     return this.getManagedUserById(newId);
@@ -280,15 +264,6 @@ export class AdminUserService {
             data.medicalNotes ?? null,
             userId,
           ],
-        );
-      }
-
-      if (data.timeSlot) {
-        await client.query(
-          `UPDATE reminder_schedules
-           SET time_slot = $1, updated_at = CURRENT_TIMESTAMP
-           WHERE user_id = $2`,
-          [data.timeSlot, userId],
         );
       }
     });
