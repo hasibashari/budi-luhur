@@ -47,27 +47,42 @@ interface WibNow {
 
 /** Ambil tanggal & menit saat ini menurut zona waktu WIB (bukan timezone device). */
 function getWibNow(now: Date = new Date()): WibNow {
-  const parts = new Intl.DateTimeFormat('en-GB', {
-    timeZone: TIMEZONE,
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false,
-  }).formatToParts(now);
+  try {
+    const parts = new Intl.DateTimeFormat('en-GB', {
+      timeZone: TIMEZONE,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+    }).formatToParts(now);
 
-  const get = (type: string) => parts.find(part => part.type === type)?.value || '00';
-  const year = get('year');
-  const month = get('month');
-  const day = get('day');
-  const hour = Number(get('hour')) % 24;
-  const minute = Number(get('minute'));
+    const get = (type: string) => parts.find(part => part.type === type)?.value || '00';
+    const year = get('year');
+    const month = get('month');
+    const day = get('day');
+    const hour = Number(get('hour')) % 24;
+    const minute = Number(get('minute'));
 
-  return {
-    dateKey: `${year}-${month}-${day}`,
-    minutes: hour * 60 + minute,
-  };
+    return {
+      dateKey: `${year}-${month}-${day}`,
+      minutes: hour * 60 + minute,
+    };
+  } catch {
+    // Fallback untuk perangkat lama tanpa dukungan timezone Asia/Jakarta di Intl
+    const utcTime = now.getTime() + now.getTimezoneOffset() * 60000;
+    const wibTime = new Date(utcTime + 7 * 3600000);
+    const year = wibTime.getFullYear();
+    const month = String(wibTime.getMonth() + 1).padStart(2, '0');
+    const day = String(wibTime.getDate()).padStart(2, '0');
+    const hour = wibTime.getHours();
+    const minute = wibTime.getMinutes();
+    return {
+      dateKey: `${year}-${month}-${day}`,
+      minutes: hour * 60 + minute,
+    };
+  }
 }
 
 /** Ubah "HH:mm" menjadi total menit. Null jika format tidak valid. */

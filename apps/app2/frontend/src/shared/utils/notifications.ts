@@ -68,7 +68,7 @@ export async function subscribeToPush(): Promise<boolean> {
   if (!('serviceWorker' in navigator) || !isNotificationSupported() || Notification.permission !== 'granted') return false
   try {
     const registration = await registerPushServiceWorker()
-    if (!registration) return false
+    if (!registration || !registration.pushManager) return false
     const { data } = await apiClient.get<{ publicKey: string | null }>('/notifications/public-key')
     if (!data.publicKey) return false
     const existing = await registration.pushManager.getSubscription()
@@ -76,7 +76,7 @@ export async function subscribeToPush(): Promise<boolean> {
     await apiClient.post('/notifications/subscribe', subscription.toJSON())
     return true
   } catch (error) {
-    console.error('Failed to register push subscription:', error)
+    console.warn('Failed to register push subscription:', error)
     return false
   }
 }
@@ -86,7 +86,11 @@ export async function subscribeToPush(): Promise<boolean> {
  */
 export function isNotificationSupported(): boolean {
   if (typeof window === 'undefined') return false
-  return 'Notification' in window
+  try {
+    return 'Notification' in window && Boolean(window.Notification)
+  } catch {
+    return false
+  }
 }
 
 /**
@@ -94,7 +98,11 @@ export function isNotificationSupported(): boolean {
  */
 export function getNotificationPermission(): NotificationPermission | 'unsupported' {
   if (!isNotificationSupported()) return 'unsupported'
-  return Notification.permission
+  try {
+    return Notification.permission || 'unsupported'
+  } catch {
+    return 'unsupported'
+  }
 }
 
 /**
@@ -104,11 +112,29 @@ export async function requestNotificationPermission(): Promise<NotificationPermi
   if (!isNotificationSupported()) return 'unsupported'
 
   try {
-    const permission = await Notification.requestPermission()
-    return permission
+    if (typeof Notification.requestPermission !== 'function') return 'unsupported'
+    let permission: NotificationPermission
+    const result = Notification.requestPermission()
+    if (result && typeof (result as any).then === 'function') {
+      permission = await result
+    } else {
+      // Legacy callback-based browser support
+      permission = await new Promise(resolve => {
+        try {
+          Notification.requestPermission(perm => resolve(perm))
+        } catch {
+          resolve(Notification.permission || 'denied')
+        }
+      })
+    }
+    return permission || 'unsupported'
   } catch (error) {
-    console.error('Failed to request notification permission:', error)
-    return Notification.permission
+    console.warn('Failed to request notification permission:', error)
+    try {
+      return Notification.permission || 'unsupported'
+    } catch {
+      return 'unsupported'
+    }
   }
 }
 

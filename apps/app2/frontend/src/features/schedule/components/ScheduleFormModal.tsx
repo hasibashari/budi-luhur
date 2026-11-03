@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Calendar as CalendarIcon, Clock, Bell, Info, X, BookOpen, ExternalLink } from 'lucide-react';
+import { Calendar as CalendarIcon, Clock, Bell, Info, X, BookOpen, ExternalLink, Volume2 } from 'lucide-react';
 import { Button } from '@/src/shared/components/ui/Button';
 import { CreateDailySchedulePayload } from '../types';
 
@@ -20,6 +20,19 @@ export interface ScheduleFormModalProps {
   onClose: () => void;
   onSave: (data: FormState) => Promise<void>;
   isSaving: boolean;
+  onTestSound?: () => void;
+}
+
+function normalizeTimeSlot(val?: string): string {
+  if (!val) return '20:00';
+  const trimmed = val.trim();
+  const parts = trimmed.split(':');
+  if (parts.length >= 2) {
+    const hh = parts[0].padStart(2, '0');
+    const mm = parts[1].padStart(2, '0');
+    return `${hh}:${mm}`;
+  }
+  return trimmed;
 }
 
 export function ScheduleFormModal({
@@ -28,12 +41,27 @@ export function ScheduleFormModal({
   onClose,
   onSave,
   isSaving,
+  onTestSound,
 }: ScheduleFormModalProps) {
-  const [form, setForm] = useState<FormState>({ ...initial });
+  const [form, setForm] = useState<FormState>({
+    ...initial,
+    title: initial.title || 'Minum Pil KB',
+    timeSlot: normalizeTimeSlot(initial.timeSlot),
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await onSave(form);
+    const cleanTitle = (form.title || '').trim() || 'Minum Pil KB';
+    const cleanTime = normalizeTimeSlot(form.timeSlot);
+    try {
+      await onSave({
+        ...form,
+        title: cleanTitle,
+        timeSlot: cleanTime,
+      });
+    } catch (error) {
+      console.error('Failed to submit schedule form:', error);
+    }
   };
 
   const set = <K extends keyof FormState>(key: K, value: FormState[K]) =>
@@ -134,6 +162,7 @@ export function ScheduleFormModal({
               </div>
               <input
                 type='time'
+                step='60'
                 value={form.timeSlot}
                 onChange={e => set('timeSlot', e.target.value)}
                 className='bg-white px-2.5 py-1 rounded-lg border border-slate-200 text-xs font-bold text-slate-800 outline-none focus:border-teal-600'
@@ -180,12 +209,24 @@ export function ScheduleFormModal({
           </div>
 
           {/* Info: Harian */}
-          <div className='p-3 rounded-2xl bg-slate-50 border border-slate-200 flex items-center gap-2 text-xs text-slate-600'>
-            <Info size={14} className='text-teal-600 shrink-0' />
-            <span>
-              Jadwal ini akan berlaku <strong>setiap hari</strong> pada jam yang ditentukan.
+          <div className='p-3 rounded-2xl bg-teal-50/50 border border-teal-100 text-teal-800 text-xs flex items-center gap-2.5'>
+            <span className='text-base'>🗓️</span>
+            <span className='leading-relaxed'>
+              Alarm akan berbunyi <strong>setiap hari</strong> pada jam yang ditentukan.
             </span>
           </div>
+
+          {/* Sound test preview button */}
+          {onTestSound && (
+            <button
+              type='button'
+              onClick={onTestSound}
+              className='inline-flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-semibold border border-slate-200 transition-colors cursor-pointer'
+            >
+              <Volume2 size={14} className='text-teal-600' />
+              <span>Uji Bunyi Suara Alarm</span>
+            </button>
+          )}
 
           {/* Action Buttons */}
           <div className='flex items-center gap-2 pt-3 border-t border-slate-100'>

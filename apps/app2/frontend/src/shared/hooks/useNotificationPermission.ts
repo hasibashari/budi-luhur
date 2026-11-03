@@ -11,16 +11,22 @@ import {
 function subscribePermission(callback: () => void) {
   if (typeof window === 'undefined') return () => {}
   // Check permission changes via permissions API if supported
-  if ('permissions' in navigator) {
+  if ('permissions' in navigator && typeof navigator.permissions?.query === 'function') {
     let statusObj: PermissionStatus | null = null
-    navigator.permissions.query({ name: 'notifications' as PermissionName }).then((status) => {
-      statusObj = status
-      status.addEventListener('change', callback)
-    }).catch(() => {})
+    try {
+      navigator.permissions.query({ name: 'notifications' as PermissionName }).then((status) => {
+        statusObj = status
+        status.addEventListener('change', callback)
+      }).catch(() => {})
+    } catch {
+      // Ignore browsers that throw synchronous error on 'notifications' permission name
+    }
 
     return () => {
       if (statusObj) {
-        statusObj.removeEventListener('change', callback)
+        try {
+          statusObj.removeEventListener('change', callback)
+        } catch {}
       }
     }
   }
@@ -53,16 +59,26 @@ export function useNotificationPermission() {
     try {
       const result = await requestNotificationPermission()
       if (result === 'granted') {
-        await subscribeToPush()
+        try {
+          await subscribeToPush()
+        } catch {
+          // Push subscription is optional
+        }
         if (sendWelcome) {
-          await showSystemNotification('Pengingat MediCore Aktif! 🔔', {
-            body: 'Anda akan menerima notifikasi suara dan getar saat jadwal minum obat tiba.',
-            tag: 'welcome-notification',
-            url: '/user/dashboard',
-          })
+          try {
+            await showSystemNotification('Pengingat MediCore Aktif! 🔔', {
+              body: 'Anda akan menerima notifikasi suara dan getar saat jadwal minum obat tiba.',
+              tag: 'welcome-notification',
+              url: '/user/dashboard',
+            })
+          } catch {
+            // Notification welcome display is optional
+          }
         }
         return true
       }
+      return false
+    } catch {
       return false
     } finally {
       setRequesting(false)

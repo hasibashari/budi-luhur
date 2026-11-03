@@ -1,6 +1,8 @@
 import { useState } from 'react';
-import { Plus, Sparkles } from 'lucide-react';
+import { Plus, Sparkles, Volume2, HelpCircle } from 'lucide-react';
 import { Button } from '@/src/shared/components/ui/Button';
+import { Card } from '@/src/shared/components/ui/Card';
+import { playNotificationTone } from '@/src/shared/utils/notifications';
 import { ConfirmDeleteDialog } from '@/src/shared/components/ConfirmDeleteDialog';
 import useNotificationPermission from '@/src/shared/hooks/useNotificationPermission';
 import { useDailySchedules } from '../hooks/useDailySchedules';
@@ -14,7 +16,7 @@ import {
 } from '../components';
 
 const DEFAULT_FORM: FormState = {
-  title: '',
+  title: 'Minum Pil KB',
   timeSlot: '20:00',
   notes: '',
   remind15MinBefore: true,
@@ -33,20 +35,36 @@ export default function ScheduleView() {
   const [isSaving, setIsSaving] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<DailySchedule | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isTestingSound, setIsTestingSound] = useState(false);
 
   const showToast = (msg: string) => {
     setToast(msg);
     setTimeout(() => setToast(null), 3200);
   };
 
+  const handleTestSound = () => {
+    setIsTestingSound(true);
+    playNotificationTone();
+    showToast('🔔 Nada alarm pengingat berbunyi!');
+    setTimeout(() => setIsTestingSound(false), 1200);
+  };
+
   /**
    * Pastikan izin notifikasi sudah diberikan sebelum jadwal aktif.
    * `requestNotificationPermission()` juga mendaftarkan Web Push subscription,
    * sehingga pengingat tetap bisa dikirim backend saat aplikasi tertutup.
+   * Dibungkus try/catch agar tidak pernah melempar error tak tertangani di perangkat non-standar.
    */
   const ensureNotificationPermission = async (): Promise<boolean> => {
     if (isGranted) return true;
-    return requestNotificationPermission();
+    try {
+      return await Promise.race([
+        requestNotificationPermission(),
+        new Promise<boolean>(resolve => setTimeout(() => resolve(false), 2500)),
+      ]);
+    } catch {
+      return false;
+    }
   };
 
   const handleOpenAdd = () => {
@@ -69,62 +87,77 @@ export default function ScheduleView() {
   };
 
   const handleSaveModal = async (data: FormState) => {
-    // Minta izin notifikasi lebih dulu selagi masih dalam konteks klik user.
-    const permissionOk = data.isEnabled === false ? true : await ensureNotificationPermission();
-
     setIsSaving(true);
     try {
+      const cleanTitle = (data.title || '').trim() || 'Minum Pil KB';
+      const cleanTime = (data.timeSlot || '').trim() || '20:00';
+
+      let res: { success: boolean; error?: string };
       if (modalMode === 'create') {
-        const res = await createSchedule({
-          title: data.title,
-          timeSlot: data.timeSlot,
-          notes: data.notes,
-          remind15MinBefore: data.remind15MinBefore,
-          isEnabled: data.isEnabled,
+        res = await createSchedule({
+          title: cleanTitle,
+          timeSlot: cleanTime,
+          notes: (data.notes || '').trim(),
+          remind15MinBefore: data.remind15MinBefore ?? true,
+          isEnabled: data.isEnabled ?? true,
         });
-        if (res.success) {
-          showToast(
-            permissionOk
-              ? 'Jadwal baru berhasil dibuat! 🎉'
-              : 'Jadwal tersimpan, tetapi izin notifikasi belum aktif. 🔕',
-          );
-          setIsModalOpen(false);
-        } else {
-          showToast(res.error || 'Gagal membuat jadwal.');
-        }
       } else {
         if (!data.id) return;
-        const res = await updateSchedule(data.id, {
-          title: data.title,
-          timeSlot: data.timeSlot,
-          notes: data.notes,
-          remind15MinBefore: data.remind15MinBefore,
+        res = await updateSchedule(data.id, {
+          title: cleanTitle,
+          timeSlot: cleanTime,
+          notes: (data.notes || '').trim(),
+          remind15MinBefore: data.remind15MinBefore ?? true,
         });
-        if (res.success) {
-          showToast('Jadwal berhasil diperbarui! ✨');
-          setIsModalOpen(false);
-        } else {
-          showToast(res.error || 'Gagal memperbarui jadwal.');
-        }
       }
+
+      if (!res.success) {
+        showToast(res.error || (modalMode === 'create' ? 'Gagal membuat jadwal.' : 'Gagal memperbarui jadwal.'));
+        return;
+      }
+
+      // Berhasil disimpan ke server/DB, tutup modal segera
+      setIsModalOpen(false);
+
+      // Minta izin notifikasi secara aman (non-blocking untuk proses simpan)
+      let permissionOk = isGranted;
+      if (data.isEnabled !== false && !isGranted) {
+        permissionOk = await ensureNotificationPermission();
+      }
+
+      showToast(
+        modalMode === 'create'
+          ? permissionOk
+            ? 'Jadwal baru berhasil dibuat! 🎉'
+            : 'Jadwal tersimpan, tetapi izin notifikasi belum aktif. 🔕'
+          : 'Jadwal berhasil diperbarui! ✨',
+      );
+    } catch (err: any) {
+      console.error('ScheduleView handleSaveModal error:', err);
+      showToast(err?.message || 'Terjadi kesalahan sistem saat menyimpan jadwal.');
     } finally {
       setIsSaving(false);
     }
   };
 
   const handleToggle = async (id: string, next: boolean) => {
-    // Saat mengaktifkan jadwal, pastikan izin notifikasi sudah diberikan.
-    const permissionOk = next ? await ensureNotificationPermission() : true;
-
     const res = await toggleSchedule(id, next);
+    if (!res.success) {
+      showToast(res.error || 'Gagal memperbarui status jadwal.');
+      return;
+    }
+
+    let permissionOk = isGranted;
+    if (next && !isGranted) {
+      permissionOk = await ensureNotificationPermission();
+    }
+
     showToast(
-      res.success
-        ? next
-          ? permissionOk
-            ? 'Jadwal diaktifkan 🔔'
-            : 'Jadwal aktif, tetapi izin notifikasi ditolak. 🔕'
-          : 'Jadwal dinonaktifkan.'
-        : res.error || 'Gagal memperbarui status jadwal.',
+      next
+        ? permissionOk
+          ? 'Jadwal diaktifkan 🔔'
+          : 'Jadwal aktif, tetapi izin notifikasi ditolak. 🔕'
+        : 'Jadwal dinonaktifkan.',
     );
   };
 
@@ -151,34 +184,53 @@ export default function ScheduleView() {
         </div>
       )}
 
-      {/* Page Header */}
+      {/* Screen Header */}
       <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-3'>
         <div>
           <div className='flex items-center gap-2'>
             <h2 className='text-xl sm:text-2xl font-black text-slate-900 tracking-tight'>
-              Jadwal Harian
+              Pengaturan Alarm Pil KB
             </h2>
             <span className='px-2.5 py-0.5 rounded-full bg-teal-100 text-teal-700 text-[11px] font-bold'>
-              Pengingat
+              Harian
             </span>
           </div>
           <p className='text-xs sm:text-sm text-slate-500 mt-0.5'>
-            Atur dan kelola pengingat harian untuk menjaga konsistensi rutin kesehatanmu
+            Atur dan kelola waktu rutin pengingat minum Pil KB sesuai kebutuhanmu
           </p>
         </div>
 
-        {schedules.length > 0 && (
+        {/* Action Header Buttons */}
+        <div className='flex items-center gap-2 self-start sm:self-auto'>
           <Button
-            variant='primary'
+            variant='outline'
             size='sm'
             shape='pill'
-            icon={<Plus size={14} />}
-            onClick={handleOpenAdd}
-            className='self-start sm:self-auto text-xs font-bold shadow-sm shadow-teal-500/20'
+            icon={
+              <Volume2
+                size={14}
+                className={isTestingSound ? 'animate-pulse text-teal-600' : ''}
+              />
+            }
+            onClick={handleTestSound}
+            className='text-xs font-bold'
           >
-            Tambah Jadwal
+            {isTestingSound ? 'Membunyikan...' : 'Uji Suara Alarm'}
           </Button>
-        )}
+
+          {schedules.length > 0 && (
+            <Button
+              variant='primary'
+              size='sm'
+              shape='pill'
+              icon={<Plus size={14} />}
+              onClick={handleOpenAdd}
+              className='text-xs font-bold shadow-sm shadow-teal-500/20'
+            >
+              Tambah Jadwal
+            </Button>
+          )}
+        </div>
       </div>
 
       {/* Content */}
@@ -186,24 +238,46 @@ export default function ScheduleView() {
         <div className='flex items-center justify-center py-20 w-full'>
           <div className='animate-spin rounded-full h-8 w-8 border-2 border-teal-500 border-t-transparent' />
         </div>
-      ) : schedules.length === 0 ? (
-        <ScheduleEmptyState onAdd={handleOpenAdd} />
       ) : (
+        /* Responsive Grid: Mobile 1-col -> Tablet/Desktop 2-col */
         <div className='grid grid-cols-1 md:grid-cols-12 gap-5 md:gap-6 items-start'>
-          {/* Left Column: Schedule Cards */}
-          <div className='md:col-span-7 flex flex-col gap-4'>
-            {schedules.map(schedule => (
-              <ScheduleCard
-                key={schedule.id}
-                schedule={schedule}
-                onToggle={handleToggle}
-                onEdit={handleOpenEdit}
-                onDelete={setDeleteTarget}
-              />
-            ))}
+          {/* LEFT COLUMN: Alarm Control Card or Empty State (md:col-span-7) */}
+          <div className='md:col-span-7 flex flex-col gap-5'>
+            {schedules.length === 0 ? (
+              <ScheduleEmptyState onAdd={handleOpenAdd} />
+            ) : (
+              schedules.map(schedule => (
+                <ScheduleCard
+                  key={schedule.id}
+                  schedule={schedule}
+                  onToggle={handleToggle}
+                  onEdit={handleOpenEdit}
+                  onDelete={setDeleteTarget}
+                />
+              ))
+            )}
+
+            {/* Quick Helper: How Pilluna's reminder works */}
+            <Card padding='md' className='bg-slate-50 border border-slate-200/80'>
+              <div className='flex items-start gap-3'>
+                <div className='w-8 h-8 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center shrink-0 mt-0.5'>
+                  <HelpCircle size={16} />
+                </div>
+                <div>
+                  <h4 className='text-xs sm:text-sm font-bold text-slate-800'>
+                    Bagaimana Pengingat Pilluna Bekerja?
+                  </h4>
+                  <p className='text-xs text-slate-500 mt-1 leading-relaxed'>
+                    Saat waktu alarm tiba, aplikasi akan membunyikan nada chime pengingat dan
+                    menampilkan banner interaktif di layar. Kamu bisa mencatat konsumsi Pil KB dengan
+                    satu sentuhan.
+                  </p>
+                </div>
+              </div>
+            </Card>
           </div>
 
-          {/* Right Column: Tips & Info */}
+          {/* RIGHT COLUMN: Medical Guidelines & FAQs (md:col-span-5) */}
           <div className='md:col-span-5 flex flex-col gap-4'>
             <ScheduleGuideCard />
           </div>
@@ -218,6 +292,7 @@ export default function ScheduleView() {
           onClose={() => setIsModalOpen(false)}
           onSave={handleSaveModal}
           isSaving={isSaving}
+          onTestSound={handleTestSound}
         />
       )}
 

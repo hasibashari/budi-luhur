@@ -82,11 +82,14 @@ export class ScheduleService {
       frequency = 'daily',
     } = input;
 
+    const cleanTime = (timeSlot || '20:00').trim().slice(0, 5);
+    const cleanTitle = (title || 'Minum Pil KB').trim();
+
     await db.query(
       `INSERT INTO reminder_schedules
          (id, user_id, tablet_name, dosage, frequency, day_of_week, time_slot, is_enabled, remind_15min_before, instructions, status)
        VALUES ($1, $2, $3, '1 unit', $4, 'Setiap Hari', $5, $6, $7, $8, 'Aktif')`,
-      [id, userId, title, frequency, timeSlot, isEnabled, remind15MinBefore, notes || ''],
+      [id, userId, cleanTitle, frequency, cleanTime, isEnabled, remind15MinBefore, notes || ''],
     );
 
     const res = await db.query<any>(
@@ -108,13 +111,14 @@ export class ScheduleService {
     // Support both `title` and `tablet_name`
     if (data.title !== undefined) {
       updates.push(`tablet_name = $${idx++}`);
-      params.push(data.title);
+      params.push(data.title.trim());
     }
     // Support both `time` and `timeSlot`
     const newTime = data.time ?? data.timeSlot;
     if (newTime !== undefined) {
+      const cleanTime = newTime.trim().slice(0, 5);
       updates.push(`time_slot = $${idx++}`);
-      params.push(newTime);
+      params.push(cleanTime);
     }
     if (data.isEnabled !== undefined) {
       updates.push(`is_enabled = $${idx++}`);
