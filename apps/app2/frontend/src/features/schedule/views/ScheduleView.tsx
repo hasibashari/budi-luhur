@@ -1,7 +1,6 @@
 import { useState } from 'react';
-import { Plus, Sparkles, Volume2, HelpCircle } from 'lucide-react';
+import { Sparkles, Volume2 } from 'lucide-react';
 import { Button } from '@/src/shared/components/ui/Button';
-import { Card } from '@/src/shared/components/ui/Card';
 import { playNotificationTone } from '@/src/shared/utils/notifications';
 import { ConfirmDeleteDialog } from '@/src/shared/components/ConfirmDeleteDialog';
 import useNotificationPermission from '@/src/shared/hooks/useNotificationPermission';
@@ -217,19 +216,6 @@ export default function ScheduleView() {
           >
             {isTestingSound ? 'Membunyikan...' : 'Uji Suara Alarm'}
           </Button>
-
-          {schedules.length === 0 && (
-            <Button
-              variant='primary'
-              size='sm'
-              shape='pill'
-              icon={<Plus size={14} />}
-              onClick={handleOpenAdd}
-              className='text-xs font-bold shadow-sm shadow-teal-500/20'
-            >
-              Atur Jadwal
-            </Button>
-          )}
         </div>
       </div>
 
@@ -253,44 +239,6 @@ export default function ScheduleView() {
                 onDelete={setDeleteTarget}
               />
             )}
-
-            {/* Quick Helper: How Pilluna's 4-stage reminder works */}
-            <Card padding='md' className='bg-slate-50 border border-slate-200/80'>
-              <div className='flex items-start gap-3'>
-                <div className='w-8 h-8 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center shrink-0 mt-0.5'>
-                  <HelpCircle size={16} />
-                </div>
-                <div className='space-y-1.5'>
-                  <h4 className='text-xs sm:text-sm font-bold text-slate-800'>
-                    Bagaimana Pengingat Otomatis Pilluna Bekerja?
-                  </h4>
-                  <p className='text-xs text-slate-500 leading-relaxed'>
-                    Kamu cukup menentukan <strong>satu jam patokan</strong> rutin setiap hari. Sistem akan mengawal kepatuhanmu secara dinamis:
-                  </p>
-                  <ul className='text-[11px] sm:text-xs text-slate-600 space-y-1 pt-1'>
-                    <li className='flex items-center gap-1.5'>
-                      <span>🌅</span>
-                      <span><strong>Pagi (07:00 WIB)</strong>: Notifikasi awal jadwal minum hari ini</span>
-                    </li>
-                    <li className='flex items-center gap-1.5'>
-                      <span>⏳</span>
-                      <span><strong>15 Menit Sebelum</strong>: Aba-aba persiapan minum pil & air putih</span>
-                    </li>
-                    <li className='flex items-center gap-1.5'>
-                      <span>🔔</span>
-                      <span><strong>Tepat Waktu</strong>: Alarm nada dering utama berbunyi</span>
-                    </li>
-                    <li className='flex items-center gap-1.5'>
-                      <span>🌙</span>
-                      <span><strong>Malam Hari (21:30 WIB)</strong>: Pengingat tambahan jika belum dicatat</span>
-                    </li>
-                  </ul>
-                  <p className='text-[11px] text-teal-700 italic pt-1'>
-                    💡 Begitu kamu menandai &ldquo;Sudah Minum&rdquo;, seluruh pengingat susulan untuk sisa hari itu otomatis dihentikan.
-                  </p>
-                </div>
-              </div>
-            </Card>
           </div>
 
           {/* RIGHT COLUMN: Medical Guidelines & FAQs (md:col-span-5) */}

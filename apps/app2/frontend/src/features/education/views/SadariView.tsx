@@ -10,7 +10,6 @@ import {
   ShieldAlert,
   ArrowRight,
   Clock,
-  Layers,
   HeartHandshake,
   BookOpen,
   Play,
@@ -20,7 +19,6 @@ import { Button } from '@/src/shared/components/ui/Button';
 import {
   SADARI_DEFINITION,
   SADARI_STEPS,
-  SADARI_PRESSURE_LEVELS,
   SADARI_WARNING_SIGNS,
   SADARI_REFERENCES,
 } from '../constants/sadari.constants';
@@ -227,46 +225,6 @@ export default function SadariView() {
 
       {/* Interactive Timing Calculator Widget */}
       <SadariTimingWidget />
-
-      {/* Panduan 3 Tingkatan Tekanan Raba (Palpasi) */}
-      <Card padding='md' className='border border-slate-200/80 bg-white shadow-2xs p-4 sm:p-5'>
-        <div className='flex items-center gap-2 mb-3'>
-          <div className='w-8 h-8 rounded-xl bg-teal-50 text-teal-700 flex items-center justify-center shrink-0 border border-teal-100'>
-            <Layers size={18} />
-          </div>
-          <div>
-            <h4 className='text-sm sm:text-base font-bold text-slate-900'>
-              Teknik Perabaan: 3 Tingkat Tekanan Jari
-            </h4>
-            <p className='text-xs text-slate-500'>
-              Gunakan bantalan 3 jari tengah (telunjuk, tengah, manis) dengan gerakan memutar
-              melingkar bertahap:
-            </p>
-          </div>
-        </div>
-
-        <div className='grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1'>
-          {SADARI_PRESSURE_LEVELS.map(level => (
-            <div
-              key={level.level}
-              className='bg-slate-50 p-3 sm:p-3.5 rounded-xl border border-slate-200/70 flex flex-col justify-between'
-            >
-              <div>
-                <div className='flex items-center gap-2 mb-1.5'>
-                  <span className='w-5 h-5 rounded-full bg-teal-100 text-teal-800 font-bold text-[10px] flex items-center justify-center'>
-                    {level.level}
-                  </span>
-                  <span className='text-xs font-bold text-slate-800'>{level.name}</span>
-                </div>
-                <span className='text-[10px] font-semibold text-teal-700 block mb-1'>
-                  Target: {level.target}
-                </span>
-                <p className='text-[11px] text-slate-600 leading-relaxed'>{level.description}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </Card>
 
       {/* 6 Langkah Standar SADARI */}
       <div>

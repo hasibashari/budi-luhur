@@ -10,9 +10,10 @@ import {
   RotateCcw,
   BookOpen,
   Info,
+  Layers,
 } from 'lucide-react';
 import { Button } from '@/src/shared/components/ui/Button';
-import { SADARI_STEPS, SadariStepDetail } from '../constants/sadari.constants';
+import { SADARI_STEPS, SADARI_PRESSURE_LEVELS, SadariStepDetail } from '../constants/sadari.constants';
 
 interface SadariGuidedModalProps {
   isOpen: boolean;
@@ -191,6 +192,47 @@ export const SadariGuidedModal: React.FC<SadariGuidedModalProps> = ({
               <p className='text-slate-700 leading-normal text-[11px] sm:text-xs'>{currentStep.tactileTip}</p>
             </div>
           </div>
+
+          {/* Teknik Perabaan: 3 Tingkat Tekanan Jari (Khusus Langkah Palpasi 5 & 6) */}
+          {[5, 6].includes(currentStep.step) && (
+            <div className='bg-slate-50/80 rounded-2xl p-3.5 sm:p-4 border border-slate-200/80 animate-fade-in'>
+              <div className='flex items-center gap-2 mb-2.5'>
+                <div className='w-7 h-7 rounded-lg bg-teal-50 text-teal-700 flex items-center justify-center shrink-0 border border-teal-100'>
+                  <Layers size={16} />
+                </div>
+                <div>
+                  <h5 className='text-xs sm:text-sm font-bold text-slate-900'>
+                    Teknik Perabaan: 3 Tingkat Tekanan Jari
+                  </h5>
+                  <p className='text-[10px] sm:text-[11px] text-slate-500'>
+                    Gunakan bantalan 3 jari tengah dengan gerakan memutar melingkar bertahap:
+                  </p>
+                </div>
+              </div>
+
+              <div className='grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1'>
+                {SADARI_PRESSURE_LEVELS.map(level => (
+                  <div
+                    key={level.level}
+                    className='bg-white p-2.5 sm:p-3 rounded-xl border border-slate-200/80 flex flex-col justify-between shadow-2xs'
+                  >
+                    <div>
+                      <div className='flex items-center gap-1.5 mb-1'>
+                        <span className='w-4.5 h-4.5 rounded-full bg-teal-100 text-teal-800 font-bold text-[10px] flex items-center justify-center shrink-0'>
+                          {level.level}
+                        </span>
+                        <span className='text-xs font-bold text-slate-800 truncate'>{level.name}</span>
+                      </div>
+                      <span className='text-[10px] font-semibold text-teal-700 block mb-1'>
+                        Target: {level.target}
+                      </span>
+                      <p className='text-[11px] text-slate-600 leading-relaxed'>{level.description}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Timer Helper */}
           <div className='bg-white border border-slate-200 rounded-2xl p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs'>

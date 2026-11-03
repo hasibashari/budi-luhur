@@ -8,7 +8,6 @@ import {
   BookOpen,
   ExternalLink,
   Volume2,
-  Sparkles,
 } from 'lucide-react';
 import { Button } from '@/src/shared/components/ui/Button';
 import { CreateDailySchedulePayload } from '../types';
@@ -217,35 +216,6 @@ export function ScheduleFormModal({
               onChange={e => set('remind15MinBefore', e.target.checked)}
               className='w-4.5 h-4.5 accent-teal-600 rounded-md cursor-pointer'
             />
-          </div>
-
-          {/* Otomatisasi Pengingat Cerdas */}
-          <div className='p-3.5 rounded-2xl bg-teal-50/60 border border-teal-200/80 text-teal-950 space-y-2 shadow-2xs'>
-            <div className='flex items-center gap-2 text-xs font-bold text-teal-900'>
-              <Sparkles size={14} className='text-teal-600' />
-              <span>Otomatisasi Pengingat Pilluna</span>
-            </div>
-            <p className='text-[11px] text-slate-600 leading-relaxed'>
-              Dengan mengatur jam di atas, sistem akan mengawal kepatuhanmu secara otomatis:
-            </p>
-            <div className='grid grid-cols-2 gap-2 text-[10px] text-slate-700 font-medium pt-0.5'>
-              <div className='p-2 bg-white rounded-xl border border-teal-100 flex items-center gap-1.5'>
-                <span>🌅</span>
-                <span>Pagi: Info Harian</span>
-              </div>
-              <div className='p-2 bg-white rounded-xl border border-teal-100 flex items-center gap-1.5'>
-                <span>⏳</span>
-                <span>15m: Persiapan</span>
-              </div>
-              <div className='p-2 bg-white rounded-xl border border-teal-100 flex items-center gap-1.5'>
-                <span>🔔</span>
-                <span>Tepat: Alarm Chime</span>
-              </div>
-              <div className='p-2 bg-white rounded-xl border border-teal-100 flex items-center gap-1.5'>
-                <span>🌙</span>
-                <span>Malam: Susulan</span>
-              </div>
-            </div>
           </div>
 
           {/* Sound test preview button */}

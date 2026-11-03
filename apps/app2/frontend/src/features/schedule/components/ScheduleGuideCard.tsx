@@ -54,19 +54,6 @@ export function ScheduleGuideCard() {
         </ul>
       </Card>
 
-      {/* Why Consistent Time Card */}
-      <Card padding='md' className='bg-teal-50/60 border border-teal-100'>
-        <h4 className='text-xs font-bold text-teal-900 mb-1 flex items-center gap-1.5'>
-          <span>Kenapa Harus Jam yang Sama?</span>
-          <span>⏰</span>
-        </h4>
-        <p className='text-xs text-teal-800/80 leading-relaxed'>
-          Pil KB bekerja menjaga kestabilan kadar hormon pencegah ovulasi dalam tubuh selama 24 jam.
-          Keterlambatan minum pil lebih dari beberapa jam dapat memicu penurunan hormon dan
-          menurunkan efektivitas proteksi kontrasepsi.
-        </p>
-      </Card>
-
       {/* Educational Link Card */}
       <Card
         padding='md'
@@ -81,8 +68,8 @@ export function ScheduleGuideCard() {
               Pelajari Lebih Lanjut di Modul Edukasi
             </h4>
             <p className='text-xs text-slate-500 mt-1 leading-relaxed'>
-              Pelajari tata cara memulai minum pil KB saat menstruasi, penanganan lupa minum pil, dan
-              panduan periksa payudara sendiri (SADARI).
+              Pelajari tata cara memulai minum pil KB saat menstruasi, penanganan lupa minum pil,
+              dan panduan periksa payudara sendiri (SADARI).
             </p>
             <Link
               to='/user/education'
@@ -97,4 +84,3 @@ export function ScheduleGuideCard() {
     </div>
   );
 }
-
