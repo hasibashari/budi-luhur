@@ -41,11 +41,10 @@ export function WeddingCountdownWidget({
           <div className='w-11 h-11 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mb-2.5'>
             <Calendar size={20} />
           </div>
-          <h5 className='text-xs font-bold text-slate-900 mb-1'>
-            Tanggal Pernikahan Belum Diatur
-          </h5>
+          <h5 className='text-xs font-bold text-slate-900 mb-1'>Tanggal Pernikahan Belum Diatur</h5>
           <p className='text-[11px] text-slate-500 max-w-xs leading-relaxed mb-3.5'>
-            Atur tanggal rencana pernikahan Anda di profil untuk mengaktifkan hitung mundur dan memantau batas aman vaksinasi TT pranikah.
+            Atur tanggal rencana pernikahan Anda di profil untuk mengaktifkan hitung mundur dan
+            memantau batas aman vaksinasi TT pranikah.
           </p>
           <Link
             to='/user/profile'
@@ -61,7 +60,9 @@ export function WeddingCountdownWidget({
           <Clock size={16} className='text-amber-600 shrink-0 mt-0.5' />
           <div className='flex-1 text-[11px] leading-relaxed'>
             <p>
-              <strong>Informasi Klinis:</strong> Vaksin TT2 disyaratkan minimal 30 hari sebelum akad nikah agar pembentukan antibodi tetanus optimal sebelum hari-H.
+              <strong>Informasi Klinis:</strong> Yuk, Vaksinasi Tetanus Pastikan status imunisasi
+              tetanus sebelum menikah dan merencanakan kehamilan. Konsultasikan jadwal imunisasi
+              dengan tenaga kesehatan untuk membantu melindungi ibu dan calon buah hati.
             </p>
           </div>
         </div>
@@ -133,7 +134,9 @@ export function WeddingCountdownWidget({
       <div className='py-3.5 flex items-center justify-between gap-2 sm:gap-3'>
         <div className='flex items-center gap-1.5 sm:gap-2 shrink-0'>
           <div className='flex flex-col items-center justify-center bg-stone-50 border border-stone-200/80 rounded-2xl w-16 sm:w-20 py-2 sm:py-2.5 shadow-2xs'>
-            <span className='text-xl sm:text-2xl font-black text-slate-900 leading-none'>{diffDays}</span>
+            <span className='text-xl sm:text-2xl font-black text-slate-900 leading-none'>
+              {diffDays}
+            </span>
             <span className='text-[9px] sm:text-[10px] font-bold text-slate-500 mt-1 uppercase tracking-wider'>
               Hari Lagi
             </span>
@@ -142,7 +145,9 @@ export function WeddingCountdownWidget({
           <span className='text-slate-300 font-bold text-base sm:text-xl'>:</span>
 
           <div className='flex flex-col items-center justify-center bg-stone-50 border border-stone-200/80 rounded-2xl w-16 sm:w-20 py-2 sm:py-2.5 shadow-2xs'>
-            <span className='text-xl sm:text-2xl font-black text-slate-900 leading-none'>{diffWeeks}</span>
+            <span className='text-xl sm:text-2xl font-black text-slate-900 leading-none'>
+              {diffWeeks}
+            </span>
             <span className='text-[9px] sm:text-[10px] font-bold text-slate-500 mt-1 uppercase tracking-wider'>
               Minggu
             </span>
@@ -176,8 +181,8 @@ export function WeddingCountdownWidget({
         <div className='flex-1 text-[11px] leading-relaxed'>
           {isUrgent ? (
             <p>
-              <strong>Batas Waktu TT2 Kritis!</strong> Vaksin TT2 disyaratkan minimal 30
-              hari sebelum hari pernikahan agar antibodi tetanus protektif optimal.
+              <strong>Batas Waktu TT2 Kritis!</strong> Vaksin TT2 disyaratkan minimal 30 hari
+              sebelum hari pernikahan agar antibodi tetanus protektif optimal.
             </p>
           ) : (
             <p>

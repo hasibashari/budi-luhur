@@ -522,7 +522,7 @@ export default function DashboardView() {
               </div>
             </div>
             <p className='text-xs text-[#574144] leading-relaxed'>
-              Pastikan kelengkapan 5 dosis imunisasi Tetanus Toksoid untuk perlindungan optimal calon ibu dan buah hati menjelang hari pernikahan.
+              Pastikan segera imunisasi Tetanus Toksoid untuk perlindungan optimal calon ibu dan buah hati menjelang hari pernikahan.
             </p>
             <div className='mt-3 pt-2.5 border-t border-[#aff1d0]/50 flex items-center justify-between'>
               <Link

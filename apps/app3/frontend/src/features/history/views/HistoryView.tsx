@@ -490,7 +490,7 @@ export default function HistoryView() {
         <div className='flex items-center justify-between'>
           <div className='flex flex-col'>
             <span className='text-[11px] uppercase tracking-wider text-[#aa294d] font-bold'>
-              RIWAYAT TT
+              Riwayat suntik tetanus toxoid
             </span>
             <h2 className='text-base sm:text-lg font-bold text-[#121c2a]'>Evaluasi Vaksinasi TT</h2>
           </div>
