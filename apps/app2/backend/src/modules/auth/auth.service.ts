@@ -1,3 +1,4 @@
+import { randomUUID } from 'crypto';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import db from '../../config/database.js';
@@ -126,7 +127,7 @@ export class AuthService {
     const randNum = Math.floor(1000 + Math.random() * 9000);
     const friendCode = `FE-${cleanTag}-${randNum}`;
 
-    const newId = `usr_${Date.now().toString().slice(-6)}`;
+    const newId = `usr_${randomUUID()}`;
     const avatarUrl = null;
     const passwordHash = await bcrypt.hash(data.password, 10);
 

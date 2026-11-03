@@ -45,8 +45,9 @@ export function VerificationDocumentCard({
     detail.documentFileType === 'application/pdf' ||
     detail.documentFileName.toLowerCase().endsWith('.pdf');
 
-  // Compute source from detail.documentFileData or fetched blob
+  // Compute source from docUrl prop, detail.documentFileData, or fetched blob
   const computeInitialSrc = () => {
+    if (docUrl) return docUrl;
     if (!detail.documentFileData) return null;
     if (detail.documentFileData.startsWith('data:')) return detail.documentFileData;
     const mime = detail.documentFileType || (isPdf ? 'application/pdf' : 'image/jpeg');

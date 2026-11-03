@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   AuthUser,
   AuthState,
@@ -25,6 +26,7 @@ const initialAuthState: AuthState = {
 export const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const navigate = useNavigate();
   const [state, setState] = useState<AuthState>(initialAuthState);
 
   useEffect(() => {
@@ -176,9 +178,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       isAuthenticated: false,
       isLoading: false,
     }));
-    const loginPath = `${import.meta.env.BASE_URL || '/'}auth/login`.replace(/\/+/g, '/');
-    window.location.href = loginPath;
-  }, []);
+    navigate('/auth/login', { replace: true });
+  }, [navigate]);
 
   const updateUser = useCallback((updated: Partial<AuthUser>) => {
     setState(prev => {
@@ -209,8 +210,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isAuthenticated: false,
         isLoading: false,
       }));
-      const onboardPath = `${import.meta.env.BASE_URL || '/'}onboarding?deleted=true`.replace(/\/+/g, '/');
-      window.location.href = onboardPath;
+      navigate('/onboarding?deleted=true', { replace: true });
       return { success: true, message: res.data.message };
     } catch (err: any) {
       setState(prev => ({ ...prev, isLoading: false }));
@@ -219,7 +219,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         error: extractErrorMessage(err, 'Gagal menghapus akun.'),
       };
     }
-  }, [state.user?.id]);
+  }, [state.user?.id, navigate]);
 
   return (
     <AuthContext.Provider

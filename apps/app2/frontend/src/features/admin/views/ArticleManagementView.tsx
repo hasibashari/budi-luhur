@@ -15,7 +15,7 @@ import {
   createAdminArticleAction,
   updateAdminArticleAction,
   deleteAdminArticleAction,
-} from '../api/articleRepository';
+} from '../api/adminRepository';
 import { HealthArticle, ArticleCategory } from '../types/admin.types';
 
 const initialArticleFormData: ArticleFormData = {

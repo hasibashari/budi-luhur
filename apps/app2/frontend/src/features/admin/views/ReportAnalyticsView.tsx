@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Printer, TrendingUp, CheckCircle2, AlertCircle, FileSpreadsheet } from 'lucide-react';
 import AdminHeader from '../components/AdminHeader';
-import { getComplianceReportsAction } from '../api/complianceRepository';
-import { getUsersAction } from '../api/userManagementRepository';
+import { getComplianceReportsAction, getUsersAction } from '../api/adminRepository';
 import { ComplianceReport, ManagedUser } from '../types/admin.types';
 import { Avatar } from '@/src/shared/components/ui/Avatar';
 import { LoadingSpinner } from '@/src/shared/components/ui/LoadingSpinner';

@@ -1,3 +1,4 @@
+import { randomUUID } from 'crypto';
 import db from '../../../config/database.js';
 import { NotificationService } from '../../notifications/notification.service.js';
 
@@ -35,14 +36,35 @@ export class AdminUserService {
         SELECT 
           u.id, u.name, u.gender, u.phone, u.email, u.avatar_url, u.created_at,
           p.risk_level, p.status, p.notes, p.school_or_org, p.friend_code, p.streak_count, p.last_active_at,
-          (SELECT count(*) FROM reminder_schedules WHERE user_id = u.id AND status = 'Aktif') as active_schedules_count,
-          (SELECT time_slot FROM reminder_schedules WHERE user_id = u.id AND status = 'Aktif' ORDER BY created_at DESC LIMIT 1) as schedule_time_slot,
-          (SELECT frequency FROM reminder_schedules WHERE user_id = u.id AND status = 'Aktif' ORDER BY created_at DESC LIMIT 1) as schedule_frequency,
-          (SELECT day_of_week FROM reminder_schedules WHERE user_id = u.id AND status = 'Aktif' ORDER BY created_at DESC LIMIT 1) as schedule_day_of_week,
-          (SELECT count(*) FROM consumption_logs WHERE user_id = u.id) as total_logs,
-          (SELECT count(*) FROM consumption_logs WHERE user_id = u.id AND status IN ('ON_TIME', 'LATE')) as completed_logs
+          COALESCE(sc.active_schedules_count, 0) as active_schedules_count,
+          s.time_slot as schedule_time_slot,
+          s.frequency as schedule_frequency,
+          s.day_of_week as schedule_day_of_week,
+          COALESCE(ls.total_logs, 0) as total_logs,
+          COALESCE(ls.completed_logs, 0) as completed_logs
         FROM users u
         LEFT JOIN user_profiles p ON u.id = p.user_id
+        LEFT JOIN (
+          SELECT DISTINCT ON (user_id)
+            user_id, time_slot, frequency, day_of_week
+          FROM reminder_schedules
+          WHERE status = 'Aktif'
+          ORDER BY user_id, created_at DESC
+        ) s ON u.id = s.user_id
+        LEFT JOIN (
+          SELECT user_id, count(*)::int as active_schedules_count
+          FROM reminder_schedules
+          WHERE status = 'Aktif'
+          GROUP BY user_id
+        ) sc ON u.id = sc.user_id
+        LEFT JOIN (
+          SELECT 
+            user_id,
+            count(*)::int as total_logs,
+            count(*) FILTER (WHERE status IN ('ON_TIME', 'LATE'))::int as completed_logs
+          FROM consumption_logs
+          GROUP BY user_id
+        ) ls ON u.id = ls.user_id
         WHERE u.role = 'user'
         ORDER BY u.created_at DESC, u.name ASC
       `),
@@ -115,14 +137,36 @@ export class AdminUserService {
         `SELECT 
           u.id, u.name, u.gender, u.phone, u.email, u.avatar_url, u.created_at,
           p.risk_level, p.status, p.notes, p.school_or_org, p.friend_code, p.streak_count, p.last_active_at,
-          (SELECT count(*) FROM reminder_schedules WHERE user_id = u.id AND status = 'Aktif') as active_schedules_count,
-          (SELECT time_slot FROM reminder_schedules WHERE user_id = u.id AND status = 'Aktif' ORDER BY created_at DESC LIMIT 1) as schedule_time_slot,
-          (SELECT frequency FROM reminder_schedules WHERE user_id = u.id AND status = 'Aktif' ORDER BY created_at DESC LIMIT 1) as schedule_frequency,
-          (SELECT day_of_week FROM reminder_schedules WHERE user_id = u.id AND status = 'Aktif' ORDER BY created_at DESC LIMIT 1) as schedule_day_of_week,
-          (SELECT count(*) FROM consumption_logs WHERE user_id = u.id) as total_logs,
-          (SELECT count(*) FROM consumption_logs WHERE user_id = u.id AND status IN ('ON_TIME', 'LATE')) as completed_logs
+          COALESCE(sc.active_schedules_count, 0) as active_schedules_count,
+          s.time_slot as schedule_time_slot,
+          s.frequency as schedule_frequency,
+          s.day_of_week as schedule_day_of_week,
+          COALESCE(ls.total_logs, 0) as total_logs,
+          COALESCE(ls.completed_logs, 0) as completed_logs
         FROM users u
         LEFT JOIN user_profiles p ON u.id = p.user_id
+        LEFT JOIN (
+          SELECT user_id, time_slot, frequency, day_of_week
+          FROM reminder_schedules
+          WHERE user_id = $1 AND status = 'Aktif'
+          ORDER BY created_at DESC
+          LIMIT 1
+        ) s ON u.id = s.user_id
+        LEFT JOIN (
+          SELECT user_id, count(*)::int as active_schedules_count
+          FROM reminder_schedules
+          WHERE user_id = $1 AND status = 'Aktif'
+          GROUP BY user_id
+        ) sc ON u.id = sc.user_id
+        LEFT JOIN (
+          SELECT 
+            user_id,
+            count(*)::int as total_logs,
+            count(*) FILTER (WHERE status IN ('ON_TIME', 'LATE'))::int as completed_logs
+          FROM consumption_logs
+          WHERE user_id = $1
+          GROUP BY user_id
+        ) ls ON u.id = ls.user_id
         WHERE u.id = $1
         LIMIT 1`,
         [userId],
@@ -190,7 +234,7 @@ export class AdminUserService {
     schoolOrOrg?: string;
     medicalNotes?: string;
   }) {
-    const newId = `usr_${Date.now().toString().slice(-6)}`;
+    const newId = `usr_${randomUUID()}`;
     const avatarUrl = null;
     const cleanTag =
       data.name
@@ -277,7 +321,7 @@ export class AdminUserService {
   }
 
   static async sendUserReminder(userId: string, message?: string, channel: string = 'app') {
-    const nudgeId = `ndg_${Date.now().toString().slice(-6)}`;
+    const nudgeId = `ndg_${randomUUID()}`;
     const msg = message || 'Halo! Jangan lupa minum Pil KB hari ini tepat waktu ya 🌸';
 
     await db.query(

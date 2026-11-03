@@ -51,11 +51,11 @@ export default function MarkdownRenderer({ content, className = '' }: MarkdownRe
       elements.push(
         <div
           key={`table-${key}`}
-          className='overflow-x-auto my-4 rounded-xl border border-rose-200 shadow-xs'
+          className='overflow-x-auto my-4 rounded-xl border border-teal-200 shadow-xs'
         >
           <table className='w-full border-collapse text-left text-xs sm:text-sm'>
             {headerRow && (
-              <thead className='bg-rose-50/80 border-b border-rose-200 text-[#9f1239] font-bold'>
+              <thead className='bg-teal-50/80 border-b border-teal-200 text-teal-900 font-bold'>
                 <tr>
                   {headerRow.map((h, i) => (
                     <th key={i} className='py-2.5 px-3.5'>
@@ -67,7 +67,7 @@ export default function MarkdownRenderer({ content, className = '' }: MarkdownRe
             )}
             <tbody className='divide-y divide-slate-100 text-[#334155]'>
               {bodyRows.map((row, rIdx) => (
-                <tr key={rIdx} className={rIdx % 2 === 1 ? 'bg-[#fffafb]' : 'bg-white'}>
+                <tr key={rIdx} className={rIdx % 2 === 1 ? 'bg-teal-50/20' : 'bg-white'}>
                   {row.map((cell, cIdx) => (
                     <td key={cIdx} className='py-2 px-3.5'>
                       {renderInlineMarkdown(cell.trim())}
@@ -136,7 +136,7 @@ export default function MarkdownRenderer({ content, className = '' }: MarkdownRe
       elements.push(
         <h2
           key={idx}
-          className='font-extrabold text-[#0f172a] mt-6 mb-3 text-lg sm:text-xl border-b border-rose-100 pb-1.5'
+          className='font-extrabold text-[#0f172a] mt-6 mb-3 text-lg sm:text-xl border-b border-teal-100 pb-1.5'
         >
           {renderInlineMarkdown(trimmed.slice(3))}
         </h2>,
@@ -145,7 +145,7 @@ export default function MarkdownRenderer({ content, className = '' }: MarkdownRe
     }
     if (trimmed.startsWith('# ')) {
       elements.push(
-        <h1 key={idx} className='font-black text-[#e11d48] mt-6 mb-4 text-xl sm:text-2xl'>
+        <h1 key={idx} className='font-black text-[#0D9488] mt-6 mb-4 text-xl sm:text-2xl'>
           {renderInlineMarkdown(trimmed.slice(2))}
         </h1>,
       );
@@ -157,10 +157,10 @@ export default function MarkdownRenderer({ content, className = '' }: MarkdownRe
       elements.push(
         <div
           key={idx}
-          className='p-4 my-4 bg-rose-50 border-l-4 border-[#e11d48] rounded-r-xl flex items-start gap-3'
+          className='p-4 my-4 bg-teal-50 border-l-4 border-[#0D9488] rounded-r-xl flex items-start gap-3'
         >
-          <Lightbulb size={20} className='text-[#e11d48] shrink-0 mt-0.5' />
-          <div className='text-xs sm:text-sm text-[#881337] font-medium leading-relaxed'>
+          <Lightbulb size={20} className='text-[#0D9488] shrink-0 mt-0.5' />
+          <div className='text-xs sm:text-sm text-teal-900 font-medium leading-relaxed'>
             {renderInlineMarkdown(trimmed.slice(2))}
           </div>
         </div>,
@@ -218,7 +218,7 @@ function renderInlineMarkdown(text: string): React.ReactNode {
       parts.push(
         <code
           key={match.index}
-          className='bg-slate-100 text-[#e11d48] px-1.5 py-0.5 rounded text-xs font-mono font-semibold'
+          className='bg-slate-100 text-[#0D9488] px-1.5 py-0.5 rounded text-xs font-mono font-semibold'
         >
           {token.slice(1, -1)}
         </code>,
@@ -232,7 +232,7 @@ function renderInlineMarkdown(text: string): React.ReactNode {
             href={linkMatch[2]}
             target='_blank'
             rel='noopener noreferrer'
-            className='text-[#e11d48] underline font-semibold hover:text-[#be123c]'
+            className='text-[#0D9488] underline font-semibold hover:text-teal-700'
           >
             {linkMatch[1]}
           </a>,

@@ -1,15 +1,48 @@
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
+import { config } from './config/env.js';
 
 export const app = express();
+
+// Allowed origins for CORS (whitelisting for security with credentials)
+const configuredOrigins = (process.env.ALLOWED_ORIGINS || '')
+  .split(',')
+  .map(o => o.trim())
+  .filter(Boolean);
+
+const allowedOrigins = new Set<string>([
+  config.corsOrigin,
+  'http://localhost:5174',
+  'http://127.0.0.1:5174',
+  'http://localhost:5170',
+  'http://127.0.0.1:5170',
+  'http://localhost:5173',
+  'http://localhost:5175',
+  ...configuredOrigins,
+]);
 
 // Middlewares
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow requests with no origin (mobile, curl) or any web origin with credentials
+      // Allow requests with no origin (mobile app, curl, server-to-server)
       if (!origin) return callback(null, true);
-      return callback(null, true);
+
+      // Check explicit whitelist
+      if (allowedOrigins.has(origin)) {
+        return callback(null, true);
+      }
+
+      // In non-production environments, permit local development hosts on any port
+      if (config.nodeEnv !== 'production') {
+        const isLocalHost = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin);
+        if (isLocalHost) {
+          return callback(null, true);
+        }
+      }
+
+      // Reject untrusted origins by omitting Access-Control-Allow-Origin header
+      return callback(null, false);
     },
     credentials: true,
   }),
@@ -75,9 +108,10 @@ app.use(['/api/v1/notifications', '/v1/notifications'], notificationRoutes);
 // Global Error Handler
 app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
   console.error('Unhandled server error:', err);
+  const isProd = config.nodeEnv === 'production';
   res.status(500).json({
     success: false,
-    error: err.message || 'Internal Server Error',
+    error: isProd ? 'Terjadi kesalahan internal pada server.' : err.message || 'Internal Server Error',
   });
 });
 

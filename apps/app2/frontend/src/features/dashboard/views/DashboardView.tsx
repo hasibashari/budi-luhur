@@ -1,13 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import {
-  Sparkles,
-  ArrowRight,
-  ShieldCheck,
-  Flame,
-  Award,
-  CalendarClock,
-} from 'lucide-react';
+import { Sparkles, ArrowRight, ShieldCheck, Flame, Award, CalendarClock } from 'lucide-react';
 import { DailyPrescriptionHeroCard } from '@/src/shared/components/domain/DailyPrescriptionHeroCard';
 import { ActiveBlisterStripWidget } from '@/src/shared/components/domain/ActiveBlisterStripWidget';
 import { QuickAction } from '@/src/shared/components/domain/QuickAction';
@@ -58,38 +51,41 @@ export default function DashboardView() {
     }
     fetchDashboard();
 
-    // Subscribe to realtime push & admin nudge events
-    const unsubscribe = subscribeRealtimeEvent(async event => {
-      if (event.type === 'NUDGE_SENT' && (!event.patientId || event.patientId === userId)) {
-        try {
-          const freshNudge = await getActiveNudgeAction(userId);
-          if (freshNudge && isMounted) {
-            setActiveNudge(freshNudge);
-            playNotificationTone();
-            if (
-              typeof window !== 'undefined' &&
-              'Notification' in window &&
-              Notification.permission === 'granted'
-            ) {
-              showSystemNotification('Pengingat Pil KB Pilluna', {
-                body: freshNudge.message,
-                url: '/user/dashboard',
-              });
+    // Subscribe to realtime push & admin nudge events (ignoreSelf to avoid duplicate fetch on current tab)
+    const unsubscribe = subscribeRealtimeEvent(
+      async event => {
+        if (event.type === 'NUDGE_SENT' && (!event.patientId || event.patientId === userId)) {
+          try {
+            const freshNudge = await getActiveNudgeAction(userId);
+            if (freshNudge && isMounted) {
+              setActiveNudge(freshNudge);
+              playNotificationTone();
+              if (
+                typeof window !== 'undefined' &&
+                'Notification' in window &&
+                Notification.permission === 'granted'
+              ) {
+                showSystemNotification('Pengingat Pil KB Pilluna', {
+                  body: freshNudge.message,
+                  url: '/user/dashboard',
+                });
+              }
             }
+          } catch (e) {
+            console.error('Error handling realtime nudge:', e);
           }
-        } catch (e) {
-          console.error('Error handling realtime nudge:', e);
+        } else if (event.type === 'NUDGE_DISMISSED') {
+          if (isMounted) setActiveNudge(null);
+        } else if (
+          (event.type === 'MEDICATION_TAKEN' || event.type === 'SCHEDULE_UPDATED') &&
+          (!event.patientId || event.patientId === userId)
+        ) {
+          const freshData = await getUserDashboardDataAction(userId);
+          if (freshData && isMounted) setDashboardData(freshData);
         }
-      } else if (event.type === 'NUDGE_DISMISSED') {
-        if (isMounted) setActiveNudge(null);
-      } else if (
-        (event.type === 'MEDICATION_TAKEN' || event.type === 'SCHEDULE_UPDATED') &&
-        (!event.patientId || event.patientId === userId)
-      ) {
-        const freshData = await getUserDashboardDataAction(userId);
-        if (freshData && isMounted) setDashboardData(freshData);
-      }
-    });
+      },
+      { ignoreSelf: true },
+    );
 
     const handleLocalScheduleUpdate = async () => {
       const freshData = await getUserDashboardDataAction(userId);

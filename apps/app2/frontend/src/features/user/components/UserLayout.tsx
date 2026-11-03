@@ -30,11 +30,11 @@ export default function UserLayout({ children }: UserLayoutProps) {
   );
 
   if (pathname === '/user/setup') {
-    return <AuthGuard requiredRole='user'>{children || <Outlet />}</AuthGuard>;
+    return <AuthGuard allowedRoles={['user', 'admin']}>{children || <Outlet />}</AuthGuard>;
   }
 
   return (
-    <AuthGuard requiredRole='user'>
+    <AuthGuard allowedRoles={['user', 'admin']}>
       <div className='min-h-screen bg-[#F8FAFC] flex flex-col md:flex-row selection:bg-teal-100 selection:text-[#0D9488]'>
         {/* Mobile Top Header (< md) */}
         <div className='block md:hidden'>

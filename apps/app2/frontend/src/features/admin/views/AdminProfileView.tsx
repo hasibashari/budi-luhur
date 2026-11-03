@@ -9,7 +9,7 @@ import {
   ProfileSecuritySection,
 } from '@/src/shared/components/profile';
 import { useAuth } from '@/src/features/auth';
-import { updateAdminProfileAction } from '../api/userManagementRepository';
+import { updateAdminProfileAction } from '../api/adminRepository';
 
 export default function AdminProfileView() {
   const navigate = useNavigate();

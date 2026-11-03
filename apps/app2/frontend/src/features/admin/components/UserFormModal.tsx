@@ -1,10 +1,8 @@
 import { CrudModalDialog } from '@/src/shared/components/CrudModalDialog';
 import {
   GENDER_OPTIONS,
-  RISK_LEVEL_OPTIONS,
   UserFormData,
   UserGender,
-  RiskLevel,
 } from '../constants/user.constants';
 
 interface UserFormModalProps {

@@ -1,3 +1,4 @@
+import { randomUUID } from 'crypto';
 import db from '../../config/database.js';
 import {
   UserProfile,
@@ -9,7 +10,7 @@ import { calculateNextSchedule } from '../../utils/scheduleHelpers.js';
 import { calculateChronologicalStreak } from '../../utils/streakCalculator.js';
 
 export class UserService {
-  static async calculateAndSyncUserStreak(
+  static async calculateUserStreakReadOnly(
     userId: string,
     scheduleFrequency: 'daily' | 'weekly' = 'daily',
   ): Promise<StreakResult & { completedDates: string[] }> {
@@ -28,15 +29,24 @@ export class UserService {
     );
     const streakResult = await calculateChronologicalStreak(completedDates, scheduleFrequency);
 
-    // Sync streak_count in user_profiles
+    return { ...streakResult, completedDates };
+  }
+
+  static async calculateAndSyncUserStreak(
+    userId: string,
+    scheduleFrequency: 'daily' | 'weekly' = 'daily',
+  ): Promise<StreakResult & { completedDates: string[] }> {
+    const result = await this.calculateUserStreakReadOnly(userId, scheduleFrequency);
+
+    // Sync streak_count in user_profiles on mutation
     await db.query(
       `UPDATE user_profiles 
        SET streak_count = $1, last_active_at = CURRENT_TIMESTAMP
        WHERE user_id = $2`,
-      [streakResult.streakCount, userId],
+      [result.streakCount, userId],
     );
 
-    return { ...streakResult, completedDates };
+    return result;
   }
 
   static async getDashboardData(userId: string): Promise<UserDashboardData | null> {
@@ -145,7 +155,7 @@ export class UserService {
       };
     }
 
-    const streakResult = await this.calculateAndSyncUserStreak(userId, schedFrequencyType);
+    const streakResult = await this.calculateUserStreakReadOnly(userId, schedFrequencyType);
 
     let todayStatus: 'recorded' | 'missed' | 'pending' = 'pending';
     let todayRecordedTime: string | undefined;
@@ -336,7 +346,7 @@ export class UserService {
 
       // 3. Create or update initial reminder schedule (only if explicitly provided)
       if (data.schedule && data.schedule.timeSlot) {
-        const schedId = `sch_${Date.now().toString().slice(-6)}`;
+        const schedId = `sch_${randomUUID()}`;
         const tabletName =
           data.schedule?.tabletName ||
           (pillType === 'Mini Pil'
@@ -382,7 +392,7 @@ export class UserService {
         const fileSize = Number(doc.fileSize) || 0;
         const fileData = doc.fileData || '';
 
-        const verifId = `vrf_${Date.now().toString().slice(-6)}`;
+        const verifId = `vrf_${randomUUID()}`;
         const screeningAnswers = data.screening || {};
 
         await client.query(

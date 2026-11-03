@@ -23,11 +23,12 @@ import {
 } from '@/src/shared/components/profile';
 import { useAuth } from '@/src/features/auth/context/AuthContext';
 import {
-  getUserDashboardDataAction,
+  getUserProfileAction,
   updateUserProfileAction,
   updateUserScheduleSettingsAction,
   UserScheduleData,
 } from '../api/userRepository';
+import { getDailySchedulesAction } from '@/src/features/schedule/api/scheduleRepository';
 
 interface UserProfileState {
   id: string;
@@ -103,32 +104,56 @@ export default function ProfileView() {
     let isMounted = true;
     async function loadData() {
       try {
-        const dashboard = await getUserDashboardDataAction(authUser?.id);
-        if (isMounted && dashboard.user) {
-          const activeTablet = dashboard.activeSchedule?.tabletName?.toLowerCase() || '';
+        const [profileRes, schedulesRes] = await Promise.allSettled([
+          getUserProfileAction(authUser?.id),
+          getDailySchedulesAction(),
+        ]);
+
+        const profileData = profileRes.status === 'fulfilled' ? profileRes.value : null;
+        const user = (profileData as any)?.user || profileData;
+        const schedules = schedulesRes.status === 'fulfilled' ? schedulesRes.value : [];
+        const activeSch = schedules.length > 0 ? schedules[0] : (profileData as any)?.activeSchedule;
+
+        if (isMounted && user) {
+          const activeTablet = (activeSch?.tabletName || activeSch?.title || '').toLowerCase();
           const resolvedPillType =
-            dashboard.user.pillType ||
+            user.pillType ||
             (activeTablet.includes('mini') || activeTablet.includes('progestin')
               ? 'Mini Pil'
               : 'Pil KB Kombinasi');
 
           setUserProfile({
-            id: dashboard.user.id,
-            name: dashboard.user.name,
-            email: dashboard.user.email,
-            phone: dashboard.user.phone || '',
-            avatarUrl: dashboard.user.avatarUrl || '',
-            streakCount: dashboard.user.streakCount || 0,
-            schoolOrOrg: dashboard.user.schoolOrOrg,
-            riskLevel: dashboard.user.riskLevel,
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            phone: user.phone || '',
+            avatarUrl: user.avatarUrl || '',
+            streakCount: user.streakCount || 0,
+            schoolOrOrg: user.schoolOrOrg,
+            riskLevel: user.riskLevel,
             pillType: resolvedPillType,
           });
-          setEditName(dashboard.user.name);
-          setEditFaskes(dashboard.user.schoolOrOrg || '');
-          setEditPhone(dashboard.user.phone || '');
+          setEditName(user.name);
+          setEditFaskes(user.schoolOrOrg || '');
+          setEditPhone(user.phone || '');
           setEditPillType(resolvedPillType);
-          if (dashboard.activeSchedule) {
-            setScheduleData(dashboard.activeSchedule);
+
+          if (activeSch) {
+            setScheduleData({
+              id: activeSch.id,
+              patientId: user.id,
+              tabletName: activeSch.tabletName || activeSch.title || 'Pil KB Kombinasi',
+              dosage: activeSch.dosage || '1 tablet setiap hari',
+              frequency: activeSch.frequency || 'Harian',
+              category: 'Pil KB Kombinasi',
+              dayOfWeek: activeSch.dayOfWeek || 'Setiap Hari',
+              time: activeSch.time || activeSch.timeSlot || '20:00',
+              isEnabled: activeSch.isEnabled ?? true,
+              remind15MinBefore: activeSch.remind15MinBefore ?? true,
+              instructions: activeSch.instructions || '',
+              nextDate: activeSch.nextDate || 'Hari ini',
+              daysRemaining: activeSch.daysRemaining ?? 0,
+            });
           }
         }
       } catch (err) {

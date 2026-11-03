@@ -1,3 +1,4 @@
+import { randomUUID } from 'crypto';
 import db from '../../config/database.js';
 import { UserService } from '../users/user.service.js';
 import { calculateChronologicalStreak } from '../../utils/streakCalculator.js';
@@ -65,7 +66,7 @@ export class ConsumptionService {
           [dbStatus, dbStatus === 'ON_TIME' ? nowTimeStr : null, notes || null, existingLogRes.rows[0].id],
         );
       } else {
-        const newLogId = `log_${Date.now().toString().slice(-6)}`;
+        const newLogId = `log_${randomUUID()}`;
         await db.query(
           `INSERT INTO consumption_logs (
             id, user_id, schedule_id, title, category, dosage, scheduled_date, scheduled_time, taken_at, status, notes, taken_by

@@ -11,14 +11,14 @@ import { MobileFilterChips } from '@/src/shared/components/ui/MobileFilterChips'
 import { useCrudModal } from '@/src/shared/hooks/useCrudModal';
 import { useDeleteConfirm } from '@/src/shared/hooks/useDeleteConfirm';
 import { useToast } from '@/src/shared/hooks/useToast';
-import { publishRealtimeEvent } from '@/src/shared/utils/realtimeSync';
+import { publishRealtimeEvent, subscribeRealtimeEvent } from '@/src/shared/utils/realtimeSync';
 import {
   getUsersAction,
   createUserAction,
   updateUserAction,
   deleteUserAction,
   sendUserReminderAction,
-} from '../api/userManagementRepository';
+} from '../api/adminRepository';
 import { ManagedUser } from '../types/admin.types';
 import {
   INITIAL_USER_FORM_DATA,
@@ -90,11 +90,20 @@ export default function UserManagementView() {
     };
     fetchUsers();
 
-    const interval = setInterval(() => {
-      if (typeof document !== 'undefined' && document.visibilityState === 'visible') {
-        fetchUsers();
-      }
-    }, 8000);
+    // Sinkronisasi realtime saat ada event minum obat, pembaruan jadwal, atau nudge
+    const unsubscribe = subscribeRealtimeEvent(
+      event => {
+        if (
+          event.type === 'MEDICATION_TAKEN' ||
+          event.type === 'SCHEDULE_UPDATED' ||
+          event.type === 'NUDGE_SENT' ||
+          event.type === 'NUDGE_DISMISSED'
+        ) {
+          fetchUsers();
+        }
+      },
+      { ignoreSelf: true },
+    );
 
     const handleFocus = () => {
       fetchUsers();
@@ -103,7 +112,7 @@ export default function UserManagementView() {
 
     return () => {
       isMounted = false;
-      clearInterval(interval);
+      unsubscribe();
       window.removeEventListener('focus', handleFocus);
     };
   }, []);

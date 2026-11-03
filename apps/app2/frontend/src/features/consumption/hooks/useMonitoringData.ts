@@ -40,40 +40,19 @@ export function useMonitoringData(userId: string) {
 
   // Initial load and realtime event subscription
   useEffect(() => {
-    let isSubscribed = true;
+    loadData();
 
-    async function initMonitoring() {
-      try {
-        const [dash, summary] = await Promise.all([
-          getUserDashboardDataAction(userId),
-          getMonitoringSummaryAction(userId),
-        ]);
-
-        if (isSubscribed) {
-          setDashboardData(dash);
-          setActivityMap(summary.activityMap);
-          setAllLogs(summary.logs);
-          setStats(summary.stats);
-          setLoading(false);
+    const unsubscribe = subscribeRealtimeEvent(
+      event => {
+        if (event.type === 'MEDICATION_TAKEN' || event.type === 'SCHEDULE_UPDATED') {
+          loadData();
         }
-      } catch (err) {
-        console.error('Error loading monitoring data:', err);
-        if (isSubscribed) {
-          setLoading(false);
-        }
-      }
-    }
-
-    initMonitoring();
-
-    const unsubscribe = subscribeRealtimeEvent(event => {
-      if (event.type === 'MEDICATION_TAKEN' || event.type === 'SCHEDULE_UPDATED') {
-        initMonitoring();
-      }
-    });
+      },
+      { ignoreSelf: true },
+    );
 
     const handleLocalScheduleUpdate = () => {
-      initMonitoring();
+      loadData();
     };
 
     if (typeof window !== 'undefined') {
@@ -81,13 +60,12 @@ export function useMonitoringData(userId: string) {
     }
 
     return () => {
-      isSubscribed = false;
       unsubscribe();
       if (typeof window !== 'undefined') {
         window.removeEventListener('schedule:updated', handleLocalScheduleUpdate);
       }
     };
-  }, [userId]);
+  }, [loadData]);
 
   // Handle direct status change for a specific calendar date
   const updateDateStatus = async (

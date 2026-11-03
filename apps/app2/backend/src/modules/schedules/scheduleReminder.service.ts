@@ -1,3 +1,4 @@
+import { randomUUID } from 'crypto';
 import db from '../../config/database.js';
 import { NotificationService } from '../notifications/notification.service.js';
 
@@ -108,6 +109,50 @@ export class ScheduleReminderService {
     let overdueSent = 0;
     let lateNightSent = 0;
 
+    if (schedulesRes.rows.length === 0) {
+      return {
+        checked: 0,
+        exactSent: 0,
+        earlySent: 0,
+        morningSent: 0,
+        afternoonSent: 0,
+        overdueSent: 0,
+        lateNightSent: 0,
+      };
+    }
+
+    // Batch query untuk konsumsi hari ini dan nudge yang sudah terkirim hari ini (mencegah N+1)
+    const [todayLogsRes, existingNudgesRes] = await Promise.all([
+      db.query<{ user_id?: string; status: string }>(
+        `SELECT user_id, status FROM consumption_logs
+         WHERE scheduled_date = $1`,
+        [dateKey],
+      ),
+      db.query<{ user_id?: string; schedule_id?: string; title?: string }>(
+        `SELECT user_id, schedule_id, title FROM admin_nudges
+         WHERE created_at >= (date_trunc('day', now() AT TIME ZONE '${TIMEZONE}') AT TIME ZONE '${TIMEZONE}')`,
+      ),
+    ]);
+
+    const completedUserIds = new Set<string>();
+    let anyCompletedWithoutUserId = false;
+    for (const log of todayLogsRes.rows) {
+      if (log.status === 'ON_TIME' || log.status === 'LATE') {
+        if (log.user_id) {
+          completedUserIds.add(log.user_id);
+        } else {
+          anyCompletedWithoutUserId = true;
+        }
+      }
+    }
+
+    const sentNudgeKeys = new Set<string>();
+    for (const nudge of existingNudgesRes.rows) {
+      if (nudge.user_id && nudge.schedule_id && nudge.title) {
+        sentNudgeKeys.add(`${nudge.user_id}_${nudge.schedule_id}_${nudge.title}`);
+      }
+    }
+
     for (const schedule of schedulesRes.rows) {
       const isScheduledToday =
         schedule.frequency === 'daily' ||
@@ -122,14 +167,7 @@ export class ScheduleReminderService {
       const diff = nowMinutes - scheduleMinutes;
 
       // Sudah mencatat minum hari ini → jangan ganggu lagi.
-      const logRes = await db.query<{ status: string }>(
-        `SELECT status FROM consumption_logs
-         WHERE user_id = $1 AND scheduled_date = $2
-         ORDER BY created_at DESC LIMIT 1`,
-        [schedule.user_id, dateKey],
-      );
-      const latestStatus = logRes.rows[0]?.status;
-      if (latestStatus === 'ON_TIME' || latestStatus === 'LATE') continue;
+      if (completedUserIds.has(schedule.user_id) || anyCompletedWithoutUserId) continue;
 
       const tabletName = schedule.tablet_name || 'Pil KB';
 
@@ -211,25 +249,18 @@ export class ScheduleReminderService {
 
       if (!kind) continue;
 
-      // Anti-duplikat: satu nudge per jadwal per jenis per hari (berbasis WIB).
-      const duplicateRes = await db.query<{ id: string }>(
-        `SELECT id FROM admin_nudges
-         WHERE user_id = $1 AND schedule_id = $2 AND title = $3
-           AND created_at >= (date_trunc('day', now() AT TIME ZONE '${TIMEZONE}') AT TIME ZONE '${TIMEZONE}')
-         LIMIT 1`,
-        [schedule.user_id, schedule.id, title],
-      );
-      if (duplicateRes.rows.length > 0) continue;
+      // Anti-duplikat in-memory: satu nudge per jadwal per jenis per hari (berbasis WIB).
+      const nudgeKey = `${schedule.user_id}_${schedule.id}_${title}`;
+      if (sentNudgeKeys.has(nudgeKey)) continue;
 
-      const nudgeId = `nudge_auto_${Date.now().toString(36)}_${Math.random()
-        .toString(36)
-        .slice(2, 6)}`;
+      const nudgeId = `nudge_auto_${randomUUID().replace(/-/g, '')}`;
 
       await db.query(
         `INSERT INTO admin_nudges (id, user_id, schedule_id, title, message, channel, status)
          VALUES ($1, $2, $3, $4, $5, 'app', 'UNREAD')`,
         [nudgeId, schedule.user_id, schedule.id, title, message],
       );
+      sentNudgeKeys.add(nudgeKey);
 
       await NotificationService.sendToUser(schedule.user_id, {
         title,

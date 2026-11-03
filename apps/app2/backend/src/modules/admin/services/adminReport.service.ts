@@ -64,10 +64,10 @@ export class AdminReportService {
         COUNT(*) as total
       FROM consumption_logs
       GROUP BY scheduled_date
-      ORDER BY scheduled_date ASC
+      ORDER BY scheduled_date DESC
       LIMIT 14
     `);
-    const rows = res.rows;
+    const rows = [...res.rows].reverse();
 
     if (rows.length === 0) {
       return [
