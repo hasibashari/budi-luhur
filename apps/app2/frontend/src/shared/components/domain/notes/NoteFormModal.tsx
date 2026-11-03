@@ -1,4 +1,4 @@
-import { ReactNode, useEffect  } from 'react';
+import { ReactNode, useEffect } from 'react';
 import { X, CalendarHeart } from 'lucide-react';
 
 export interface NoteFormModalProps {
@@ -7,6 +7,7 @@ export interface NoteFormModalProps {
   title?: string;
   subtitle?: string;
   children: ReactNode;
+  footer?: ReactNode;
   isSaving?: boolean;
 }
 
@@ -19,6 +20,7 @@ export function NoteFormModal({
   title = 'Catatan Kesehatan Harian',
   subtitle = 'Catat kondisi tubuh, adaptasi pil, dan gejala Anda',
   children,
+  footer,
   isSaving = false,
 }: NoteFormModalProps) {
   useEffect(() => {
@@ -40,7 +42,7 @@ export function NoteFormModal({
   if (!isOpen) return null;
 
   return (
-    <div className='fixed inset-0 z-[70] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-950/60 backdrop-blur-xs transition-opacity duration-200'>
+    <div className='fixed inset-0 z-[70] flex items-center justify-center p-3 sm:p-4 bg-slate-950/60 backdrop-blur-xs transition-opacity duration-200 animate-fade-in'>
       {/* Click outside backdrop */}
       <div
         className='fixed inset-0 bg-transparent'
@@ -50,16 +52,17 @@ export function NoteFormModal({
         aria-hidden='true'
       />
 
-      {/* Modal Dialog Content (Mobile Bottom-Sheet / Desktop Centered Card) */}
+      {/* Centered Modal Dialog Box (Mobile & Desktop Unified Card) */}
       <div
-        className='relative z-10 w-full max-w-2xl bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl border border-border flex flex-col max-h-[90dvh] sm:max-h-[85vh] overflow-hidden'
+        data-testid='note-form-modal'
+        className='relative z-10 w-full max-w-xl sm:max-w-2xl bg-white rounded-2xl sm:rounded-3xl shadow-2xl border border-border flex flex-col max-h-[86vh] sm:max-h-[85vh] overflow-hidden my-auto'
         onClick={e => e.stopPropagation()}
         role='dialog'
         aria-modal='true'
         aria-labelledby='note-modal-title'
       >
         {/* Header */}
-        <div className='flex items-center justify-between px-5 py-3.5 border-b border-border bg-surface-soft/60'>
+        <div className='flex items-center justify-between px-4 sm:px-5 py-3.5 border-b border-border bg-surface-soft/60'>
           <div className='flex items-center gap-2.5 min-w-0'>
             <div className='flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary-subtle text-primary border border-primary-soft'>
               <CalendarHeart className='w-5 h-5' />
@@ -79,7 +82,7 @@ export function NoteFormModal({
             type='button'
             onClick={onClose}
             disabled={isSaving}
-            className='w-8 h-8 rounded-full bg-surface text-muted hover:bg-slate-200 hover:text-ink flex items-center justify-center transition-colors cursor-pointer disabled:opacity-50 shrink-0 ml-2'
+            className='w-8 h-8 rounded-full bg-surface text-muted hover:bg-slate-200 hover:text-ink flex items-center justify-center transition-colors cursor-pointer disabled:opacity-50 shrink-0 ml-2 touch-manipulation'
             aria-label='Tutup dialog'
           >
             <X size={16} />
@@ -87,9 +90,16 @@ export function NoteFormModal({
         </div>
 
         {/* Scrollable Body Content */}
-        <div className='p-4 sm:p-5 overflow-y-auto flex-1'>
+        <div className='p-3.5 sm:p-5 overflow-y-auto flex-1 overscroll-contain'>
           {children}
         </div>
+
+        {/* Action Footer (Sticky Save Button at Bottom of Modal Box) */}
+        {footer && (
+          <div className='border-t border-border bg-white px-4 py-3 sm:px-5 sm:py-3.5 shadow-xs'>
+            {footer}
+          </div>
+        )}
       </div>
     </div>
   );
