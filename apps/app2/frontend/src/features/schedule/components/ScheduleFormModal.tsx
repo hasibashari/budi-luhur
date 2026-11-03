@@ -1,6 +1,15 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Calendar as CalendarIcon, Clock, Bell, Info, X, BookOpen, ExternalLink, Volume2 } from 'lucide-react';
+import {
+  Calendar as CalendarIcon,
+  Clock,
+  Bell,
+  X,
+  BookOpen,
+  ExternalLink,
+  Volume2,
+  Sparkles,
+} from 'lucide-react';
 import { Button } from '@/src/shared/components/ui/Button';
 import { CreateDailySchedulePayload } from '../types';
 
@@ -79,10 +88,12 @@ export function ScheduleFormModal({
             </div>
             <div>
               <h3 className='text-sm sm:text-base font-black text-slate-900'>
-                {mode === 'create' ? 'Buat Jadwal Baru' : 'Ubah Jadwal'}
+                {mode === 'create' ? 'Atur Jam Minum Pil' : 'Ubah Jam Minum Pil'}
               </h3>
               <span className='text-[11px] text-slate-500'>
-                {mode === 'create' ? 'Isi detail jadwal harianmu' : 'Perbarui detail jadwal'}
+                {mode === 'create'
+                  ? 'Tentukan satu jam rutin setiap hari'
+                  : 'Perbarui jam rutin pengingat pil KB'}
               </span>
             </div>
           </div>
@@ -208,12 +219,33 @@ export function ScheduleFormModal({
             />
           </div>
 
-          {/* Info: Harian */}
-          <div className='p-3 rounded-2xl bg-teal-50/50 border border-teal-100 text-teal-800 text-xs flex items-center gap-2.5'>
-            <span className='text-base'>🗓️</span>
-            <span className='leading-relaxed'>
-              Alarm akan berbunyi <strong>setiap hari</strong> pada jam yang ditentukan.
-            </span>
+          {/* Otomatisasi Pengingat Cerdas */}
+          <div className='p-3.5 rounded-2xl bg-teal-50/60 border border-teal-200/80 text-teal-950 space-y-2 shadow-2xs'>
+            <div className='flex items-center gap-2 text-xs font-bold text-teal-900'>
+              <Sparkles size={14} className='text-teal-600' />
+              <span>Otomatisasi Pengingat Pilluna</span>
+            </div>
+            <p className='text-[11px] text-slate-600 leading-relaxed'>
+              Dengan mengatur jam di atas, sistem akan mengawal kepatuhanmu secara otomatis:
+            </p>
+            <div className='grid grid-cols-2 gap-2 text-[10px] text-slate-700 font-medium pt-0.5'>
+              <div className='p-2 bg-white rounded-xl border border-teal-100 flex items-center gap-1.5'>
+                <span>🌅</span>
+                <span>Pagi: Info Harian</span>
+              </div>
+              <div className='p-2 bg-white rounded-xl border border-teal-100 flex items-center gap-1.5'>
+                <span>⏳</span>
+                <span>15m: Persiapan</span>
+              </div>
+              <div className='p-2 bg-white rounded-xl border border-teal-100 flex items-center gap-1.5'>
+                <span>🔔</span>
+                <span>Tepat: Alarm Chime</span>
+              </div>
+              <div className='p-2 bg-white rounded-xl border border-teal-100 flex items-center gap-1.5'>
+                <span>🌙</span>
+                <span>Malam: Susulan</span>
+              </div>
+            </div>
           </div>
 
           {/* Sound test preview button */}

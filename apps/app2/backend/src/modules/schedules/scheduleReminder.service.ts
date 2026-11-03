@@ -36,6 +36,7 @@ export interface CronResult {
   morningSent: number;
   afternoonSent: number;
   overdueSent: number;
+  lateNightSent: number;
 }
 
 /**
@@ -105,6 +106,7 @@ export class ScheduleReminderService {
     let morningSent = 0;
     let afternoonSent = 0;
     let overdueSent = 0;
+    let lateNightSent = 0;
 
     for (const schedule of schedulesRes.rows) {
       const isScheduledToday =
@@ -163,7 +165,14 @@ export class ScheduleReminderService {
         diff >= -EARLY_MIN_MINUTES &&
         diff <= -EARLY_MAX_MINUTES;
 
-      let kind: 'exact' | 'overdue' | 'morning' | 'afternoon' | 'early' | null = null;
+      // ── Skenario 6: Pengingat Tambahan Malam Hari (21:30 - 22:30 WIB) ──────
+      // Hanya untuk jadwal yang jatuh sebelum malam (<= 21:00 WIB) jika belum dicatat
+      const isLateNightWindow =
+        nowMinutes >= 21 * 60 + 30 &&
+        nowMinutes <= 22 * 60 + 30 &&
+        scheduleMinutes <= 21 * 60;
+
+      let kind: 'exact' | 'overdue' | 'morning' | 'afternoon' | 'early' | 'latenight' | null = null;
       let title = '';
       let message = '';
       let tagSuffix = '';
@@ -173,6 +182,11 @@ export class ScheduleReminderService {
         title = EXACT_TITLE;
         message = `Pukul ${schedule.time_slot} WIB telah tiba. Minum ${tabletName} sekarang dan catat di aplikasi.`;
         tagSuffix = 'exact';
+      } else if (isLateNightWindow) {
+        kind = 'latenight';
+        title = 'Pengingat Malam Pil KB 🌙';
+        message = `Pil KB ${schedule.time_slot} WIB belum dicatat hari ini. Jangan tidur dulu, segera minum pil sekarang agar efektivitas kontrasepsi tetap optimal.`;
+        tagSuffix = 'latenight';
       } else if (isOverdueWindow) {
         kind = 'overdue';
         title = `Pengingat: Belum Dicatat (${overdueStep} Menit) ⚠️`;
@@ -229,6 +243,7 @@ export class ScheduleReminderService {
       else if (kind === 'morning') morningSent += 1;
       else if (kind === 'afternoon') afternoonSent += 1;
       else if (kind === 'overdue') overdueSent += 1;
+      else if (kind === 'latenight') lateNightSent += 1;
     }
 
     return {
@@ -238,6 +253,7 @@ export class ScheduleReminderService {
       morningSent,
       afternoonSent,
       overdueSent,
+      lateNightSent,
     };
   }
 }

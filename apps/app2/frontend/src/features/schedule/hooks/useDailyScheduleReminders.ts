@@ -29,7 +29,7 @@ const APP_BASE = (typeof import.meta !== 'undefined' && import.meta.env?.BASE_UR
 
 export interface ActiveReminder {
   scheduleId: string;
-  kind: 'exact' | 'early' | 'morning' | 'afternoon' | 'overdue';
+  kind: 'exact' | 'early' | 'morning' | 'afternoon' | 'overdue' | 'latenight';
   title: string;
   time: string;
 }
@@ -270,7 +270,32 @@ export function useDailyScheduleReminders({
           continue;
         }
 
-        // 4. Pengingat berulang / susulan jika belum diminum (10 menit hingga 2 jam)
+        // 4. Malam hari (21:30 - 22:30 WIB) jika jadwal sebelum malam dan belum dicatat
+        if (
+          nowMinutes >= 21 * 60 + 30 &&
+          nowMinutes <= 22 * 60 + 30 &&
+          scheduleMinutes <= 21 * 60
+        ) {
+          stillActive.push({
+            scheduleId: schedule.id,
+            kind: 'latenight',
+            title: schedule.title,
+            time: schedule.time,
+          });
+
+          const key = `${baseKey}_latenight`;
+          if (!wasAlreadyFired(key)) {
+            markAsFired(key);
+            notifyUser('Pengingat Malam Pil KB 🌙', {
+              body: `Pil KB ${schedule.time} WIB belum dicatat hari ini. Jangan tidur dulu, segera minum pil sekarang agar efektivitas kontrasepsi tetap optimal.`,
+              tag: `${notificationTag}_latenight`,
+              url: `${APP_BASE}/user/dashboard`,
+            });
+          }
+          continue;
+        }
+
+        // 5. Pengingat berulang / susulan jika belum diminum (10 menit hingga 2 jam)
         if (diff > EXACT_WINDOW_MINUTES && diff <= 120) {
           stillActive.push({
             scheduleId: schedule.id,

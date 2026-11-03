@@ -85,6 +85,15 @@ export class ScheduleService {
     const cleanTime = (timeSlot || '20:00').trim().slice(0, 5);
     const cleanTitle = (title || 'Minum Pil KB').trim();
 
+    // Kebijakan 1 Jadwal Aktif per Pengguna:
+    // Nonaktifkan jadwal aktif sebelumnya agar tidak terjadi duplikasi pengingat.
+    await db.query(
+      `UPDATE reminder_schedules
+       SET status = 'Nonaktif', is_enabled = FALSE, updated_at = NOW()
+       WHERE user_id = $1 AND status = 'Aktif'`,
+      [userId],
+    );
+
     await db.query(
       `INSERT INTO reminder_schedules
          (id, user_id, tablet_name, dosage, frequency, day_of_week, time_slot, is_enabled, remind_15min_before, instructions, status)

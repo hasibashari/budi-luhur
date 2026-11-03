@@ -218,7 +218,7 @@ export default function ScheduleView() {
             {isTestingSound ? 'Membunyikan...' : 'Uji Suara Alarm'}
           </Button>
 
-          {schedules.length > 0 && (
+          {schedules.length === 0 && (
             <Button
               variant='primary'
               size='sm'
@@ -227,7 +227,7 @@ export default function ScheduleView() {
               onClick={handleOpenAdd}
               className='text-xs font-bold shadow-sm shadow-teal-500/20'
             >
-              Tambah Jadwal
+              Atur Jadwal
             </Button>
           )}
         </div>
@@ -246,31 +246,47 @@ export default function ScheduleView() {
             {schedules.length === 0 ? (
               <ScheduleEmptyState onAdd={handleOpenAdd} />
             ) : (
-              schedules.map(schedule => (
-                <ScheduleCard
-                  key={schedule.id}
-                  schedule={schedule}
-                  onToggle={handleToggle}
-                  onEdit={handleOpenEdit}
-                  onDelete={setDeleteTarget}
-                />
-              ))
+              <ScheduleCard
+                schedule={schedules[0]}
+                onToggle={handleToggle}
+                onEdit={handleOpenEdit}
+                onDelete={setDeleteTarget}
+              />
             )}
 
-            {/* Quick Helper: How Pilluna's reminder works */}
+            {/* Quick Helper: How Pilluna's 4-stage reminder works */}
             <Card padding='md' className='bg-slate-50 border border-slate-200/80'>
               <div className='flex items-start gap-3'>
                 <div className='w-8 h-8 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center shrink-0 mt-0.5'>
                   <HelpCircle size={16} />
                 </div>
-                <div>
+                <div className='space-y-1.5'>
                   <h4 className='text-xs sm:text-sm font-bold text-slate-800'>
-                    Bagaimana Pengingat Pilluna Bekerja?
+                    Bagaimana Pengingat Otomatis Pilluna Bekerja?
                   </h4>
-                  <p className='text-xs text-slate-500 mt-1 leading-relaxed'>
-                    Saat waktu alarm tiba, aplikasi akan membunyikan nada chime pengingat dan
-                    menampilkan banner interaktif di layar. Kamu bisa mencatat konsumsi Pil KB dengan
-                    satu sentuhan.
+                  <p className='text-xs text-slate-500 leading-relaxed'>
+                    Kamu cukup menentukan <strong>satu jam patokan</strong> rutin setiap hari. Sistem akan mengawal kepatuhanmu secara dinamis:
+                  </p>
+                  <ul className='text-[11px] sm:text-xs text-slate-600 space-y-1 pt-1'>
+                    <li className='flex items-center gap-1.5'>
+                      <span>🌅</span>
+                      <span><strong>Pagi (07:00 WIB)</strong>: Notifikasi awal jadwal minum hari ini</span>
+                    </li>
+                    <li className='flex items-center gap-1.5'>
+                      <span>⏳</span>
+                      <span><strong>15 Menit Sebelum</strong>: Aba-aba persiapan minum pil & air putih</span>
+                    </li>
+                    <li className='flex items-center gap-1.5'>
+                      <span>🔔</span>
+                      <span><strong>Tepat Waktu</strong>: Alarm nada dering utama berbunyi</span>
+                    </li>
+                    <li className='flex items-center gap-1.5'>
+                      <span>🌙</span>
+                      <span><strong>Malam Hari (21:30 WIB)</strong>: Pengingat tambahan jika belum dicatat</span>
+                    </li>
+                  </ul>
+                  <p className='text-[11px] text-teal-700 italic pt-1'>
+                    💡 Begitu kamu menandai &ldquo;Sudah Minum&rdquo;, seluruh pengingat susulan untuk sisa hari itu otomatis dihentikan.
                   </p>
                 </div>
               </div>
