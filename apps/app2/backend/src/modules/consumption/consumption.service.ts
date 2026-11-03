@@ -112,9 +112,7 @@ export class ConsumptionService {
     ]);
 
     const activeSched = schedRes.rows[0];
-    const activeSchedId = activeSched?.id;
-    const activeSchedCreatedAt = activeSched?.created_at ? new Date(activeSched.created_at) : null;
-    const schedFreq = (activeSched?.frequency as 'daily' | 'weekly') || 'weekly';
+    const schedFreq = (activeSched?.frequency as 'daily' | 'weekly') || 'daily';
     const rows = logsRes.rows;
 
     const activityMap: Record<string, any> = {};
@@ -126,29 +124,19 @@ export class ConsumptionService {
     const logs = rows.map((r: any) => {
       const dateStr = formatDbDateKey(r.scheduled_date);
 
-      // Check whether this log was recorded under a previous deleted schedule before the active schedule was created
-      const isFromOldSchedule = Boolean(
-        activeSchedId &&
-        r.schedule_id &&
-        r.schedule_id !== activeSchedId &&
-        activeSchedCreatedAt &&
-        r.created_at &&
-        new Date(r.created_at) < activeSchedCreatedAt
-      );
-
-      const isCompleted = (r.status === 'ON_TIME' || r.status === 'LATE') && !isFromOldSchedule;
+      const isCompleted = r.status === 'ON_TIME' || r.status === 'LATE';
       if (isCompleted) {
         completedDates.push(dateStr);
         if (r.status === 'ON_TIME') onTimeCount++;
         else lateCount++;
-      } else if ((r.status === 'MISSED' || r.status === 'SKIPPED') && !isFromOldSchedule) {
+      } else if (r.status === 'MISSED' || r.status === 'SKIPPED') {
         missedCount++;
       }
 
       const info = {
         id: r.id,
         scheduleId: r.schedule_id || undefined,
-        status: isCompleted ? 'recorded' : r.status === 'MISSED' && !isFromOldSchedule ? 'missed' : 'pending',
+        status: isCompleted ? 'recorded' : r.status === 'MISSED' ? 'missed' : 'pending',
         rawStatus: r.status,
         title: r.title,
         category: r.category,
@@ -159,7 +147,7 @@ export class ConsumptionService {
         notes: r.notes || undefined,
       };
 
-      if (!isFromOldSchedule && !activityMap[dateStr]) {
+      if (!activityMap[dateStr]) {
         activityMap[dateStr] = info;
       }
 

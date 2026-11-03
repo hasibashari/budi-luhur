@@ -11,8 +11,8 @@ import { calculateChronologicalStreak } from '../../utils/streakCalculator.js';
 export class UserService {
   static async calculateAndSyncUserStreak(
     userId: string,
-    scheduleFrequency: 'daily' | 'weekly' = 'weekly',
-  ): Promise<StreakResult> {
+    scheduleFrequency: 'daily' | 'weekly' = 'daily',
+  ): Promise<StreakResult & { completedDates: string[] }> {
     const res = await db.query<{ scheduled_date: string; taken_at: string | null }>(
       `SELECT scheduled_date, taken_at 
        FROM consumption_logs 
@@ -21,7 +21,11 @@ export class UserService {
       [userId],
     );
 
-    const completedDates = res.rows.map((r: { scheduled_date: string }) => r.scheduled_date);
+    const completedDates = res.rows.map((r: { scheduled_date: string }) =>
+      typeof r.scheduled_date === 'string'
+        ? r.scheduled_date.split('T')[0]
+        : String(r.scheduled_date),
+    );
     const streakResult = await calculateChronologicalStreak(completedDates, scheduleFrequency);
 
     // Sync streak_count in user_profiles
@@ -32,7 +36,7 @@ export class UserService {
       [streakResult.streakCount, userId],
     );
 
-    return streakResult;
+    return { ...streakResult, completedDates };
   }
 
   static async getDashboardData(userId: string): Promise<UserDashboardData | null> {
@@ -106,11 +110,12 @@ export class UserService {
     if (!userRow) return null;
 
     let activeSchedule: UserScheduleData | null = null;
-    let schedFrequencyType: 'daily' | 'weekly' = 'weekly';
+    let schedFrequencyType: 'daily' | 'weekly' = 'daily';
 
     if (scheduleRes.rows.length > 0) {
       const sch = scheduleRes.rows[0];
-      schedFrequencyType = sch.frequency === 'daily' ? 'daily' : 'weekly';
+      const isDaily = sch.frequency?.toLowerCase().includes('hari') || sch.frequency === 'daily';
+      schedFrequencyType = isDaily ? 'daily' : 'weekly';
       const dayOfWeek = sch.day_of_week || 'Sabtu';
       const timeSlot = sch.time_slot || '20:00';
       const { nextDate, daysRemaining } = calculateNextSchedule(dayOfWeek, timeSlot);
@@ -147,22 +152,11 @@ export class UserService {
 
     if (todayLogRes.rows.length > 0) {
       const log = todayLogRes.rows[0];
-      const isFromOldSchedule = Boolean(
-        activeSchedule &&
-        log.schedule_id &&
-        log.schedule_id !== activeSchedule.id &&
-        scheduleRes.rows[0]?.created_at &&
-        log.created_at &&
-        new Date(log.created_at) < new Date(scheduleRes.rows[0].created_at),
-      );
-
-      if (!isFromOldSchedule) {
-        if (log.status === 'ON_TIME' || log.status === 'LATE') {
-          todayStatus = 'recorded';
-          todayRecordedTime = log.taken_at || '20:00 WIB';
-        } else if (log.status === 'MISSED' || log.status === 'SKIPPED') {
-          todayStatus = 'missed';
-        }
+      if (log.status === 'ON_TIME' || log.status === 'LATE') {
+        todayStatus = 'recorded';
+        todayRecordedTime = log.taken_at || '20:00 WIB';
+      } else if (log.status === 'MISSED' || log.status === 'SKIPPED') {
+        todayStatus = 'missed';
       }
     }
 
@@ -178,6 +172,7 @@ export class UserService {
         streakCount: streakResult.streakCount,
         streakUnit: streakResult.streakUnit,
         consecutiveDates: streakResult.consecutiveDates,
+        completedDates: streakResult.completedDates || streakResult.consecutiveDates,
         schoolOrOrg: userRow.school_or_org,
         riskLevel: userRow.risk_level,
         friendCode: userRow.friend_code || undefined,

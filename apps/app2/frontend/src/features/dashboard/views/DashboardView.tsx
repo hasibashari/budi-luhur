@@ -15,6 +15,7 @@ import { Card } from '@/src/shared/components/ui/Card';
 import { useAuth } from '@/src/features/auth/context/AuthContext';
 import { publishRealtimeEvent, subscribeRealtimeEvent } from '@/src/shared/utils/realtimeSync';
 import { playNotificationTone, showSystemNotification } from '@/src/shared/utils/notifications';
+import { getTodayDateString } from '@/src/features/consumption/utils/dateHelpers';
 import {
   getUserDashboardDataAction,
   recordUserConsumptionAction,
@@ -116,7 +117,7 @@ export default function DashboardView() {
     // Optimistic UI update
     setDashboardData(prev => (prev ? { ...prev, todayStatus: newStatus } : null));
 
-    const todayStr = new Date().toISOString().split('T')[0];
+    const todayStr = getTodayDateString();
     const res = await recordUserConsumptionAction(currentUid, newStatus, undefined, todayStr);
     if (!res.success) {
       // Revert if error
@@ -154,6 +155,7 @@ export default function DashboardView() {
     streakCount: 0,
     streakUnit: 'Hari' as const,
     consecutiveDates: [],
+    completedDates: [],
     schoolOrOrg: authUser?.schoolOrOrg || null,
     avatarUrl: authUser?.avatarUrl || null,
   };
@@ -346,6 +348,7 @@ export default function DashboardView() {
               streakCount={currentUser.streakCount}
               todayStatus={dashboardData?.todayStatus || 'pending'}
               consecutiveDates={currentUser.consecutiveDates}
+              completedDates={dashboardData?.user.completedDates || currentUser.consecutiveDates}
             />
           </section>
 

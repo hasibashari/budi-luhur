@@ -54,6 +54,7 @@ export interface UserDashboardData {
     streakCount: number;
     streakUnit?: 'Hari' | 'Minggu';
     consecutiveDates?: string[];
+    completedDates?: string[];
     schoolOrOrg?: string | null;
     riskLevel?: string | null;
     friendCode?: string;

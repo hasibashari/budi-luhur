@@ -54,10 +54,8 @@ export const FullBlisterPackCalendar: React.FC<FullBlisterPackCalendarProps> = (
 
       let status: 'recorded' | 'missed' | 'pending' | 'none' = 'none';
 
-      if (startDate && dateKey < startDate) {
-        // Hari sebelum jadwal pengingat aktif dibuat: netral, bukan siklus berjalan
-        status = 'none';
-      } else if (activity) {
+      // 1. Prioritaskan jika ADA riwayat aktivitas/konsumsi pil pada tanggal ini
+      if (activity) {
         if (activity.status === 'recorded') {
           status = 'recorded';
         } else if (activity.status === 'missed') {
@@ -65,14 +63,20 @@ export const FullBlisterPackCalendar: React.FC<FullBlisterPackCalendarProps> = (
         } else if (activity.status === 'pending') {
           status = isToday ? todayStatus || 'pending' : isPast ? 'missed' : 'pending';
         }
-      } else if (!hasActiveSchedule) {
-        // Siklus pengingat belum dibuat: kalender standby, belum menandai missed
-        status = 'none';
       } else if (isToday) {
+        // 2. Hari ini (jika belum tercatat di activityMap): ambil status realtime
         status = todayStatus || 'pending';
+      } else if (startDate && dateKey < startDate) {
+        // 3. Hari di masa lalu SEBELUM jadwal dibuat dan TANPA catatan minum: netral (none), bukan missed
+        status = 'none';
+      } else if (!hasActiveSchedule) {
+        // 4. Siklus pengingat belum dibuat: kalender standby, bukan missed
+        status = 'none';
       } else if (isPast) {
+        // 5. Hari di masa lalu setelah jadwal aktif tapi tidak ada catatan: missed
         status = 'missed';
       } else {
+        // 6. Hari di masa depan: none
         status = 'none';
       }
 

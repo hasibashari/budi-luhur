@@ -96,10 +96,8 @@ export function PillComplianceChart({
 
       let status: DayPillItem['status'] = 'FUTURE';
 
-      // Jika tanggal sebelum jadwal aktif dibuat, tanggal ini bukan bagian dari siklus aktif saat ini
-      if (startDate && dateStr < startDate) {
-        status = 'FUTURE';
-      } else if (activity) {
+      // 1. Cek riwayat aktivitas dan log terlebih dahulu
+      if (activity) {
         if (activity.status === 'recorded') {
           status = activity.rawStatus === 'LATE' ? 'LATE' : 'ON_TIME';
         } else if (activity.status === 'missed') {
@@ -114,6 +112,9 @@ export function PillComplianceChart({
           status = 'MISSED';
         else if (isToday) status = 'PENDING';
         else if (isPast) status = 'MISSED';
+      } else if (startDate && dateStr < startDate) {
+        // Jika tanggal sebelum jadwal aktif dibuat dan TIDAK ADA catatan minum: netral (FUTURE), bukan missed
+        status = 'FUTURE';
       } else {
         if (!hasActiveSchedule) {
           status = 'FUTURE';
