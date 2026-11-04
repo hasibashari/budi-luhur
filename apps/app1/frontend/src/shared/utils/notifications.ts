@@ -1,5 +1,5 @@
 /**
- * MediCore Web Notification & PWA Push Utilities
+ * Femory Web Notification & PWA Push Utilities
  */
 import apiClient from '../api/client';
 

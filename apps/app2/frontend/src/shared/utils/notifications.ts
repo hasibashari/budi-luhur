@@ -1,5 +1,5 @@
 /**
- * MediCore Web Notification & PWA Push Utilities
+ * Pilluna Web Notification & PWA Push Utilities
  */
 import apiClient from '../api/client'
 

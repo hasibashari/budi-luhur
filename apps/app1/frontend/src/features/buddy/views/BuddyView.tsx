@@ -453,29 +453,29 @@ export default function BuddyView() {
 
       {/* Unified Empty State when User has 0 Groups */}
       {!isLoadingGroups && groups.length === 0 ? (
-        <div className='flex-1 min-h-0 flex items-center justify-center p-4'>
+        <div className='flex-1 min-h-0 flex items-center justify-center p-3 sm:p-4'>
           <Card
             padding='none'
-            className='w-full max-w-md flex flex-col items-center justify-center text-center p-6 sm:p-8 bg-white border border-[#fce7f3] shadow-sm animate-scale-up'
+            className='w-full max-w-sm sm:max-w-md flex flex-col items-center justify-center text-center p-5 sm:p-8 bg-white border border-[#fce7f3] shadow-sm animate-scale-up'
           >
-            <div className='w-14 h-14 rounded-2xl bg-gradient-to-tr from-rose-500 to-pink-400 text-white flex items-center justify-center shadow-md shadow-rose-500/25 mb-3.5'>
-              <MessageSquare size={28} />
+            <div className='w-14 h-14 rounded-2xl bg-gradient-to-tr from-rose-500 to-pink-400 text-white flex items-center justify-center shadow-md shadow-rose-500/20 mb-3.5 ring-4 ring-rose-50'>
+              <MessageSquare size={26} />
             </div>
-            <h3 className='text-base sm:text-lg font-bold text-[#1e293b]'>
+            <h3 className='text-base sm:text-lg font-bold text-[#1e293b] tracking-tight'>
               Belum Bergabung ke Grup Buddy
             </h3>
-            <p className='text-xs sm:text-sm text-[#64748b] max-w-xs mt-1 mb-5 leading-relaxed'>
+            <p className='text-xs sm:text-sm text-[#64748b] max-w-xs mt-1.5 mb-6 leading-relaxed'>
               Ajak kawan sekelas atau sahabat UKS untuk saling mengingatkan jadwal minum TTD setiap
               minggu!
             </p>
 
-            <div className='flex items-center gap-2.5 w-full'>
+            <div className='flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3 w-full'>
               <Button
                 variant='primary'
                 size='md'
                 shape='pill'
-                icon={<Plus size={15} />}
-                className='flex-1 text-xs'
+                icon={<Plus size={16} />}
+                className='w-full sm:flex-1 justify-center text-xs sm:text-sm'
                 onClick={() => setIsCreateModalOpen(true)}
               >
                 Buat Grup Baru
@@ -484,8 +484,8 @@ export default function BuddyView() {
                 variant='soft'
                 size='md'
                 shape='pill'
-                icon={<UserPlus size={15} />}
-                className='flex-1 text-xs'
+                icon={<UserPlus size={16} />}
+                className='w-full sm:flex-1 justify-center text-xs sm:text-sm'
                 onClick={() => setIsJoinModalOpen(true)}
               >
                 Gabung via Kode

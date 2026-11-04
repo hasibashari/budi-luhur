@@ -57,7 +57,7 @@ export function useNotificationPermission() {
       if (result === 'granted') {
         await subscribeToPush()
         if (sendWelcome) {
-          await showSystemNotification('Pengingat MediCore Aktif! 🔔', {
+          await showSystemNotification('Pengingat Temani Aktif! 🔔', {
             body: 'Anda akan menerima notifikasi suara dan getar saat jadwal minum obat tiba.',
             tag: 'welcome-notification',
             url: '/user/dashboard',
