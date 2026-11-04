@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import {
   Ribbon,
   Calendar,
@@ -8,7 +7,6 @@ import {
   Eye,
   Sparkles,
   ShieldAlert,
-  ArrowRight,
   Clock,
   BookOpen,
   Play,
@@ -17,7 +15,6 @@ import { Card } from '@/src/shared/components/ui/Card';
 import { Button } from '@/src/shared/components/ui/Button';
 import {
   SADARI_DEFINITION,
-  SADARI_STEPS,
   SADARI_WARNING_SIGNS,
   SADARI_REFERENCES,
 } from '../constants/sadari.constants';
@@ -106,32 +103,19 @@ export default function SadariView() {
         </div>
       )}
 
-      {/* Screen Title & Top Navigation */}
-      <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3'>
-        <div>
-          <div className='inline-flex items-center gap-1.5 px-3 py-1 bg-teal-50 text-teal-800 rounded-full text-xs font-bold border border-teal-200 mb-2'>
-            <Ribbon size={14} className='text-teal-600' />
-            <span>Skrining Mandiri Bulanan</span>
-          </div>
-          <h2 className='text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight'>
-            Panduan Mandiri SADARI
-          </h2>
-          <p className='text-xs sm:text-sm text-slate-500 mt-1 max-w-2xl'>
-            Pemeriksaan Payudara Sendiri secara berkala untuk mengenali kondisi normal dan
-            mendeteksi perubahan sejak dini.
-          </p>
+      {/* Screen Title */}
+      <div>
+        <div className='inline-flex items-center gap-1.5 px-3 py-1 bg-teal-50 text-teal-800 rounded-full text-xs font-bold border border-teal-200 mb-2'>
+          <Ribbon size={14} className='text-teal-600' />
+          <span>Skrining Mandiri Bulanan</span>
         </div>
-
-        {/* Quick Link to Education Library */}
-        <div className='shrink-0 w-full sm:w-auto'>
-          <Link
-            to='/user/education'
-            className='inline-flex items-center justify-center gap-2 px-3.5 py-2.5 sm:py-2 rounded-xl bg-white border border-slate-200 text-xs font-bold text-slate-700 hover:text-teal-700 hover:border-teal-300 transition-colors shadow-2xs w-full sm:w-auto text-center'
-          >
-            <span>Pustaka Artikel Edukasi</span>
-            <ArrowRight size={14} />
-          </Link>
-        </div>
+        <h2 className='text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight'>
+          Panduan Mandiri SADARI
+        </h2>
+        <p className='text-xs sm:text-sm text-slate-500 mt-1 max-w-2xl'>
+          Pemeriksaan Payudara Sendiri secara berkala untuk mengenali kondisi normal dan mendeteksi
+          perubahan sejak dini.
+        </p>
       </div>
 
       {/* Interactive Timing Calculator Widget (Posisi Paling Atas) */}
@@ -180,7 +164,7 @@ export default function SadariView() {
                 icon={<Play size={16} className='fill-white shrink-0' />}
                 className='w-full sm:w-auto inline-flex items-center justify-center gap-2.5 shadow-md shadow-teal-700/25 hover:shadow-lg hover:shadow-teal-700/30 text-xs sm:text-sm py-2.5 sm:py-3 px-5 sm:px-6 whitespace-normal leading-snug font-bold active:scale-[0.98] transition-all text-center'
               >
-                Mulai Praktik Terpandu (Langkah demi Langkah)
+                Mulai Praktik Terpandu
               </Button>
             </div>
           </div>
@@ -224,74 +208,6 @@ export default function SadariView() {
           </div>
         </div>
       </Card>
-
-      {/* 6 Langkah Standar SADARI */}
-      <div>
-        <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4'>
-          <div>
-            <h4 className='text-base sm:text-lg font-bold text-slate-900'>
-              6 Langkah Standar SADARI
-            </h4>
-            <p className='text-xs text-slate-500'>
-              Lakukan secara berurutan di tempat yang tenang untuk hasil deteksi dini yang optimal
-            </p>
-          </div>
-          <div className='flex items-center gap-2'>
-            <span className='text-xs font-semibold text-teal-800 bg-teal-50 border border-teal-200 px-3 py-1 rounded-full'>
-              Standar Medis Klinis
-            </span>
-          </div>
-        </div>
-
-        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5'>
-          {SADARI_STEPS.map(item => (
-            <Card
-              key={item.step}
-              padding='md'
-              className='border border-slate-200/80 shadow-xs flex flex-col justify-between hover:border-teal-400/80 hover:shadow-sm transition-all bg-white'
-            >
-              <div>
-                <div className='flex items-center justify-between mb-3'>
-                  <span className='w-7 h-7 rounded-xl bg-teal-600 text-white font-extrabold text-xs flex items-center justify-center shadow-xs shadow-teal-600/30'>
-                    {item.step}
-                  </span>
-                  <span className='text-[11px] font-bold text-teal-800 bg-teal-50 px-2 py-0.5 rounded-full border border-teal-100'>
-                    {item.badge}
-                  </span>
-                </div>
-
-                <h5 className='text-sm font-bold text-slate-800 mb-1.5 leading-snug'>
-                  {item.title}
-                </h5>
-
-                <p className='text-xs text-slate-600 leading-relaxed mb-3'>{item.instruction}</p>
-              </div>
-
-              <div className='flex flex-col gap-2 mt-2 pt-2 border-t border-slate-100'>
-                <div className='bg-slate-50 rounded-xl p-2.5 border border-slate-200/80'>
-                  <span className='text-[10px] font-bold text-teal-700 uppercase tracking-wider block mb-0.5'>
-                    Tips Penting:
-                  </span>
-                  <p className='text-[11px] text-slate-600 leading-tight'>{item.tactileTip}</p>
-                </div>
-                <div className='flex items-center justify-between pt-1 px-1 text-[10px] text-slate-500'>
-                  <span>
-                    Sumber: <strong>{item.citation}</strong>
-                  </span>
-                  <button
-                    type='button'
-                    onClick={() => handleOpenGuidedAtStep(item.step)}
-                    className='text-teal-700 hover:text-teal-900 font-bold inline-flex items-center gap-1 bg-teal-50 hover:bg-teal-100/80 px-2.5 py-1 rounded-lg border border-teal-200/60 transition-colors cursor-pointer shrink-0 text-[11px]'
-                  >
-                    <span>Buka Panduan</span>
-                    <ArrowRight size={11} />
-                  </button>
-                </div>
-              </div>
-            </Card>
-          ))}
-        </div>
-      </div>
 
       {/* Tanda Bahaya & Kapan Harus ke Dokter / Faskes */}
       <Card

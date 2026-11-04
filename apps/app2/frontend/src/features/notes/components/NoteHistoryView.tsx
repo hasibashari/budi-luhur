@@ -93,20 +93,9 @@ export const NoteHistoryView: React.FC<NoteHistoryViewProps> = ({
         </div>
         <p className='text-sm sm:text-base font-extrabold text-ink'>Belum Ada Riwayat Catatan</p>
         <p className='text-xs text-muted mt-1 max-w-sm mx-auto'>
-          Catat kondisi tubuh, adaptasi pil KB, atau gejala efek samping Anda untuk mulai melihat grafik tren kesehatan.
+          Catat kondisi tubuh, adaptasi pil KB, atau gejala efek samping Anda untuk mulai melihat
+          grafik tren kesehatan.
         </p>
-        {onAddNewLog && (
-          <Button
-            type='button'
-            variant='primary'
-            size='md'
-            shape='pill'
-            onClick={onAddNewLog}
-            className='mt-4 font-bold min-h-[44px]'
-          >
-            Mulai Catat Hari Ini
-          </Button>
-        )}
       </div>
     );
   }
