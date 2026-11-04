@@ -15,7 +15,9 @@ const RegisterView = lazy(() => import('@/src/features/auth/view/RegisterView'))
 // User Portal Views (Lazy Loaded)
 const DashboardView = lazy(() => import('@/src/features/dashboard/views/DashboardView'));
 const SetupProfileView = lazy(() => import('@/src/features/user/views/SetupProfileView'));
-const VerificationStatusView = lazy(() => import('@/src/features/user/views/VerificationStatusView'));
+const VerificationStatusView = lazy(
+  () => import('@/src/features/user/views/VerificationStatusView'),
+);
 const ProfileView = lazy(() => import('@/src/features/user/views/ProfileView'));
 const ScheduleView = lazy(() => import('@/src/features/schedule/views/ScheduleView'));
 const HistoryView = lazy(() => import('@/src/features/consumption/views/HistoryView'));
@@ -27,8 +29,12 @@ const NotesView = lazy(() => import('@/src/features/notes/views/NotesView'));
 // Admin Portal Views (Lazy Loaded)
 const AdminDashboardView = lazy(() => import('@/src/features/admin/views/AdminDashboardView'));
 const UserManagementView = lazy(() => import('@/src/features/admin/views/UserManagementView'));
-const AdminVerificationView = lazy(() => import('@/src/features/admin/views/AdminVerificationView'));
-const ArticleManagementView = lazy(() => import('@/src/features/admin/views/ArticleManagementView'));
+const AdminVerificationView = lazy(
+  () => import('@/src/features/admin/views/AdminVerificationView'),
+);
+const ArticleManagementView = lazy(
+  () => import('@/src/features/admin/views/ArticleManagementView'),
+);
 const ReportAnalyticsView = lazy(() => import('@/src/features/admin/views/ReportAnalyticsView'));
 const AdminProfileView = lazy(() => import('@/src/features/admin/views/AdminProfileView'));
 
@@ -46,7 +52,7 @@ function RootRedirect() {
     if (!user?.isProfileComplete) {
       return <Navigate to='/user/setup' replace />;
     }
-    if (user?.verificationStatus === 'Pending' || user?.verificationStatus === 'Rejected') {
+    if (user?.verificationStatus !== 'Approved') {
       return <Navigate to='/user/verification-status' replace />;
     }
     return <Navigate to='/user/dashboard' replace />;

@@ -29,7 +29,7 @@ import {
   BLEEDING_OPTIONS,
   SIDE_EFFECT_OPTIONS,
   WEIGHT_OPTIONS,
-} from './notes.types';
+} from '../types/notes.types';
 
 export interface DailyNoteFormProps {
   selectedDate: string;

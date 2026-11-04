@@ -108,7 +108,9 @@ export const SadariTimingWidget: React.FC = () => {
           <h4 className='text-base sm:text-lg font-bold text-slate-900'>
             Kapan Waktu Terbaik Melakukan Pemeriksaan?
           </h4>
-          <p className='text-xs text-slate-500 mt-0.5'>{SADARI_TIMING_INFO.generalRule}</p>
+          <p className='text-xs text-slate-500 mt-0.5'>
+            Hitung perkiraan jadwal paling optimal berdasarkan siklus menstruasi atau tanggal rutin bulanan Anda.
+          </p>
         </div>
 
         {/* Profile Switcher Tabs */}

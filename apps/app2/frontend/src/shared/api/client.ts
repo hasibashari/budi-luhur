@@ -32,7 +32,7 @@ apiClient.interceptors.request.use(config => {
   return config;
 });
 
-// Response interceptor: handle 401
+// Response interceptor: handle 401 & 403
 apiClient.interceptors.response.use(
   response => response,
   error => {
@@ -41,6 +41,27 @@ apiClient.interceptors.response.use(
       localStorage.removeItem(USER_STORAGE_KEY);
       // Optional: dispatch custom event or allow AuthContext to handle
       window.dispatchEvent(new Event('auth:unauthorized'));
+    } else if (error.response?.status === 403) {
+      const data = error.response?.data;
+      if (
+        data?.code === 'ACCOUNT_PENDING_VERIFICATION' ||
+        data?.code === 'ACCOUNT_REJECTED' ||
+        data?.verificationStatus === 'Pending' ||
+        data?.verificationStatus === 'Rejected'
+      ) {
+        const storedUser = localStorage.getItem(USER_STORAGE_KEY);
+        if (storedUser) {
+          try {
+            const user = JSON.parse(storedUser);
+            user.verificationStatus =
+              data.verificationStatus || (data.code === 'ACCOUNT_REJECTED' ? 'Rejected' : 'Pending');
+            if (data.rejectionReason) user.rejectionReason = data.rejectionReason;
+            user.isProfileComplete = true;
+            localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user));
+          } catch {}
+        }
+        window.dispatchEvent(new CustomEvent('auth:verification-forbidden', { detail: data }));
+      }
     }
     return Promise.reject(error);
   },

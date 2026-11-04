@@ -1,5 +1,5 @@
 import React from 'react';
-import { HeartPulse, Info, Baby, Activity, AlertTriangle, Stethoscope, Clock } from 'lucide-react';
+import { HeartPulse, Info, Activity, AlertTriangle, Stethoscope, Clock } from 'lucide-react';
 import { PillScreeningAnswers } from '../types';
 
 export interface PillScreeningSectionProps {
@@ -23,27 +23,20 @@ export function PillScreeningSection({ answers, onChange, pillType }: PillScreen
   }[] = [
     {
       number: 3,
-      key: 'isPregnant',
-      title: 'Apakah Anda sedang hamil?',
-      description: 'Pil KB tidak boleh dikonsumsi selama masa kehamilan aktif.',
-      icon: <Baby size={16} className='text-amber-600' />,
-    },
-    {
-      number: 4,
       key: 'hasContraindications',
       title: 'Apakah Anda memiliki kondisi medis yang menjadi kontraindikasi pil KB?',
       description: 'Contoh: migrain dengan aura, perdarahan abnormal tanpa sebab yang jelas, dll.',
       icon: <AlertTriangle size={16} className='text-rose-600' />,
     },
     {
-      number: 5,
+      number: 4,
       key: 'hasHypertension',
       title: 'Apakah Anda memiliki tekanan darah tinggi yang tidak terkontrol?',
       description: 'Tekanan darah sistolik >140 mmHg atau diastolik >90 mmHg tanpa pengobatan.',
       icon: <Activity size={16} className='text-red-500' />,
     },
     {
-      number: 6,
+      number: 5,
       key: 'hasBloodClotOrStroke',
       title:
         'Apakah Anda memiliki riwayat penggumpalan darah atau stroke, terutama untuk pil KB kombinasi?',
@@ -53,21 +46,21 @@ export function PillScreeningSection({ answers, onChange, pillType }: PillScreen
       icon: <HeartPulse size={16} className='text-red-600' />,
     },
     {
-      number: 7,
+      number: 6,
       key: 'hasBreastCancer',
       title: 'Apakah Anda sedang menderita kanker payudara aktif?',
       description: 'Riwayat atau diagnosis kanker yang sensitif terhadap pengaruh hormon.',
       icon: <Stethoscope size={16} className='text-purple-600' />,
     },
     {
-      number: 8,
+      number: 7,
       key: 'hasSevereLiverDisease',
       title: 'Apakah Anda memiliki penyakit hati berat?',
       description: 'Seperti hepatitis aktif, sirosis hati dekompensata, atau tumor hati.',
       icon: <AlertTriangle size={16} className='text-amber-600' />,
     },
     {
-      number: 9,
+      number: 8,
       key: 'willingToTakeDaily',
       title: 'Apakah Anda bersedia mengonsumsi pil KB secara teratur setiap hari?',
       description:
@@ -93,7 +86,7 @@ export function PillScreeningSection({ answers, onChange, pillType }: PillScreen
             </span>
           </div>
           <p className='text-xs text-slate-600 mt-0.5 leading-relaxed'>
-            Jawab 9 pertanyaan di bawah ini secara jujur untuk peninjauan kelayakan dan keamanan
+            Jawab 8 pertanyaan di bawah ini secara jujur untuk peninjauan kelayakan dan keamanan
             kontrasepsi oleh tim kesehatan admin.
           </p>
         </div>
@@ -187,7 +180,7 @@ export function PillScreeningSection({ answers, onChange, pillType }: PillScreen
         </div>
       </div>
 
-      {/* Pertanyaan 3-9: Ya / Tidak Interaktif */}
+      {/* Pertanyaan 3-8: Ya / Tidak Interaktif */}
       <div className='flex flex-col gap-2.5 pt-1'>
         {yesNoQuestions.map(q => {
           const val = answers[q.key];

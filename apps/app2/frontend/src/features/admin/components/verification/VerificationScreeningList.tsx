@@ -11,48 +11,41 @@ export function VerificationScreeningList({ screening }: VerificationScreeningLi
     { no: 2, label: 'Jumlah Anak', val: `${screening.childrenCount ?? '-'} Anak` },
     {
       no: 3,
-      label: 'Sedang Hamil',
-      val: screening.isPregnant ? 'Ya' : 'Tidak',
-      isWarning: screening.isPregnant === true,
-      hint: 'Kontraindikasi mutlak kehamilan',
-    },
-    {
-      no: 4,
       label: 'Kondisi Medis Kontraindikasi',
       val: screening.hasContraindications ? 'Ya' : 'Tidak',
       isWarning: screening.hasContraindications === true,
       hint: 'Memerlukan evaluasi dokter',
     },
     {
-      no: 5,
+      no: 4,
       label: 'Tekanan Darah Tinggi Tidak Terkontrol',
       val: screening.hasHypertension ? 'Ya' : 'Tidak',
       isWarning: screening.hasHypertension === true,
       hint: 'Risiko kardiovaskular',
     },
     {
-      no: 6,
+      no: 5,
       label: 'Riwayat Gumpalan Darah / Stroke',
       val: screening.hasBloodClotOrStroke ? 'Ya' : 'Tidak',
       isWarning: screening.hasBloodClotOrStroke === true,
       hint: 'Risiko tromboemboli (khusus pil kombinasi)',
     },
     {
-      no: 7,
+      no: 6,
       label: 'Kanker Payudara Aktif',
       val: screening.hasBreastCancer ? 'Ya' : 'Tidak',
       isWarning: screening.hasBreastCancer === true,
       hint: 'Sensitif terhadap pengaruh hormon',
     },
     {
-      no: 8,
+      no: 7,
       label: 'Penyakit Hati Berat',
       val: screening.hasSevereLiverDisease ? 'Ya' : 'Tidak',
       isWarning: screening.hasSevereLiverDisease === true,
       hint: 'Gangguan metabolisme steroid',
     },
     {
-      no: 9,
+      no: 8,
       label: 'Bersedia Minum Teratur Setiap Hari',
       val: screening.willingToTakeDaily ? 'Ya' : 'Tidak',
       isWarning: screening.willingToTakeDaily === false,
@@ -65,7 +58,7 @@ export function VerificationScreeningList({ screening }: VerificationScreeningLi
       <div className='flex items-center justify-between'>
         <span className='text-xs font-bold text-slate-900 flex items-center gap-1.5'>
           <HeartPulse size={14} className='text-teal-600' />
-          <span>Hasil Skrining Persyaratan Pil KB (9 Pertanyaan)</span>
+          <span>Hasil Skrining Persyaratan Pil KB (8 Pertanyaan)</span>
         </span>
         <span className='text-[10px] font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded'>
           Kriteria Klinis
@@ -85,9 +78,7 @@ export function VerificationScreeningList({ screening }: VerificationScreeningLi
                 {item.no}
               </span>
               <div>
-                <span className='text-slate-800 font-medium block leading-snug'>
-                  {item.label}
-                </span>
+                <span className='text-slate-800 font-medium block leading-snug'>{item.label}</span>
                 {item.hint && (
                   <span className='text-[10px] text-slate-400 block leading-tight'>
                     {item.hint}
@@ -115,4 +106,3 @@ export function VerificationScreeningList({ screening }: VerificationScreeningLi
     </div>
   );
 }
-

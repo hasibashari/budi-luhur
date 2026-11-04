@@ -37,15 +37,13 @@ export function SetupProfileView() {
   const [dateOfBirth, setDateOfBirth] = useState('');
   const today = new Date();
   const maxDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-  const [bloodType, setBloodType] = useState<string>('');
   const [height, setHeight] = useState<string>('');
   const [weight, setWeight] = useState<string>('');
 
-  // Form States – Step 2: 9 Pertanyaan Skrining Persyaratan
+  // Form States – Step 2: 8 Pertanyaan Skrining Persyaratan
   const [screeningAnswers, setScreeningAnswers] = useState<PillScreeningAnswers>({
     age: '',
     childrenCount: '',
-    isPregnant: null,
     hasContraindications: null,
     hasHypertension: null,
     hasBloodClotOrStroke: null,
@@ -91,7 +89,7 @@ export function SetupProfileView() {
       return;
     }
 
-    // Validasi Step 2: 9 Pertanyaan Skrining
+    // Validasi Step 2: 8 Pertanyaan Skrining
     if (
       screeningAnswers.age === '' ||
       Number(screeningAnswers.age) < 15 ||
@@ -109,7 +107,6 @@ export function SetupProfileView() {
     }
 
     const unansweredYesNo =
-      screeningAnswers.isPregnant === null ||
       screeningAnswers.hasContraindications === null ||
       screeningAnswers.hasHypertension === null ||
       screeningAnswers.hasBloodClotOrStroke === null ||
@@ -119,7 +116,7 @@ export function SetupProfileView() {
 
     if (unansweredYesNo) {
       setErrorMessage(
-        'Mohon lengkapi seluruh 9 pertanyaan pada bagian Persyaratan Penggunaan Pil KB.',
+        'Mohon lengkapi seluruh 8 pertanyaan pada bagian Persyaratan Penggunaan Pil KB.',
       );
       setCurrentStep(2);
       return;
@@ -144,7 +141,6 @@ export function SetupProfileView() {
         schoolOrOrg: schoolOrOrg.trim(),
         pillType,
         dateOfBirth: dateOfBirth || undefined,
-        bloodType: bloodType || undefined,
         height: height ? Number(height) : undefined,
         weight: weight ? Number(weight) : undefined,
         screening: screeningAnswers,
@@ -252,7 +248,7 @@ export function SetupProfileView() {
                     2. Skrining & Dokumen
                   </span>
                   <span className='text-[9px] sm:text-[10px] text-slate-400 font-medium hidden sm:block'>
-                    9 Pertanyaan & Bukti
+                    8 Pertanyaan & Bukti
                   </span>
                 </div>
               </button>
@@ -274,7 +270,7 @@ export function SetupProfileView() {
             <p className='text-xs sm:text-sm text-[#334155] mt-1 leading-relaxed'>
               {currentStep === 1
                 ? `Halo, ${authUser?.name || 'Akseptor Setia'}! Pilih jenis pil KB yang akan Anda konsumsi dan faskes rujukan Anda.`
-                : 'Jawab 9 pertanyaan skrining kontraindikasi medis dan unggah salah satu bukti dokumen status pernikahan.'}
+                : 'Jawab 8 pertanyaan skrining kontraindikasi medis dan unggah salah satu bukti dokumen status pernikahan.'}
             </p>
           </div>
         </div>
@@ -301,15 +297,13 @@ export function SetupProfileView() {
               {/* Pilihan Jenis Pil KB (Bisa di-klik) */}
               <PillTypeCardSelector value={pillType} onChange={setPillType} />
 
-              {/* Data Profil Dasar (Faskes, Tanggal Lahir, Golongan Darah, BB/TB) */}
+              {/* Data Profil Dasar (Faskes, Tanggal Lahir, BB/TB) */}
               <BasicProfileFormFields
                 schoolOrOrg={schoolOrOrg}
                 onSchoolOrOrgChange={setSchoolOrOrg}
                 dateOfBirth={dateOfBirth}
                 onDateOfBirthChange={setDateOfBirth}
                 maxDate={maxDate}
-                bloodType={bloodType}
-                onBloodTypeChange={setBloodType}
                 height={height}
                 onHeightChange={setHeight}
                 weight={weight}
@@ -367,7 +361,7 @@ export function SetupProfileView() {
                 </button>
               </div>
 
-              {/* Bagian 1: Persyaratan Penggunaan Pil KB (9 Pertanyaan) */}
+              {/* Bagian 1: Persyaratan Penggunaan Pil KB (8 Pertanyaan) */}
               <PillScreeningSection
                 answers={screeningAnswers}
                 onChange={updated => setScreeningAnswers(prev => ({ ...prev, ...updated }))}

@@ -1,5 +1,5 @@
 import apiClient, { extractErrorMessage } from '@/src/shared/api/client';
-import { DailyHealthLog } from '@/src/shared/components/domain/notes';
+import { DailyHealthLog } from '../types';
 
 export async function getHealthLogsAction(): Promise<DailyHealthLog[]> {
   const response = await apiClient.get<DailyHealthLog[]>('/notes');

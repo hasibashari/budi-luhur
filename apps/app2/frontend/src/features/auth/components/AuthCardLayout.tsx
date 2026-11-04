@@ -28,7 +28,7 @@ export function AuthCardLayout({ children }: AuthCardLayoutProps) {
           <div className='flex items-center justify-center gap-1.5 mt-8 text-center text-[#64748b]'>
             <ShieldCheck size={16} className='text-emerald-500 shrink-0' />
             <span className='text-xs font-medium'>
-              Privasi & rekam kesehatan terproteksi standar keamanan
+              Privasi kesehatan terproteksi standar keamanan
             </span>
           </div>
         </div>
@@ -95,7 +95,8 @@ export function AuthCardLayout({ children }: AuthCardLayoutProps) {
               Disiplin Minum Pil, Bebas Khawatir
             </h3>
             <p className='text-xs text-[#334155] leading-relaxed'>
-              Pengingat cerdas harian, pelacak siklus pil kontrasepsi, serta panduan SADARI untuk deteksi dini kesehatan payudara.
+              Pengingat cerdas harian, pelacak siklus pil kontrasepsi, serta panduan SADARI untuk
+              deteksi dini kesehatan payudara.
             </p>
           </div>
         </div>

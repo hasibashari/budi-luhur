@@ -94,7 +94,7 @@ export type DocumentProofType = 'KK' | 'KTP' | 'Buku Nikah';
 export interface PillScreeningAnswers {
   age: number | string;
   childrenCount: number | string;
-  isPregnant: boolean | null;
+  isPregnant?: boolean | null;
   hasContraindications: boolean | null;
   hasHypertension: boolean | null;
   hasBloodClotOrStroke: boolean | null;

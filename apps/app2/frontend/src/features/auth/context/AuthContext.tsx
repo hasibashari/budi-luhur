@@ -80,9 +80,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
     window.addEventListener('auth:unauthorized', handleUnauthorized);
 
+    const handleVerificationForbidden = (e: any) => {
+      const data = e.detail;
+      const newStatus =
+        data?.verificationStatus || (data?.code === 'ACCOUNT_REJECTED' ? 'Rejected' : 'Pending');
+      setState(prev => {
+        if (!prev.user) return prev;
+        const updatedUser = {
+          ...prev.user,
+          verificationStatus: newStatus,
+          rejectionReason: data?.rejectionReason || prev.user.rejectionReason,
+          isProfileComplete: true,
+        };
+        try {
+          localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(updatedUser));
+        } catch {}
+        return {
+          ...prev,
+          user: updatedUser,
+        };
+      });
+      navigate('/user/verification-status', { replace: true });
+    };
+    window.addEventListener('auth:verification-forbidden', handleVerificationForbidden);
+
     return () => {
       isMounted = false;
       window.removeEventListener('auth:unauthorized', handleUnauthorized);
+      window.removeEventListener('auth:verification-forbidden', handleVerificationForbidden);
     };
   }, []);
 

@@ -1,9 +1,7 @@
-import { useEffect, useState  } from 'react';
+import { useEffect, useState } from 'react';
 import { AlertCircle } from 'lucide-react';
-import {
-  DailyNotesCard,
-  DailyHealthLog,
-} from '@/src/shared/components/domain/notes';
+import { DailyNotesCard } from '../components';
+import { DailyHealthLog } from '../types';
 import { getHealthLogsAction, saveHealthLogAction } from '../api/notesRepository';
 
 export default function NotesView() {

@@ -22,7 +22,11 @@ export default function UserLayout({ children }: UserLayoutProps) {
   // di halaman Jadwal), agar notifikasi tetap muncul saat jam jadwal tiba.
   const { activeReminders } = useDailyScheduleReminders({
     userId: user?.id,
-    enabled: Boolean(user?.id) && pathname !== '/user/setup',
+    enabled:
+      Boolean(user?.id) &&
+      user?.verificationStatus === 'Approved' &&
+      pathname !== '/user/setup' &&
+      pathname !== '/user/verification-status',
   });
 
   const urgentReminder = activeReminders.find(

@@ -1,14 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  School,
-  Calendar,
-  Droplets,
-  Check,
-  AlertCircle,
-  Loader2,
-  LogOut,
-} from 'lucide-react';
+import { School, Calendar, Check, AlertCircle, Loader2, LogOut } from 'lucide-react';
 import { useAuth } from '@/src/features/auth/context/AuthContext';
 import { saveUserInitialSetupAction } from '../api/userRepository';
 import { Button } from '@/src/shared/components/ui/Button';
@@ -25,7 +17,6 @@ export function SetupProfileView() {
   const [dateOfBirth, setDateOfBirth] = useState('');
   const today = new Date();
   const maxDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-  const [bloodType, setBloodType] = useState<string>('');
   const [height, setHeight] = useState<string>('');
   const [weight, setWeight] = useState<string>('');
   const [hbLevel, setHbLevel] = useState<string>('');
@@ -48,7 +39,6 @@ export function SetupProfileView() {
       const payload: Record<string, any> = {
         schoolOrOrg: schoolOrOrg.trim(),
         dateOfBirth: dateOfBirth || undefined,
-        bloodType: bloodType || undefined,
         height: height ? Number(height) : undefined,
         weight: weight ? Number(weight) : undefined,
         hbLevel: hbLevel ? Number(hbLevel) : undefined,
@@ -104,7 +94,9 @@ export function SetupProfileView() {
               <span>Lengkapi Data Dirimu ✨</span>
             </h1>
             <p className='text-xs sm:text-sm text-slate-500 mt-1 leading-relaxed'>
-              Halo, {authUser?.name || 'Siswi Sehat'}! Masukkan asal sekolah dan data kesehatanmu untuk personalisasi pemantauan. Pengaturan alarm pengingat dapat kamu atur kapan saja secara mandiri di menu Jadwal.
+              Halo, {authUser?.name || 'Siswi Sehat'}! Masukkan asal sekolah dan data kesehatanmu
+              untuk personalisasi pemantauan. Pengaturan alarm pengingat dapat kamu atur kapan saja
+              secara mandiri di menu Jadwal.
             </p>
           </div>
 
@@ -122,7 +114,10 @@ export function SetupProfileView() {
         </div>
 
         {/* Profile Form */}
-        <form onSubmit={handleSubmit} className='flex-1 flex flex-col justify-between animate-fade-in'>
+        <form
+          onSubmit={handleSubmit}
+          className='flex-1 flex flex-col justify-between animate-fade-in'
+        >
           <div className='space-y-3.5 sm:space-y-4'>
             {/* School / Class Field (Required) */}
             <div>
@@ -144,54 +139,25 @@ export function SetupProfileView() {
               </div>
             </div>
 
-            {/* Date of Birth & Blood Type (2-column) */}
-            <div className='grid grid-cols-2 gap-2.5 sm:gap-3.5'>
-              {/* Date of Birth */}
-              <div className='min-w-0'>
-                <label className='block text-xs font-bold text-slate-800 mb-1.5 truncate'>
-                  Tanggal Lahir{' '}
-                  <span className='text-slate-400 font-normal text-[10px] sm:text-[11px]'>
-                    (Opsional)
-                  </span>
-                </label>
-                <div className='relative flex items-center'>
-                  <div className='absolute left-3 w-6 sm:w-7 h-6 sm:h-7 rounded-full bg-rose-50 flex items-center justify-center text-[#e11d48]'>
-                    <Calendar size={13} />
-                  </div>
-                  <input
-                    type='date'
-                    value={dateOfBirth}
-                    max={maxDate}
-                    onChange={e => setDateOfBirth(e.target.value)}
-                    className='w-full min-w-0 bg-white text-xs sm:text-sm text-[#1e293b] rounded-full border border-slate-200 pl-10 sm:pl-11 pr-2.5 sm:pr-3 py-2.5 sm:py-3 outline-none focus:border-[#e11d48] transition-colors shadow-2xs'
-                  />
+            {/* Date of Birth */}
+            <div>
+              <label className='block text-xs font-bold text-slate-800 mb-1.5'>
+                Tanggal Lahir{' '}
+                <span className='text-slate-400 font-normal text-[10px] sm:text-[11px]'>
+                  (Opsional)
+                </span>
+              </label>
+              <div className='relative flex items-center'>
+                <div className='absolute left-3.5 w-7 sm:w-8 h-7 sm:h-8 rounded-full bg-rose-50 flex items-center justify-center text-[#e11d48]'>
+                  <Calendar size={15} />
                 </div>
-              </div>
-
-              {/* Blood Type */}
-              <div className='min-w-0'>
-                <label className='block text-xs font-bold text-slate-800 mb-1.5 truncate'>
-                  Gol. Darah{' '}
-                  <span className='text-slate-400 font-normal text-[10px] sm:text-[11px]'>
-                    (Opsional)
-                  </span>
-                </label>
-                <div className='relative flex items-center'>
-                  <div className='absolute left-3 w-6 sm:w-7 h-6 sm:h-7 rounded-full bg-rose-50 flex items-center justify-center text-[#e11d48]'>
-                    <Droplets size={13} />
-                  </div>
-                  <select
-                    value={bloodType}
-                    onChange={e => setBloodType(e.target.value)}
-                    className='w-full min-w-0 bg-white text-xs sm:text-sm text-[#1e293b] rounded-full border border-slate-200 pl-10 sm:pl-11 pr-3 py-2.5 sm:py-3 outline-none focus:border-[#e11d48] transition-colors shadow-2xs cursor-pointer'
-                  >
-                    <option value=''>Pilih Golongan</option>
-                    <option value='A'>A</option>
-                    <option value='B'>B</option>
-                    <option value='AB'>AB</option>
-                    <option value='O'>O</option>
-                  </select>
-                </div>
+                <input
+                  type='date'
+                  value={dateOfBirth}
+                  max={maxDate}
+                  onChange={e => setDateOfBirth(e.target.value)}
+                  className='w-full bg-white text-xs sm:text-sm text-[#1e293b] rounded-full border border-slate-200 pl-12 sm:pl-13 pr-4 py-2.5 sm:py-3 outline-none focus:border-[#e11d48] transition-colors shadow-2xs'
+                />
               </div>
             </div>
 
@@ -257,9 +223,7 @@ export function SetupProfileView() {
               size='md'
               shape='pill'
               disabled={isSaving}
-              icon={
-                isSaving ? <Loader2 size={15} className='animate-spin' /> : <Check size={16} />
-              }
+              icon={isSaving ? <Loader2 size={15} className='animate-spin' /> : <Check size={16} />}
               className='flex-1 sm:flex-initial px-6 sm:px-8 py-3 font-bold shadow-md shadow-rose-500/20 text-xs sm:text-sm flex items-center justify-center gap-2'
             >
               {isSaving ? 'Menyimpan...' : 'Simpan & Masuk 🌸'}

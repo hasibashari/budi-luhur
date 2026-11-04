@@ -1,5 +1,4 @@
-import { Info, BookOpen, ExternalLink } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Info } from 'lucide-react';
 import { Card } from '@/src/shared/components/ui/Card';
 
 export function ScheduleGuideCard() {
@@ -52,34 +51,6 @@ export function ScheduleGuideCard() {
             </span>
           </li>
         </ul>
-      </Card>
-
-      {/* Educational Link Card */}
-      <Card
-        padding='md'
-        className='bg-gradient-to-br from-teal-50/90 to-emerald-50/50 border border-teal-100 shadow-2xs'
-      >
-        <div className='flex items-start gap-3'>
-          <div className='w-8 h-8 rounded-xl bg-teal-100 text-teal-700 flex items-center justify-center shrink-0 mt-0.5'>
-            <BookOpen size={16} />
-          </div>
-          <div className='flex-1 min-w-0'>
-            <h4 className='text-xs sm:text-sm font-bold text-slate-800'>
-              Pelajari Lebih Lanjut di Modul Edukasi
-            </h4>
-            <p className='text-xs text-slate-500 mt-1 leading-relaxed'>
-              Pelajari tata cara memulai minum pil KB saat menstruasi, penanganan lupa minum pil,
-              dan panduan periksa payudara sendiri (SADARI).
-            </p>
-            <Link
-              to='/user/education'
-              className='mt-2.5 inline-flex items-center gap-1 text-xs font-bold text-teal-700 hover:text-teal-900 underline underline-offset-2'
-            >
-              <span>Buka Menu Edukasi</span>
-              <ExternalLink size={12} />
-            </Link>
-          </div>
-        </div>
       </Card>
     </div>
   );

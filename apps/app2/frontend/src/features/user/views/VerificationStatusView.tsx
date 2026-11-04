@@ -268,7 +268,7 @@ export function VerificationStatusView() {
             </div>
           </div>
 
-          {/* Collapsible 9 Screening Answers */}
+          {/* Collapsible 8 Screening Answers */}
           {screening && (
             <div className='border-t border-slate-200 pt-2'>
               <button
@@ -276,7 +276,7 @@ export function VerificationStatusView() {
                 onClick={() => setShowScreeningDetails(prev => !prev)}
                 className='w-full flex items-center justify-between text-xs font-bold text-slate-700 hover:text-teal-700 transition-colors py-1'
               >
-                <span>Lihat Jawaban Skrining (9 Pertanyaan)</span>
+                <span>Lihat Jawaban Skrining (8 Pertanyaan)</span>
                 {showScreeningDetails ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
               </button>
 
@@ -293,17 +293,7 @@ export function VerificationStatusView() {
                     </span>
                   </div>
                   <div className='flex justify-between py-1 border-b border-slate-100'>
-                    <span className='text-slate-600'>3. Sedang Hamil:</span>
-                    <span
-                      className={`font-bold ${
-                        screening.isPregnant ? 'text-amber-600' : 'text-teal-600'
-                      }`}
-                    >
-                      {screening.isPregnant ? 'Ya' : 'Tidak'}
-                    </span>
-                  </div>
-                  <div className='flex justify-between py-1 border-b border-slate-100'>
-                    <span className='text-slate-600'>4. Kondisi Kontraindikasi:</span>
+                    <span className='text-slate-600'>3. Kondisi Kontraindikasi:</span>
                     <span
                       className={`font-bold ${
                         screening.hasContraindications ? 'text-amber-600' : 'text-teal-600'
@@ -313,7 +303,7 @@ export function VerificationStatusView() {
                     </span>
                   </div>
                   <div className='flex justify-between py-1 border-b border-slate-100'>
-                    <span className='text-slate-600'>5. Hipertensi Tidak Terkontrol:</span>
+                    <span className='text-slate-600'>4. Hipertensi Tidak Terkontrol:</span>
                     <span
                       className={`font-bold ${
                         screening.hasHypertension ? 'text-amber-600' : 'text-teal-600'
@@ -323,7 +313,7 @@ export function VerificationStatusView() {
                     </span>
                   </div>
                   <div className='flex justify-between py-1 border-b border-slate-100'>
-                    <span className='text-slate-600'>6. Riwayat Gumpalan Darah/Stroke:</span>
+                    <span className='text-slate-600'>5. Riwayat Gumpalan Darah/Stroke:</span>
                     <span
                       className={`font-bold ${
                         screening.hasBloodClotOrStroke ? 'text-amber-600' : 'text-teal-600'
@@ -333,7 +323,7 @@ export function VerificationStatusView() {
                     </span>
                   </div>
                   <div className='flex justify-between py-1 border-b border-slate-100'>
-                    <span className='text-slate-600'>7. Kanker Payudara Aktif:</span>
+                    <span className='text-slate-600'>6. Kanker Payudara Aktif:</span>
                     <span
                       className={`font-bold ${
                         screening.hasBreastCancer ? 'text-amber-600' : 'text-teal-600'
@@ -343,7 +333,7 @@ export function VerificationStatusView() {
                     </span>
                   </div>
                   <div className='flex justify-between py-1 border-b border-slate-100'>
-                    <span className='text-slate-600'>8. Penyakit Hati Berat:</span>
+                    <span className='text-slate-600'>7. Penyakit Hati Berat:</span>
                     <span
                       className={`font-bold ${
                         screening.hasSevereLiverDisease ? 'text-amber-600' : 'text-teal-600'
@@ -353,7 +343,7 @@ export function VerificationStatusView() {
                     </span>
                   </div>
                   <div className='flex justify-between py-1'>
-                    <span className='text-slate-600'>9. Bersedia Minum Teratur:</span>
+                    <span className='text-slate-600'>8. Bersedia Minum Teratur:</span>
                     <span
                       className={`font-bold ${
                         screening.willingToTakeDaily ? 'text-teal-600' : 'text-amber-600'

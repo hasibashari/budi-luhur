@@ -10,7 +10,6 @@ import {
   ShieldAlert,
   ArrowRight,
   Clock,
-  HeartHandshake,
   BookOpen,
   Play,
 } from 'lucide-react';
@@ -135,6 +134,9 @@ export default function SadariView() {
         </div>
       </div>
 
+      {/* Interactive Timing Calculator Widget (Posisi Paling Atas) */}
+      <SadariTimingWidget />
+
       {/* Hero Banner: Definisi SADARI, Status, & Quick Start Guided Mode */}
       <Card
         padding='md'
@@ -207,7 +209,7 @@ export default function SadariView() {
               <p className='text-[11px] text-slate-500 mt-1 leading-relaxed'>
                 {isCheckedThisMonth
                   ? `Pemeriksaan tercatat pada: ${lastCheckDate || 'Bulan ini'}. Pertahankan konsistensi pemeriksaan di siklus bulan depan!`
-                  : 'Luangkan waktu 10 menit untuk melakukan 6 langkah pemeriksaan mandiri di bawah ini.'}
+                  : 'Lakukan 6 langkah pemeriksaan mandiri untuk memastikan kondisi payudara Anda terpantau secara konsisten.'}
               </p>
             </div>
             <Button
@@ -223,9 +225,6 @@ export default function SadariView() {
         </div>
       </Card>
 
-      {/* Interactive Timing Calculator Widget */}
-      <SadariTimingWidget />
-
       {/* 6 Langkah Standar SADARI */}
       <div>
         <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4'>
@@ -234,7 +233,7 @@ export default function SadariView() {
               6 Langkah Standar SADARI
             </h4>
             <p className='text-xs text-slate-500'>
-              Lakukan secara berurutan di tempat yang tenang dengan pencahayaan yang cukup
+              Lakukan secara berurutan di tempat yang tenang untuk hasil deteksi dini yang optimal
             </p>
           </div>
           <div className='flex items-center gap-2'>
@@ -274,9 +273,6 @@ export default function SadariView() {
                     Tips Penting:
                   </span>
                   <p className='text-[11px] text-slate-600 leading-tight'>{item.tactileTip}</p>
-                </div>
-                <div className='text-[10px] text-slate-400 italic px-1'>
-                  Catatan visual: {item.visualNote}
                 </div>
                 <div className='flex items-center justify-between pt-1 px-1 text-[10px] text-slate-500'>
                   <span>
@@ -330,23 +326,6 @@ export default function SadariView() {
               <span className='text-[11px] leading-relaxed'>{sign.description}</span>
             </div>
           ))}
-        </div>
-
-        {/* CTA Bantuan Klinis */}
-        <div className='mt-4 pt-3 border-t border-orange-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3'>
-          <div className='flex items-center gap-2 text-xs text-slate-600'>
-            <HeartHandshake size={16} className='text-teal-600 shrink-0' />
-            <span>Memiliki keraguan atau keluhan setelah melakukan periksa mandiri?</span>
-          </div>
-          <div className='flex items-center gap-2 w-full sm:w-auto'>
-            <Link
-              to='/user/education'
-              className='inline-flex items-center justify-center gap-1.5 px-3.5 py-2 sm:py-1.5 rounded-xl bg-teal-600 text-white text-xs font-bold hover:bg-teal-700 transition-colors shadow-2xs w-full sm:w-auto text-center'
-            >
-              <span>Baca Panduan Edukasi</span>
-              <ArrowRight size={13} />
-            </Link>
-          </div>
         </div>
       </Card>
 

@@ -48,9 +48,6 @@ export function PillTypeCardSelector({ value, onChange }: PillTypeCardSelectorPr
             <p className='text-[11px] text-slate-500 mt-0.5 font-medium leading-snug'>
               Estrogen & Progestin (28 Tablet)
             </p>
-            <span className='inline-block text-[10px] text-[#0D9488] font-bold mt-1.5 bg-white/80 px-1.5 py-0.5 rounded border border-[#CCFBF1]'>
-              Umum / Non-Menyusui
-            </span>
           </div>
           <div
             className={`absolute top-3.5 right-3.5 w-4 h-4 rounded-full flex items-center justify-center transition-all ${
@@ -91,9 +88,6 @@ export function PillTypeCardSelector({ value, onChange }: PillTypeCardSelectorPr
             <p className='text-[11px] text-slate-500 mt-0.5 font-medium leading-snug'>
               Progestin Saja / POP (28 Tablet)
             </p>
-            <span className='inline-block text-[10px] text-[#ea580c] font-bold mt-1.5 bg-[#fff7ed] px-1.5 py-0.5 rounded border border-[#ffedd5]'>
-              Aman Ibu Menyusui
-            </span>
           </div>
           <div
             className={`absolute top-3.5 right-3.5 w-4 h-4 rounded-full flex items-center justify-center transition-all ${

@@ -1,4 +1,4 @@
-import { Building2, Calendar, Droplets } from 'lucide-react';
+import { Building2, Calendar } from 'lucide-react';
 
 export interface BasicProfileFormFieldsProps {
   schoolOrOrg: string;
@@ -6,8 +6,6 @@ export interface BasicProfileFormFieldsProps {
   dateOfBirth: string;
   onDateOfBirthChange: (val: string) => void;
   maxDate: string;
-  bloodType: string;
-  onBloodTypeChange: (val: string) => void;
   height: string;
   onHeightChange: (val: string) => void;
   weight: string;
@@ -20,8 +18,6 @@ export function BasicProfileFormFields({
   dateOfBirth,
   onDateOfBirthChange,
   maxDate,
-  bloodType,
-  onBloodTypeChange,
   height,
   onHeightChange,
   weight,
@@ -48,52 +44,25 @@ export function BasicProfileFormFields({
         </div>
       </div>
 
-      {/* Date of Birth & Blood Type */}
-      <div className='grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3.5'>
-        <div className='min-w-0'>
-          <label className='block text-xs font-bold text-[#0F172A] mb-1.5 truncate'>
-            Tanggal Lahir{' '}
-            <span className='text-[#64748B] font-normal text-[10px] sm:text-[11px]'>
-              (Opsional)
-            </span>
-          </label>
-          <div className='relative flex items-center'>
-            <div className='absolute left-3 w-6 sm:w-7 h-6 sm:h-7 rounded-full bg-[#F0FDFA] flex items-center justify-center text-[#0D9488]'>
-              <Calendar size={13} />
-            </div>
-            <input
-              type='date'
-              value={dateOfBirth}
-              max={maxDate}
-              onChange={e => onDateOfBirthChange(e.target.value)}
-              className='w-full min-w-0 bg-white text-xs sm:text-sm text-[#0F172A] rounded-full border border-slate-200 pl-10 sm:pl-11 pr-2.5 sm:pr-3 py-2.5 sm:py-3 outline-none focus:border-[#0D9488] focus:ring-2 focus:ring-[#0D9488]/15 transition-all shadow-2xs'
-            />
+      {/* Date of Birth */}
+      <div>
+        <label className='block text-xs font-bold text-[#0F172A] mb-1.5'>
+          Tanggal Lahir{' '}
+          <span className='text-[#64748B] font-normal text-[10px] sm:text-[11px]'>
+            (Opsional)
+          </span>
+        </label>
+        <div className='relative flex items-center'>
+          <div className='absolute left-3.5 w-7 sm:w-8 h-7 sm:h-8 rounded-full bg-[#F0FDFA] flex items-center justify-center text-[#0D9488]'>
+            <Calendar size={15} />
           </div>
-        </div>
-
-        <div className='min-w-0'>
-          <label className='block text-xs font-bold text-[#0F172A] mb-1.5 truncate'>
-            Gol. Darah{' '}
-            <span className='text-[#64748B] font-normal text-[10px] sm:text-[11px]'>
-              (Opsional)
-            </span>
-          </label>
-          <div className='relative flex items-center'>
-            <div className='absolute left-3 w-6 sm:w-7 h-6 sm:h-7 rounded-full bg-[#F0FDFA] flex items-center justify-center text-[#0D9488]'>
-              <Droplets size={13} />
-            </div>
-            <select
-              value={bloodType}
-              onChange={e => onBloodTypeChange(e.target.value)}
-              className='w-full min-w-0 bg-white text-xs sm:text-sm text-[#0F172A] rounded-full border border-slate-200 pl-10 sm:pl-11 pr-3 py-2.5 sm:py-3 outline-none focus:border-[#0D9488] focus:ring-2 focus:ring-[#0D9488]/15 transition-all shadow-2xs cursor-pointer'
-            >
-              <option value=''>Pilih Golongan</option>
-              <option value='A'>A</option>
-              <option value='B'>B</option>
-              <option value='AB'>AB</option>
-              <option value='O'>O</option>
-            </select>
-          </div>
+          <input
+            type='date'
+            value={dateOfBirth}
+            max={maxDate}
+            onChange={e => onDateOfBirthChange(e.target.value)}
+            className='w-full bg-white text-xs sm:text-sm text-[#0F172A] rounded-full border border-slate-200 pl-12 sm:pl-13 pr-4 py-2.5 sm:py-3 outline-none focus:border-[#0D9488] focus:ring-2 focus:ring-[#0D9488]/15 transition-all shadow-2xs'
+          />
         </div>
       </div>
 

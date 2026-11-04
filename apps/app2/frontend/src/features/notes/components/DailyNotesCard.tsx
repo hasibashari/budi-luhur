@@ -17,7 +17,7 @@ import {
   SIDE_EFFECT_OPTIONS,
   getLocalDateString,
   formatIndonesianDate,
-} from './notes.types';
+} from '../types/notes.types';
 import { DailyNoteForm } from './DailyNoteForm';
 import { NoteHistoryView } from './NoteHistoryView';
 import { NoteFormModal } from './NoteFormModal';

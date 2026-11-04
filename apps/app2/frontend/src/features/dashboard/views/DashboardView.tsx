@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Sparkles, ArrowRight, ShieldCheck, Flame, Award, CalendarClock } from 'lucide-react';
 import { DailyPrescriptionHeroCard } from '@/src/shared/components/domain/DailyPrescriptionHeroCard';
 import { ActiveBlisterStripWidget } from '@/src/shared/components/domain/ActiveBlisterStripWidget';
@@ -24,7 +24,8 @@ import { MobileHealthStatsBar, AdminNudgeBanner } from '../components';
 type DashboardConsumptionStatus = 'recorded' | 'missed' | 'pending';
 
 export default function DashboardView() {
-  const { user: authUser } = useAuth();
+  const navigate = useNavigate();
+  const { user: authUser, updateUser } = useAuth();
   const [dashboardData, setDashboardData] = useState<UserDashboardData | null>(null);
   const [activeNudge, setActiveNudge] = useState<AdminNudge | null>(null);
   const [loading, setLoading] = useState(true);
@@ -44,7 +45,18 @@ export default function DashboardView() {
           setActiveNudge(nudge);
           setLoading(false);
         }
-      } catch (err) {
+      } catch (err: any) {
+        if (err?.response?.status === 403) {
+          const data = err.response.data;
+          const status = data?.verificationStatus || (data?.code === 'ACCOUNT_REJECTED' ? 'Rejected' : 'Pending');
+          updateUser({
+            verificationStatus: status,
+            rejectionReason: data?.rejectionReason,
+            isProfileComplete: true,
+          });
+          navigate('/user/verification-status', { replace: true });
+          return;
+        }
         console.error('Failed to fetch dashboard data:', err);
         if (isMounted) setLoading(false);
       }

@@ -263,7 +263,7 @@ export function VerificationDocumentCard({
         <div
           role='dialog'
           aria-modal='true'
-          className='fixed inset-0 z-60 bg-slate-950/85 backdrop-blur-sm flex flex-col'
+          className='fixed inset-0 z-[80] bg-slate-950/85 backdrop-blur-sm flex flex-col'
         >
           {/* Lightbox Header */}
           <div className='flex items-center justify-between px-4 py-3 bg-slate-900/80 text-white border-b border-slate-800 shrink-0'>

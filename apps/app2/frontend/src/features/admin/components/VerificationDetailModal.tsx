@@ -1,13 +1,6 @@
 import { useState, useEffect } from 'react';
-import {
-  X,
-  CheckCircle2,
-  XCircle,
-  Clock,
-  ShieldCheck,
-  AlertTriangle,
-  Loader2,
-} from 'lucide-react';
+import { createPortal } from 'react-dom';
+import { X, CheckCircle2, XCircle, Clock, ShieldCheck, AlertTriangle, Loader2 } from 'lucide-react';
 import {
   getAdminVerificationDetailAction,
   approveUserVerificationAction,
@@ -83,6 +76,25 @@ export function VerificationDetailModal({
     }
   }, [isOpen, userId]);
 
+  useEffect(() => {
+    if (!isOpen || !userId) return;
+
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && !isSubmitting) {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = originalOverflow;
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, userId, isSubmitting, onClose]);
+
   if (!isOpen || !userId) return null;
 
   const handleApprove = async () => {
@@ -141,13 +153,18 @@ export function VerificationDetailModal({
     }
   };
 
-  return (
+  const modalContent = (
     <div
       role='dialog'
       aria-modal='true'
-      className='fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-slate-900/60 backdrop-blur-xs overflow-y-auto'
+      className='fixed inset-0 z-[70] flex items-center justify-center p-3 sm:p-5 pb-[calc(1rem+env(safe-area-inset-bottom,0px))] bg-slate-900/60 backdrop-blur-xs overflow-y-auto animate-fade-in'
+      onClick={e => {
+        if (e.target === e.currentTarget && !isSubmitting) {
+          onClose();
+        }
+      }}
     >
-      <div className='relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden my-auto max-h-[92vh] flex flex-col'>
+      <div className='relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden my-auto max-h-[calc(100dvh-2rem)] sm:max-h-[92vh] flex flex-col'>
         {/* Header */}
         <div className='flex items-center justify-between p-4 sm:p-5 border-b border-slate-100 bg-slate-50/50 shrink-0'>
           <div className='flex items-center gap-2.5'>
@@ -254,10 +271,7 @@ export function VerificationDetailModal({
                 openingDoc={openingDoc}
                 onOpenDocument={handleOpenDocument}
               />
-              <VerificationAuditHistory
-                history={detail.history || []}
-                formatDate={formatDate}
-              />
+              <VerificationAuditHistory history={detail.history || []} formatDate={formatDate} />
 
               {/* Action Error Banner */}
               {actionError && (
@@ -338,16 +352,6 @@ export function VerificationDetailModal({
             <div className='flex items-center gap-2'>
               <Button
                 type='button'
-                variant='outline'
-                size='sm'
-                onClick={onClose}
-                disabled={isSubmitting}
-              >
-                Tutup
-              </Button>
-
-              <Button
-                type='button'
                 variant='primary'
                 size='sm'
                 onClick={handleApprove}
@@ -372,6 +376,9 @@ export function VerificationDetailModal({
       </div>
     </div>
   );
+
+  if (typeof document === 'undefined') return null;
+  return createPortal(modalContent, document.body);
 }
 
 export default VerificationDetailModal;

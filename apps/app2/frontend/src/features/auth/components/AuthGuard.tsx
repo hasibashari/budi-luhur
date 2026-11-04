@@ -40,12 +40,11 @@ export function AuthGuard({ children, requiredRole, allowedRoles }: AuthGuardPro
         if (!user.isProfileComplete && pathname !== '/user/setup') {
           navigate('/user/setup', { replace: true });
         } else if (user.isProfileComplete) {
-          const isNotApproved =
-            user.verificationStatus === 'Pending' || user.verificationStatus === 'Rejected';
-          if (isNotApproved && pathname !== '/user/verification-status') {
+          const isApproved = user.verificationStatus === 'Approved';
+          if (!isApproved && pathname !== '/user/verification-status') {
             navigate('/user/verification-status', { replace: true });
           } else if (
-            user.verificationStatus === 'Approved' &&
+            isApproved &&
             (pathname === '/user/setup' || pathname === '/user/verification-status')
           ) {
             navigate('/user/dashboard', { replace: true });
@@ -84,15 +83,11 @@ export function AuthGuard({ children, requiredRole, allowedRoles }: AuthGuardPro
       return null;
     }
     if (user.isProfileComplete) {
-      const isNotApproved =
-        user.verificationStatus === 'Pending' || user.verificationStatus === 'Rejected';
-      if (isNotApproved && pathname !== '/user/verification-status') {
+      const isApproved = user.verificationStatus === 'Approved';
+      if (!isApproved && pathname !== '/user/verification-status') {
         return null;
       }
-      if (
-        user.verificationStatus === 'Approved' &&
-        (pathname === '/user/setup' || pathname === '/user/verification-status')
-      ) {
+      if (isApproved && (pathname === '/user/setup' || pathname === '/user/verification-status')) {
         return null;
       }
     }

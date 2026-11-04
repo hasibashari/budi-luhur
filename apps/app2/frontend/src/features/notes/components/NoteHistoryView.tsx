@@ -18,7 +18,7 @@ import {
   MOOD_OPTIONS,
   PAIN_OPTIONS,
   BLEEDING_OPTIONS,
-} from './notes.types';
+} from '../types/notes.types';
 
 export interface NoteHistoryViewProps {
   logs: DailyHealthLog[];
