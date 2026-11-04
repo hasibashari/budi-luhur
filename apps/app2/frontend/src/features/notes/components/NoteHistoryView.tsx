@@ -34,7 +34,6 @@ type HistoryFilter = 'semua' | 'ada_keluhan' | 'nyeri' | 'pendarahan';
 export const NoteHistoryView: React.FC<NoteHistoryViewProps> = ({
   logs,
   onEditLog,
-  onAddNewLog,
 }) => {
   const [activeFilter, setActiveFilter] = useState<HistoryFilter>('semua');
 
