@@ -13,6 +13,7 @@ export function LoginForm({ hideHeader = false }: LoginFormProps) {
   const [searchParams] = useSearchParams();
   const redirectParam = searchParams.get('redirect');
   const isJustRegistered = searchParams.get('registered') === 'true';
+  const isJustReset = searchParams.get('reset') === 'true';
 
   const { login } = useAuth();
 
@@ -75,6 +76,18 @@ export function LoginForm({ hideHeader = false }: LoginFormProps) {
           <CheckCircle2 size={16} className='text-emerald-600 shrink-0' />
           <span>
             Akun Anda telah berhasil dibuat! Silakan masuk menggunakan email dan kata sandi Anda.
+          </span>
+        </div>
+      )}
+
+      {isJustReset && !errorMessage && !successRole && (
+        <div
+          role='status'
+          className='mb-4 p-3.5 rounded-2xl bg-[#ecfdf5] border border-[#aff1d0] text-[#166534] text-xs sm:text-sm font-semibold flex items-center gap-2 animate-fade-in'
+        >
+          <CheckCircle2 size={16} className='text-[#16a34a] shrink-0' />
+          <span>
+            Kata sandi berhasil diperbarui! Silakan masuk dengan kata sandi baru Anda.
           </span>
         </div>
       )}
@@ -147,14 +160,8 @@ export function LoginForm({ hideHeader = false }: LoginFormProps) {
 
         <div className='flex items-center justify-between flex-wrap gap-2 mt-2 pt-1'>
           <Link
-            to='#'
-            onClick={e => {
-              e.preventDefault();
-              alert(
-                'Silakan hubungi pembina UKS atau administrator untuk mereset kata sandi Anda.',
-              );
-            }}
-            className='text-xs text-[#64748b] hover:text-[#e11d48] font-medium transition-colors'
+            to='/auth/forgot-password'
+            className='text-xs text-[#64748b] hover:text-[#e11d48] font-medium transition-colors cursor-pointer'
           >
             Lupa kata sandi?
           </Link>

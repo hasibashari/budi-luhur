@@ -4,6 +4,8 @@ export * from './components/AuthGuard';
 export * from './components/GuestGuard';
 export * from './components/LoginForm';
 export * from './components/RegisterForm';
+export * from './components/ForgotPasswordForm';
 export * from './components/AuthCardLayout';
 export * from './view/LoginView';
 export * from './view/RegisterView';
+export * from './view/ForgotPasswordView';

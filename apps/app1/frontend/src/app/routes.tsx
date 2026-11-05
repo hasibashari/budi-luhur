@@ -2,7 +2,7 @@ import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthGuard } from '@/src/features/auth/components/AuthGuard';
 import { GuestGuard } from '@/src/features/auth/components/GuestGuard';
-import { LoginView, RegisterView } from '@/src/features/auth';
+import { LoginView, RegisterView, ForgotPasswordView } from '@/src/features/auth';
 import { SplashView } from '@/src/features/splash';
 import { OnboardingView } from '@/src/features/onboarding';
 
@@ -61,6 +61,14 @@ export function AppRoutes() {
         element={
           <GuestGuard>
             <RegisterView />
+          </GuestGuard>
+        }
+      />
+      <Route
+        path='/auth/forgot-password'
+        element={
+          <GuestGuard>
+            <ForgotPasswordView />
           </GuestGuard>
         }
       />

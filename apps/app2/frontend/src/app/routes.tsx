@@ -11,6 +11,7 @@ import AdminLayout from '@/src/features/admin/components/AdminLayout';
 const OnboardingView = lazy(() => import('@/src/features/onboarding/views/OnboardingView'));
 const LoginView = lazy(() => import('@/src/features/auth/view/LoginView'));
 const RegisterView = lazy(() => import('@/src/features/auth/view/RegisterView'));
+const ForgotPasswordView = lazy(() => import('@/src/features/auth/view/ForgotPasswordView'));
 
 // User Portal Views (Lazy Loaded)
 const DashboardView = lazy(() => import('@/src/features/dashboard/views/DashboardView'));
@@ -96,6 +97,14 @@ export function AppRoutes() {
           element={
             <GuestGuard>
               <RegisterView />
+            </GuestGuard>
+          }
+        />
+        <Route
+          path='/auth/forgot-password'
+          element={
+            <GuestGuard>
+              <ForgotPasswordView />
             </GuestGuard>
           }
         />
