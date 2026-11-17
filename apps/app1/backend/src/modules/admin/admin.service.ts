@@ -795,7 +795,50 @@ export class AdminService {
     return { success: true };
   }
 
-  static async getComplianceReports(): Promise<ComplianceReport[]> {
+  static async getUserYearlyMonitoring(userId: string) {
+    const { ConsumptionService } = await import('../consumption/consumption.service.js');
+    return ConsumptionService.getYearlyMonitoring(userId);
+  }
+
+  static async getComplianceReports(period: string = '7-hari'): Promise<ComplianceReport[]> {
+    if (period === '1-tahun' || period === '1-year') {
+      const res = await db.query<any>(`
+        SELECT 
+          TO_CHAR(scheduled_date, 'YYYY-MM') as month_key,
+          SUM(CASE WHEN status IN ('ON_TIME', 'LATE') THEN 1 ELSE 0 END) as taken_count,
+          SUM(CASE WHEN status = 'MISSED' THEN 1 ELSE 0 END) as missed_count,
+          COUNT(*) as total
+        FROM consumption_logs
+        WHERE scheduled_date >= CURRENT_DATE - INTERVAL '12 months'
+        GROUP BY TO_CHAR(scheduled_date, 'YYYY-MM')
+        ORDER BY month_key ASC
+      `);
+
+      const INDO_MONTHS = [
+        'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+        'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember',
+      ];
+
+      return res.rows.map((r: any) => {
+        const total = Number(r.total) || 0;
+        const takenCount = Number(r.taken_count) || 0;
+        const missedCount = Number(r.missed_count) || 0;
+        const percentage = total > 0 ? Math.round((takenCount / total) * 100) : 100;
+
+        const [yStr, mStr] = (r.month_key || '').split('-');
+        const mIdx = (parseInt(mStr, 10) || 1) - 1;
+        const label = `${INDO_MONTHS[mIdx] || mStr} ${yStr || ''}`.trim();
+
+        return {
+          date: label,
+          takenCount,
+          missedCount,
+          adherencePercentage: percentage,
+        };
+      });
+    }
+
+    const limitDays = period === '30-hari' ? 30 : period === '3-bulan' ? 90 : 14;
     const res = await db.query<any>(`
       SELECT 
         scheduled_date as date,
@@ -805,7 +848,7 @@ export class AdminService {
       FROM consumption_logs
       GROUP BY scheduled_date
       ORDER BY scheduled_date ASC
-      LIMIT 14
+      LIMIT ${limitDays}
     `);
     const rows = res.rows;
 

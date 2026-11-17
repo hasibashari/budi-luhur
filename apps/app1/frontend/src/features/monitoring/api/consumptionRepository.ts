@@ -6,6 +6,7 @@ import {
   DateRangeFilter,
   CategoryFilter,
   StatusFilter,
+  YearlyMonitoringData,
 } from '../types';
 
 export interface ActivityDateInfo {
@@ -111,4 +112,9 @@ export async function recordConsumptionForDateAction(
   } catch (err: any) {
     return { success: false, error: err.response?.data?.error || err.message };
   }
+}
+
+export async function getYearlyMonitoringAction(): Promise<YearlyMonitoringData> {
+  const response = await apiClient.get<YearlyMonitoringData>('/consumption/yearly');
+  return response.data;
 }

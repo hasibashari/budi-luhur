@@ -63,4 +63,20 @@ export class ConsumptionController {
       res.status(500).json({ success: false, error: 'Gagal memuat riwayat konsumsi.' });
     }
   }
+
+  static async getYearly(req: AuthRequest, res: Response) {
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        res.status(401).json({ success: false, error: 'Sesi tidak valid.' });
+        return;
+      }
+
+      const yearlyData = await ConsumptionService.getYearlyMonitoring(userId);
+      res.json(yearlyData);
+    } catch (error: any) {
+      console.error('ConsumptionController.getYearly error:', error);
+      res.status(500).json({ success: false, error: 'Gagal memuat monitoring tahunan.' });
+    }
+  }
 }

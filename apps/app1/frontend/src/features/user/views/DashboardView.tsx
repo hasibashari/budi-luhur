@@ -54,7 +54,7 @@ export default function DashboardView() {
     }
   }, [dashboardData, userId]);
 
-  const { isReminderActive } = useScheduleReminder({
+  const { isReminderActive, isAlarmRinging, dismissAlarm } = useScheduleReminder({
     schedule: dashboardData?.activeSchedule,
     todayStatus: dashboardData?.todayStatus || 'pending',
     userId,
@@ -472,16 +472,31 @@ export default function DashboardView() {
                   </div>
                 </div>
 
-                <Button
-                  variant='primary'
-                  size='sm'
-                  shape='pill'
-                  className='bg-white text-rose-600 hover:bg-rose-50 font-extrabold shadow-sm text-xs self-start sm:self-auto shrink-0'
-                  icon={<CheckCircle2 size={15} />}
-                  onClick={() => handleStatusChange('recorded')}
-                >
-                  Sudah Minum Sekarang
-                </Button>
+                <div className='flex items-center gap-2 self-start sm:self-auto shrink-0 flex-wrap'>
+                  {isAlarmRinging && (
+                    <button
+                      type='button'
+                      onClick={dismissAlarm}
+                      className='inline-flex items-center justify-center gap-1.5 px-3 py-2 bg-white/20 hover:bg-white/30 text-white font-semibold rounded-full text-xs transition-colors'
+                    >
+                      <BellOff size={14} />
+                      <span>Matikan Alarm</span>
+                    </button>
+                  )}
+                  <Button
+                    variant='primary'
+                    size='sm'
+                    shape='pill'
+                    className='bg-white text-rose-600 hover:bg-rose-50 font-extrabold shadow-sm text-xs'
+                    icon={<CheckCircle2 size={15} />}
+                    onClick={() => {
+                      dismissAlarm();
+                      handleStatusChange('recorded');
+                    }}
+                  >
+                    Sudah Minum Sekarang
+                  </Button>
+                </div>
               </div>
             </section>
           )}

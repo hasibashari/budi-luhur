@@ -248,12 +248,24 @@ export async function deleteAdminArticleAction(
   }
 }
 
-export async function getComplianceReportsAction(): Promise<ComplianceReport[]> {
+export async function getComplianceReportsAction(period: string = '7-hari'): Promise<ComplianceReport[]> {
   try {
-    const res = await apiClient.get<ComplianceReport[]>('/admin/compliance');
+    const res = await apiClient.get<ComplianceReport[]>('/admin/compliance', {
+      params: { period },
+    });
     return res.data || [];
   } catch (err: any) {
     console.error('getComplianceReportsAction error:', err);
     return [];
+  }
+}
+
+export async function getUserYearlyMonitoringAction(userId: string): Promise<any> {
+  try {
+    const res = await apiClient.get(`/admin/users/${userId}/yearly-monitoring`);
+    return res.data;
+  } catch (err: any) {
+    console.error('getUserYearlyMonitoringAction error:', err);
+    return null;
   }
 }

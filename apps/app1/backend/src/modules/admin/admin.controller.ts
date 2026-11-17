@@ -184,13 +184,29 @@ export class AdminController {
     }
   }
 
-  static async getComplianceReports(_req: AuthRequest, res: Response) {
+  static async getComplianceReports(req: AuthRequest, res: Response) {
     try {
-      const reports = await AdminService.getComplianceReports();
+      const period = String(req.query.period || '7-hari');
+      const reports = await AdminService.getComplianceReports(period);
       res.json(reports);
     } catch (error: any) {
       console.error('AdminController.getComplianceReports error:', error);
       res.status(500).json({ success: false, error: 'Gagal memuat laporan kepatuhan.' });
+    }
+  }
+
+  static async getUserYearlyMonitoring(req: AuthRequest, res: Response) {
+    try {
+      const userId = String(req.params.id);
+      if (!userId) {
+        res.status(400).json({ success: false, error: 'ID Pengguna wajib diisi.' });
+        return;
+      }
+      const data = await AdminService.getUserYearlyMonitoring(userId);
+      res.json(data);
+    } catch (error: any) {
+      console.error('AdminController.getUserYearlyMonitoring error:', error);
+      res.status(500).json({ success: false, error: 'Gagal memuat data monitoring tahunan pengguna.' });
     }
   }
 

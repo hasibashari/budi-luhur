@@ -1,9 +1,17 @@
-import React from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useLocation, Outlet } from 'react-router-dom';
 import MobileTopBar from '@/src/shared/components/MobileTopBar';
 import MobileBottomBar from '@/src/shared/components/MobileBottomBar';
 import UserSidebar from './UserSidebar';
 import { AuthGuard, useAuth } from '@/src/features/auth';
+import { useScheduleReminder, ActiveAlarmModal } from '@/src/features/schedule';
+import {
+  getUserDashboardDataAction,
+  recordUserConsumptionAction,
+  UserScheduleData,
+} from '@/src/features/user/api/userRepository';
+import { subscribeToPush } from '@/src/shared/utils/notifications';
+import { publishRealtimeEvent, subscribeRealtimeEvent } from '@/src/shared/utils/realtimeSync';
 
 export interface UserLayoutProps {
   children?: React.ReactNode;
@@ -13,9 +21,68 @@ export default function UserLayout({ children }: UserLayoutProps) {
   const location = useLocation();
   const pathname = location.pathname;
   const { user } = useAuth();
+  const userId = user?.id || '';
   const fullName = user?.name || 'Siswi FEMORY';
   const firstName = user?.name ? user.name.split(' ')[0] : 'Siswi';
   const avatarUrl = user?.avatarUrl || null;
+
+  // Global schedule & today status for real-time reminder across all user pages
+  const [schedule, setSchedule] = useState<UserScheduleData | null>(null);
+  const [todayStatus, setTodayStatus] = useState<'recorded' | 'missed' | 'pending'>('pending');
+
+  const loadUserData = useCallback(async () => {
+    if (!userId) return;
+    try {
+      const data = await getUserDashboardDataAction(userId);
+      if (data) {
+        setSchedule(data.activeSchedule);
+        setTodayStatus(data.todayStatus);
+      }
+    } catch (e) {
+      // Ignore initial layout load error
+    }
+  }, [userId]);
+
+  useEffect(() => {
+    loadUserData();
+    // Attempt PWA push subscription when notification permission is available
+    if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
+      subscribeToPush().catch(() => {});
+    }
+
+    const unsubscribe = subscribeRealtimeEvent(event => {
+      if (event.type === 'MEDICATION_TAKEN' && (!event.patientId || event.patientId === userId)) {
+        loadUserData();
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, [loadUserData, userId]);
+
+  const handleAutoMissed = useCallback(async () => {
+    if (todayStatus === 'pending') {
+      setTodayStatus('missed');
+      const todayDateStr = new Date().toLocaleDateString('en-CA');
+      await recordUserConsumptionAction(userId, 'missed', undefined, todayDateStr);
+    }
+  }, [todayStatus, userId]);
+
+  const handleConfirmTaken = useCallback(async () => {
+    const todayDateStr = new Date().toLocaleDateString('en-CA');
+    setTodayStatus('recorded');
+    await recordUserConsumptionAction(userId, 'recorded', undefined, todayDateStr);
+    publishRealtimeEvent('MEDICATION_TAKEN', { patientId: userId });
+  }, [userId]);
+
+  const { isAlarmRinging, dismissAlarm, confirmTaken } = useScheduleReminder({
+    schedule,
+    todayStatus,
+    userId,
+    onAutoMissed: handleAutoMissed,
+    onConfirmTaken: handleConfirmTaken,
+  });
 
   if (pathname === '/user/setup') {
     return (
@@ -49,6 +116,15 @@ export default function UserLayout({ children }: UserLayoutProps) {
 
         {/* Fixed Mobile Bottom Navigation (< md) */}
         <MobileBottomBar />
+
+        {/* Persistent Continuous Audio Alarm Modal */}
+        <ActiveAlarmModal
+          isOpen={isAlarmRinging}
+          tabletName={schedule?.tabletName}
+          time={schedule?.time}
+          onConfirmTaken={confirmTaken}
+          onDismiss={dismissAlarm}
+        />
       </div>
     </AuthGuard>
   );

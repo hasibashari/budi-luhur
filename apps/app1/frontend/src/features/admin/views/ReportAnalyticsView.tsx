@@ -14,7 +14,7 @@ export default function ReportAnalyticsView() {
   useEffect(() => {
     let isMounted = true;
     const fetchReports = async () => {
-      const [r, u] = await Promise.all([getComplianceReportsAction(), getUsersAction()]);
+      const [r, u] = await Promise.all([getComplianceReportsAction(period), getUsersAction()]);
       if (isMounted) {
         setReports(r);
         setUsers(u);
@@ -24,7 +24,7 @@ export default function ReportAnalyticsView() {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [period]);
 
   const totalTaken = reports.reduce((acc, curr) => acc + curr.takenCount, 0);
   const totalMissed = reports.reduce((acc, curr) => acc + curr.missedCount, 0);
@@ -70,6 +70,7 @@ export default function ReportAnalyticsView() {
                 <option value='7-hari'>7 Hari Terakhir</option>
                 <option value='30-hari'>30 Hari Terakhir</option>
                 <option value='3-bulan'>3 Bulan Terakhir</option>
+                <option value='1-tahun'>1 Tahun Terakhir (12 Bulan) 🌟</option>
               </select>
             </div>
             <span className='inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200'>
@@ -152,7 +153,7 @@ export default function ReportAnalyticsView() {
         {/* Table breakdown */}
         <div className='lg:col-span-8 bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-pink-100 shadow-sm'>
           <h3 className='text-sm sm:text-base font-bold text-slate-900 mb-4'>
-            Rincian Kepatuhan Konsumsi Harian Pengguna
+            Rincian Kepatuhan Konsumsi {period === '1-tahun' ? 'Bulanan (1 Tahun)' : 'Harian'} Siswi
           </h3>
           <div className='space-y-4'>
             {reports.map((report, idx) => {

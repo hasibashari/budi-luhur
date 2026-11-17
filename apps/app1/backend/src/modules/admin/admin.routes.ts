@@ -12,6 +12,7 @@ adminRoutes.use(roleMiddleware(['admin']) as any);
 adminRoutes.get('/stats', AdminController.getStats as any);
 adminRoutes.get('/users', AdminController.getUsers as any);
 adminRoutes.get('/users/:id', AdminController.getUserById as any);
+adminRoutes.get('/users/:id/yearly-monitoring', AdminController.getUserYearlyMonitoring as any);
 adminRoutes.post('/users', AdminController.createUser as any);
 adminRoutes.put('/users/:id', AdminController.updateUser as any);
 adminRoutes.delete('/users/:id', AdminController.deleteUser as any);

@@ -88,7 +88,110 @@ export async function requestNotificationPermission(): Promise<
 }
 
 /**
- * Plays a pleasant medical chime audio tone when notification fires
+ * Continuous alarm audio state management
+ */
+let alarmAudioContext: AudioContext | null = null;
+let alarmLoopInterval: any = null;
+let isAlarmPlaying = false;
+
+/**
+ * Plays a single pulse of pleasant medical alarm chime (E5 -> G5 -> C6)
+ */
+function playAlarmChimePulse(ctx: AudioContext) {
+  try {
+    const now = ctx.currentTime;
+
+    const osc1 = ctx.createOscillator();
+    const osc2 = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc1.type = 'sine';
+    osc1.frequency.setValueAtTime(659.25, now); // E5
+    osc1.frequency.exponentialRampToValueAtTime(783.99, now + 0.15); // G5
+    osc1.frequency.exponentialRampToValueAtTime(1046.5, now + 0.35); // C6
+
+    osc2.type = 'triangle';
+    osc2.frequency.setValueAtTime(329.63, now); // E4
+    osc2.frequency.exponentialRampToValueAtTime(392.0, now + 0.15); // G4
+    osc2.frequency.exponentialRampToValueAtTime(523.25, now + 0.35); // C5
+
+    gain.gain.setValueAtTime(0.01, now);
+    gain.gain.linearRampToValueAtTime(0.35, now + 0.06);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 1.1);
+
+    osc1.connect(gain);
+    osc2.connect(gain);
+    gain.connect(ctx.destination);
+
+    osc1.start(now);
+    osc2.start(now);
+    osc1.stop(now + 1.1);
+    osc2.stop(now + 1.1);
+  } catch {
+    // Ignore audio context autoplay errors
+  }
+}
+
+/**
+ * Starts continuous looping alarm sound until explicitly stopped by user
+ */
+export function startContinuousAlarmSound() {
+  if (typeof window === 'undefined') return;
+  if (isAlarmPlaying) return;
+
+  try {
+    const AudioContextClass =
+      window.AudioContext ||
+      (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+    if (!AudioContextClass) return;
+
+    if (!alarmAudioContext || alarmAudioContext.state === 'closed') {
+      alarmAudioContext = new AudioContextClass();
+    }
+    if (alarmAudioContext.state === 'suspended') {
+      alarmAudioContext.resume().catch(() => {});
+    }
+
+    isAlarmPlaying = true;
+    playAlarmChimePulse(alarmAudioContext);
+
+    // Play chime pulse every 1.4 seconds repeatedly
+    alarmLoopInterval = setInterval(() => {
+      if (!isAlarmPlaying || !alarmAudioContext) {
+        clearInterval(alarmLoopInterval);
+        alarmLoopInterval = null;
+        return;
+      }
+      playAlarmChimePulse(alarmAudioContext);
+    }, 1400);
+  } catch {
+    // Ignore audio context initialization issues
+  }
+}
+
+/**
+ * Stops continuous alarm sound immediately
+ */
+export function stopContinuousAlarmSound() {
+  isAlarmPlaying = false;
+  if (alarmLoopInterval) {
+    clearInterval(alarmLoopInterval);
+    alarmLoopInterval = null;
+  }
+  if (alarmAudioContext && alarmAudioContext.state !== 'closed') {
+    alarmAudioContext.suspend().catch(() => {});
+  }
+}
+
+/**
+ * Check if continuous alarm sound is currently active
+ */
+export function isAlarmSoundActive(): boolean {
+  return isAlarmPlaying;
+}
+
+/**
+ * Legacy single tone chime (backwards compatible)
  */
 export function playNotificationTone() {
   if (typeof window === 'undefined') return;
@@ -99,35 +202,9 @@ export function playNotificationTone() {
     if (!AudioContextClass) return;
 
     const ctx = new AudioContextClass();
-    const now = ctx.currentTime;
-
-    // Two-tone medical reminder chime (E5 -> G5)
-    const osc1 = ctx.createOscillator();
-    const osc2 = ctx.createOscillator();
-    const gain = ctx.createGain();
-
-    osc1.type = 'sine';
-    osc1.frequency.setValueAtTime(659.25, now); // E5
-    osc1.frequency.exponentialRampToValueAtTime(783.99, now + 0.18); // G5
-
-    osc2.type = 'triangle';
-    osc2.frequency.setValueAtTime(329.63, now); // E4
-    osc2.frequency.exponentialRampToValueAtTime(392.0, now + 0.18); // G4
-
-    gain.gain.setValueAtTime(0.01, now);
-    gain.gain.linearRampToValueAtTime(0.2, now + 0.05);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
-
-    osc1.connect(gain);
-    osc2.connect(gain);
-    gain.connect(ctx.destination);
-
-    osc1.start(now);
-    osc2.start(now);
-    osc1.stop(now + 0.6);
-    osc2.stop(now + 0.6);
+    playAlarmChimePulse(ctx);
   } catch {
-    // ignore audio context restrictions
+    // ignore
   }
 }
 
@@ -141,13 +218,13 @@ export async function showSystemNotification(
   if (!isNotificationSupported()) return false;
   if (Notification.permission !== 'granted') return false;
 
-  // Play audio chime
-  playNotificationTone();
-
+  // Start continuous alarm tone if this is a real-time alarm trigger
   const defaultOptions: SystemNotificationOptions = {
     icon: '/icons/icon-192x192.svg',
     badge: '/icons/icon-192x192.svg',
-    vibrate: [200, 100, 200, 100, 200],
+    vibrate: [500, 250, 500, 250, 500, 250, 500],
+    requireInteraction: true,
+    tag: 'femory-ttd-alarm',
     data: {
       url: options.url || '/user/dashboard',
       dateOfArrival: Date.now(),

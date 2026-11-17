@@ -1,12 +1,17 @@
-import { useState, useEffect, useRef } from 'react';
-import { playNotificationTone, showSystemNotification } from '@/src/shared/utils/notifications';
+import { useState, useEffect, useRef, useCallback } from 'react';
+import {
+  startContinuousAlarmSound,
+  stopContinuousAlarmSound,
+  showSystemNotification,
+} from '@/src/shared/utils/notifications';
 import { UserScheduleData } from '@/src/features/user/api/userRepository';
 
-interface UseScheduleReminderOptions {
+export interface UseScheduleReminderOptions {
   schedule: UserScheduleData | null | undefined;
   todayStatus: 'recorded' | 'missed' | 'pending';
   userId?: string;
   onAutoMissed?: () => void;
+  onConfirmTaken?: () => void;
 }
 
 export function useScheduleReminder({
@@ -14,15 +19,59 @@ export function useScheduleReminder({
   todayStatus,
   userId,
   onAutoMissed,
+  onConfirmTaken,
 }: UseScheduleReminderOptions) {
   const [isReminderActive, setIsReminderActive] = useState(false);
+  const [isAlarmRinging, setIsAlarmRinging] = useState(false);
   const [isPastTolerance, setIsPastTolerance] = useState(false);
-  const lastTriggeredRef = useRef<string | null>(null);
+  const dismissedKeysRef = useRef<Set<string>>(new Set());
+
+  // Dismiss / Stop the ongoing alarm sound
+  const dismissAlarm = useCallback(() => {
+    stopContinuousAlarmSound();
+    setIsAlarmRinging(false);
+    if (schedule) {
+      const now = new Date();
+      const todayStr = now.toLocaleDateString('en-CA');
+      const dismissKey = `dismissed_${userId || 'user'}_${todayStr}_${schedule.time}`;
+      dismissedKeysRef.current.add(dismissKey);
+      if (typeof sessionStorage !== 'undefined') {
+        sessionStorage.setItem(dismissKey, 'true');
+      }
+    }
+  }, [schedule, userId]);
+
+  // Action: Mark as taken from alarm dialog
+  const confirmTaken = useCallback(() => {
+    dismissAlarm();
+    onConfirmTaken?.();
+  }, [dismissAlarm, onConfirmTaken]);
+
+  useEffect(() => {
+    // Listen for Service Worker notification action events (from background or lock screen)
+    if (typeof navigator !== 'undefined' && 'serviceWorker' in navigator) {
+      const handleMessage = (event: MessageEvent) => {
+        if (event.data?.type === 'ALARM_ACTION') {
+          if (event.data.action === 'take_ttd') {
+            confirmTaken();
+          } else if (event.data.action === 'dismiss_alarm') {
+            dismissAlarm();
+          }
+        }
+      };
+      navigator.serviceWorker.addEventListener('message', handleMessage);
+      return () => {
+        navigator.serviceWorker.removeEventListener('message', handleMessage);
+      };
+    }
+  }, [confirmTaken, dismissAlarm]);
 
   useEffect(() => {
     if (!schedule || !schedule.isEnabled || todayStatus === 'recorded') {
       setIsReminderActive(false);
+      setIsAlarmRinging(false);
       setIsPastTolerance(false);
+      stopContinuousAlarmSound();
       return;
     }
 
@@ -39,7 +88,9 @@ export function useScheduleReminder({
 
       if (!isScheduledToday) {
         setIsReminderActive(false);
+        setIsAlarmRinging(false);
         setIsPastTolerance(false);
+        stopContinuousAlarmSound();
         return;
       }
 
@@ -54,7 +105,9 @@ export function useScheduleReminder({
       // 1. Auto-Missed: If current time is past scheduled time + 60 mins tolerance
       if (diffMinutes > toleranceMinutes) {
         setIsReminderActive(false);
+        setIsAlarmRinging(false);
         setIsPastTolerance(true);
+        stopContinuousAlarmSound();
         if (todayStatus === 'pending') {
           onAutoMissed?.();
         }
@@ -66,16 +119,22 @@ export function useScheduleReminder({
         setIsReminderActive(true);
         setIsPastTolerance(false);
 
-        const exactKey = `exact_${userId || 'user'}_${todayStr}_${schedule.time}`;
-        if (lastTriggeredRef.current !== exactKey && typeof window !== 'undefined') {
-          const stored = sessionStorage.getItem(exactKey);
-          if (!stored) {
-            sessionStorage.setItem(exactKey, '1');
-            lastTriggeredRef.current = exactKey;
-            playNotificationTone();
+        const dismissKey = `dismissed_${userId || 'user'}_${todayStr}_${schedule.time}`;
+        const isDismissed =
+          dismissedKeysRef.current.has(dismissKey) ||
+          (typeof sessionStorage !== 'undefined' && sessionStorage.getItem(dismissKey) === 'true');
+
+        if (!isDismissed) {
+          setIsAlarmRinging(true);
+          startContinuousAlarmSound();
+
+          const notifiedKey = `notified_${userId || 'user'}_${todayStr}_${schedule.time}`;
+          if (typeof sessionStorage !== 'undefined' && !sessionStorage.getItem(notifiedKey)) {
+            sessionStorage.setItem(notifiedKey, '1');
             showSystemNotification('Waktunya Minum TTD! 🌸', {
-              body: `Waktu minum ${schedule.tabletName || 'Tablet Tambah Darah'} (${schedule.time} WIB) telah tiba. Yuk catat sekarang!`,
+              body: `Waktu minum ${schedule.tabletName || 'Tablet Tambah Darah'} (${schedule.time} WIB) telah tiba. Yuk minum sekarang!`,
               url: '/user/dashboard',
+              requireInteraction: true,
             });
           }
         }
@@ -85,36 +144,42 @@ export function useScheduleReminder({
       // 3. Early Reminder Window (15 minutes before)
       if (schedule.remind15MinBefore && diffMinutes >= -15 && diffMinutes < 0) {
         setIsReminderActive(false);
+        setIsAlarmRinging(false);
         setIsPastTolerance(false);
 
         const earlyKey = `early_${userId || 'user'}_${todayStr}_${schedule.time}`;
-        if (lastTriggeredRef.current !== earlyKey && typeof window !== 'undefined') {
-          const stored = sessionStorage.getItem(earlyKey);
-          if (!stored) {
-            sessionStorage.setItem(earlyKey, '1');
-            lastTriggeredRef.current = earlyKey;
-            playNotificationTone();
-            showSystemNotification('15 Menit Menuju Minum TTD 🌸', {
-              body: `Persiapkan ${schedule.tabletName || 'TTD'}. Waktu minum dalam 15 menit (${schedule.time} WIB).`,
-              url: '/user/dashboard',
-            });
-          }
+        if (typeof sessionStorage !== 'undefined' && !sessionStorage.getItem(earlyKey)) {
+          sessionStorage.setItem(earlyKey, '1');
+          showSystemNotification('15 Menit Menuju Minum TTD 🌸', {
+            body: `Persiapkan ${schedule.tabletName || 'TTD'}. Waktu minum dalam 15 menit (${schedule.time} WIB).`,
+            url: '/user/dashboard',
+          });
         }
         return;
       }
 
       setIsReminderActive(false);
+      setIsAlarmRinging(false);
       setIsPastTolerance(false);
+      stopContinuousAlarmSound();
     };
 
     checkSchedule();
-    const timer = setInterval(checkSchedule, 20 * 1000); // Check every 20 seconds
 
-    return () => clearInterval(timer);
+    // High frequency interval (2.5 seconds) for real-time responsiveness without lag
+    const timer = setInterval(checkSchedule, 2500);
+
+    return () => {
+      clearInterval(timer);
+      stopContinuousAlarmSound();
+    };
   }, [schedule, todayStatus, userId, onAutoMissed]);
 
   return {
     isReminderActive,
+    isAlarmRinging,
     isPastTolerance,
+    dismissAlarm,
+    confirmTaken,
   };
 }
