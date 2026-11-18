@@ -25,6 +25,8 @@ interface ArticleFormModalProps {
   onSubmit: () => Promise<void>;
   updateFormData: (data: Partial<ArticleFormData>) => void;
   showToast: (msg: string, severity: 'success' | 'error') => void;
+  /** User portal mode: drafts only, no direct publishing. */
+  isUserMode?: boolean;
 }
 
 export default function ArticleFormModal({
@@ -36,6 +38,7 @@ export default function ArticleFormModal({
   onSubmit,
   updateFormData,
   showToast,
+  isUserMode = false,
 }: ArticleFormModalProps) {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [isGeneratingAi, setIsGeneratingAi] = useState(false);
@@ -95,9 +98,25 @@ export default function ArticleFormModal({
     <CrudModalDialog
       open={open}
       onClose={onClose}
-      title={editingId ? 'Edit Artikel Edukasi' : 'Tulis Artikel Edukasi Baru'}
+      title={
+        isUserMode
+          ? editingId
+            ? 'Edit Draf Artikel Saya'
+            : 'Tulis Draf Artikel Baru'
+          : editingId
+            ? 'Edit Artikel Edukasi'
+            : 'Tulis Artikel Edukasi Baru'
+      }
       onSubmit={onSubmit}
-      submitText={editingId ? 'Update' : 'Publikasikan Artikel'}
+      submitText={
+        editingId
+          ? isUserMode
+            ? 'Simpan Perubahan Draf'
+            : 'Update'
+          : isUserMode
+            ? 'Ajukan Draf Artikel'
+            : 'Publikasikan Artikel'
+      }
       submitting={submitting}
       maxWidth='md'
     >
@@ -217,7 +236,29 @@ export default function ArticleFormModal({
           />
         </div>
         <div>
-          <label className='block text-xs font-bold text-slate-700 mb-1'>Status Publikasi</label>
+          <label className='block text-xs font-bold text-slate-700 mb-1'>
+            {isUserMode ? 'Nama Penulis' : 'Penulis / Petugas Faskes'}
+          </label>
+          <input
+            type='text'
+            value={formData.author || ''}
+            onChange={e => updateFormData({ author: e.target.value })}
+            placeholder={isUserMode ? 'Nama tampilan penulis' : 'Nama penulis artikel'}
+            className='w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-400 focus:border-transparent transition-all'
+          />
+        </div>
+      </div>
+
+      <div>
+        <label className='block text-xs font-bold text-slate-700 mb-1'>Status Publikasi</label>
+        {isUserMode ? (
+          <div className='flex items-center gap-2 px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs text-slate-600'>
+            <span className='inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-extrabold bg-amber-100 text-amber-800 border border-amber-200 shrink-0'>
+              Draf
+            </span>
+            <span>Otomatis disimpan sebagai draf dan menunggu persetujuan admin.</span>
+          </div>
+        ) : (
           <select
             value={formData.status}
             onChange={e =>
@@ -230,7 +271,7 @@ export default function ArticleFormModal({
             <option value='Terbit'>Terbit Langsung</option>
             <option value='Draf'>Simpan Sebagai Draf</option>
           </select>
-        </div>
+        )}
       </div>
 
       <div>

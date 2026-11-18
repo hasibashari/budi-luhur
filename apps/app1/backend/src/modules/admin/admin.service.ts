@@ -1,5 +1,6 @@
 import db from '../../config/database.js';
 import { NotificationService } from '../notifications/notification.service.js';
+import { clearArticlesCache } from '../articles/article.service.js';
 
 export interface AdminStats {
   totalUsers: number;
@@ -361,10 +362,10 @@ export class AdminService {
     const push =
       channel === 'app'
         ? await NotificationService.sendToUser(userId, {
-            title: 'Pengingat Minum TTD',
-            body: msg,
-            url: '/app1/user/dashboard',
-          })
+          title: 'Pengingat Minum TTD',
+          body: msg,
+          url: '/app1/user/dashboard',
+        })
         : { sent: 0, configured: true };
 
     return { success: true, nudgeId, pushSent: push.sent > 0, pushConfigured: push.configured };
@@ -397,7 +398,7 @@ export class AdminService {
             }
             sectionsByArticle.get(s.article_id)!.push(...parsed);
           }
-        } catch {}
+        } catch { }
       }
     }
 
@@ -470,6 +471,8 @@ export class AdminService {
       );
     });
 
+    clearArticlesCache();
+
     return {
       id: newId,
       title: data.title,
@@ -525,6 +528,7 @@ export class AdminService {
       }
     });
 
+    clearArticlesCache();
     return { success: true };
   }
 
@@ -533,6 +537,7 @@ export class AdminService {
       await client.query(`DELETE FROM articles WHERE id = $1`, [articleId]);
       await AdminService.normalizeStoredCategories(client);
     });
+    clearArticlesCache();
     return { success: true };
   }
 
@@ -592,16 +597,16 @@ export class AdminService {
 
       const log = isDaily
         ? recentLogs.find(
-            (l: any) =>
-              l.user_id === r.user_id &&
-              (l.schedule_id === r.id || !l.schedule_id) &&
-              (typeof l.scheduled_date === 'string'
-                ? l.scheduled_date.startsWith(todayStr)
-                : new Date(l.scheduled_date).toISOString().split('T')[0] === todayStr),
-          )
+          (l: any) =>
+            l.user_id === r.user_id &&
+            (l.schedule_id === r.id || !l.schedule_id) &&
+            (typeof l.scheduled_date === 'string'
+              ? l.scheduled_date.startsWith(todayStr)
+              : new Date(l.scheduled_date).toISOString().split('T')[0] === todayStr),
+        )
         : recentLogs.find(
-            (l: any) => l.user_id === r.user_id && (l.schedule_id === r.id || !l.schedule_id),
-          );
+          (l: any) => l.user_id === r.user_id && (l.schedule_id === r.id || !l.schedule_id),
+        );
 
       const isCompleted = log && (log.status === 'ON_TIME' || log.status === 'LATE');
       const todayStatus: 'COMPLETED' | 'PENDING' = isCompleted ? 'COMPLETED' : 'PENDING';
@@ -721,7 +726,7 @@ export class AdminService {
           dayOfWeek,
           mainSlot,
           data.instructions ||
-            'Minum 1 tablet setelah sarapan atau sebelum tidur dengan air putih.',
+          'Minum 1 tablet setelah sarapan atau sebelum tidur dengan air putih.',
         ],
       );
 

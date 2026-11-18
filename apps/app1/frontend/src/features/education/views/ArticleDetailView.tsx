@@ -190,6 +190,19 @@ export default function ArticleDetailView({
         </div>
       </div>
 
+      {/* Draft preview notice (visible to the author & admins only) */}
+      {article.status === 'Draf' && (
+        <div className='mb-5 flex items-start gap-3 px-4 py-3 rounded-2xl border border-amber-200 bg-amber-50'>
+          <span className='text-lg leading-none'>⏳</span>
+          <div>
+            <p className='text-sm font-bold text-amber-900'>Pratinjau Draf</p>
+            <p className='text-xs text-amber-800 mt-0.5'>
+              Materi ini belum diterbitkan. Hanya Anda dan admin yang dapat melihatnya.
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Article Header */}
       <div className='mb-6'>
         <h1 className='text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 leading-tight mb-3'>
