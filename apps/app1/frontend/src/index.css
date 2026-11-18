@@ -1,21 +1,50 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-primary: #e11d48;
-  --color-primary-hover: #be123c;
-  --color-primary-light: #ffe4e6;
-  --color-primary-subtle: #fff1f2;
+  --color-primary: #C53771;
+  --color-primary-hover: #AF2660;
+  --color-primary-light: #FBDAE5;
+  --color-primary-subtle: #FDF2F7;
 
-  --color-canvas: #fff5f7;
+  /* Custom Blash & Raspberry palette */
+  --color-blash: #FBDAE5;
+  --color-blash-light: #FDF2F7;
+  --color-blash-soft: #FDE8F0;
+  --color-raspberry: #C53771;
+  --color-raspberry-hover: #AF2660;
+  --color-raspberry-light: #FBDAE5;
+
+  /* Override standard rose palette to vibrant Raspberry #C53771 */
+  --color-rose-50: #FDF2F7;
+  --color-rose-100: #FBDAE5;
+  --color-rose-200: #F8B6CE;
+  --color-rose-300: #F289B0;
+  --color-rose-400: #E65A91;
+  --color-rose-500: #D83C7B;
+  --color-rose-600: #C53771;
+  --color-rose-700: #AF2660;
+  --color-rose-800: #912250;
+  --color-rose-900: #781F44;
+
+  /* Override standard pink palette to bright Blash #FBDAE5 */
+  --color-pink-50: #FDF2F7;
+  --color-pink-100: #FBDAE5;
+  --color-pink-200: #F8B6CE;
+  --color-pink-300: #F289B0;
+  --color-pink-400: #E65A91;
+  --color-pink-500: #C53771;
+  --color-pink-600: #AF2660;
+
+  --color-canvas: #FDF2F7;
   --color-surface: #ffffff;
-  --color-surface-soft: #fff5f7;
+  --color-surface-soft: #FDF2F7;
   --color-surface-card: #ffffff;
-  --color-surface-alt: #fdf2f4;
+  --color-surface-alt: #FDE8F0;
   --color-surface-dark: #1e293b;
 
-  --color-border: #fce7f3;
-  --color-border-subtle: #f1f5f9;
-  --color-hairline: #fce7f3;
+  --color-border: #FBDAE5;
+  --color-border-subtle: #FDE8F0;
+  --color-hairline: #FBDAE5;
 
   --color-ink: #1e293b;
   --color-body: #475569;
@@ -23,19 +52,26 @@
   --color-muted-soft: #cbd5e1;
 
   --color-status-recorded: #10b981;
-  --color-status-missed: #f43f5e;
+  --color-status-missed: #C53771;
   --color-status-pending: #f59e0b;
 
   --color-accent-teal: #10b981;
   --color-accent-amber: #f59e0b;
-  --color-accent-rose: #e11d48;
+  --color-accent-rose: #C53771;
 
   --font-sans: 'Plus Jakarta Sans', Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 :root {
-  --background: #fff5f7;
+  --background: #FDF2F7;
   --foreground: #1e293b;
+  --blash: #FBDAE5;
+  --raspberry: #C53771;
+}
+
+/* 5. Ukuran font naik 1 tingkat di seluruh aplikasi (base font dari default 16px menjadi 18px) */
+html {
+  font-size: 18px;
 }
 
 body {
@@ -45,7 +81,7 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Custom scrollbar */
+/* Custom scrollbar in Blash & Raspberry */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -56,10 +92,10 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #fce7f3;
+  background: #FBDAE5;
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #fbcfe8;
+  background: #C53771;
 }

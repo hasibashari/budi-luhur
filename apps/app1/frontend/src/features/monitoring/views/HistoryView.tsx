@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState, useMemo, useEffect, useCallback } from 'react';
-import { Flame, Calendar, BarChart2 } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { Flame } from 'lucide-react';
 import { StreakProgressCard } from '@/src/shared/components/domain/StreakProgressCard';
 import { useAuth } from '@/src/features/auth/context/AuthContext';
 import { useMonitoringData } from '../hooks/useMonitoringData';
@@ -12,22 +12,14 @@ import {
   ActiveDateActionCard,
   ConsumptionLogList,
   MonthlyEvaluationView,
-  YearlyMonitoringView,
 } from '../components';
 import { getTodayDateString, formatShortDate } from '../utils/dateHelpers';
-import { getYearlyMonitoringAction } from '../api/consumptionRepository';
-import { YearlyMonitoringData } from '../types';
 
 export default function HistoryView() {
   const { user } = useAuth();
   const userId = user?.id || '';
 
-  // Mode switcher: Monthly / Daily vs Yearly (1 Year scale)
-  const [monitoringMode, setMonitoringMode] = useState<'monthly' | 'yearly'>('monthly');
-  const [yearlyData, setYearlyData] = useState<YearlyMonitoringData | null>(null);
-  const [loadingYearly, setLoadingYearly] = useState(false);
-
-  // Filter states for monthly/daily mode
+  // Filter states
   const todayStr = useMemo(() => getTodayDateString(), []);
   const [selectedDate, setSelectedDate] = useState<string>(todayStr);
   const [dateFilterPreset, setDateFilterPreset] = useState<DateFilterPreset>('ALL');
@@ -36,25 +28,6 @@ export default function HistoryView() {
   // Unified PostgreSQL data fetching & realtime mutations hook
   const { dashboardData, activityMap, allLogs, stats, loading, isUpdatingDate, updateDateStatus } =
     useMonitoringData(userId);
-
-  // Load yearly data
-  const loadYearlyData = useCallback(async () => {
-    setLoadingYearly(true);
-    try {
-      const result = await getYearlyMonitoringAction();
-      setYearlyData(result);
-    } catch (err) {
-      console.error('Failed to load yearly monitoring data:', err);
-    } finally {
-      setLoadingYearly(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (monitoringMode === 'yearly' && !yearlyData) {
-      loadYearlyData();
-    }
-  }, [monitoringMode, yearlyData, loadYearlyData]);
 
   // Selected date details and status
   const selectedDateActivity = activityMap[selectedDate];
@@ -81,6 +54,11 @@ export default function HistoryView() {
         const nowMs = new Date(todayStr).getTime();
         if ((nowMs - logMs) / (1000 * 60 * 60 * 24) > 30) return false;
       }
+      if (dateFilterPreset === '1_YEAR') {
+        const logMs = new Date(log.scheduledDate).getTime();
+        const nowMs = new Date(todayStr).getTime();
+        if ((nowMs - logMs) / (1000 * 60 * 60 * 24) > 365) return false;
+      }
 
       // 2. Status filter
       if (statusFilter === 'ON_TIME' && log.status !== 'ON_TIME' && log.status !== 'LATE')
@@ -97,13 +75,14 @@ export default function HistoryView() {
     if (dateFilterPreset === 'ALL') return 'Semua catatan';
     if (dateFilterPreset === 'TODAY') return 'Catatan hari ini';
     if (dateFilterPreset === 'CUSTOM') return `Catatan tanggal ${formatShortDate(selectedDate)}`;
+    if (dateFilterPreset === '1_YEAR') return 'Catatan 1 tahun terakhir (12 bulan)';
     return `Filter ${dateFilterPreset.replace('_', ' ')}`;
   }, [dateFilterPreset, selectedDate]);
 
   if (loading && !dashboardData) {
     return (
       <div className='flex items-center justify-center min-h-[50vh] w-full'>
-        <div className='animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#e11d48]' />
+        <div className='animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-rose-600' />
       </div>
     );
   }
@@ -125,7 +104,7 @@ export default function HistoryView() {
         </div>
 
         {/* Live Dynamic Streak Counter Badge */}
-        <div className='inline-flex items-center gap-2 bg-white px-3.5 py-1.5 rounded-full border border-[#fce7f3] shadow-2xs self-start sm:self-auto'>
+        <div className='inline-flex items-center gap-2 bg-white px-3.5 py-1.5 rounded-full border border-pink-100 shadow-2xs self-start sm:self-auto'>
           <Flame size={18} className='text-amber-500 fill-amber-500' />
           <span className='text-xs font-bold text-[#1e293b]'>
             {streakCount} {streakUnit} Streak
@@ -140,91 +119,51 @@ export default function HistoryView() {
         showDetailsLink={false}
       />
 
-      {/* 3. Monitoring Scope Toggle Bar */}
-      <div className='bg-white p-1.5 rounded-2xl border border-pink-100 shadow-2xs flex items-center gap-1.5 self-start'>
-        <button
-          type='button'
-          onClick={() => setMonitoringMode('monthly')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
-            monitoringMode === 'monthly'
-              ? 'bg-rose-600 text-white shadow-xs'
-              : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
-          }`}
-        >
-          <Calendar size={16} />
-          <span>Monitoring Bulanan & Harian</span>
-        </button>
-        <button
-          type='button'
-          onClick={() => {
-            setMonitoringMode('yearly');
-            if (!yearlyData) loadYearlyData();
-          }}
-          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
-            monitoringMode === 'yearly'
-              ? 'bg-rose-600 text-white shadow-xs'
-              : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
-          }`}
-        >
-          <BarChart2 size={16} />
-          <span>Monitoring Skala Tahunan (1 Tahun) 🌟</span>
-        </button>
-      </div>
+      {/* 3. UNIFIED DATE FILTER BAR WITH CALENDAR POPOVER & PRESETS */}
+      <DateFilterBar
+        selectedDate={selectedDate}
+        onSelectDate={setSelectedDate}
+        dateFilterPreset={dateFilterPreset}
+        onDateFilterPresetChange={setDateFilterPreset}
+        activityMap={activityMap}
+        todayStr={todayStr}
+        todayStatus={dashboardData?.todayStatus}
+      />
 
-      {/* 4. CONTENT AREA ACCORDING TO SELECTED MODE */}
-      {monitoringMode === 'yearly' ? (
-        yearlyData ? (
-          <YearlyMonitoringView data={yearlyData} loading={loadingYearly} />
-        ) : (
-          <div className='flex items-center justify-center min-h-[30vh] w-full'>
-            <div className='animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-rose-600' />
-          </div>
-        )
-      ) : (
-        <div className='flex flex-col gap-5 animate-fade-in'>
-          {/* COMPACT FILTER BAR WITH CALENDAR POPOVER */}
-          <DateFilterBar
+      {/* 4. MAIN MONITORING EVALUATION VIEW (CHART, ACTIVE CARD, LOGS) */}
+      <div className='flex flex-col gap-5 animate-fade-in'>
+        {/* Monthly / Period Bar Chart & Statistics */}
+        <MonthlyEvaluationView
+          stats={stats}
+          streakCount={streakCount}
+          streakUnit={streakUnit}
+          hbLevel={dashboardData?.user.hbLevel}
+          riskLevel={dashboardData?.user.riskLevel}
+          logs={allLogs}
+        />
+
+        {/* ACTIVE DATE QUICK ACTION CARD (For Today or Custom selected date) */}
+        {(dateFilterPreset === 'CUSTOM' || dateFilterPreset === 'TODAY') && (
+          <ActiveDateActionCard
             selectedDate={selectedDate}
-            onSelectDate={setSelectedDate}
-            dateFilterPreset={dateFilterPreset}
-            onDateFilterPresetChange={setDateFilterPreset}
-            activityMap={activityMap}
-            todayStr={todayStr}
-            todayStatus={dashboardData?.todayStatus}
+            isToday={isSelectedDateToday}
+            activity={selectedDateActivity}
+            effectiveStatus={effectiveSelectedStatus}
+            fallbackTabletName={dashboardData?.activeSchedule?.tabletName}
+            fallbackTime={dashboardData?.activeSchedule?.time}
+            isUpdating={isUpdatingDate}
+            onUpdateStatus={updateDateStatus}
           />
+        )}
 
-          <MonthlyEvaluationView
-            stats={stats}
-            streakCount={streakCount}
-            streakUnit={streakUnit}
-            hbLevel={dashboardData?.user.hbLevel}
-            riskLevel={dashboardData?.user.riskLevel}
-            logs={allLogs}
-          />
-
-          {/* ACTIVE DATE QUICK ACTION CARD */}
-          {(dateFilterPreset === 'CUSTOM' || dateFilterPreset === 'TODAY') && (
-            <ActiveDateActionCard
-              selectedDate={selectedDate}
-              isToday={isSelectedDateToday}
-              activity={selectedDateActivity}
-              effectiveStatus={effectiveSelectedStatus}
-              fallbackTabletName={dashboardData?.activeSchedule?.tabletName}
-              fallbackTime={dashboardData?.activeSchedule?.time}
-              isUpdating={isUpdatingDate}
-              onUpdateStatus={updateDateStatus}
-            />
-          )}
-
-          {/* UNIFIED CONSUMPTION LOG LIST WITH STATUS FILTER DROPDOWN */}
-          <ConsumptionLogList
-            logs={filteredLogs}
-            filterLabel={filterLabel}
-            statusFilter={statusFilter}
-            onStatusFilterChange={setStatusFilter}
-          />
-        </div>
-      )}
+        {/* UNIFIED CONSUMPTION LOG LIST WITH STATUS FILTER DROPDOWN */}
+        <ConsumptionLogList
+          logs={filteredLogs}
+          filterLabel={filterLabel}
+          statusFilter={statusFilter}
+          onStatusFilterChange={setStatusFilter}
+        />
+      </div>
     </div>
   );
 }

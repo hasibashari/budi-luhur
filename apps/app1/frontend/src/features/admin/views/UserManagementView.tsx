@@ -1,9 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Search, UserPlus, BellRing, Edit, Trash2, Phone, CalendarClock } from 'lucide-react';
+import { Search, UserPlus, BellRing, Edit, Trash2, Phone } from 'lucide-react';
 import AdminHeader from '../components/AdminHeader';
 import SendReminderModal from '../components/SendReminderModal';
 import UserFormModal from '../components/UserFormModal';
-import StudentYearlyMonitoringModal from '../components/StudentYearlyMonitoringModal';
 import { DataTable, Column } from '@/src/shared/components/DataTable';
 import { ConfirmDeleteDialog } from '@/src/shared/components/ConfirmDeleteDialog';
 import { ToastFeedback } from '@/src/shared/components/ToastFeedback';
@@ -73,15 +72,6 @@ export default function UserManagementView() {
   }>({
     userName: '',
   });
-
-  // Yearly Monitoring Modal State for Validator
-  const [yearlyUser, setYearlyUser] = useState<ManagedUser | null>(null);
-  const [yearlyModalOpen, setYearlyModalOpen] = useState(false);
-
-  const handleOpenYearlyMonitoring = (user: ManagedUser) => {
-    setYearlyUser(user);
-    setYearlyModalOpen(true);
-  };
 
   const loadUsers = useCallback(async () => {
     const data = await getUsersAction();
@@ -317,14 +307,6 @@ export default function UserManagementView() {
         <div className='flex items-center justify-end gap-1'>
           <button
             type='button'
-            title='Monitoring Tahunan (1 Tahun)'
-            onClick={() => handleOpenYearlyMonitoring(user)}
-            className='p-1.5 rounded-lg text-indigo-600 hover:bg-indigo-50 transition-colors cursor-pointer'
-          >
-            <CalendarClock size={16} />
-          </button>
-          <button
-            type='button'
             title='Kirim Pengingat'
             onClick={() => handleOpenReminder(user)}
             className='p-1.5 rounded-lg text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer'
@@ -497,14 +479,6 @@ export default function UserManagementView() {
                 <div className='flex gap-1.5'>
                   <button
                     type='button'
-                    title='Monitoring Tahunan Siswi'
-                    onClick={() => handleOpenYearlyMonitoring(user)}
-                    className='w-11 h-11 rounded-xl bg-indigo-50 text-indigo-600 hover:bg-indigo-100 flex items-center justify-center transition-colors cursor-pointer'
-                  >
-                    <CalendarClock size={16} />
-                  </button>
-                  <button
-                    type='button'
                     title='Edit Data Siswi'
                     onClick={() => onOpenEdit(user)}
                     className='w-11 h-11 rounded-xl bg-slate-100 text-slate-600 hover:bg-rose-50 hover:text-rose-600 flex items-center justify-center transition-colors cursor-pointer'
@@ -555,13 +529,6 @@ export default function UserManagementView() {
         userPhone={reminderData.userPhone}
         userId={reminderData.userId}
         onSendSuccess={handleSendReminderSuccess}
-      />
-
-      {/* Student Yearly Monitoring Modal for Validator */}
-      <StudentYearlyMonitoringModal
-        isOpen={yearlyModalOpen}
-        onClose={() => setYearlyModalOpen(false)}
-        user={yearlyUser}
       />
 
       {/* Toast Feedback */}

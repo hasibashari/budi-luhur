@@ -13,7 +13,7 @@ export default function AdminLayout() {
 
   return (
     <AuthGuard requiredRole='admin'>
-      <div className="flex flex-col min-h-screen bg-[#fff5f7]">
+      <div className="flex flex-col min-h-screen bg-[#FDF2F7] selection:bg-[#FBDAE5] selection:text-[#C53771]">
         {/* Mobile Top App Bar (< md) */}
         <div className="block md:hidden">
           <MobileTopBar
