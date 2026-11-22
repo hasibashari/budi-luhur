@@ -6,9 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "preview": "vite preview",
-    "test": "CI=true NODE_OPTIONS='--experimental-vm-modules' jest --reporters=default",
-    "test:coverage": "CI=true NODE_OPTIONS='--experimental-vm-modules' jest --reporters=default --coverage"
+    "preview": "vite preview"
   },
   "dependencies": {
     "axios": "^1.7.9",
