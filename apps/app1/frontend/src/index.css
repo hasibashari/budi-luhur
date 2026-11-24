@@ -1,77 +1,76 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-primary: #C53771;
-  --color-primary-hover: #AF2660;
-  --color-primary-light: #FBDAE5;
-  --color-primary-subtle: #FDF2F7;
+  --color-primary: #B8285F;
+  --color-primary-hover: #A11E50;
+  --color-primary-active: #8D1847;
+  --color-primary-light: #FCE7F0;
+  --color-primary-subtle: #FAF0F4;
 
-  /* Custom Blash & Raspberry palette */
-  --color-blash: #FBDAE5;
-  --color-blash-light: #FDF2F7;
-  --color-blash-soft: #FDE8F0;
-  --color-raspberry: #C53771;
-  --color-raspberry-hover: #AF2660;
-  --color-raspberry-light: #FBDAE5;
+  /* Signature FEMORY Raspberry & Petal Palette */
+  --color-raspberry: #B8285F;
+  --color-raspberry-hover: #A11E50;
+  --color-raspberry-light: #FCE7F0;
+  --color-blash: #FCE7F0;
+  --color-blash-light: #FAF0F4;
+  --color-blash-soft: #F7E4EC;
 
-  /* Override standard rose palette to vibrant Raspberry #C53771 */
-  --color-rose-50: #FDF2F7;
-  --color-rose-100: #FBDAE5;
-  --color-rose-200: #F8B6CE;
-  --color-rose-300: #F289B0;
-  --color-rose-400: #E65A91;
-  --color-rose-500: #D83C7B;
-  --color-rose-600: #C53771;
-  --color-rose-700: #AF2660;
-  --color-rose-800: #912250;
-  --color-rose-900: #781F44;
+  /* Rose palette calibrated to FEMORY Raspberry */
+  --color-rose-50: #FAF0F4;
+  --color-rose-100: #FCE7F0;
+  --color-rose-200: #F7CADF;
+  --color-rose-300: #EE9CBF;
+  --color-rose-400: #E06397;
+  --color-rose-500: #CE3B77;
+  --color-rose-600: #B8285F;
+  --color-rose-700: #A11E50;
+  --color-rose-800: #861A43;
+  --color-rose-900: #701B3B;
 
-  /* Override standard pink palette to bright Blash #FBDAE5 */
-  --color-pink-50: #FDF2F7;
-  --color-pink-100: #FBDAE5;
-  --color-pink-200: #F8B6CE;
-  --color-pink-300: #F289B0;
-  --color-pink-400: #E65A91;
-  --color-pink-500: #C53771;
-  --color-pink-600: #AF2660;
-
-  --color-canvas: #FDF2F7;
+  /* Canvas and surfaces */
+  --color-canvas: #FAF6F8;
   --color-surface: #ffffff;
-  --color-surface-soft: #FDF2F7;
+  --color-surface-soft: #FAF2F6;
   --color-surface-card: #ffffff;
-  --color-surface-alt: #FDE8F0;
-  --color-surface-dark: #1e293b;
+  --color-surface-alt: #F7EBF0;
+  --color-surface-dark: #1E1F24;
 
-  --color-border: #FBDAE5;
-  --color-border-subtle: #FDE8F0;
-  --color-hairline: #FBDAE5;
+  /* Refined delicate borders */
+  --color-border: #F0DFE7;
+  --color-border-subtle: #F6EAF0;
+  --color-hairline: #F0DFE7;
 
-  --color-ink: #1e293b;
-  --color-body: #475569;
-  --color-muted: #94a3b8;
-  --color-muted-soft: #cbd5e1;
+  /* High legibility charcoal typography */
+  --color-ink: #1E1F24;
+  --color-body: #525866;
+  --color-muted: #8E95A5;
+  --color-muted-soft: #CBD0DC;
 
-  --color-status-recorded: #10b981;
-  --color-status-missed: #C53771;
-  --color-status-pending: #f59e0b;
+  /* Status Colors: Vitality Emerald, Urgent Ruby, Sunlit Amber */
+  --color-status-recorded: #10B981;
+  --color-status-missed: #B8285F;
+  --color-status-pending: #F59E0B;
 
-  --color-accent-teal: #10b981;
-  --color-accent-amber: #f59e0b;
-  --color-accent-rose: #C53771;
+  --color-accent-teal: #0D9488;
+  --color-accent-emerald: #10B981;
+  --color-accent-amber: #F59E0B;
+  --color-accent-rose: #B8285F;
 
   --font-sans: 'Plus Jakarta Sans', Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 :root {
-  --background: #FDF2F7;
-  --foreground: #1e293b;
-  --blash: #FBDAE5;
-  --raspberry: #C53771;
+  --background: #FAF6F8;
+  --foreground: #1E1F24;
+  --blash: #FCE7F0;
+  --raspberry: #B8285F;
 }
 
-/* 5. Ukuran font naik 1 tingkat di seluruh aplikasi (base font dari default 16px menjadi 18px) */
+/* Normalized root typography with smooth text rendering */
 html {
-  font-size: 18px;
+  font-size: 16px;
+  -webkit-tap-highlight-color: transparent;
+  scroll-behavior: smooth;
 }
 
 body {
@@ -79,9 +78,10 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Custom scrollbar in Blash & Raspberry */
+/* Custom scrollbar in Petal & Raspberry */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -92,10 +92,41 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #FBDAE5;
+  background: #F0DFE7;
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #C53771;
+  background: #B8285F;
+}
+
+/* Gentle keyframe animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleUp {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-scale-up {
+  animation: scaleUp 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }

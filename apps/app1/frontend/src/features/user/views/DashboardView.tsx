@@ -242,29 +242,29 @@ export default function DashboardView() {
   return (
     <div className='flex flex-col gap-4 sm:gap-5 w-full'>
       {/* Mobile Health Stats Bar (< md) */}
-      <div className='flex md:hidden items-center justify-between gap-2 p-3 bg-white rounded-2xl border border-[#fce7f3] shadow-2xs'>
+      <div className='flex md:hidden items-center justify-between gap-2 p-3 bg-white rounded-2xl border border-[#F0DFE7] shadow-[0_2px_10px_rgba(184,40,95,0.02)]'>
         <div className='flex items-center gap-2'>
-          <div className='w-8 h-8 rounded-full bg-amber-50 flex items-center justify-center text-amber-500'>
+          <div className='w-8 h-8 rounded-full bg-amber-50 flex items-center justify-center text-amber-600'>
             <Flame size={18} className='fill-amber-500' />
           </div>
           <div>
-            <span className='text-[10px] text-[#64748b] block leading-tight'>Streak Minum</span>
-            <span className='text-xs font-extrabold text-[#1e293b]'>
+            <span className='text-[10px] text-[#525866] block leading-tight'>Streak Minum</span>
+            <span className='text-xs font-bold text-[#1E1F24]'>
               {currentUser.streakCount} {streakUnit}
             </span>
           </div>
         </div>
 
-        <div className='h-7 w-[1px] bg-[#fce7f3]' />
+        <div className='h-7 w-[1px] bg-[#F0DFE7]' />
 
         <div className='flex items-center gap-2'>
-          <div className='w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-500'>
+          <div className='w-8 h-8 rounded-full bg-teal-50 flex items-center justify-center text-[#0D9488]'>
             <Activity size={18} />
           </div>
           <div>
-            <span className='text-[10px] text-[#64748b] block leading-tight'>Kadar Hb</span>
+            <span className='text-[10px] text-[#525866] block leading-tight'>Kadar Hb</span>
             <span
-              className={`text-xs font-extrabold ${currentUser.hbLevel ? 'text-[#10b981]' : 'text-slate-500'}`}
+              className={`text-xs font-bold ${currentUser.hbLevel ? 'text-[#0D9488]' : 'text-[#8E95A5]'}`}
             >
               {currentUser.hbLevel ? `${currentUser.hbLevel} g/dL` : 'Belum Ada'}
             </span>
@@ -280,30 +280,30 @@ export default function DashboardView() {
       </section>
 
       {/* Desktop Welcome Banner (Visible on md+) */}
-      <div className='hidden md:flex items-center justify-between pb-2 border-b border-[#fce7f3]'>
+      <div className='hidden md:flex items-center justify-between pb-3 border-b border-[#F0DFE7]'>
         <div>
-          <h1 className='text-2xl font-extrabold text-[#1e293b] tracking-tight'>
+          <h1 className='text-2xl font-bold text-[#1E1F24] tracking-tight'>
             Dashboard Siswi FEMORY 🌸
           </h1>
-          <p className='text-sm text-[#64748b] mt-0.5'>
-            Selamat datang kembali, <strong>{currentUser.name}</strong>! Pertahankan konsistensi minum TTD pekan ini.
+          <p className='text-sm text-[#525866] mt-0.5'>
+            Selamat datang kembali, <strong className='text-[#1E1F24] font-semibold'>{currentUser.name}</strong>! Pertahankan konsistensi minum TTD pekan ini.
           </p>
         </div>
 
         <div className='flex items-center gap-3'>
-          <div className='flex items-center gap-2 bg-white px-3.5 py-1.5 rounded-full border border-[#fce7f3] shadow-2xs'>
+          <div className='flex items-center gap-2 bg-white px-3.5 py-1.5 rounded-full border border-[#F0DFE7] shadow-xs'>
             <Flame size={18} className='text-amber-500 fill-amber-500' />
-            <span className='text-xs font-bold text-[#1e293b]'>
+            <span className='text-xs font-bold text-[#1E1F24]'>
               {currentUser.streakCount} {streakUnit} Streak
             </span>
           </div>
-          <div className='flex items-center gap-2 bg-white px-3.5 py-1.5 rounded-full border border-[#fce7f3] shadow-2xs'>
+          <div className='flex items-center gap-2 bg-white px-3.5 py-1.5 rounded-full border border-[#F0DFE7] shadow-xs'>
             <Activity
               size={18}
-              className={currentUser.hbLevel ? 'text-emerald-500' : 'text-slate-400'}
+              className={currentUser.hbLevel ? 'text-[#0D9488]' : 'text-[#8E95A5]'}
             />
             <span
-              className={`text-xs font-bold ${currentUser.hbLevel ? 'text-[#10b981]' : 'text-slate-500'}`}
+              className={`text-xs font-bold ${currentUser.hbLevel ? 'text-[#0D9488]' : 'text-[#8E95A5]'}`}
             >
               {currentUser.hbLevel ? `Hb ${currentUser.hbLevel} g/dL` : 'Belum Ada Data Hb'}
             </span>
@@ -314,7 +314,7 @@ export default function DashboardView() {
       {/* Realtime Admin / UKS Reminder Nudge Banner (If Admin sent a reminder) */}
       {activeNudge && (
         <section aria-label='Pengingat Langsung dari UKS'>
-          <div className='p-4 sm:p-5 rounded-3xl bg-gradient-to-r from-rose-500 via-rose-600 to-rose-700 text-white shadow-xl shadow-rose-500/20 border border-rose-300/30 animate-fade-in'>
+          <div className='p-4 sm:p-5 rounded-3xl bg-gradient-to-r from-[#B8285F] via-[#CE3B77] to-[#E06397] text-white shadow-xl shadow-[#B8285F]/20 border border-white/20 animate-fade-in'>
             <div className='flex items-start justify-between gap-3'>
               <div className='flex items-start gap-3.5'>
                 <div className='w-11 h-11 rounded-2xl bg-white/20 backdrop-blur-xs flex items-center justify-center shrink-0 text-white mt-0.5 shadow-inner'>
@@ -322,10 +322,10 @@ export default function DashboardView() {
                 </div>
                 <div>
                   <div className='flex items-center gap-2 flex-wrap'>
-                    <span className='text-[10px] sm:text-xs font-black uppercase tracking-wider bg-white/25 px-2.5 py-0.5 rounded-full'>
+                    <span className='text-[10px] sm:text-xs font-bold uppercase tracking-wider bg-white/25 px-2.5 py-0.5 rounded-full'>
                       Pesan Pengingat UKS • {activeNudge.senderName}
                     </span>
-                    <span className='text-[11px] text-rose-200'>{activeNudge.sentAt}</span>
+                    <span className='text-[11px] text-pink-100'>{activeNudge.sentAt}</span>
                   </div>
                   <h3 className='text-sm sm:text-base font-bold mt-1 text-white leading-snug'>
                     {activeNudge.message}
@@ -336,7 +336,7 @@ export default function DashboardView() {
               <button
                 type='button'
                 onClick={handleDismissNudge}
-                className='text-rose-200 hover:text-white p-1.5 rounded-xl hover:bg-white/10 transition-colors cursor-pointer shrink-0'
+                className='text-pink-100 hover:text-white p-1.5 rounded-xl hover:bg-white/10 transition-colors cursor-pointer shrink-0'
                 title='Tutup Pengingat'
               >
                 <X size={18} />
@@ -349,7 +349,7 @@ export default function DashboardView() {
                 size='sm'
                 shape='pill'
                 icon={<CheckCircle2 size={14} />}
-                className='bg-white text-rose-600 hover:bg-rose-50 font-extrabold shadow-sm text-xs'
+                className='bg-white text-[#B8285F] hover:bg-pink-50 font-bold shadow-xs text-xs'
                 onClick={handleTakeFromNudge}
               >
                 Catat Minum
@@ -357,7 +357,7 @@ export default function DashboardView() {
               <button
                 type='button'
                 onClick={handleDismissNudge}
-                className='text-xs font-semibold text-rose-100 hover:text-white px-3 py-1.5 rounded-full hover:bg-white/10 transition-colors cursor-pointer'
+                className='text-xs font-semibold text-pink-100 hover:text-white px-3 py-1.5 rounded-full hover:bg-white/10 transition-colors cursor-pointer'
               >
                 Sudah Mengerti
               </button>
@@ -543,12 +543,12 @@ export default function DashboardView() {
                 </div>
 
                 <div className='p-4 bg-white flex items-center justify-between'>
-                  <p className='text-xs text-[#64748b] line-clamp-1 flex-1 pr-3'>
+                  <p className='text-xs text-[#525866] line-clamp-1 flex-1 pr-3'>
                     {featuredArticle.summary}
                   </p>
                   <Link
                     to={`/user/education/${featuredArticle.id}`}
-                    className='inline-flex items-center gap-1 text-xs font-bold text-[#e11d48] hover:text-[#be123c] shrink-0'
+                    className='inline-flex items-center gap-1 text-xs font-semibold text-[#B8285F] hover:text-[#8D1847] shrink-0'
                   >
                     <span>Baca Selengkapnya</span>
                     <ArrowRight size={13} />
@@ -577,17 +577,17 @@ export default function DashboardView() {
           </section>
 
           {/* Motivation & Level Milestone Widget */}
-          <Card padding='md' className='bg-gradient-to-br from-[#fff5f7] to-[#ffe4e6]/50'>
+          <Card padding='md' className='bg-gradient-to-br from-[#FAF0F4] to-[#FCE7F0]/40 border border-[#F0DFE7]'>
             <div className='flex items-center gap-2.5 mb-2'>
-              <div className='w-8 h-8 rounded-full bg-rose-100 text-[#e11d48] flex items-center justify-center'>
+              <div className='w-8 h-8 rounded-full bg-white border border-[#F0DFE7] text-[#B8285F] flex items-center justify-center shadow-2xs'>
                 <Award size={18} />
               </div>
               <div>
-                <h4 className='text-xs font-bold text-[#1e293b]'>Tingkat Kepatuhan</h4>
-                <span className='text-[11px] font-semibold text-[#e11d48]'>{milestone.title}</span>
+                <h4 className='text-xs font-bold text-[#1E1F24]'>Tingkat Kepatuhan</h4>
+                <span className='text-[11px] font-semibold text-[#B8285F]'>{milestone.title}</span>
               </div>
             </div>
-            <p className='text-xs text-[#475569] leading-relaxed'>{milestone.desc}</p>
+            <p className='text-xs text-[#525866] leading-relaxed'>{milestone.desc}</p>
           </Card>
         </div>
       </div>

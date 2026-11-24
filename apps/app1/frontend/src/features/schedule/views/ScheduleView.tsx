@@ -218,14 +218,14 @@ export default function ScheduleView() {
       <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-3'>
         <div>
           <div className='flex items-center gap-2'>
-            <h2 className='text-xl sm:text-2xl font-black text-slate-900 tracking-tight'>
+            <h2 className='text-xl sm:text-2xl font-bold text-[#1E1F24] tracking-tight'>
               Pengaturan Alarm TTD
             </h2>
-            <span className='px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-700 text-[11px] font-bold'>
+            <span className='px-2.5 py-0.5 rounded-full bg-[#FCE7F0] text-[#861A43] text-[11px] font-bold'>
               Mandiri
             </span>
           </div>
-          <p className='text-xs sm:text-sm text-slate-500 mt-0.5'>
+          <p className='text-xs sm:text-sm text-[#525866] mt-0.5'>
             Atur dan kelola waktu rutin pengingat minum Tablet Tambah Darah sesuai kebutuhanmu
           </p>
         </div>
@@ -236,7 +236,7 @@ export default function ScheduleView() {
           size='sm'
           shape='pill'
           icon={
-            <Volume2 size={14} className={isTestingSound ? 'animate-pulse text-rose-600' : ''} />
+            <Volume2 size={14} className={isTestingSound ? 'animate-pulse text-[#B8285F]' : ''} />
           }
           onClick={handleTestSound}
           className='self-start sm:self-auto text-xs font-bold'
@@ -259,28 +259,28 @@ export default function ScheduleView() {
               <Card
                 variant='hero'
                 padding='lg'
-                className='relative overflow-hidden border border-rose-100/80 shadow-xl shadow-rose-950/5'
+                className='relative overflow-hidden border border-[#F0DFE7] shadow-lg shadow-[#B8285F]/5 bg-gradient-to-br from-[#FFF8FA] via-[#FAF0F4] to-[#FCE7F0]/60'
               >
                 {/* Decorative glow */}
-                <div className='absolute -top-12 -right-12 w-44 h-44 bg-rose-400/10 rounded-full blur-2xl pointer-events-none' />
+                <div className='absolute -top-12 -right-12 w-44 h-44 bg-[#B8285F]/10 rounded-full blur-2xl pointer-events-none' />
 
                 {/* Top Status & Master Toggle Switch */}
                 <div className='flex items-center justify-between gap-3 mb-6 relative z-10'>
                   {/* Status Badge */}
                   <div className='flex items-center gap-2'>
                     {schedule.isEnabled ? (
-                      <span className='inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-700 border border-emerald-500/20 text-xs font-bold'>
-                        <span className='w-2 h-2 rounded-full bg-emerald-500 animate-pulse' />
+                      <span className='inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-teal-50 text-[#0D9488] border border-teal-200 text-xs font-bold'>
+                        <span className='w-2 h-2 rounded-full bg-[#0D9488] animate-pulse' />
                         Alarm Aktif
                       </span>
                     ) : (
-                      <span className='inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 text-slate-600 border border-slate-200 text-xs font-bold'>
+                      <span className='inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 text-[#525866] border border-slate-200 text-xs font-bold'>
                         <span className='w-2 h-2 rounded-full bg-slate-400' />
                         Alarm Nonaktif
                       </span>
                     )}
 
-                    <span className='inline-flex items-center gap-1 px-2.5 py-1 bg-white/90 rounded-full text-[11px] font-bold text-rose-700 border border-rose-200'>
+                    <span className='inline-flex items-center gap-1 px-2.5 py-1 bg-white rounded-full text-[11px] font-bold text-[#861A43] border border-[#F0DFE7]'>
                       <Pill size={12} />
                       <span>{schedule.dosage}</span>
                     </span>
@@ -291,7 +291,7 @@ export default function ScheduleView() {
                     type='button'
                     onClick={handleToggleActive}
                     className={`w-14 h-7.5 rounded-full transition-colors p-1 flex items-center cursor-pointer shadow-inner ${
-                      schedule.isEnabled ? 'bg-[#e11d48]' : 'bg-slate-300'
+                      schedule.isEnabled ? 'bg-[#B8285F]' : 'bg-slate-300'
                     }`}
                     aria-label='Toggle Status Alarm'
                     title={schedule.isEnabled ? 'Matikan Alarm' : 'Nyalakan Alarm'}
@@ -307,23 +307,23 @@ export default function ScheduleView() {
                 {/* Big Digital Clock Display */}
                 <div className='my-2 relative z-10'>
                   <div className='flex items-baseline gap-2.5'>
-                    <span className='text-4xl sm:text-6xl font-black text-slate-900 tracking-tight font-mono'>
+                    <span className='text-4xl sm:text-6xl font-bold text-[#1E1F24] tracking-tight font-mono'>
                       {schedule.time}
                     </span>
-                    <span className='text-lg sm:text-2xl font-bold text-rose-600 font-mono'>
+                    <span className='text-lg sm:text-2xl font-bold text-[#B8285F] font-mono'>
                       WIB
                     </span>
                   </div>
 
                   {/* Day and Frequency description */}
                   <div className='flex items-center gap-2 flex-wrap mt-3'>
-                    <span className='px-3 py-1 bg-rose-50 text-rose-800 rounded-xl text-xs sm:text-sm font-bold border border-rose-100'>
+                    <span className='px-3 py-1 bg-white text-[#861A43] rounded-xl text-xs sm:text-sm font-bold border border-[#F0DFE7] shadow-2xs'>
                       📅{' '}
                       {schedule.frequency === 'Harian' || schedule.frequency === 'daily'
                         ? 'Setiap Hari'
                         : `Setiap ${schedule.dayOfWeek}`}
                     </span>
-                    <span className='text-xs text-slate-500 font-medium'>
+                    <span className='text-xs text-[#525866] font-medium'>
                       (
                       {schedule.frequency === 'Harian' || schedule.frequency === 'daily'
                         ? 'Harian'
@@ -333,12 +333,12 @@ export default function ScheduleView() {
                   </div>
 
                   {/* Tablet info */}
-                  <div className='mt-4 p-3 rounded-2xl bg-white/90 border border-rose-100/80 shadow-2xs'>
-                    <div className='text-xs sm:text-sm font-bold text-slate-800'>
+                  <div className='mt-4 p-3 rounded-2xl bg-white border border-[#F0DFE7] shadow-2xs'>
+                    <div className='text-xs sm:text-sm font-bold text-[#1E1F24]'>
                       {schedule.tabletName}
                     </div>
                     {schedule.instructions && (
-                      <p className='text-xs text-slate-500 mt-1 italic leading-relaxed'>
+                      <p className='text-xs text-[#525866] mt-1 italic leading-relaxed'>
                         💡 {schedule.instructions}
                       </p>
                     )}
@@ -346,8 +346,8 @@ export default function ScheduleView() {
                 </div>
 
                 {/* Card Footer Actions */}
-                <div className='mt-6 pt-4 border-t border-rose-100/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3 relative z-10'>
-                  <div className='flex items-center gap-2 text-xs text-slate-600 font-medium'>
+                <div className='mt-6 pt-4 border-t border-[#F0DFE7] flex flex-col sm:flex-row sm:items-center justify-between gap-3 relative z-10'>
+                  <div className='flex items-center gap-2 text-xs text-[#525866] font-medium'>
                     <BellRing
                       size={14}
                       className={schedule.isEnabled ? 'text-rose-600' : 'text-slate-400'}
@@ -386,15 +386,15 @@ export default function ScheduleView() {
               /* EMPTY STATE: ALARM NOT SET */
               <Card
                 padding='lg'
-                className='text-center py-10 sm:py-14 border-2 border-dashed border-rose-200 bg-rose-50/20 rounded-3xl'
+                className='text-center py-10 sm:py-14 border-2 border-dashed border-[#F7CADF] bg-[#FAF0F4]/40 rounded-3xl'
               >
-                <div className='w-16 h-16 rounded-3xl bg-rose-100 text-rose-600 flex items-center justify-center mx-auto mb-4 shadow-sm'>
+                <div className='w-16 h-16 rounded-3xl bg-[#FCE7F0] text-[#B8285F] flex items-center justify-center mx-auto mb-4 shadow-xs'>
                   <BellOff size={32} />
                 </div>
-                <h3 className='text-lg font-black text-slate-900 tracking-tight'>
+                <h3 className='text-lg font-bold text-[#1E1F24] tracking-tight'>
                   Belum Ada Alarm Pengingat ⏰
                 </h3>
-                <p className='text-xs sm:text-sm text-slate-500 max-w-md mx-auto mt-1.5 mb-6 leading-relaxed'>
+                <p className='text-xs sm:text-sm text-[#525866] max-w-md mx-auto mt-1.5 mb-6 leading-relaxed'>
                   Kamu belum mengaktifkan alarm pengingat. Tambahkan alarm pengingat sekarang agar
                   FEMORY dapat mengingatkanmu minum Tablet Tambah Darah secara rutin tepat waktu.
                 </p>
@@ -406,7 +406,7 @@ export default function ScheduleView() {
                     shape='pill'
                     icon={<Plus size={16} />}
                     onClick={handleOpenAddModal}
-                    className='font-bold shadow-md shadow-rose-500/20 text-xs px-6 py-2.5'
+                    className='font-bold shadow-md shadow-[#B8285F]/20 text-xs px-6 py-2.5'
                   >
                     Tambahkan Alarm Sekarang
                   </Button>
@@ -415,17 +415,17 @@ export default function ScheduleView() {
             )}
 
             {/* Quick Helper: How the alarm works */}
-            <Card padding='md' className='bg-slate-50 border border-slate-200/80'>
+            <Card padding='md' className='bg-[#FAF6F8] border border-[#F0DFE7]'>
               <div className='flex items-start gap-3'>
-                <div className='w-8 h-8 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center shrink-0 mt-0.5'>
+                <div className='w-8 h-8 rounded-xl bg-[#FAF0F4] text-[#B8285F] flex items-center justify-center shrink-0 mt-0.5'>
                   <HelpCircle size={16} />
                 </div>
                 <div>
-                  <h4 className='text-xs sm:text-sm font-bold text-slate-800'>
+                  <h4 className='text-xs sm:text-sm font-bold text-[#1E1F24]'>
                     Bagaimana Alarm FEMORY Bekerja?
                   </h4>
-                  <p className='text-xs text-slate-500 mt-1 leading-relaxed'>
-                    Saat waktu alarm tiba, aplikasi akan membunyikan nada chime pengingat dan
+                  <p className='text-xs text-[#525866] mt-1 leading-relaxed'>
+                    Saat waktu alarm tiba, aplikasi akan membunyikan nada pengingat dan
                     menampilkan banner interaktif di layar. Kamu bisa mencatat konsumsi TTD dengan
                     satu sentuhan.
                   </p>
@@ -437,7 +437,7 @@ export default function ScheduleView() {
           {/* RIGHT COLUMN: Medical Guidelines & FAQs (md:col-span-5) */}
           <div className='md:col-span-5 flex flex-col gap-4'>
             {/* Medical Guidelines */}
-            <Card padding='md'>
+            <Card padding='md' className='bg-white border border-[#F0DFE7]'>
               <div className='flex items-center gap-2 text-sm sm:text-base font-bold text-slate-900 mb-3'>
                 <div className='w-7 h-7 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center shrink-0'>
                   <Info size={15} />

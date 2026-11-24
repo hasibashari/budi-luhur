@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { CheckCircle2, XCircle, Clock, Sparkles } from 'lucide-react';
+import { CheckCircle2, XCircle, Clock, Sparkles, AlertCircle } from 'lucide-react';
 import { Card } from '../ui/Card';
 import { Badge } from '../ui/Badge';
 import { Button } from '../ui/Button';
@@ -64,45 +64,54 @@ export function StatusCard({
   };
 
   return (
-    <Card padding='md' className='relative'>
-      <div className='flex items-center justify-between gap-2 mb-2'>
-        <h4 className='text-sm sm:text-base font-bold text-[#1e293b] flex items-center gap-1.5'>
-          <span>Status Hari Ini</span>
-        </h4>
+    <Card padding='md' className='relative bg-white'>
+      <div className='flex items-center justify-between gap-2 mb-2.5'>
+        <div className='flex items-center gap-2'>
+          <h3 className='text-sm sm:text-base font-bold text-[#1E1F24] leading-tight'>
+            Status Minum TTD Hari Ini
+          </h3>
+        </div>
 
         <Badge variant={status} dot={status === 'pending'} size='sm'>
           {status === 'recorded'
-            ? '✓ Sudah Dicatat'
+            ? 'Sudah Dicatat'
             : status === 'missed'
-              ? '✕ Terlewat'
-              : 'Belum Dicatat'}
+              ? 'Terlewat'
+              : 'Belum Minum'}
         </Badge>
       </div>
 
       {status === 'pending' && (
-        <div>
-          <p className='text-xs sm:text-sm text-[#475569] mb-3 leading-relaxed'>
-            Catat konsumsi TTD hari ini untuk menjaga streak kesehatanmu.
+        <div className='flex flex-col gap-3'>
+          <p className='text-xs sm:text-sm text-[#525866] leading-relaxed'>
+            Catat konsumsi Tablet Tambah Darah (TTD) hari ini untuk menjaga daya tahan tubuh dan bebas anemia.
           </p>
 
-          <div className='flex items-center gap-2'>
+          <div className='bg-[#FAF0F4] border border-[#F0DFE7] rounded-xl px-3 py-2 flex items-center gap-2'>
+            <Sparkles size={14} className='text-[#B8285F] shrink-0' />
+            <p className='text-[11px] text-[#861A43] font-medium leading-snug'>
+              Tips: Paling baik diminum setelah makan malam bersama air putih atau buah bervitamin C.
+            </p>
+          </div>
+
+          <div className='flex items-center gap-2.5 pt-1'>
             <Button
               variant='success'
-              size='sm'
+              size='md'
               shape='pill'
-              className='flex-1 text-xs sm:text-sm py-2'
+              className='flex-1 text-xs sm:text-sm'
               icon={<CheckCircle2 size={16} />}
               onClick={handleSetRecorded}
             >
-              Sudah Minum
+              Catat Sudah Minum
             </Button>
 
             <Button
               variant='outline'
-              size='sm'
+              size='md'
               shape='pill'
-              className='text-xs sm:text-sm py-2 px-3.5 text-[#f43f5e] border-[#fecdd3] hover:bg-[#fff1f2]'
-              icon={<XCircle size={16} />}
+              className='text-xs sm:text-sm px-4 text-[#8E95A5] border-[#F0DFE7] hover:text-[#B8285F] hover:bg-[#FAF0F4]'
+              icon={<XCircle size={15} />}
               onClick={handleSetMissed}
             >
               Terlewat
@@ -112,16 +121,18 @@ export function StatusCard({
       )}
 
       {status === 'recorded' && (
-        <div className='bg-[#ecfdf5] border border-[#a7f3d0] rounded-xl p-3 mt-1 flex items-center justify-between'>
-          <div className='flex items-center gap-2.5'>
-            <div className='w-8 h-8 rounded-full bg-[#10b981] text-white flex items-center justify-center shrink-0 shadow-sm shadow-emerald-500/30'>
-              <Sparkles size={16} />
+        <div className='bg-[#ECFDF5] border border-[#A7F3D0] rounded-2xl p-3.5 mt-1 flex items-center justify-between gap-3 animate-fade-in'>
+          <div className='flex items-center gap-3 min-w-0'>
+            <div className='w-9 h-9 rounded-full bg-[#0D9488] text-white flex items-center justify-center shrink-0 shadow-xs shadow-teal-700/20'>
+              <CheckCircle2 size={18} />
             </div>
-            <div>
-              <p className='text-xs sm:text-sm font-bold text-[#065f46]'>Hebat! TTD Tercatat</p>
-              <p className='text-[11px] text-[#047857] flex items-center gap-1'>
+            <div className='min-w-0'>
+              <p className='text-xs sm:text-sm font-bold text-[#065F46] leading-tight'>
+                Hebat! TTD Sudah Dicatat 🌸
+              </p>
+              <p className='text-[11px] text-[#0D9488] flex items-center gap-1 mt-0.5 font-medium'>
                 <Clock size={11} />
-                <span>Diminum pada {recordedTime || '08:15 WIB'}</span>
+                <span>Tercatat pukul {recordedTime || '20:00 WIB'}</span>
               </p>
             </div>
           </div>
@@ -129,7 +140,7 @@ export function StatusCard({
           <button
             type='button'
             onClick={handleReset}
-            className='text-[11px] text-[#059669] hover:underline font-semibold px-2 py-1'
+            className='text-xs text-[#0D9488] hover:text-[#065F46] font-semibold px-2.5 py-1 rounded-lg hover:bg-emerald-100/60 transition-colors cursor-pointer shrink-0'
           >
             Ubah
           </button>
@@ -137,17 +148,17 @@ export function StatusCard({
       )}
 
       {status === 'missed' && (
-        <div className='bg-[#fff1f2] border border-[#fecdd3] rounded-xl p-3 mt-1 flex items-center justify-between'>
-          <div className='flex items-center gap-2.5'>
-            <div className='w-8 h-8 rounded-full bg-[#f43f5e] text-white flex items-center justify-center shrink-0'>
-              <XCircle size={16} />
+        <div className='bg-[#FAF0F4] border border-[#F7CADF] rounded-2xl p-3.5 mt-1 flex items-center justify-between gap-3 animate-fade-in'>
+          <div className='flex items-center gap-3 min-w-0'>
+            <div className='w-9 h-9 rounded-full bg-[#B8285F] text-white flex items-center justify-center shrink-0'>
+              <AlertCircle size={18} />
             </div>
-            <div>
-              <p className='text-xs sm:text-sm font-bold text-[#9f1239]'>
+            <div className='min-w-0'>
+              <p className='text-xs sm:text-sm font-bold text-[#861A43] leading-tight'>
                 Jadwal Hari Ini Terlewat
               </p>
-              <p className='text-[11px] text-[#be123c]'>
-                Melewati jam jadwal yang diterapkan. Masih bisa diubah jika sudah minum!
+              <p className='text-[11px] text-[#A11E50] mt-0.5 leading-snug'>
+                Jangan khawatir, kamu masih bisa minum tablet malam ini dan memperbarui catatan.
               </p>
             </div>
           </div>
@@ -155,7 +166,7 @@ export function StatusCard({
           <button
             type='button'
             onClick={handleReset}
-            className='text-[11px] text-[#e11d48] hover:underline font-semibold px-2 py-1'
+            className='text-xs text-[#B8285F] hover:text-[#861A43] font-semibold px-2.5 py-1 rounded-lg hover:bg-[#FCE7F0] transition-colors cursor-pointer shrink-0'
           >
             Ubah
           </button>

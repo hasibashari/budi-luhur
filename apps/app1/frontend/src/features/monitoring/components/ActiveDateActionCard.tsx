@@ -32,22 +32,22 @@ export function ActiveDateActionCard({
   return (
     <Card
       padding='md'
-      className='border border-rose-200 bg-gradient-to-br from-[#fff5f7] to-white'
+      className='border border-[#F0DFE7] bg-white shadow-xs'
     >
       <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-3'>
         {/* Left side: Date & Status Details */}
         <div>
           <div className='flex items-center gap-2'>
-            <span className='text-xs font-extrabold text-[#1e293b]'>
+            <span className='text-xs sm:text-sm font-bold text-[#1E1F24]'>
               {formatFullDateText(selectedDate)}
             </span>
             {isToday && (
-              <span className='text-[10px] font-bold text-rose-600 bg-rose-100 px-2 py-0.5 rounded-full'>
+              <span className='text-[10px] font-bold text-[#861A43] bg-[#FCE7F0] px-2 py-0.5 rounded-full'>
                 Hari Ini
               </span>
             )}
           </div>
-          <p className='text-xs text-[#64748b] mt-0.5'>
+          <p className='text-xs text-[#525866] mt-0.5'>
             {activity?.title || fallbackTabletName}
             {' • '}
             Jadwal {activity?.scheduledTime || fallbackTime} WIB
@@ -66,7 +66,7 @@ export function ActiveDateActionCard({
                 type='button'
                 disabled={isUpdating}
                 onClick={() => onUpdateStatus(selectedDate, 'pending')}
-                className='text-[11px] font-semibold text-slate-500 hover:text-rose-600 hover:underline cursor-pointer'
+                className='text-xs font-semibold text-[#525866] hover:text-[#B8285F] hover:underline cursor-pointer'
               >
                 Ubah
               </button>
@@ -82,7 +82,7 @@ export function ActiveDateActionCard({
                 type='button'
                 disabled={isUpdating}
                 onClick={() => onUpdateStatus(selectedDate, 'pending')}
-                className='text-[11px] font-semibold text-slate-500 hover:text-rose-600 hover:underline cursor-pointer'
+                className='text-xs font-semibold text-[#525866] hover:text-[#B8285F] hover:underline cursor-pointer'
               >
                 Ubah
               </button>
@@ -97,18 +97,19 @@ export function ActiveDateActionCard({
                 shape='pill'
                 disabled={isUpdating}
                 icon={<CheckCircle2 size={14} />}
-                className='text-xs py-1.5 px-3'
+                className='text-xs py-1.5 px-3.5'
                 onClick={() => onUpdateStatus(selectedDate, 'recorded')}
               >
-                {isUpdating ? '...' : 'Sudah Minum'}
+                Sudah Minum
               </Button>
+
               <Button
                 variant='outline'
                 size='sm'
                 shape='pill'
                 disabled={isUpdating}
-                className='text-xs py-1.5 px-3 text-[#f43f5e] border-[#fecdd3] hover:bg-rose-50'
                 icon={<XCircle size={14} />}
+                className='text-xs py-1.5 px-3 text-[#B8285F] border-[#F0DFE7] hover:bg-[#FAF0F4]'
                 onClick={() => onUpdateStatus(selectedDate, 'missed')}
               >
                 Terlewat

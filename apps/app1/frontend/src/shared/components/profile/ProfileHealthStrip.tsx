@@ -83,36 +83,36 @@ export function ProfileHealthStrip({
   return (
     <div>
       <div className='px-2 mb-1.5 flex items-center justify-between'>
-        <h2 className='text-[11px] font-bold text-slate-400 uppercase tracking-wider'>{title}</h2>
+        <h2 className='text-[11px] font-bold text-[#8E95A5] uppercase tracking-wider'>{title}</h2>
         {badgeLabel && (
-          <span className='text-[10px] font-semibold text-rose-500'>{badgeLabel}</span>
+          <span className='text-[10px] font-semibold text-[#B8285F]'>{badgeLabel}</span>
         )}
       </div>
 
-      <div className='rounded-2xl sm:rounded-3xl bg-white border border-rose-100/90 shadow-2xs p-3 sm:p-5'>
-        <div className='grid grid-cols-3 divide-x divide-slate-100 text-center'>
+      <div className='rounded-2xl sm:rounded-3xl bg-white border border-[#F0DFE7] shadow-xs p-3 sm:p-5'>
+        <div className='grid grid-cols-3 divide-x divide-[#F0DFE7] text-center'>
           {/* Metric 1: Streak Pekan */}
           <div className='px-1 sm:px-4 py-0.5 sm:py-2 flex flex-col items-center justify-between min-h-[105px] sm:min-h-[120px]'>
             <div className='flex flex-col items-center'>
-              <div className='w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-orange-100 text-orange-600 flex items-center justify-center mb-1 sm:mb-1.5'>
+              <div className='w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mb-1 sm:mb-1.5'>
                 <Flame size={16} className='sm:w-5 sm:h-5' />
               </div>
-              <span className='text-[11px] sm:text-xs font-semibold text-slate-400 leading-tight'>
+              <span className='text-[11px] sm:text-xs font-semibold text-[#8E95A5] leading-tight'>
                 Streak
               </span>
-              <span className='text-sm sm:text-xl font-black text-slate-800 tracking-tight mt-0.5'>
+              <span className='text-sm sm:text-xl font-bold text-[#1E1F24] tracking-tight mt-0.5'>
                 {streakCount} Pekan
               </span>
             </div>
             <div className='mt-1.5'>
               <span
-                className={`inline-block text-[10px] sm:text-xs font-extrabold px-2 sm:px-2.5 py-0.5 rounded-full ${
-                  streakCount > 0 ? 'bg-orange-100 text-orange-700' : 'bg-slate-100 text-slate-600'
+                className={`inline-block text-[10px] sm:text-xs font-bold px-2 sm:px-2.5 py-0.5 rounded-full ${
+                  streakCount > 0 ? 'bg-amber-50 text-amber-800' : 'bg-slate-100 text-[#525866]'
                 }`}
               >
                 {streakCount > 0 ? 'Konsisten' : 'Mulai Sekarang'}
               </span>
-              <p className='text-[9px] sm:text-[11px] text-slate-400 mt-0.5 hidden sm:block'>
+              <p className='text-[9px] sm:text-[11px] text-[#8E95A5] mt-0.5 hidden sm:block'>
                 Konsumsi mingguan
               </p>
             </div>
@@ -126,20 +126,20 @@ export function ProfileHealthStrip({
               >
                 <Activity size={16} className='sm:w-5 sm:h-5' />
               </div>
-              <span className='text-[11px] sm:text-xs font-semibold text-slate-400 leading-tight'>
+              <span className='text-[11px] sm:text-xs font-semibold text-[#8E95A5] leading-tight'>
                 Kadar Hb
               </span>
-              <span className='text-sm sm:text-xl font-black text-slate-800 tracking-tight mt-0.5'>
+              <span className='text-sm sm:text-xl font-bold text-[#1E1F24] tracking-tight mt-0.5'>
                 {hbLevel ? `${hbLevel} g/dL` : 'Belum Diisi'}
               </span>
             </div>
             <div className='mt-1.5 flex flex-col items-center'>
               <span
-                className={`inline-block text-[10px] sm:text-xs font-extrabold px-2 sm:px-2.5 py-0.5 rounded-full ${hbStatus.color}`}
+                className={`inline-block text-[10px] sm:text-xs font-bold px-2 sm:px-2.5 py-0.5 rounded-full ${hbStatus.color}`}
               >
                 {hbStatus.text}
               </span>
-              <span className='text-[9px] sm:text-[11px] text-slate-400 mt-0.5 leading-tight line-clamp-1 max-w-[100px] sm:max-w-none'>
+              <span className='text-[9px] sm:text-[11px] text-[#8E95A5] mt-0.5 leading-tight line-clamp-1 max-w-[100px] sm:max-w-none'>
                 {hbStatus.subtitle}
               </span>
             </div>
@@ -151,12 +151,12 @@ export function ProfileHealthStrip({
               <div
                 className={`w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl flex items-center justify-center mb-1 sm:mb-1.5 ${
                   riskLevel === 'Tinggi'
-                    ? 'bg-rose-100 text-rose-600'
+                    ? 'bg-[#FAF0F4] text-[#B8285F]'
                     : riskLevel === 'Sedang'
-                      ? 'bg-amber-100 text-amber-600'
+                      ? 'bg-amber-50 text-amber-600'
                       : riskLevel
-                        ? 'bg-emerald-100 text-emerald-600'
-                        : 'bg-slate-100 text-slate-600'
+                        ? 'bg-teal-50 text-[#0D9488]'
+                        : 'bg-slate-100 text-[#525866]'
                 }`}
               >
                 <HeartPulse size={16} className='sm:w-5 sm:h-5' />

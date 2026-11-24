@@ -64,24 +64,24 @@ export function SetupProfileView() {
   };
 
   return (
-    <div className='flex-1 min-h-[100dvh] w-full bg-gradient-to-b from-[#fff5f7] via-[#ffe4e6]/30 to-[#fff5f7] flex flex-col justify-center items-center p-3.5 sm:p-6 md:p-8 pb-6 sm:pb-8 box-border relative overflow-x-hidden'>
+    <div className='flex-1 min-h-[100dvh] w-full bg-gradient-to-b from-[#FAF6F8] via-[#FAF0F4] to-[#FAF6F8] flex flex-col justify-center items-center p-3.5 sm:p-6 md:p-8 pb-6 sm:pb-8 box-border relative overflow-x-hidden'>
       {/* Decorative desktop ambient bubbles */}
-      <div className='hidden md:block absolute top-12 left-12 w-64 h-64 bg-rose-300/20 rounded-full blur-3xl pointer-events-none' />
-      <div className='hidden md:block absolute bottom-12 right-12 w-80 h-80 bg-rose-400/20 rounded-full blur-3xl pointer-events-none' />
+      <div className='hidden md:block absolute top-12 left-12 w-64 h-64 bg-[#B8285F]/10 rounded-full blur-3xl pointer-events-none' />
+      <div className='hidden md:block absolute bottom-12 right-12 w-80 h-80 bg-[#CE3B77]/10 rounded-full blur-3xl pointer-events-none' />
 
-      <div className='w-full max-w-lg bg-white/95 backdrop-blur-md rounded-3xl border border-rose-100/90 shadow-2xl shadow-rose-950/5 p-5 sm:p-8 relative z-10 flex flex-col justify-between my-auto'>
+      <div className='w-full max-w-lg bg-white/95 backdrop-blur-md rounded-3xl border border-[#F0DFE7] shadow-xl shadow-[#B8285F]/5 p-5 sm:p-8 relative z-10 flex flex-col justify-between my-auto'>
         {/* Top Header */}
         <div>
           <div className='mb-4 sm:mb-5'>
             <div className='flex items-center justify-between mb-2'>
               <div className='flex items-center gap-1.5'>
-                <span className='font-black text-lg sm:text-xl tracking-tight text-slate-800'>
+                <span className='font-bold text-lg sm:text-xl tracking-tight text-[#1E1F24]'>
                   FEMORY
                 </span>
                 <span className='text-base'>🌸</span>
               </div>
               <div className='flex items-center gap-2'>
-                <span className='text-[11px] sm:text-xs font-bold text-rose-600 bg-rose-50 px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full border border-rose-200'>
+                <span className='text-[11px] sm:text-xs font-bold text-[#861A43] bg-[#FCE7F0] px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full border border-[#F7CADF]'>
                   Setup Profil
                 </span>
               </div>
@@ -90,10 +90,10 @@ export function SetupProfileView() {
 
           {/* Title & Greeting */}
           <div className='mb-4 sm:mb-6 text-left'>
-            <h1 className='text-lg sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2'>
+            <h1 className='text-lg sm:text-2xl font-bold text-[#1E1F24] tracking-tight flex items-center gap-2'>
               <span>Lengkapi Data Dirimu ✨</span>
             </h1>
-            <p className='text-xs sm:text-sm text-slate-500 mt-1 leading-relaxed'>
+            <p className='text-xs sm:text-sm text-[#525866] mt-1 leading-relaxed'>
               Halo, {authUser?.name || 'Siswi Sehat'}! Masukkan asal sekolah dan data kesehatanmu
               untuk personalisasi pemantauan. Pengaturan alarm pengingat dapat kamu atur kapan saja
               secara mandiri di menu Jadwal.
@@ -102,8 +102,8 @@ export function SetupProfileView() {
 
           {/* Error Alert */}
           {errorMessage && (
-            <div className='mb-4 p-3 sm:p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs sm:text-sm font-semibold flex items-center gap-2 animate-fade-in'>
-              <AlertCircle size={16} className='text-rose-600 shrink-0' />
+            <div className='mb-4 p-3 sm:p-3.5 rounded-2xl bg-[#FAF0F4] border border-[#F7CADF] text-[#861A43] text-xs sm:text-sm font-semibold flex items-center gap-2 animate-fade-in'>
+              <AlertCircle size={16} className='text-[#B8285F] shrink-0' />
               <span>
                 {typeof errorMessage === 'string'
                   ? errorMessage
@@ -121,11 +121,11 @@ export function SetupProfileView() {
           <div className='space-y-3.5 sm:space-y-4'>
             {/* School / Class Field (Required) */}
             <div>
-              <label className='block text-xs font-bold text-slate-800 mb-1.5'>
-                Asal Sekolah & Kelas <span className='text-[#e11d48]'>*</span>
+              <label className='block text-xs font-bold text-[#1E1F24] mb-1.5'>
+                Asal Sekolah & Kelas <span className='text-[#B8285F]'>*</span>
               </label>
               <div className='relative flex items-center'>
-                <div className='absolute left-3.5 w-7 sm:w-8 h-7 sm:h-8 rounded-full bg-rose-50 flex items-center justify-center text-[#e11d48]'>
+                <div className='absolute left-3.5 w-7 sm:w-8 h-7 sm:h-8 rounded-full bg-[#FAF0F4] flex items-center justify-center text-[#B8285F]'>
                   <School size={15} />
                 </div>
                 <input
@@ -134,21 +134,21 @@ export function SetupProfileView() {
                   value={schoolOrOrg}
                   onChange={e => setSchoolOrOrg(e.target.value)}
                   required
-                  className='w-full bg-white text-xs sm:text-sm text-[#1e293b] rounded-full border border-slate-200 pl-12 sm:pl-13 pr-4 py-2.5 sm:py-3 outline-none focus:border-[#e11d48] transition-colors shadow-2xs'
+                  className='w-full bg-white text-xs sm:text-sm text-[#1E1F24] rounded-full border border-[#F0DFE7] pl-12 sm:pl-13 pr-4 py-2.5 sm:py-3 outline-none focus:border-[#B8285F] focus:ring-1 focus:ring-[#B8285F] transition-all shadow-2xs'
                 />
               </div>
             </div>
 
             {/* Date of Birth */}
             <div>
-              <label className='block text-xs font-bold text-slate-800 mb-1.5'>
+              <label className='block text-xs font-bold text-[#1E1F24] mb-1.5'>
                 Tanggal Lahir{' '}
-                <span className='text-slate-400 font-normal text-[10px] sm:text-[11px]'>
+                <span className='text-[#8E95A5] font-normal text-[10px] sm:text-[11px]'>
                   (Opsional)
                 </span>
               </label>
               <div className='relative flex items-center'>
-                <div className='absolute left-3.5 w-7 sm:w-8 h-7 sm:h-8 rounded-full bg-rose-50 flex items-center justify-center text-[#e11d48]'>
+                <div className='absolute left-3.5 w-7 sm:w-8 h-7 sm:h-8 rounded-full bg-[#FAF0F4] flex items-center justify-center text-[#B8285F]'>
                   <Calendar size={15} />
                 </div>
                 <input
@@ -156,7 +156,7 @@ export function SetupProfileView() {
                   value={dateOfBirth}
                   max={maxDate}
                   onChange={e => setDateOfBirth(e.target.value)}
-                  className='w-full bg-white text-xs sm:text-sm text-[#1e293b] rounded-full border border-slate-200 pl-12 sm:pl-13 pr-4 py-2.5 sm:py-3 outline-none focus:border-[#e11d48] transition-colors shadow-2xs'
+                  className='w-full bg-white text-xs sm:text-sm text-[#1E1F24] rounded-full border border-[#F0DFE7] pl-12 sm:pl-13 pr-4 py-2.5 sm:py-3 outline-none focus:border-[#B8285F] focus:ring-1 focus:ring-[#B8285F] transition-all shadow-2xs'
                 />
               </div>
             </div>
@@ -164,34 +164,34 @@ export function SetupProfileView() {
             {/* Height, Weight, Hb Level (3-column compact) */}
             <div className='grid grid-cols-3 gap-2 sm:gap-3'>
               <div className='min-w-0'>
-                <label className='block text-[11px] sm:text-xs font-bold text-slate-800 mb-1.5 truncate text-center sm:text-left'>
-                  Tinggi <span className='text-slate-400 font-normal text-[10px]'>(cm)</span>
+                <label className='block text-[11px] sm:text-xs font-bold text-[#1E1F24] mb-1.5 truncate text-center sm:text-left'>
+                  Tinggi <span className='text-[#8E95A5] font-normal text-[10px]'>(cm)</span>
                 </label>
                 <input
                   type='number'
                   placeholder='158'
                   value={height}
                   onChange={e => setHeight(e.target.value)}
-                  className='w-full bg-white text-xs sm:text-sm text-[#1e293b] rounded-full border border-slate-200 px-2 sm:px-3 py-2 sm:py-2.5 sm:py-3 outline-none focus:border-[#e11d48] transition-colors shadow-2xs text-center'
+                  className='w-full bg-white text-xs sm:text-sm text-[#1E1F24] rounded-full border border-[#F0DFE7] px-2 sm:px-3 py-2 sm:py-2.5 sm:py-3 outline-none focus:border-[#B8285F] focus:ring-1 focus:ring-[#B8285F] transition-all shadow-2xs text-center'
                 />
               </div>
 
               <div className='min-w-0'>
-                <label className='block text-[11px] sm:text-xs font-bold text-slate-800 mb-1.5 truncate text-center sm:text-left'>
-                  Berat <span className='text-slate-400 font-normal text-[10px]'>(kg)</span>
+                <label className='block text-[11px] sm:text-xs font-bold text-[#1E1F24] mb-1.5 truncate text-center sm:text-left'>
+                  Berat <span className='text-[#8E95A5] font-normal text-[10px]'>(kg)</span>
                 </label>
                 <input
                   type='number'
                   placeholder='48'
                   value={weight}
                   onChange={e => setWeight(e.target.value)}
-                  className='w-full bg-white text-xs sm:text-sm text-[#1e293b] rounded-full border border-slate-200 px-2 sm:px-3 py-2 sm:py-2.5 sm:py-3 outline-none focus:border-[#e11d48] transition-colors shadow-2xs text-center'
+                  className='w-full bg-white text-xs sm:text-sm text-[#1E1F24] rounded-full border border-[#F0DFE7] px-2 sm:px-3 py-2 sm:py-2.5 sm:py-3 outline-none focus:border-[#B8285F] focus:ring-1 focus:ring-[#B8285F] transition-all shadow-2xs text-center'
                 />
               </div>
 
               <div className='min-w-0'>
-                <label className='block text-[11px] sm:text-xs font-bold text-slate-800 mb-1.5 truncate text-center sm:text-left'>
-                  Hb Lab <span className='text-slate-400 font-normal text-[10px]'>(g/dL)</span>
+                <label className='block text-[11px] sm:text-xs font-bold text-[#1E1F24] mb-1.5 truncate text-center sm:text-left'>
+                  Hb Lab <span className='text-[#8E95A5] font-normal text-[10px]'>(g/dL)</span>
                 </label>
                 <input
                   type='number'
@@ -199,21 +199,21 @@ export function SetupProfileView() {
                   placeholder='12.4'
                   value={hbLevel}
                   onChange={e => setHbLevel(e.target.value)}
-                  className='w-full bg-white text-xs sm:text-sm text-[#1e293b] rounded-full border border-slate-200 px-2 sm:px-3 py-2 sm:py-2.5 sm:py-3 outline-none focus:border-[#e11d48] transition-colors shadow-2xs text-center'
+                  className='w-full bg-white text-xs sm:text-sm text-[#1E1F24] rounded-full border border-[#F0DFE7] px-2 sm:px-3 py-2 sm:py-2.5 sm:py-3 outline-none focus:border-[#B8285F] focus:ring-1 focus:ring-[#B8285F] transition-all shadow-2xs text-center'
                 />
               </div>
             </div>
           </div>
 
           {/* Bottom Action Row */}
-          <div className='pt-5 sm:pt-6 mt-4 sm:mt-6 border-t border-rose-100/60 sm:border-transparent flex items-center justify-between gap-3'>
+          <div className='pt-5 sm:pt-6 mt-4 sm:mt-6 border-t border-[#F0DFE7] flex items-center justify-between gap-3'>
             <button
               type='button'
               onClick={() => logout()}
-              className='flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-4 sm:px-5 py-3 rounded-full border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs sm:text-sm font-bold transition-all shadow-2xs cursor-pointer'
+              className='flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-4 sm:px-5 py-3 rounded-full border border-[#F0DFE7] bg-white hover:bg-[#FAF0F4] text-[#525866] hover:text-[#B8285F] text-xs sm:text-sm font-semibold transition-all shadow-2xs cursor-pointer'
               title='Keluar dari sesi dan kembali ke halaman masuk'
             >
-              <LogOut size={15} className='text-slate-500' />
+              <LogOut size={15} />
               <span>Ganti Akun</span>
             </button>
 
@@ -224,7 +224,7 @@ export function SetupProfileView() {
               shape='pill'
               disabled={isSaving}
               icon={isSaving ? <Loader2 size={15} className='animate-spin' /> : <Check size={16} />}
-              className='flex-1 sm:flex-initial px-6 sm:px-8 py-3 font-bold shadow-md shadow-rose-500/20 text-xs sm:text-sm flex items-center justify-center gap-2'
+              className='flex-1 sm:flex-initial px-6 sm:px-8 py-3 font-bold shadow-md shadow-[#B8285F]/20 text-xs sm:text-sm flex items-center justify-center gap-2'
             >
               {isSaving ? 'Menyimpan...' : 'Simpan & Masuk 🌸'}
             </Button>

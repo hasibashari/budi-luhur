@@ -62,18 +62,18 @@ export function LoginForm({ hideHeader = false }: LoginFormProps) {
     <div className='w-full'>
       {!hideHeader && (
         <div className='mb-6 text-left'>
-          <h2 className='text-2xl font-extrabold text-[#1e293b] tracking-tight mb-1'>
+          <h2 className='text-2xl font-bold text-[#1E1F24] tracking-tight mb-1'>
             Masuk ke FEMORY
           </h2>
-          <p className='text-xs sm:text-sm text-[#64748b]'>
+          <p className='text-xs sm:text-sm text-[#525866]'>
             Masukkan kredensial akun Siswi atau Administrator Anda.
           </p>
         </div>
       )}
 
       {isJustRegistered && !errorMessage && !successRole && (
-        <div className='mb-4 p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs sm:text-sm font-semibold flex items-center gap-2 animate-fade-in'>
-          <CheckCircle2 size={16} className='text-emerald-600 shrink-0' />
+        <div className='mb-4 p-3.5 rounded-2xl bg-teal-50 border border-teal-200 text-teal-800 text-xs sm:text-sm font-semibold flex items-center gap-2 animate-fade-in'>
+          <CheckCircle2 size={16} className='text-[#0D9488] shrink-0' />
           <span>
             Akun Anda telah berhasil dibuat! Silakan masuk menggunakan email dan kata sandi Anda.
           </span>
@@ -83,9 +83,9 @@ export function LoginForm({ hideHeader = false }: LoginFormProps) {
       {isJustReset && !errorMessage && !successRole && (
         <div
           role='status'
-          className='mb-4 p-3.5 rounded-2xl bg-[#ecfdf5] border border-[#aff1d0] text-[#166534] text-xs sm:text-sm font-semibold flex items-center gap-2 animate-fade-in'
+          className='mb-4 p-3.5 rounded-2xl bg-teal-50 border border-teal-200 text-teal-800 text-xs sm:text-sm font-semibold flex items-center gap-2 animate-fade-in'
         >
-          <CheckCircle2 size={16} className='text-[#16a34a] shrink-0' />
+          <CheckCircle2 size={16} className='text-[#0D9488] shrink-0' />
           <span>
             Kata sandi berhasil diperbarui! Silakan masuk dengan kata sandi baru Anda.
           </span>
@@ -93,8 +93,8 @@ export function LoginForm({ hideHeader = false }: LoginFormProps) {
       )}
 
       {errorMessage && (
-        <div className='mb-4 p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs sm:text-sm font-semibold flex items-center gap-2 animate-fade-in'>
-          <AlertCircle size={16} className='text-rose-600 shrink-0' />
+        <div className='mb-4 p-3.5 rounded-2xl bg-[#FAF0F4] border border-[#F7CADF] text-[#861A43] text-xs sm:text-sm font-semibold flex items-center gap-2 animate-fade-in'>
+          <AlertCircle size={16} className='text-[#B8285F] shrink-0' />
           <span>
             {typeof errorMessage === 'string'
               ? errorMessage
@@ -104,8 +104,8 @@ export function LoginForm({ hideHeader = false }: LoginFormProps) {
       )}
 
       {successRole && (
-        <div className='mb-4 p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs sm:text-sm font-semibold flex items-center gap-2 animate-fade-in'>
-          <CheckCircle2 size={16} className='text-emerald-600 shrink-0' />
+        <div className='mb-4 p-3.5 rounded-2xl bg-teal-50 border border-teal-200 text-teal-800 text-xs sm:text-sm font-semibold flex items-center gap-2 animate-fade-in'>
+          <CheckCircle2 size={16} className='text-[#0D9488] shrink-0' />
           <span>
             Berhasil masuk sebagai <strong>{successRole}</strong>. Mengalihkan...
           </span>
@@ -114,11 +114,11 @@ export function LoginForm({ hideHeader = false }: LoginFormProps) {
 
       <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
         <div>
-          <label className='text-xs font-bold text-[#1e293b] mb-1.5 block'>
+          <label className='text-xs font-bold text-[#1E1F24] mb-1.5 block'>
             Email atau Nomor Telepon
           </label>
           <div className='relative flex items-center'>
-            <div className='absolute left-3.5 w-8 h-8 rounded-full bg-rose-50 flex items-center justify-center text-[#e11d48]'>
+            <div className='absolute left-3.5 w-8 h-8 rounded-full bg-[#FAF0F4] flex items-center justify-center text-[#B8285F]'>
               <Mail size={15} />
             </div>
             <input
@@ -128,15 +128,15 @@ export function LoginForm({ hideHeader = false }: LoginFormProps) {
               onChange={e => setEmail(e.target.value)}
               required
               autoComplete='email'
-              className='w-full bg-white text-sm text-[#1e293b] rounded-full border border-slate-200 pl-13 pr-4 py-3 outline-none focus:border-[#e11d48] transition-colors shadow-2xs'
+              className='w-full bg-white text-sm text-[#1E1F24] rounded-full border border-[#F0DFE7] pl-13 pr-4 py-3 outline-none focus:border-[#B8285F] focus:ring-1 focus:ring-[#B8285F] transition-all shadow-2xs'
             />
           </div>
         </div>
 
         <div>
-          <label className='text-xs font-bold text-[#1e293b] mb-1.5 block'>Kata Sandi</label>
+          <label className='text-xs font-bold text-[#1E1F24] mb-1.5 block'>Kata Sandi</label>
           <div className='relative flex items-center'>
-            <div className='absolute left-3.5 w-8 h-8 rounded-full bg-rose-50 flex items-center justify-center text-[#e11d48]'>
+            <div className='absolute left-3.5 w-8 h-8 rounded-full bg-[#FAF0F4] flex items-center justify-center text-[#B8285F]'>
               <Lock size={15} />
             </div>
             <input
@@ -146,7 +146,7 @@ export function LoginForm({ hideHeader = false }: LoginFormProps) {
               onChange={e => setPassword(e.target.value)}
               required
               autoComplete='current-password'
-              className='w-full bg-white text-sm text-[#1e293b] rounded-full border border-slate-200 pl-13 pr-11 py-3 outline-none focus:border-[#e11d48] transition-colors shadow-2xs'
+              className='w-full bg-white text-sm text-[#1E1F24] rounded-full border border-[#F0DFE7] pl-13 pr-11 py-3 outline-none focus:border-[#B8285F] focus:ring-1 focus:ring-[#B8285F] transition-all shadow-2xs'
             />
             <button
               type='button'
@@ -161,7 +161,7 @@ export function LoginForm({ hideHeader = false }: LoginFormProps) {
         <div className='flex items-center justify-between flex-wrap gap-2 mt-2 pt-1'>
           <Link
             to='/auth/forgot-password'
-            className='text-xs text-[#64748b] hover:text-[#e11d48] font-medium transition-colors cursor-pointer'
+            className='text-xs text-[#525866] hover:text-[#B8285F] font-medium transition-colors cursor-pointer'
           >
             Lupa kata sandi?
           </Link>
@@ -169,7 +169,7 @@ export function LoginForm({ hideHeader = false }: LoginFormProps) {
           <button
             type='submit'
             disabled={loading}
-            className='px-6 py-2.5 bg-[#e11d48] hover:bg-[#be123c] text-white rounded-full text-sm font-bold shadow-md shadow-rose-500/20 transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50'
+            className='px-6 py-2.5 bg-[#B8285F] hover:bg-[#A11E50] text-white rounded-full text-sm font-bold shadow-md shadow-[#B8285F]/20 transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50'
           >
             {loading ? (
               <span>Masuk...</span>
@@ -182,12 +182,12 @@ export function LoginForm({ hideHeader = false }: LoginFormProps) {
           </button>
         </div>
 
-        <div className='mt-6 pt-4 border-t border-slate-100 text-center'>
-          <p className='text-xs sm:text-sm text-[#64748b]'>
+        <div className='mt-6 pt-4 border-t border-[#F0DFE7] text-center'>
+          <p className='text-xs sm:text-sm text-[#525866]'>
             Belum punya akun?{' '}
             <Link
               to='/auth/register'
-              className='font-bold text-[#e11d48] hover:text-[#be123c] transition-colors underline decoration-rose-200 underline-offset-4'
+              className='font-bold text-[#B8285F] hover:text-[#8D1847] transition-colors underline decoration-[#F7CADF] underline-offset-4'
             >
               Daftar Sekarang
             </Link>

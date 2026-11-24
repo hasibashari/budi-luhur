@@ -28,7 +28,7 @@ export default function MobileTopBar({
   const { request, isGranted, isDenied } = useNotificationPermission();
 
   return (
-    <header className='sticky top-0 z-40 w-full bg-white/95 backdrop-blur-md border-b border-[#fce7f3] shadow-2xs'>
+    <header className='sticky top-0 z-40 w-full bg-white/95 backdrop-blur-md border-b border-[#F0DFE7] shadow-[0_2px_10px_rgba(184,40,95,0.02)]'>
       <div className='w-full px-4 h-14 flex items-center justify-between'>
         {/* Left: Sidebar Toggle Button (if onOpenSidebar provided) + Brand */}
         <div className='flex items-center gap-2.5'>
@@ -36,31 +36,31 @@ export default function MobileTopBar({
             <button
               type='button'
               onClick={onOpenSidebar}
-              className='w-9 h-9 rounded-xl bg-[#fff5f7] border border-[#fce7f3] text-[#1e293b] hover:text-[#e11d48] hover:bg-[#ffe4e6] flex items-center justify-center transition-colors cursor-pointer shrink-0'
+              className='w-9 h-9 rounded-xl bg-[#FAF0F4] border border-[#F0DFE7] text-[#1E1F24] hover:text-[#B8285F] hover:bg-[#FCE7F0] flex items-center justify-center transition-colors cursor-pointer shrink-0'
               aria-label='Buka Menu Navigasi'
             >
-              <Menu size={20} />
+              <Menu size={19} />
             </button>
           )}
 
           <Link to={brandHref} className='flex items-center gap-2 text-inherit no-underline'>
-            <div className='w-8 h-8 rounded-xl bg-gradient-to-tr from-[#e11d48] to-[#fb7185] text-white flex items-center justify-center shadow-xs shadow-rose-500/25 shrink-0'>
-              <Heart size={16} className='fill-white' />
+            <div className='w-8 h-8 rounded-xl bg-gradient-to-tr from-[#B8285F] to-[#E06397] text-white flex items-center justify-center shadow-xs shadow-[#B8285F]/20 shrink-0'>
+              <Heart size={15} className='fill-white' />
             </div>
 
             <div className='flex flex-col'>
               <div className='flex items-center gap-1.5'>
-                <span className='text-sm font-bold text-[#1e293b] leading-tight'>
+                <span className='text-sm font-bold text-[#1E1F24] leading-tight'>
                   {brandTitle || `Hai, ${userName}! 🌸`}
                 </span>
                 {badge}
               </div>
               {brandSubtitle ? (
-                <span className='text-[10px] sm:text-[11px] text-[#64748b] leading-none'>
+                <span className='text-[10px] sm:text-[11px] text-[#525866] leading-none'>
                   {brandSubtitle}
                 </span>
               ) : (
-                <span className='text-[10px] sm:text-[11px] text-[#e11d48] font-medium leading-none'>
+                <span className='text-[10px] sm:text-[11px] text-[#B8285F] font-medium leading-none'>
                   FEMORY App
                 </span>
               )}
@@ -77,12 +77,16 @@ export default function MobileTopBar({
             <button
               type='button'
               onClick={() => request()}
-              className='w-9 h-9 rounded-full bg-[#fff5f7] border border-[#fce7f3] flex items-center justify-center text-[#475569] hover:text-[#e11d48] hover:bg-[#ffe4e6] transition-colors relative'
+              className='w-9 h-9 rounded-full bg-[#FAF0F4] border border-[#F0DFE7] flex items-center justify-center text-[#525866] hover:text-[#B8285F] hover:bg-[#FCE7F0] transition-colors relative cursor-pointer'
               aria-label={isGranted ? 'Notifikasi aktif' : 'Aktifkan notifikasi'}
               title={isDenied ? 'Notifikasi diblokir. Izinkan dari pengaturan browser.' : undefined}
             >
-              <Bell size={17} />
-              <span className={`absolute top-1.5 right-1.5 w-2 h-2 rounded-full ring-2 ring-white ${isGranted ? 'bg-emerald-500' : 'bg-[#e11d48]'}`} />
+              <Bell size={16} />
+              <span
+                className={`absolute top-1.5 right-1.5 w-2 h-2 rounded-full ring-2 ring-white ${
+                  isGranted ? 'bg-[#0D9488]' : 'bg-[#B8285F]'
+                }`}
+              />
             </button>
 
             {/* Profile Avatar with initials fallback */}
@@ -95,7 +99,7 @@ export default function MobileTopBar({
                 src={avatarUrl}
                 name={userName}
                 size='sm'
-                ringClassName='ring-2 ring-rose-200 hover:ring-[#e11d48]'
+                ringClassName='ring-2 ring-[#FCE7F0] hover:ring-[#B8285F]'
               />
             </Link>
           </div>

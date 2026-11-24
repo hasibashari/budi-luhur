@@ -12,23 +12,22 @@ export default function ArticleCard({ article, hrefPrefix = '/user/education' }:
   return (
     <Link
       to={`${hrefPrefix}/${article.id}`}
-      className='group flex flex-col h-full bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-xl hover:border-rose-300 hover:-translate-y-1.5 transition-all duration-300 cursor-pointer'
+      className='group flex flex-col h-full bg-white rounded-2xl border border-[#F0DFE7] overflow-hidden shadow-[0_2px_12px_rgba(184,40,95,0.02)] hover:shadow-[0_8px_24px_rgba(184,40,95,0.06)] hover:border-[#F7CADF] hover:-translate-y-1 transition-all duration-300 cursor-pointer'
     >
       {/* Top Image Banner */}
-      <div className='relative h-[210px] w-full overflow-hidden bg-slate-100'>
-        <span className='absolute top-3.5 left-3.5 z-10 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/95 backdrop-blur-md text-rose-600 text-xs font-bold shadow-sm'>
-          <Tag size={12} className='text-rose-500' />
+      <div className='relative h-[190px] sm:h-[210px] w-full overflow-hidden bg-[#FAF0F4]'>
+        <span className='absolute top-3.5 left-3.5 z-10 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/95 backdrop-blur-md text-[#B8285F] text-xs font-bold shadow-xs border border-[#F0DFE7]'>
+          <Tag size={12} className='text-[#B8285F]' />
           {article.category}
         </span>
         {article.imageUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element
           <img
             src={article.imageUrl}
             alt={article.title}
             className='w-full h-full object-cover transition-transform duration-500 group-hover:scale-105'
           />
         ) : (
-          <div className='w-full h-full flex items-center justify-center bg-rose-50 text-rose-300'>
+          <div className='w-full h-full flex items-center justify-center bg-[#FAF0F4] text-[#EE9CBF]'>
             <Tag size={36} />
           </div>
         )}
@@ -36,27 +35,27 @@ export default function ArticleCard({ article, hrefPrefix = '/user/education' }:
 
       {/* Card Content Body */}
       <div className='p-5 flex flex-col flex-1'>
-        <h3 className='font-bold text-base md:text-lg text-slate-800 line-clamp-2 leading-snug mb-2 group-hover:text-rose-600 transition-colors'>
+        <h3 className='font-bold text-base text-[#1E1F24] line-clamp-2 leading-snug mb-2 group-hover:text-[#B8285F] transition-colors'>
           {article.title}
         </h3>
 
-        <p className='text-sm text-slate-500 line-clamp-3 leading-relaxed mb-4 flex-1'>
+        <p className='text-xs sm:text-sm text-[#525866] line-clamp-3 leading-relaxed mb-4 flex-1'>
           {article.summary}
         </p>
 
-        <div className='h-px bg-slate-100 my-3 w-full' />
+        <div className='h-px bg-[#F6EAF0] my-3 w-full' />
 
         {/* Footer info: Read time & Date */}
-        <div className='flex items-center justify-between text-xs text-slate-400 font-medium pt-0.5'>
-          <div className='flex items-center gap-1.5 text-slate-600 font-semibold'>
-            <Clock size={14} className='text-rose-500' />
+        <div className='flex items-center justify-between text-xs text-[#8E95A5] font-medium pt-0.5'>
+          <div className='flex items-center gap-1.5 text-[#525866] font-semibold'>
+            <Clock size={13} className='text-[#B8285F]' />
             <span>{article.readTime}</span>
           </div>
-          <div className='flex items-center gap-1 text-slate-500'>
+          <div className='flex items-center gap-1 text-[#525866]'>
             <span>{article.publishedAt}</span>
             <ArrowRight
-              size={14}
-              className='ml-1 text-slate-400 group-hover:text-rose-600 group-hover:translate-x-1 transition-all duration-200'
+              size={13}
+              className='ml-1 text-[#8E95A5] group-hover:text-[#B8285F] group-hover:translate-x-1 transition-all duration-200'
             />
           </div>
         </div>

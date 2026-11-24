@@ -20,7 +20,6 @@ export interface GroupBuddySummary {
 export interface BuddyCardProps {
   groupData?: GroupBuddySummary | null;
   userName?: string;
-  // Legacy fallback props
   buddyData?: {
     buddyName: string;
     streakCount: number;
@@ -31,28 +30,27 @@ export function BuddyCard({ groupData }: BuddyCardProps) {
   // 1. EMPTY / INVITE STATE: If user has no active group
   if (!groupData || !groupData.name) {
     return (
-      <Card padding='md' className='w-full border border-[#fce7f3] shadow-sm'>
+      <Card padding='md' className='w-full bg-white border border-[#F0DFE7] shadow-xs'>
         <div className='flex items-center justify-between mb-3'>
-          <h4 className='text-sm font-bold text-[#1e293b] flex items-center gap-1.5'>
-            <Users size={16} className='text-[#e11d48]' />
-            <span>Group Buddy</span>
-          </h4>
-          <span className='text-xs font-semibold text-[#be123c] bg-[#ffe4e6] px-2.5 py-0.5 rounded-full'>
-            Komunitas Sehat
+          <h3 className='text-sm font-bold text-[#1E1F24] flex items-center gap-1.5'>
+            <Users size={16} className='text-[#B8285F]' />
+            <span>Sahabat Femory</span>
+          </h3>
+          <span className='text-xs font-semibold text-[#861A43] bg-[#FCE7F0] px-2.5 py-0.5 rounded-full'>
+            Komunitas
           </span>
         </div>
 
-        <div className='bg-gradient-to-r from-rose-50 via-amber-50 to-rose-50 border border-rose-200/80 rounded-2xl p-4 flex flex-col items-center text-center my-1.5'>
-          <div className='w-12 h-12 rounded-2xl bg-rose-100 border border-rose-200 flex items-center justify-center text-[#e11d48] shadow-sm mb-2.5'>
+        <div className='bg-[#FAF0F4] border border-[#F0DFE7] rounded-2xl p-4 flex flex-col items-center text-center my-1'>
+          <div className='w-12 h-12 rounded-2xl bg-white border border-[#F0DFE7] flex items-center justify-center text-[#B8285F] shadow-xs mb-2.5'>
             <Users size={22} />
           </div>
 
-          <h5 className='text-xs sm:text-sm font-bold text-[#1e293b] mb-1'>
-            Belum Bergabung ke Grup
-          </h5>
-          <p className='text-[11.5px] text-[#64748b] max-w-xs leading-relaxed mb-3.5'>
-            Ajak kawan sekelas atau sahabat UKS untuk saling mengingatkan jadwal minum TTD setiap
-            minggu!
+          <h4 className='text-xs sm:text-sm font-bold text-[#1E1F24] mb-1'>
+            Belum Ada Grup Sahabat
+          </h4>
+          <p className='text-[11.5px] text-[#525866] max-w-xs leading-relaxed mb-3.5'>
+            Ajak teman sekelas atau sahabat UKS untuk saling mengingatkan jadwal minum TTD setiap minggu!
           </p>
 
           <Link to='/user/buddy' className='w-full'>
@@ -64,7 +62,7 @@ export function BuddyCard({ groupData }: BuddyCardProps) {
               icon={<ArrowRight size={14} />}
               className='text-xs font-bold'
             >
-              Buka Grup Buddy
+              Cari & Gabung Grup
             </Button>
           </Link>
         </div>
@@ -86,27 +84,27 @@ export function BuddyCard({ groupData }: BuddyCardProps) {
       : `${groupData.memberCount} Anggota`;
 
   return (
-    <Card padding='md' className='w-full border border-[#fce7f3] shadow-sm'>
+    <Card padding='md' className='w-full bg-white border border-[#F0DFE7] shadow-xs'>
       {/* Card Header */}
       <div className='flex items-center justify-between mb-3'>
-        <h4 className='text-sm font-bold text-[#1e293b] flex items-center gap-1.5'>
-          <Users size={16} className='text-[#e11d48]' />
-          <span>Group Buddy</span>
-        </h4>
+        <h3 className='text-sm font-bold text-[#1E1F24] flex items-center gap-1.5'>
+          <Users size={16} className='text-[#B8285F]' />
+          <span>Sahabat Femory</span>
+        </h3>
         <Link
           to='/user/buddy'
-          className='text-xs font-semibold text-[#be123c] hover:underline bg-[#ffe4e6] px-2.5 py-0.5 rounded-full'
+          className='text-xs font-semibold text-[#861A43] hover:text-[#B8285F] hover:underline bg-[#FCE7F0] px-2.5 py-0.5 rounded-full'
         >
-          Lihat Chat Grup
+          Lihat Chat
         </Link>
       </div>
 
       {/* Main Group Hero Box */}
-      <div className='bg-gradient-to-r from-rose-50/90 via-amber-50/60 to-rose-50/90 border border-rose-200 rounded-2xl p-3.5 my-1 flex flex-col gap-3'>
+      <div className='bg-[#FAF0F4] border border-[#F0DFE7] rounded-2xl p-3.5 my-1 flex flex-col gap-3'>
         <div className='flex items-center justify-between gap-3'>
           {/* Group Identity */}
           <div className='flex items-center gap-2.5 min-w-0 flex-1'>
-            <div className='relative w-11 h-11 rounded-2xl overflow-hidden shrink-0 ring-2 ring-rose-200 bg-rose-100 shadow-2xs'>
+            <div className='relative w-11 h-11 rounded-2xl overflow-hidden shrink-0 ring-2 ring-[#FCE7F0] bg-white shadow-2xs'>
               {groupData.avatarUrl ? (
                 <img
                   src={groupData.avatarUrl}
@@ -114,17 +112,17 @@ export function BuddyCard({ groupData }: BuddyCardProps) {
                   className='w-full h-full object-cover'
                 />
               ) : (
-                <div className='w-full h-full flex items-center justify-center text-[#e11d48] font-bold'>
+                <div className='w-full h-full flex items-center justify-center text-[#B8285F] font-bold'>
                   <Users size={20} />
                 </div>
               )}
             </div>
 
             <div className='min-w-0'>
-              <h5 className='text-xs sm:text-sm font-extrabold text-[#1e293b] truncate'>
+              <h4 className='text-xs sm:text-sm font-bold text-[#1E1F24] truncate'>
                 {groupData.name}
-              </h5>
-              <p className='text-[10.5px] text-[#64748b] truncate mt-0.5'>
+              </h4>
+              <p className='text-[11px] text-[#525866] truncate mt-0.5'>
                 {groupData.memberCount} Siswi ({membersText})
               </p>
             </div>
@@ -132,44 +130,44 @@ export function BuddyCard({ groupData }: BuddyCardProps) {
 
           {/* Group Streak Badge */}
           <div
-            className='flex items-center gap-1 px-2.5 py-1 bg-white/90 border border-amber-200 rounded-full shrink-0 shadow-2xs'
+            className='flex items-center gap-1 px-2.5 py-1 bg-white border border-amber-200 rounded-full shrink-0 shadow-2xs'
             title={`Streak: ${groupData.streakCount} Pekan`}
           >
-            <Flame size={14} className='fill-orange-500 text-orange-500 animate-pulse' />
-            <span className='text-xs font-black font-mono text-orange-700'>
+            <Flame size={14} className='fill-amber-500 text-amber-500' />
+            <span className='text-xs font-bold text-amber-800'>
               {groupData.streakCount}
             </span>
           </div>
         </div>
 
         {/* Weekly Progress Bar */}
-        <div className='bg-white/80 rounded-xl p-2.5 border border-rose-100 flex flex-col gap-1.5'>
-          <div className='flex items-center justify-between text-[11px] font-semibold'>
-            <span className='flex items-center gap-1 text-[#475569]'>
+        <div className='bg-white rounded-xl p-2.5 border border-[#F0DFE7] flex flex-col gap-1.5'>
+          <div className='flex items-center justify-between text-[11px] font-medium'>
+            <span className='flex items-center gap-1 text-[#525866]'>
               {isAllCompleted ? (
-                <CheckCircle2 size={12} className='text-emerald-600' />
+                <CheckCircle2 size={12} className='text-[#0D9488]' />
               ) : (
-                <Sparkles size={12} className='text-[#e11d48]' />
+                <Sparkles size={12} className='text-[#B8285F]' />
               )}
               {isAllCompleted
                 ? 'Semua anggota sudah minum TTD! 🎉'
-                : `${completed} dari ${total} siswi sudah minum TTD`}
+                : `${completed} dari ${total} siswi sudah minum`}
             </span>
             <span
-              className={`text-[10px] font-mono font-bold px-1.5 py-0.2 rounded-md ${
-                isAllCompleted ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-[#be123c]'
+              className={`text-[10px] font-bold px-1.5 py-0.5 rounded-md ${
+                isAllCompleted ? 'bg-teal-50 text-teal-800' : 'bg-[#FAF0F4] text-[#861A43]'
               }`}
             >
               {percent}%
             </span>
           </div>
 
-          <div className='w-full h-2 bg-rose-100 rounded-full overflow-hidden'>
+          <div className='w-full h-2 bg-[#F6EAF0] rounded-full overflow-hidden'>
             <div
               className={`h-full rounded-full transition-all duration-500 ${
                 isAllCompleted
-                  ? 'bg-gradient-to-r from-emerald-500 to-teal-500'
-                  : 'bg-gradient-to-r from-amber-500 to-rose-500'
+                  ? 'bg-gradient-to-r from-teal-500 to-emerald-500'
+                  : 'bg-gradient-to-r from-amber-400 to-[#B8285F]'
               }`}
               style={{ width: `${Math.min(100, Math.max(8, percent))}%` }}
             />

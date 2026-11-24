@@ -17,6 +17,8 @@ export interface DateFilterBarProps {
   activityMap: Record<string, ActivityDateInfo>;
   todayStr: string;
   todayStatus?: 'pending' | 'recorded' | 'missed';
+  onSwitchToYearView?: () => void;
+  showCalendarButton?: boolean;
 }
 
 const MONTH_NAMES_ID = [
@@ -37,6 +39,8 @@ export function DateFilterBar({
   activityMap,
   todayStr,
   todayStatus = 'pending',
+  onSwitchToYearView,
+  showCalendarButton = true,
 }: DateFilterBarProps) {
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [calendarViewDate, setCalendarViewDate] = useState<Date>(new Date());
@@ -147,6 +151,9 @@ export function DateFilterBar({
   const handleSelectFullYear = () => {
     onDateFilterPresetChange('1_YEAR');
     setIsCalendarOpen(false);
+    if (onSwitchToYearView) {
+      onSwitchToYearView();
+    }
   };
 
   const currentYear = calendarViewDate.getFullYear();
@@ -157,290 +164,292 @@ export function DateFilterBar({
         {/* Left Side: Calendar Dropdown Button & Preset Chips */}
         <div className='flex items-center gap-2 flex-wrap'>
           {/* 📅 Popover Calendar Trigger Button */}
-          <div className='relative' ref={calendarPopoverRef}>
-            <button
-              type='button'
-              onClick={() => setIsCalendarOpen(prev => !prev)}
-              className={`inline-flex items-center justify-center gap-1.5 sm:gap-2 px-3 py-2 rounded-xl text-xs font-bold border transition-all cursor-pointer shadow-2xs ${
-                isCalendarOpen || dateFilterPreset === 'CUSTOM' || dateFilterPreset === '1_YEAR'
-                  ? 'bg-pink-50 border-rose-600 text-rose-600 ring-2 ring-pink-200'
-                  : 'bg-white border-slate-200 text-slate-700 hover:border-pink-300'
-              }`}
-              title='Buka Kalender'
-              aria-label='Buka Kalender'
-            >
-              <CalendarIcon size={15} className='text-rose-600 shrink-0' />
-              <span className='font-bold'>
-                {dateFilterPreset === 'CUSTOM'
-                  ? formatShortDate(selectedDate)
-                  : dateFilterPreset === '1_YEAR'
-                    ? `1 Tahun (${currentYear})`
-                    : dateFilterPreset === 'TODAY'
-                        ? `Hari Ini (${formatShortDate(todayStr)})`
-                        : 'Kalender'}
-              </span>
-              <ChevronDown
-                size={14}
-                className={`transition-transform text-rose-600 ${isCalendarOpen ? 'rotate-180' : ''}`}
-              />
-            </button>
-
-            {/* 🗓️ MINI CALENDAR POPOVER DROPDOWN (Supports Month & Year Views) */}
-            {isCalendarOpen && (
-              <div
-                className={`absolute left-0 top-full mt-2 bg-white rounded-3xl shadow-2xl border border-pink-100 p-4 z-50 animate-fade-in ${
-                  popoverViewMode === 'year' ? 'w-[320px] sm:w-[480px]' : 'w-72 sm:w-80'
+          {showCalendarButton && (
+            <div className='relative' ref={calendarPopoverRef}>
+              <button
+                type='button'
+                onClick={() => setIsCalendarOpen(prev => !prev)}
+                className={`inline-flex items-center justify-center gap-1.5 sm:gap-2 px-3 py-2 rounded-xl text-xs font-bold border transition-all cursor-pointer shadow-2xs ${
+                  isCalendarOpen || dateFilterPreset === 'CUSTOM' || dateFilterPreset === '1_YEAR'
+                    ? 'bg-pink-50 border-rose-600 text-rose-600 ring-2 ring-pink-200'
+                    : 'bg-white border-slate-200 text-slate-700 hover:border-pink-300'
                 }`}
+                title='Buka Kalender'
+                aria-label='Buka Kalender'
               >
-                {/* View Switcher Bar inside Popover: Bulan vs 1 Tahun (Google Calendar style) */}
-                <div className='flex items-center justify-between pb-2 mb-3 border-b border-pink-100 gap-2'>
-                  <div className='flex items-center bg-slate-100 p-0.5 rounded-xl'>
+                <CalendarIcon size={15} className='text-rose-600 shrink-0' />
+                <span className='font-bold'>
+                  {dateFilterPreset === 'CUSTOM'
+                    ? formatShortDate(selectedDate)
+                    : dateFilterPreset === '1_YEAR'
+                      ? `1 Tahun (${currentYear})`
+                      : dateFilterPreset === 'TODAY'
+                          ? `Hari Ini (${formatShortDate(todayStr)})`
+                          : 'Kalender'}
+                </span>
+                <ChevronDown
+                  size={14}
+                  className={`transition-transform text-rose-600 ${isCalendarOpen ? 'rotate-180' : ''}`}
+                />
+              </button>
+
+              {/* 🗓️ MINI CALENDAR POPOVER DROPDOWN (Supports Month & Year Views) */}
+              {isCalendarOpen && (
+                <div
+                  className={`absolute left-0 top-full mt-2 bg-white rounded-3xl shadow-2xl border border-pink-100 p-4 z-50 animate-fade-in ${
+                    popoverViewMode === 'year' ? 'w-[320px] sm:w-[480px]' : 'w-72 sm:w-80'
+                  }`}
+                >
+                  {/* View Switcher Bar inside Popover: Bulan vs 1 Tahun (Google Calendar style) */}
+                  <div className='flex items-center justify-between pb-2 mb-3 border-b border-pink-100 gap-2'>
+                    <div className='flex items-center bg-slate-100 p-0.5 rounded-xl'>
+                      <button
+                        type='button'
+                        onClick={() => setPopoverViewMode('month')}
+                        className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                          popoverViewMode === 'month'
+                            ? 'bg-rose-600 text-white shadow-xs'
+                            : 'text-slate-600 hover:text-slate-900'
+                        }`}
+                      >
+                        Bulan
+                      </button>
+                      <button
+                        type='button'
+                        onClick={() => setPopoverViewMode('year')}
+                        className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                          popoverViewMode === 'year'
+                            ? 'bg-rose-600 text-white shadow-xs'
+                            : 'text-slate-600 hover:text-slate-900'
+                        }`}
+                      >
+                        1 Tahun Penuh
+                      </button>
+                    </div>
+
+                    {/* Quick Year Selection Button */}
                     <button
                       type='button'
-                      onClick={() => setPopoverViewMode('month')}
-                      className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                        popoverViewMode === 'month'
-                          ? 'bg-rose-600 text-white shadow-xs'
-                          : 'text-slate-600 hover:text-slate-900'
-                      }`}
+                      onClick={handleSelectFullYear}
+                      className='text-[11px] font-bold text-rose-600 hover:text-rose-700 bg-pink-50 hover:bg-pink-100 px-2 py-1 rounded-lg transition-colors cursor-pointer border border-pink-200'
                     >
-                      Bulan
-                    </button>
-                    <button
-                      type='button'
-                      onClick={() => setPopoverViewMode('year')}
-                      className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                        popoverViewMode === 'year'
-                          ? 'bg-rose-600 text-white shadow-xs'
-                          : 'text-slate-600 hover:text-slate-900'
-                      }`}
-                    >
-                      1 Tahun Penuh
+                      Pilih 1 Tahun
                     </button>
                   </div>
 
-                  {/* Quick Year Selection Button */}
-                  <button
-                    type='button'
-                    onClick={handleSelectFullYear}
-                    className='text-[11px] font-bold text-rose-600 hover:text-rose-700 bg-pink-50 hover:bg-pink-100 px-2 py-1 rounded-lg transition-colors cursor-pointer border border-pink-200'
-                  >
-                    Pilih 1 Tahun
-                  </button>
-                </div>
-
-                {popoverViewMode === 'month' ? (
-                  <>
-                    {/* Month Navigator */}
-                    <div className='flex items-center justify-between mb-2.5 pb-2 border-b border-slate-100'>
-                      <button
-                        type='button'
-                        onClick={() => {
-                          setCalendarViewDate(
-                            new Date(
-                              calendarViewDate.getFullYear(),
-                              calendarViewDate.getMonth() - 1,
-                              1,
-                            ),
-                          );
-                        }}
-                        className='p-1 rounded-lg hover:bg-slate-100 text-slate-600 cursor-pointer'
-                        aria-label='Bulan Sebelumnya'
-                      >
-                        <ChevronLeft size={16} />
-                      </button>
-
-                      <span className='text-xs font-bold text-slate-800'>
-                        {calendarViewDate.toLocaleDateString('id-ID', {
-                          month: 'long',
-                          year: 'numeric',
-                        })}
-                      </span>
-
-                      <button
-                        type='button'
-                        onClick={() => {
-                          setCalendarViewDate(
-                            new Date(
-                              calendarViewDate.getFullYear(),
-                              calendarViewDate.getMonth() + 1,
-                              1,
-                            ),
-                          );
-                        }}
-                        className='p-1 rounded-lg hover:bg-slate-100 text-slate-600 cursor-pointer'
-                        aria-label='Bulan Selanjutnya'
-                      >
-                        <ChevronRight size={16} />
-                      </button>
-                    </div>
-
-                    {/* Day Names Header */}
-                    <div className='grid grid-cols-7 gap-1 text-center mb-1'>
-                      {['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'].map(d => (
-                        <span key={d} className='text-[10px] font-bold text-slate-400'>
-                          {d}
-                        </span>
-                      ))}
-                    </div>
-
-                    {/* Calendar Month Grid (1-31) with Status Dots */}
-                    <div className='grid grid-cols-7 gap-1'>
-                      {calendarGrid.map((day, idx) => {
-                        if (!day) {
-                          return <div key={`empty-${idx}`} className='h-8' />;
-                        }
-
-                        const isSelected =
-                          dateFilterPreset === 'CUSTOM' && selectedDate === day.dateKey;
-                        const isRecorded = day.status === 'recorded';
-                        const isMissed = day.status === 'missed';
-                        const isPending = day.status === 'pending' && day.isToday;
-
-                        return (
-                          <button
-                            key={day.dateKey}
-                            type='button'
-                            onClick={() => handleSelectDay(day.dateKey)}
-                            className={`relative h-8 rounded-xl flex flex-col items-center justify-center text-[11px] font-bold transition-all cursor-pointer ${
-                              isSelected
-                                ? 'bg-rose-600 text-white shadow-xs font-black'
-                                : day.isToday
-                                  ? 'bg-pink-50 text-rose-600 border border-pink-300'
-                                  : 'text-slate-700 hover:bg-slate-100'
-                            }`}
-                          >
-                            <span>{day.dayNum}</span>
-
-                            {/* Status Indicator Dot on Calendar Date */}
-                            <div className='absolute bottom-1 flex items-center justify-center'>
-                              {isRecorded && (
-                                <span
-                                  className={`w-1.5 h-1.5 rounded-full ${
-                                    isSelected ? 'bg-white' : 'bg-emerald-500 ring-1 ring-white'
-                                  }`}
-                                />
-                              )}
-                              {isMissed && (
-                                <span
-                                  className={`w-1.5 h-1.5 rounded-full ${
-                                    isSelected ? 'bg-white' : 'bg-rose-500 ring-1 ring-white'
-                                  }`}
-                                />
-                              )}
-                              {isPending && (
-                                <span
-                                  className={`w-1.5 h-1.5 rounded-full ${
-                                    isSelected
-                                      ? 'bg-white'
-                                      : 'bg-amber-400 animate-pulse ring-1 ring-white'
-                                  }`}
-                                />
-                              )}
-                            </div>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </>
-                ) : (
-                  /* 12-Month Year View Grid (Google Calendar style) */
-                  <div className='flex flex-col gap-2.5 max-h-[380px] overflow-y-auto pr-1'>
-                    {/* Year Navigator */}
-                    <div className='flex items-center justify-between pb-1 border-b border-slate-100'>
-                      <button
-                        type='button'
-                        onClick={() => {
-                          setCalendarViewDate(
-                            new Date(calendarViewDate.getFullYear() - 1, 0, 1),
-                          );
-                        }}
-                        className='p-1 rounded-lg hover:bg-slate-100 text-slate-600 cursor-pointer'
-                      >
-                        <ChevronLeft size={16} />
-                      </button>
-
-                      <span className='text-sm font-extrabold text-slate-800'>
-                        Tahun {calendarViewDate.getFullYear()}
-                      </span>
-
-                      <button
-                        type='button'
-                        onClick={() => {
-                          setCalendarViewDate(
-                            new Date(calendarViewDate.getFullYear() + 1, 0, 1),
-                          );
-                        }}
-                        className='p-1 rounded-lg hover:bg-slate-100 text-slate-600 cursor-pointer'
-                      >
-                        <ChevronRight size={16} />
-                      </button>
-                    </div>
-
-                    {/* 12 Months Grid */}
-                    <div className='grid grid-cols-2 sm:grid-cols-3 gap-2.5'>
-                      {popoverYearMonths.map(m => (
-                        <div
-                          key={m.monthIndex}
-                          className='p-2 rounded-xl bg-slate-50 border border-slate-200/60 hover:border-pink-300 transition-colors cursor-pointer'
+                  {popoverViewMode === 'month' ? (
+                    <>
+                      {/* Month Navigator */}
+                      <div className='flex items-center justify-between mb-2.5 pb-2 border-b border-slate-100'>
+                        <button
+                          type='button'
                           onClick={() => {
-                            setCalendarViewDate(new Date(calendarViewDate.getFullYear(), m.monthIndex, 1));
-                            setPopoverViewMode('month');
+                            setCalendarViewDate(
+                              new Date(
+                                calendarViewDate.getFullYear(),
+                                calendarViewDate.getMonth() - 1,
+                                1,
+                              ),
+                            );
                           }}
+                          className='p-1 rounded-lg hover:bg-slate-100 text-slate-600 cursor-pointer'
+                          aria-label='Bulan Sebelumnya'
                         >
-                          <div className='text-[11px] font-extrabold text-rose-600 mb-1'>
-                            {m.shortName}
+                          <ChevronLeft size={16} />
+                        </button>
+
+                        <span className='text-xs font-bold text-slate-800'>
+                          {calendarViewDate.toLocaleDateString('id-ID', {
+                            month: 'long',
+                            year: 'numeric',
+                          })}
+                        </span>
+
+                        <button
+                          type='button'
+                          onClick={() => {
+                            setCalendarViewDate(
+                              new Date(
+                                calendarViewDate.getFullYear(),
+                                calendarViewDate.getMonth() + 1,
+                                1,
+                              ),
+                            );
+                          }}
+                          className='p-1 rounded-lg hover:bg-slate-100 text-slate-600 cursor-pointer'
+                          aria-label='Bulan Selanjutnya'
+                        >
+                          <ChevronRight size={16} />
+                        </button>
+                      </div>
+
+                      {/* Day Names Header */}
+                      <div className='grid grid-cols-7 gap-1 text-center mb-1'>
+                        {['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'].map(d => (
+                          <span key={d} className='text-[10px] font-bold text-slate-400'>
+                            {d}
+                          </span>
+                        ))}
+                      </div>
+
+                      {/* Calendar Month Grid (1-31) with Status Dots */}
+                      <div className='grid grid-cols-7 gap-1'>
+                        {calendarGrid.map((day, idx) => {
+                          if (!day) {
+                            return <div key={`empty-${idx}`} className='h-8' />;
+                          }
+
+                          const isSelected =
+                            dateFilterPreset === 'CUSTOM' && selectedDate === day.dateKey;
+                          const isRecorded = day.status === 'recorded';
+                          const isMissed = day.status === 'missed';
+                          const isPending = day.status === 'pending' && day.isToday;
+
+                          return (
+                            <button
+                              key={day.dateKey}
+                              type='button'
+                              onClick={() => handleSelectDay(day.dateKey)}
+                              className={`relative h-8 rounded-xl flex flex-col items-center justify-center text-[11px] font-bold transition-all cursor-pointer ${
+                                isSelected
+                                  ? 'bg-rose-600 text-white shadow-xs font-black'
+                                  : day.isToday
+                                    ? 'bg-pink-50 text-rose-600 border border-pink-300'
+                                    : 'text-slate-700 hover:bg-slate-100'
+                              }`}
+                            >
+                              <span>{day.dayNum}</span>
+
+                              {/* Status Indicator Dot on Calendar Date */}
+                              <div className='absolute bottom-1 flex items-center justify-center'>
+                                {isRecorded && (
+                                  <span
+                                    className={`w-1.5 h-1.5 rounded-full ${
+                                      isSelected ? 'bg-white' : 'bg-emerald-500 ring-1 ring-white'
+                                    }`}
+                                  />
+                                )}
+                                {isMissed && (
+                                  <span
+                                    className={`w-1.5 h-1.5 rounded-full ${
+                                      isSelected ? 'bg-white' : 'bg-rose-500 ring-1 ring-white'
+                                    }`}
+                                  />
+                                )}
+                                {isPending && (
+                                  <span
+                                    className={`w-1.5 h-1.5 rounded-full ${
+                                      isSelected
+                                        ? 'bg-white'
+                                        : 'bg-amber-400 animate-pulse ring-1 ring-white'
+                                    }`}
+                                  />
+                                )}
+                              </div>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </>
+                  ) : (
+                    /* 12-Month Year View Grid (Google Calendar style) */
+                    <div className='flex flex-col gap-2.5 max-h-[380px] overflow-y-auto pr-1'>
+                      {/* Year Navigator */}
+                      <div className='flex items-center justify-between pb-1 border-b border-slate-100'>
+                        <button
+                          type='button'
+                          onClick={() => {
+                            setCalendarViewDate(
+                              new Date(calendarViewDate.getFullYear() - 1, 0, 1),
+                            );
+                          }}
+                          className='p-1 rounded-lg hover:bg-slate-100 text-slate-600 cursor-pointer'
+                        >
+                          <ChevronLeft size={16} />
+                        </button>
+
+                        <span className='text-sm font-extrabold text-slate-800'>
+                          Tahun {calendarViewDate.getFullYear()}
+                        </span>
+
+                        <button
+                          type='button'
+                          onClick={() => {
+                            setCalendarViewDate(
+                              new Date(calendarViewDate.getFullYear() + 1, 0, 1),
+                            );
+                          }}
+                          className='p-1 rounded-lg hover:bg-slate-100 text-slate-600 cursor-pointer'
+                        >
+                          <ChevronRight size={16} />
+                        </button>
+                      </div>
+
+                      {/* 12 Months Grid */}
+                      <div className='grid grid-cols-2 sm:grid-cols-3 gap-2.5'>
+                        {popoverYearMonths.map(m => (
+                          <div
+                            key={m.monthIndex}
+                            className='p-2 rounded-xl bg-slate-50 border border-slate-200/60 hover:border-pink-300 transition-colors cursor-pointer'
+                            onClick={() => {
+                              setCalendarViewDate(new Date(calendarViewDate.getFullYear(), m.monthIndex, 1));
+                              setPopoverViewMode('month');
+                            }}
+                          >
+                            <div className='text-[11px] font-extrabold text-rose-600 mb-1'>
+                              {m.shortName}
+                            </div>
+                            <div className='grid grid-cols-7 gap-0.5 text-center'>
+                              {['S','S','R','K','J','S','M'].map((d, i) => (
+                                <span key={i} className='text-[7px] text-slate-400'>{d}</span>
+                              ))}
+                              {m.days.map((d, di) => {
+                                if (!d) return <div key={`em-${di}`} className='h-3' />;
+                                const hasTaken = d.status === 'recorded';
+                                const hasMissed = d.status === 'missed';
+                                return (
+                                  <div
+                                    key={d.dateStr}
+                                    className={`h-3 flex items-center justify-center text-[7px] font-bold rounded-sm ${
+                                      hasTaken
+                                        ? 'bg-emerald-500 text-white'
+                                        : hasMissed
+                                          ? 'bg-rose-500 text-white'
+                                          : d.isToday
+                                            ? 'bg-amber-400 text-white'
+                                            : 'text-slate-600'
+                                    }`}
+                                  >
+                                    {d.day}
+                                  </div>
+                                );
+                              })}
+                            </div>
                           </div>
-                          <div className='grid grid-cols-7 gap-0.5 text-center'>
-                            {['S','S','R','K','J','S','M'].map((d, i) => (
-                              <span key={i} className='text-[7px] text-slate-400'>{d}</span>
-                            ))}
-                            {m.days.map((d, di) => {
-                              if (!d) return <div key={`em-${di}`} className='h-3' />;
-                              const hasTaken = d.status === 'recorded';
-                              const hasMissed = d.status === 'missed';
-                              return (
-                                <div
-                                  key={d.dateStr}
-                                  className={`h-3 flex items-center justify-center text-[7px] font-bold rounded-sm ${
-                                    hasTaken
-                                      ? 'bg-emerald-500 text-white'
-                                      : hasMissed
-                                        ? 'bg-rose-500 text-white'
-                                        : d.isToday
-                                          ? 'bg-amber-400 text-white'
-                                          : 'text-slate-600'
-                                  }`}
-                                >
-                                  {d.day}
-                                </div>
-                              );
-                            })}
-                          </div>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Calendar Dot Legend Footer */}
+                  <div className='flex items-center justify-between pt-2.5 mt-3 border-t border-slate-100 text-[10px] text-slate-500'>
+                    <div className='flex items-center gap-1'>
+                      <span className='w-2 h-2 rounded-full bg-emerald-500' />
+                      <span>Selesai</span>
+                    </div>
+                    <div className='flex items-center gap-1'>
+                      <span className='w-2 h-2 rounded-full bg-rose-500' />
+                      <span>Terlewat</span>
+                    </div>
+                    <div className='flex items-center gap-1'>
+                      <span className='w-2 h-2 rounded-full bg-amber-400' />
+                      <span>Hari Ini</span>
                     </div>
                   </div>
-                )}
-
-                {/* Calendar Dot Legend Footer */}
-                <div className='flex items-center justify-between pt-2.5 mt-3 border-t border-slate-100 text-[10px] text-slate-500'>
-                  <div className='flex items-center gap-1'>
-                    <span className='w-2 h-2 rounded-full bg-emerald-500' />
-                    <span>Selesai</span>
-                  </div>
-                  <div className='flex items-center gap-1'>
-                    <span className='w-2 h-2 rounded-full bg-rose-500' />
-                    <span>Terlewat</span>
-                  </div>
-                  <div className='flex items-center gap-1'>
-                    <span className='w-2 h-2 rounded-full bg-amber-400' />
-                    <span>Hari Ini</span>
-                  </div>
                 </div>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
+          )}
 
           {/* Quick Filter Preset Chips */}
           <div className='flex items-center gap-1.5 overflow-x-auto pb-0.5 no-scrollbar'>

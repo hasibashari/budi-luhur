@@ -1,14 +1,14 @@
-'use client'
+'use client';
 
-import React from 'react'
-import { clsx } from 'clsx'
-import { twMerge } from 'tailwind-merge'
+import React from 'react';
+import { clsx } from 'clsx';
+import { twMerge } from 'tailwind-merge';
 
 export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
-  variant?: 'recorded' | 'missed' | 'pending' | 'streak' | 'primary' | 'neutral'
-  size?: 'sm' | 'md'
-  dot?: boolean
-  icon?: React.ReactNode
+  variant?: 'recorded' | 'missed' | 'pending' | 'streak' | 'primary' | 'neutral';
+  size?: 'sm' | 'md';
+  dot?: boolean;
+  icon?: React.ReactNode;
 }
 
 export function Badge({
@@ -20,48 +20,45 @@ export function Badge({
   className,
   ...props
 }: BadgeProps) {
-  const baseStyles = 'inline-flex items-center font-semibold rounded-full select-none'
+  const baseStyles = 'inline-flex items-center font-semibold rounded-full select-none';
 
   const sizeStyles = {
-    sm: 'text-[11px] px-2.5 py-0.5 gap-1',
-    md: 'text-xs px-3 py-1 gap-1.5',
-  }
+    sm: 'text-[11px] px-2.5 py-0.5 gap-1 leading-tight',
+    md: 'text-xs px-3 py-1 gap-1.5 leading-tight',
+  };
 
   const variantStyles = {
-    recorded: 'bg-[#ecfdf5] text-[#059669] border border-[#a7f3d0]',
-    missed: 'bg-[#fff1f2] text-[#e11d48] border border-[#fecdd3]',
-    pending: 'bg-[#fef3c7] text-[#d97706] border border-[#fde68a]',
-    streak: 'bg-gradient-to-r from-amber-500 to-rose-500 text-white shadow-sm shadow-orange-500/20',
-    primary: 'bg-[#ffe4e6] text-[#be123c] border border-[#fecdd3]',
-    neutral: 'bg-[#f1f5f9] text-[#475569] border border-[#e2e8f0]',
-  }
+    recorded: 'bg-[#ECFDF5] text-[#065F46] border border-[#A7F3D0]',
+    missed: 'bg-[#FAF0F4] text-[#861A43] border border-[#F7CADF]',
+    pending: 'bg-[#FEF3C7] text-[#92400E] border border-[#FDE68A]',
+    streak: 'bg-gradient-to-r from-amber-500 to-[#B8285F] text-white shadow-xs',
+    primary: 'bg-[#FCE7F0] text-[#861A43] border border-[#F7CADF]',
+    neutral: 'bg-[#F1F3F7] text-[#525866] border border-[#E2E6EE]',
+  };
 
   const dotColors = {
-    recorded: 'bg-[#10b981]',
-    missed: 'bg-[#f43f5e]',
-    pending: 'bg-[#f59e0b]',
+    recorded: 'bg-[#10B981]',
+    missed: 'bg-[#B8285F]',
+    pending: 'bg-[#F59E0B]',
     streak: 'bg-white',
-    primary: 'bg-[#e11d48]',
-    neutral: 'bg-[#94a3b8]',
-  }
+    primary: 'bg-[#B8285F]',
+    neutral: 'bg-[#8E95A5]',
+  };
 
   return (
     <span
       className={twMerge(
-        clsx(
-          baseStyles,
-          sizeStyles[size],
-          variantStyles[variant],
-          className
-        )
+        clsx(baseStyles, sizeStyles[size], variantStyles[variant], className),
       )}
       {...props}
     >
       {dot && (
-        <span className={clsx('w-1.5 h-1.5 rounded-full shrink-0 animate-pulse', dotColors[variant])} />
+        <span
+          className={clsx('w-1.5 h-1.5 rounded-full shrink-0 animate-pulse', dotColors[variant])}
+        />
       )}
-      {icon && <span className="shrink-0">{icon}</span>}
+      {icon && <span className='shrink-0'>{icon}</span>}
       <span>{children}</span>
     </span>
-  )
+  );
 }

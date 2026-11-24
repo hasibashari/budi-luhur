@@ -170,11 +170,11 @@ export default function ConsultationView() {
       {/* Screen Title Header (Shrink-0) */}
       <div className='shrink-0 flex items-center justify-between gap-2 pb-0.5'>
         <div>
-          <h2 className='text-base sm:text-xl md:text-2xl font-extrabold text-[#1e293b] tracking-tight flex items-center gap-1.5'>
+          <h2 className='text-base sm:text-xl md:text-2xl font-bold text-[#1E1F24] tracking-tight flex items-center gap-1.5'>
             <span>Konsultasi AI TTD</span>
             <span className='text-sm sm:text-base'>🌸</span>
           </h2>
-          <p className='text-[11px] sm:text-xs text-[#64748b] leading-none mt-0.5'>
+          <p className='text-[11px] sm:text-xs text-[#525866] leading-none mt-0.5'>
             Tanya jawab seputar Tablet Tambah Darah, nutrisi zat besi, & cegah anemia
           </p>
         </div>
@@ -182,7 +182,7 @@ export default function ConsultationView() {
         <button
           type='button'
           onClick={handleResetChat}
-          className='inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 text-xs font-semibold text-[#64748b] hover:text-[#e11d48] rounded-xl hover:bg-rose-50 transition-colors border border-[#fce7f3] bg-white cursor-pointer shadow-2xs shrink-0 active:scale-95'
+          className='inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 text-xs font-semibold text-[#525866] hover:text-[#B8285F] rounded-xl hover:bg-[#FAF0F4] transition-colors border border-[#F0DFE7] bg-white cursor-pointer shadow-2xs shrink-0 active:scale-95'
           title='Reset Percakapan'
           aria-label='Reset Chat'
         >
@@ -307,12 +307,12 @@ export default function ConsultationView() {
 
                     {/* Message Bubble */}
                     <div
-                      className={`max-w-[90%] sm:max-w-[82%] rounded-2xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm leading-relaxed shadow-2xs break-words ${
+                      className={`max-w-[90%] sm:max-w-[82%] rounded-2xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm leading-relaxed shadow-xs break-words ${
                         isUser
-                          ? 'bg-[#e11d48] text-white rounded-tr-none'
+                          ? 'bg-[#B8285F] text-white rounded-tr-none'
                           : hasError
-                            ? 'bg-rose-50/90 text-[#1e293b] border border-rose-200 rounded-tl-none'
-                            : 'bg-white text-[#1e293b] border border-[#fce7f3] rounded-tl-none'
+                            ? 'bg-[#FAF0F4] text-[#1E1F24] border border-[#F7CADF] rounded-tl-none'
+                            : 'bg-white text-[#1E1F24] border border-[#F0DFE7] rounded-tl-none'
                       }`}
                     >
                       {isUser ? (
@@ -435,13 +435,13 @@ export default function ConsultationView() {
                   value={inputText}
                   onChange={e => setInputText(e.target.value)}
                   disabled={isTyping}
-                  className='flex-1 bg-[#fff5f7] text-[#1e293b] placeholder-[#94a3b8] text-xs sm:text-sm rounded-full border border-[#fce7f3] focus:border-[#e11d48] px-4 py-2.5 sm:py-3 outline-none touch-manipulation disabled:opacity-60'
+                  className='flex-1 bg-[#FAF0F4] text-[#1E1F24] placeholder-[#8E95A5] text-xs sm:text-sm rounded-full border border-[#F0DFE7] focus:border-[#B8285F] focus:ring-1 focus:ring-[#B8285F] px-4 py-2.5 sm:py-3 outline-none touch-manipulation disabled:opacity-60 transition-all'
                 />
 
                 <button
                   type='submit'
                   disabled={!inputText.trim() || isTyping}
-                  className='w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-[#e11d48] text-white hover:bg-[#be123c] disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center shrink-0 shadow-sm shadow-rose-500/20 transition-all cursor-pointer touch-manipulation'
+                  className='w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-[#B8285F] text-white hover:bg-[#A11E50] disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center shrink-0 shadow-sm shadow-[#B8285F]/20 transition-all cursor-pointer touch-manipulation'
                   aria-label='Kirim Pesan'
                 >
                   <Send size={16} className='sm:w-[17px] sm:h-[17px]' />
@@ -449,8 +449,8 @@ export default function ConsultationView() {
               </form>
 
               {/* Integrated Explicit Medical Disclaimer Footer */}
-              <div className='flex items-center justify-center gap-1.5 text-[10px] text-[#64748b] text-center pt-0.5 px-2'>
-                <AlertCircle size={11} className='text-[#e11d48] shrink-0' />
+              <div className='flex items-center justify-center gap-1.5 text-[10px] text-[#525866] text-center pt-0.5 px-2'>
+                <AlertCircle size={11} className='text-[#B8285F] shrink-0' />
                 <span>AI dapat membuat kekeliruan. Selalu verifikasi informasi penting dengan tenaga kesehatan.</span>
               </div>
             </div>
